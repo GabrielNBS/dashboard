@@ -5,15 +5,17 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 
-export default function DashboardAside() {
-  const optionsMenu = [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Profile', href: '/profile' },
-    { label: 'Settings', href: '/settings' },
-    { label: 'Logout', href: '/logout' },
-  ];
+import { Home, User, Settings, LogOut } from 'lucide-react';
 
+export default function DashboardAside() {
   const pathname = usePathname();
+
+  const menuItems = [
+    { label: 'Dashboard', href: '/dashboard', icon: Home },
+    { label: 'Profile', href: '/profile', icon: User },
+    { label: 'Settings', href: '/settings', icon: Settings },
+    { label: 'Logout', href: '/logout', icon: LogOut },
+  ];
 
   return (
     <motion.aside
@@ -28,16 +30,17 @@ export default function DashboardAside() {
         </div>
       </div>
       <ul className="space-y-3">
-        {optionsMenu.map(item => (
-          <li key={item.href}>
+        {menuItems.map(({ label, href, icon: Icon }) => (
+          <li key={href}>
             <Link
-              href={item.href}
+              href={href}
               className={clsx(
-                'block rounded-md px-4 py-2 font-medium transition-colors',
-                pathname === item.href ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
+                'flex items-center gap-3 rounded-md px-4 py-2 font-medium transition-colors',
+                pathname === href ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
               )}
             >
-              {item.label}
+              <Icon className="h-5 w-5 text-gray-500 group-hover:text-gray-800" />
+              {label}
             </Link>
           </li>
         ))}
