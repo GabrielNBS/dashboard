@@ -16,15 +16,19 @@ export default function DashboardAside() {
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      className="hidden sm:fixed sm:top-0 sm:left-0 sm:flex sm:h-screen sm:w-64 sm:flex-col sm:bg-white sm:p-6 sm:shadow-md"
+      className="hidden sm:fixed sm:top-0 sm:left-0 sm:flex sm:h-screen sm:w-48 sm:flex-col sm:bg-white sm:p-6 sm:shadow-md"
     >
-      <h2 className="mb-6 text-xl font-semibold text-gray-800">Menu</h2>
+      <div className="mb-6 flex items-center justify-center">
+        <div className="bg-accent h-16 w-16 rounded-full">
+          <img src="" alt="" />
+        </div>
+      </div>
       <ul className="space-y-3">
         {optionsMenu.map(item => (
           <li key={item.href}>
             <Link
               href={item.href}
-              className="block rounded-md px-4 py-2 text-gray-700 hover:bg-gray-100"
+              className="block rounded-md px-4 py-2 text-center text-gray-700 hover:bg-gray-100"
             >
               {item.label}
             </Link>
