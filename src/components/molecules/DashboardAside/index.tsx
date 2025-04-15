@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import clsx from 'clsx';
+import { usePathname } from 'next/navigation';
 
 export default function DashboardAside() {
   const optionsMenu = [
@@ -10,6 +12,8 @@ export default function DashboardAside() {
     { label: 'Settings', href: '/settings' },
     { label: 'Logout', href: '/logout' },
   ];
+
+  const pathname = usePathname();
 
   return (
     <motion.aside
@@ -28,7 +32,10 @@ export default function DashboardAside() {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="block rounded-md px-4 py-2 text-center text-gray-700 hover:bg-gray-100"
+              className={clsx(
+                'block rounded-md px-4 py-2 font-medium transition-colors',
+                pathname === item.href ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
+              )}
             >
               {item.label}
             </Link>
