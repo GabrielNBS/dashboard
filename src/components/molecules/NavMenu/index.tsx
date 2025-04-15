@@ -1,36 +1,39 @@
+'use client';
+
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Props = {
   isVisible: boolean;
 };
 
 export default function NavMenu({ isVisible }: Props) {
-  if (!isVisible) return null;
-
   return (
-    <nav className="absolute top-14 left-2 rounded-md bg-black p-4 shadow-md">
-      <ul>
-        <li>
-          <Link href="/dashboard" className="block px-2 py-1 hover:bg-gray-200">
-            Dashboard
-          </Link>
-        </li>
-        <li>
-          <Link href="/profile" className="block px-2 py-1 hover:bg-gray-200">
-            Profile
-          </Link>
-        </li>
-        <li>
-          <Link href="/settings" className="block px-2 py-1 hover:bg-gray-200">
-            Settings
-          </Link>
-        </li>
-        <li>
-          <Link href="/logout" className="block px-2 py-1 hover:bg-gray-200">
-            Logout
-          </Link>
-        </li>
-      </ul>
-    </nav>
+    <AnimatePresence>
+      {isVisible && (
+        <motion.nav
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="absolute top-14 left-2 z-40 rounded-md bg-black p-4 shadow-md"
+        >
+          <ul>
+            {[
+              { label: 'Dashboard', href: '/dashboard' },
+              { label: 'Profile', href: '/profile' },
+              { label: 'Settings', href: '/settings' },
+              { label: 'Logout', href: '/logout' },
+            ].map(item => (
+              <li key={item.href}>
+                <Link href={item.href} className="block px-2 py-1">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </motion.nav>
+      )}
+    </AnimatePresence>
   );
 }

@@ -1,12 +1,45 @@
+'use client';
+
+import { motion } from 'framer-motion';
+
 type Props = {
+  isOpen: boolean;
   onClick: () => void;
-  children: React.ReactElement;
 };
 
-export default function IconHamburger({ onClick, children }: Props) {
+export default function IconHamburger({ isOpen, onClick }: Props) {
   return (
-    <button className="hamburger-menu" aria-label="Abrir menu de navegação" onClick={onClick}>
-      {children}
-    </button>
+    <motion.button
+      className="relative z-50 flex h-8 w-8 flex-col items-center justify-center gap-[6px] p-1"
+      onClick={onClick}
+      aria-label="Toggle menu"
+      initial={false}
+      animate={isOpen ? 'open' : 'closed'}
+    >
+      <motion.span
+        className="bg-base h-0.5 w-6"
+        variants={{
+          open: { rotate: 45, y: 9 },
+          closed: { rotate: 0, y: 0 },
+        }}
+        transition={{ duration: 0.2 }}
+      />
+      <motion.span
+        className="bg-base h-0.5 w-6"
+        variants={{
+          open: { opacity: 0 },
+          closed: { opacity: 1 },
+        }}
+        transition={{ duration: 0.2 }}
+      />
+      <motion.span
+        className="bg-base h-0.5 w-6"
+        variants={{
+          open: { rotate: -45, y: -6 },
+          closed: { rotate: 0, y: 0 },
+        }}
+        transition={{ duration: 0.2 }}
+      />
+    </motion.button>
   );
 }
