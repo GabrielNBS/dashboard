@@ -4,6 +4,13 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function DashboardAside() {
+  const optionsMenu = [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Profile', href: '/profile' },
+    { label: 'Settings', href: '/settings' },
+    { label: 'Logout', href: '/logout' },
+  ];
+
   return (
     <motion.aside
       initial={{ x: -100, opacity: 0 }}
@@ -13,12 +20,7 @@ export default function DashboardAside() {
     >
       <h2 className="mb-6 text-xl font-semibold text-gray-800">Menu</h2>
       <ul className="space-y-3">
-        {[
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: 'Profile', href: '/profile' },
-          { label: 'Settings', href: '/settings' },
-          { label: 'Logout', href: '/logout' },
-        ].map(item => (
+        {optionsMenu.map(item => (
           <li key={item.href}>
             <Link
               href={item.href}
