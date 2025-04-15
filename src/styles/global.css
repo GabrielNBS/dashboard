@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@import './components.css';
+
+@theme {
+    /* Cores */
+    --color-base: #fff;
+    --color-primary: #4c2158;
+    --color-accent: #a76fad;
+
+    /* Espaçamentos */
+    --spacing-default: 1rem;
+}
+
+.btn-primary {
+    @apply bg-accent text-base font-bold p-default rounded;
+}
+
+body {
+    @apply font-sans text-base text-neutral-900 bg-neutral-50;
+}
