@@ -5,15 +5,16 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 
-import { Home, User, Settings, LogOut } from 'lucide-react';
+import { Home, BadgeDollarSign, ScanBarcode, Package, LogOut } from 'lucide-react';
 
 export default function DashboardAside() {
   const pathname = usePathname();
 
   const menuItems = [
     { label: 'Dashboard', href: '/dashboard', icon: Home },
-    { label: 'Profile', href: '/profile', icon: User },
-    { label: 'Settings', href: '/settings', icon: Settings },
+    { label: 'Estoque', href: '/estoque', icon: Package },
+    { label: 'Financeiro', href: '/financeiro', icon: BadgeDollarSign },
+    { label: 'Produto', href: '/produto', icon: ScanBarcode },
     { label: 'Logout', href: '/logout', icon: LogOut },
   ];
 

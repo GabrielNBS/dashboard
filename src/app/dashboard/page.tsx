@@ -1,3 +1,11 @@
+import CardBase from '@/components/atoms/CardBase';
+import { Title } from '@/components/atoms/Text';
+
 export default function DashboardPage() {
-  return <h1 className="text-2xl font-bold">Bem-vindo ao Dashboard!</h1>;
+  return (
+    <>
+      <Title>Bem-vindo ao Dashboard!</Title>
+      <CardBase />
+    </>
+  );
 }
