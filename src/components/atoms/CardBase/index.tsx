@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-function CardBase() {
-  return <div className="h-76 w-64 rounded-sm shadow-lg"></div>;
+interface CardProps {
+  children: ReactNode;
+}
+
+function CardBase({ children }: CardProps) {
+  return <div className="flex h-76 w-64 flex-col rounded-sm text-center shadow-lg">{children}</div>;
 }
 
 export default CardBase;
