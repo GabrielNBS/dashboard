@@ -2,13 +2,20 @@
 @import './components.css';
 
 @theme {
-    /* Cores */
+    /* Colors */
     --color-base: #fff;
     --color-primary: #4c2158;
+    --color-secondary: #aa20c542;
     --color-accent: #a76fad;
 
-    /* Espaçamentos */
-    --spacing-default: 1rem;
+    /* Paddings */
+    --spacing-default: 2rem;
+
+    /* Font-Size */
+    --text-hero: clamp(2.5rem, 2.5rem + 1.5vw, 3rem);
+    --text-title: clamp(1.5rem, 1.5rem + 1.5vw, 2rem);
+    --text-subtitle: clamp(1rem, 1rem + 1.5vw, 1.5rem);
+    --text-paragraph: clamp(0.875rem, 0.875rem + 1.5vw, 1rem);
 }
 
 .btn-primary {
@@ -17,4 +24,5 @@
 
 body {
     @apply font-sans text-base text-neutral-900 bg-neutral-50;
+
 }

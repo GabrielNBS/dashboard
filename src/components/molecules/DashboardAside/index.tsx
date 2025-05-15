@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 
 import { Home, BadgeDollarSign, ScanBarcode, Package, LogOut } from 'lucide-react';
+import Image from 'next/image';
 
 export default function DashboardAside() {
   const pathname = usePathname();
@@ -27,7 +28,12 @@ export default function DashboardAside() {
     >
       <div className="mb-6 flex items-center justify-center">
         <div className="bg-accent h-16 w-16 rounded-full">
-          <img src="" alt="" />
+          <Image
+            src={'https://source.unsplash.com/random/800x600'}
+            alt="random image"
+            width={64}
+            height={64}
+          />
         </div>
       </div>
       <ul className="space-y-3">
