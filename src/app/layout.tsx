@@ -1,7 +1,7 @@
 import DashboardHeader from '@/components/organisms/DashboardHeader';
 import '../styles/global.css';
 import DashboardAside from '@/components/molecules/DashboardAside';
-import MainSection from '@/components/templates/MainSection';
+import MainSection from '@/components/organisms/Main';
 
 export default function RootLayout({
   children,
@@ -10,7 +10,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`antialiased`}>
+      <body className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
         <DashboardHeader />
         <DashboardAside />
         <MainSection>{children}</MainSection>

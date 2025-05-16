@@ -1,5 +1,5 @@
-'use client';
+import DashboardTemplate from '@/components/templates/MainSection/DashboardTemplate';
 
 export default function Home() {
-  return <h1>teste</h1>;
+  return <DashboardTemplate />;
 }

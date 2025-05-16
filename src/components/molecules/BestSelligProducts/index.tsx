@@ -1,5 +1,6 @@
 import { formatCurrency } from '@/utils/icons/formatCurrency';
 import React from 'react';
+import Image from 'next/image';
 
 type Product = {
   id: string;
@@ -16,17 +17,21 @@ type BestProductsProps = {
 
 export default function BestSellingProducts({ title, products }: BestProductsProps) {
   return (
-    <div className="flex flex-col gap-4">
-      <h2 className="text-title font-bold">{title}</h2>
+    <>
+      <h2 className="text-title text-center font-bold">{title}</h2>
       <ul className="flex flex-col gap-2">
         {products.map(product => (
           <li key={product.id} className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-full bg-neutral-200">
               {product.image && (
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
                   className="h-full w-full rounded-full object-cover"
+                  width={48}
+                  height={48}
+                  placeholder="blur"
+                  blurDataURL={product.image}
                 />
               )}
             </div>
@@ -38,6 +43,6 @@ export default function BestSellingProducts({ title, products }: BestProductsPro
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }

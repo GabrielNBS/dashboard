@@ -9,7 +9,7 @@
     --color-accent: #a76fad;
 
     /* Paddings */
-    --spacing-default: 2rem;
+    --spacing-default: 1rem;
 
     /* Font-Size */
     --text-hero: clamp(2.5rem, 2.5rem + 1.5vw, 3rem);
@@ -25,4 +25,12 @@
 body {
     @apply font-sans text-base text-neutral-900 bg-neutral-50;
 
+}
+
+.centralize {
+    @apply flex items-center justify-center;
+}
+
+.centralize-column {
+    @apply flex flex-col items-center justify-center;
 }

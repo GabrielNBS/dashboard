@@ -8,7 +8,7 @@ type MainSectionProps = {
 
 export default function MainSection({ children }: MainSectionProps) {
   return (
-    <main className="outline-accent p-4 pt-20 outline-1 transition-all sm:ml-52 sm:pt-8">
+    <main className="outline-accent sm:p-default h-dvh px-4 outline-1 transition-all">
       {children}
     </main>
   );

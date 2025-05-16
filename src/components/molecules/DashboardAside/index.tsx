@@ -12,7 +12,7 @@ export default function DashboardAside() {
   const pathname = usePathname();
 
   const menuItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: Home },
+    { label: 'Dashboard', href: '/', icon: Home },
     { label: 'Estoque', href: '/estoque', icon: Package },
     { label: 'Financeiro', href: '/financeiro', icon: BadgeDollarSign },
     { label: 'Produto', href: '/produto', icon: ScanBarcode },
@@ -24,7 +24,7 @@ export default function DashboardAside() {
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      className="hidden sm:fixed sm:top-0 sm:left-0 sm:flex sm:h-screen sm:w-48 sm:flex-col sm:bg-white sm:p-6 sm:shadow-md"
+      className="hidden sm:top-0 sm:flex sm:h-dvh sm:flex-col sm:bg-white sm:p-6 sm:shadow-md"
     >
       <div className="mb-6 flex items-center justify-center">
         <div className="bg-accent h-16 w-16 rounded-full">
@@ -42,7 +42,7 @@ export default function DashboardAside() {
             <Link
               href={href}
               className={clsx(
-                'flex items-center gap-3 rounded-md px-4 py-2 font-medium transition-colors',
+                'flex items-center gap-3 rounded-md px-2 py-2 font-medium transition-colors',
                 pathname === href ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
               )}
             >
