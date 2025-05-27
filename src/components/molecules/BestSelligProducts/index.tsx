@@ -24,14 +24,12 @@ export default function BestSellingProducts({ title, products }: BestProductsPro
           <li key={product.id} className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-full bg-neutral-200">
               {product.image && (
-                <Image
+                <img
                   src={product.image}
                   alt={product.name}
                   className="h-full w-full rounded-full object-cover"
                   width={48}
                   height={48}
-                  placeholder="blur"
-                  blurDataURL={product.image}
                 />
               )}
             </div>

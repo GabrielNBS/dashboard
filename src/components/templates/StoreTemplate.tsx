@@ -4,9 +4,12 @@ import { useState } from 'react';
 import { Product } from '@/types/ProductProps';
 import ProductTable from '../organisms/ProductTable';
 import ProductForm from '../molecules/ProductForm';
+import ProductEditModal from '../organisms/ProductEditModal';
 
 export default function StoreTemplate() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
 
   function handleAddProduct(product: Product) {
     setProducts([...products, product]);
@@ -17,16 +20,29 @@ export default function StoreTemplate() {
   }
 
   function handleEditProduct(product: Product) {
-    setProducts(products.map(p => (p.id === product.id ? product : p)));
+    setProductToEdit(product);
+    setModalIsOpen(true);
+  }
+
+  function handleSaveProduct(updatedProduct: Product) {
+    setProducts(products.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
+    setProductToEdit(null);
+    setModalIsOpen(false);
   }
 
   return (
     <main className="flex flex-col items-center justify-center gap-4">
       <ProductForm onAddProduct={handleAddProduct} />
       <ProductTable
+        products={products}
         onDeleteProduct={handleDeleteProduct}
         onEditProduct={handleEditProduct}
-        products={products}
+      />
+      <ProductEditModal
+        isOpen={modalIsOpen}
+        product={productToEdit || ({} as Product)}
+        onClose={() => setModalIsOpen(false)}
+        onSave={handleSaveProduct}
       />
     </main>
   );

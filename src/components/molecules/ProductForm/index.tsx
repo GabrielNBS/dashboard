@@ -38,54 +38,52 @@ export default function ProductForm({
     alert('Produto adicionado com sucesso');
   };
 
+  const inputStyle = 'rounded-md border border-gray-300 p-2 w-full h-full';
+
   return (
     <form onSubmit={handleSubmit} className="flex w-1/2 gap-4">
       <div>
-        <label htmlFor="name">Nome do produto</label>
         <input
           type="text"
           value={name}
           placeholder="Nome do produto"
           onChange={e => setName(e.target.value)}
-          className="rounded-md border border-gray-300 p-2"
+          className={inputStyle}
           id="name"
         />
       </div>
       <div>
-        <label htmlFor="quantity">Quantidade</label>
         <input
           type="number"
           value={quantity}
           step={0.01}
           placeholder="Quantidade"
           onChange={e => setQuantity(e.target.value)}
-          className="rounded-md border border-gray-300 p-2"
+          className={inputStyle}
           id="quantity"
           min={0}
         />
       </div>
       <div>
-        <label htmlFor="buyPrice">Preço de compra</label>
         <input
           type="number"
           value={buyPrice}
           step={0.01}
           placeholder="Preço de compra"
           onChange={e => setBuyPrice(e.target.value)}
-          className="rounded-md border border-gray-300 p-2"
+          className={inputStyle}
           id="buyPrice"
           min={0}
         />
       </div>
       <div>
-        <label htmlFor="sellPrice">Preço de venda</label>
         <input
           type="number"
           value={sellPrice}
           step={0.01}
           placeholder="Preço de venda"
           onChange={e => setSellPrice(e.target.value)}
-          className="rounded-md border border-gray-300 p-2"
+          className={inputStyle}
           id="sellPrice"
           min={0}
         />

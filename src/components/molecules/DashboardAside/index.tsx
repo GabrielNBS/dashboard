@@ -27,9 +27,10 @@ export default function DashboardAside() {
       className="hidden sm:top-0 sm:flex sm:h-dvh sm:flex-col sm:bg-white sm:p-6 sm:shadow-md"
     >
       <div className="mb-6 flex items-center justify-center">
-        <div className="bg-accent h-16 w-16 rounded-full">
-          <Image
-            src={'https://source.unsplash.com/random/800x600'}
+        <div className="bg-accent h-16 w-16 overflow-hidden rounded-full">
+          <img
+            className=""
+            src={'https://placehold.co/150'}
             alt="random image"
             width={64}
             height={64}
