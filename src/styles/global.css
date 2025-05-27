@@ -18,11 +18,7 @@
     --text-paragraph: clamp(0.875rem, 0.875rem + 1.5vw, 1rem);
 }
 
-.btn-primary {
-    @apply bg-accent text-base font-bold p-default rounded;
-}
-
-body {
+.btn- body {
     @apply font-sans text-base text-neutral-900 bg-neutral-50;
 
 }

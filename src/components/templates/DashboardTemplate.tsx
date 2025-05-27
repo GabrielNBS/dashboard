@@ -26,7 +26,7 @@ export default function DashboardTemplate() {
         {/* Card de produtos mais vendidos */}
         <div className="flex flex-col gap-4">
           <div className="rounded-lg bg-blue-100 p-4">
-            <BestSellingProducts products={bestSellingProducts} title="Produtos mais vendidos" />
+            <BestSellingProducts products={bestSellingProducts} title="Top Vendas" />
           </div>
 
           {/* Card de produtos com estoque crítico */}

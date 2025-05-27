@@ -1,3 +1,5 @@
+import StoreTemplate from '@/components/templates/StoreTemplate';
+
 export default function DashboardPage() {
-  return <h1 className="text-2xl font-bold">Bem-vindo ao Estoque!</h1>;
+  return <StoreTemplate />;
 }
