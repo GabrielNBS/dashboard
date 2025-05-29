@@ -1,3 +1,9 @@
+import ProductTemplate from '@/components/templates/ProductTemplate';
+
 export default function DashboardPage() {
-  return <h1 className="text-2xl font-bold">Bem-vindo aos Produtos!</h1>;
+  return (
+    <div>
+      <ProductTemplate />
+    </div>
+  );
 }

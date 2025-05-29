@@ -1,3 +1,10 @@
+import FinanceTemplate from '@/components/templates/FinanceTemplate';
+
 export default function DashboardPage() {
-  return <h1 className="text-2xl font-bold">Bem-vindo ao Financeiro!</h1>;
+  return (
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">Bem-vindo ao Financeiro!</h1>
+      <FinanceTemplate />
+    </div>
+  );
 }

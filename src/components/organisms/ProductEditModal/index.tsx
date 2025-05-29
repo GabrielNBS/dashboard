@@ -16,6 +16,7 @@ export default function ProductEditModal({
     setEditedProduct(product);
   }, [product]);
 
+  // Atualiza o state local quando o input muda
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditedProduct({
