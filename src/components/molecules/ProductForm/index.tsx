@@ -1,4 +1,5 @@
 import Button from '@/components/atoms/Button';
+import Input from '@/components/atoms/Input';
 import { useState } from 'react';
 import { Product } from '@/types/ProductProps';
 
@@ -38,52 +39,46 @@ export default function ProductForm({
     alert('Produto adicionado com sucesso');
   };
 
-  const inputStyle = 'rounded-md border border-gray-300 p-2 w-full h-full';
-
   return (
     <form onSubmit={handleSubmit} className="flex w-1/2 gap-4">
       <div>
-        <input
+        <Input
           type="text"
           value={name}
           placeholder="Nome do produto"
           onChange={e => setName(e.target.value)}
-          className={inputStyle}
           id="name"
         />
       </div>
       <div>
-        <input
+        <Input
           type="number"
           value={quantity}
           step={0.01}
           placeholder="Quantidade"
           onChange={e => setQuantity(e.target.value)}
-          className={inputStyle}
           id="quantity"
           min={0}
         />
       </div>
       <div>
-        <input
+        <Input
           type="number"
           value={buyPrice}
           step={0.01}
           placeholder="Preço de compra"
           onChange={e => setBuyPrice(e.target.value)}
-          className={inputStyle}
           id="buyPrice"
           min={0}
         />
       </div>
       <div>
-        <input
+        <Input
           type="number"
           value={sellPrice}
           step={0.01}
           placeholder="Preço de venda"
           onChange={e => setSellPrice(e.target.value)}
-          className={inputStyle}
           id="sellPrice"
           min={0}
         />
