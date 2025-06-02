@@ -13,7 +13,7 @@ export default function DashboardTemplate() {
   return (
     <>
       <div className="mt-4 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-hero text-2xl font-bold">Olá, seja bem vindo!</h1>
+        <h1 className="text-hero font-bold">Olá, seja bem vindo!</h1>
         <CardFinance />
       </div>
 

@@ -3,11 +3,16 @@ import Button from '@/components/atoms/Button';
 import { CheckIcon } from 'lucide-react';
 
 export default function ProductForm() {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('Form submitted');
+  };
+
   return (
     <>
-      <h2 className="p-default text-2xl font-bold">Adicionar produto</h2>
-      <form className="flex flex-wrap gap-4">
-        <Input type="text" placeholder="Nome do ingrediente" />
+      <h2 className="p-default text-hero-2xl font-bold">Adicionar produto</h2>
+      <form onSubmit={handleSubmit} className="flex flex-wrap gap-4">
+        <Input type="text-hero" placeholder="Nome do ingrediente" />
         <Input type="number" placeholder="Quantidade" />
         <Input type="number" placeholder="Valor do ingrediente" />
         <div className="absolute right-32 bottom-10 flex items-center gap-8">

@@ -4,11 +4,11 @@ import CardFinance from '../molecules/CardFinance';
 function FinanceTemplate() {
   return (
     <div className="flex flex-col gap-4">
-      <h1>Finance</h1>
+      <h1 className="text-title text-bold">Finance</h1>
       <CardFinance />
       <table className="w-full">
         <thead className="bg-gray-100">
-          <tr className="text-left">
+          <tr className="text-hero-left">
             <th className="p-2">Data</th>
             <th className="p-2">Descrição</th>
             <th className="p-2">Valor</th>

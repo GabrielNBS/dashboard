@@ -44,10 +44,10 @@ export default function DashboardAside() {
               href={href}
               className={clsx(
                 'flex items-center gap-3 rounded-md px-2 py-2 font-medium transition-colors',
-                pathname === href ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
+                pathname === href ? 'bg-primary text-white' : 'text-paragraph hover:bg-gray-100'
               )}
             >
-              <Icon className="h-5 w-5 text-gray-500 group-hover:text-gray-800" />
+              <Icon className="text-hero-gray-500 group-hover:text-paragraph h-5 w-5" />
               {label}
             </Link>
           </li>

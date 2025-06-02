@@ -40,11 +40,11 @@ export default function ProductEditModal({
       })}
     >
       <div className="flex flex-col gap-2 rounded-md bg-white p-4 shadow-md">
-        <h2 className="text-lg font-bold">Editar produto</h2>
+        <h2 className="text-hero-lg font-bold">Editar produto</h2>
         <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
           <input
             className={inputStyle}
-            type="text"
+            type="text-hero"
             name="name"
             value={editedProduct.name}
             onChange={handleChange}

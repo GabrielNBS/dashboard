@@ -43,7 +43,7 @@ export default function ProductForm({
     <form onSubmit={handleSubmit} className="flex w-1/2 gap-4">
       <div>
         <Input
-          type="text"
+          type="text-hero"
           value={name}
           placeholder="Nome do produto"
           onChange={e => setName(e.target.value)}

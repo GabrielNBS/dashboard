@@ -14,7 +14,7 @@ export default function ProductTable({
 
   return (
     <table className="w-1/2">
-      <thead className="text-left text-sm font-bold uppercase">
+      <thead className="text-hero-left text-hero-sm font-bold uppercase">
         <tr className="border-b border-gray-200 bg-gray-50">
           <th className="p-2">Nome</th>
           <th className="p-2">Quantidade</th>
@@ -24,7 +24,7 @@ export default function ProductTable({
           <th className="p-2">Ações</th>
         </tr>
       </thead>
-      <tbody className="text-sm">
+      <tbody className="text-hero-sm">
         {products.map(product => (
           <tr key={product.id}>
             <td className="p-2">{product.name}</td>

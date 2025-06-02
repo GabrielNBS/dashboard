@@ -18,7 +18,7 @@ type BestProductsProps = {
 export default function BestSellingProducts({ title, products }: BestProductsProps) {
   return (
     <>
-      <h2 className="text-title text-center font-bold">{title}</h2>
+      <h2 className="text-hero-title text-hero-center font-bold">{title}</h2>
       <ul className="flex flex-col gap-2">
         {products.map(product => (
           <li key={product.id} className="flex items-center gap-4">
@@ -35,7 +35,7 @@ export default function BestSellingProducts({ title, products }: BestProductsPro
             </div>
             <div className="flex flex-1 justify-between">
               <span className="font-medium">{product.name}</span>
-              <span className="text-neutral-600">{product.quantity} un.</span>
+              <span className="text-hero-neutral-600">{product.quantity} un.</span>
               <span className="font-bold">{formatCurrency(product.price)}</span>
             </div>
           </li>

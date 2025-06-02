@@ -5,7 +5,7 @@ const categories = ['Tradicionais', 'Especiais', 'Gourmet', 'Bebidas'];
 
 export default function CategoryList() {
   return (
-    <div className="p-default flex gap-4 text-white">
+    <div className="p-default text-paragraph flex gap-4 text-base">
       {categories.map(category => (
         <CategoryTag key={category} label={category} />
       ))}
