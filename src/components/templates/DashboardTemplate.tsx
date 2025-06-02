@@ -1,4 +1,4 @@
-import BestSellingProducts from '@/components/molecules/BestSelligProducts';
+import BestSellingProducts from '@/components/molecules/BestSellingProducts';
 import CardFinance from '@/components/molecules/CardFinance';
 
 export default function DashboardTemplate() {

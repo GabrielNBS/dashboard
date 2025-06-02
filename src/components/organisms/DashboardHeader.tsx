@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import IconHamburger from '@/components/atoms/IconHamburger';
+import IconHamburger from '@/components/atoms/IconHamburguer';
 import NavMenu from '@/components/molecules/NavMenu';
 
 export default function DashboardHeader() {

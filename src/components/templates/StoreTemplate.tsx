@@ -5,9 +5,9 @@ import { Product } from '@/types/ProductProps';
 import ProductTable from '../organisms/ProductTable';
 import ProductForm from '../molecules/ProductForm';
 import ProductEditModal from '../organisms/ProductEditModal';
-
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 export default function StoreTemplate() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useLocalStorage<Product[]>('products', []);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
 
