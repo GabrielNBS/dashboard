@@ -7,34 +7,43 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 // Estado inicial
 interface ProductState {
   products: Product[];
+  productToEdit: Product | null;
+  isModalOpen: boolean;
 }
 
-// Ações para manipular o estado
 type ProductAction =
   | { type: 'ADD_PRODUCT'; payload: Product }
-  | { type: 'DELETE_PRODUCT'; payload: string }
+  | { type: 'DELETE_PRODUCT'; payload: number }
   | { type: 'EDIT_PRODUCT'; payload: Product }
-  | { type: 'SET_PRODUCTS'; payload: Product[] };
+  | { type: 'SET_PRODUCTS'; payload: Product[] }
+  | { type: 'OPEN_EDIT_MODAL'; payload: Product }
+  | { type: 'CLOSE_EDIT_MODAL' };
 
-// Reducer para gerenciar o estado dos produtos
 function productReducer(state: ProductState, action: ProductAction): ProductState {
   switch (action.type) {
     case 'ADD_PRODUCT':
-      return { products: [...state.products, action.payload] };
+      return { ...state, products: [...state.products, action.payload] };
     case 'DELETE_PRODUCT':
-      return { products: state.products.filter(p => p.id !== action.payload) };
+      return {
+        ...state,
+        products: state.products.filter(p => p.id !== action.payload),
+      };
     case 'EDIT_PRODUCT':
       return {
+        ...state,
         products: state.products.map(p => (p.id === action.payload.id ? action.payload : p)),
       };
     case 'SET_PRODUCTS':
-      return { products: action.payload };
+      return { ...state, products: action.payload };
+    case 'OPEN_EDIT_MODAL':
+      return { ...state, isModalOpen: true, productToEdit: action.payload };
+    case 'CLOSE_EDIT_MODAL':
+      return { ...state, isModalOpen: false, productToEdit: null };
     default:
       return state;
   }
 }
 
-// Context
 interface ProductContextType {
   state: ProductState;
   dispatch: React.Dispatch<ProductAction>;
@@ -42,16 +51,24 @@ interface ProductContextType {
 
 export const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-// Provider
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
   const [storedProducts, setStoredProducts] = useLocalStorage<Product[]>('products', []);
 
-  const [state, dispatch] = useReducer(productReducer, { products: storedProducts });
+  const [state, dispatch] = useReducer(productReducer, {
+    products: storedProducts,
+    productToEdit: null,
+    isModalOpen: false,
+  });
 
-  // Sincroniza com localStorage sempre que o estado mudar
   useEffect(() => {
     setStoredProducts(state.products);
-  }, [state.products, setStoredProducts]);
+  }, [state.products]);
 
   return <ProductContext.Provider value={{ state, dispatch }}>{children}</ProductContext.Provider>;
+};
+
+export const useProductContext = () => {
+  const context = useContext(ProductContext);
+  if (!context) throw new Error('useProductContext deve ser usado dentro de ProductProvider');
+  return context;
 };

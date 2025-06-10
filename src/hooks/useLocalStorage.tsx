@@ -1,27 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-// Hook para armazenar e recuperar valores do localStorage
 export function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(initialValue);
-
-  useEffect(() => {
+  function checkReceivedItem() {
+    if (typeof window === 'undefined') {
+      return initialValue;
+    }
     try {
       const item = localStorage.getItem(key);
-      if (item) {
-        setStoredValue(JSON.parse(item));
-      }
+      return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.error('Error ao recuperar o valor do localStorage', error);
+      console.error('Erro ao recuperar o valor do localStorage', error);
+      return initialValue;
     }
-  }, [key]);
+  }
 
-  // Função para salvar o valor no localStorage
+  const [storedValue, setStoredValue] = useState<T>(checkReceivedItem);
   const setValue = (value: T) => {
     try {
       setStoredValue(value);
-      window.localStorage.setItem(key, JSON.stringify(value));
+      localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-      console.error('Error ao salvar o valor no localStorage', error);
+      console.error('Erro ao salvar o valor no localStorage', error);
     }
   };
 

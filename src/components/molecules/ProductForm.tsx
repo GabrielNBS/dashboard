@@ -2,16 +2,18 @@ import Button from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
 import { useState } from 'react';
 import { Product } from '@/types/ProductProps';
+import { useProductContext } from '@/hooks/useProductContext';
 
-export default function ProductForm({
-  onAddProduct,
-}: {
-  onAddProduct: (product: Product) => void;
-}) {
+export default function ProductForm() {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [buyPrice, setBuyPrice] = useState('');
   const [sellPrice, setSellPrice] = useState('');
+  const { dispatch } = useProductContext();
+
+  function handleAddProduct(product: Product) {
+    dispatch({ type: 'ADD_PRODUCT', payload: product });
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ export default function ProductForm({
       return;
     }
     // se todos os campos estão preenchidos, adiciona o produto seguindo a tipagem do Product
-    onAddProduct({
+    handleAddProduct({
       id: Date.now(),
       name,
       quantity: parseInt(quantity),
