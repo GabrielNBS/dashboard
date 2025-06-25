@@ -4,10 +4,10 @@ import Button from '@/components/atoms/Button';
 import { CheckIcon } from 'lucide-react';
 import IngredientSelector from './IngredientSelector';
 import { useProductBuilderContext } from '@/contexts/ProductBuilderContext';
-import { useFinalProductListContext } from '@/contexts/FinalProductListContext';
+import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
 import CategoryList from './CategoryList';
 
-export default function RegisterIngredientForm() {
+export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
   const { state: listState, dispatch: listDispatch } = useFinalProductListContext();
 
@@ -17,7 +17,7 @@ export default function RegisterIngredientForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!finalProduct.name.trim() || !finalProduct.category.trim()) {
+    if (!finalProduct.name.trim() && !finalProduct.category.trim()) {
       alert('Preencha o nome e a categoria do produto.');
       return;
     }
@@ -27,7 +27,6 @@ export default function RegisterIngredientForm() {
       return;
     }
 
-    // Verifica duplicidade
     const isDuplicate = listState.products.some(
       p =>
         p.name.toLowerCase() === finalProduct.name.toLowerCase() &&
@@ -44,6 +43,7 @@ export default function RegisterIngredientForm() {
 
     // Limpa o formulário
     dispatch({ type: 'RESET_PRODUCT' });
+    if (onClose) onClose();
 
     alert('Produto cadastrado com sucesso!');
   };

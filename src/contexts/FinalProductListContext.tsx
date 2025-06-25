@@ -1,12 +1,13 @@
 'use client';
 
-import React, { createContext, useReducer, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
 import { FinalProductState } from '@/types/finalProduct';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 interface FinalProductListState {
   products: FinalProductState[];
 }
+
 type Action =
   | { type: 'ADD_FINAL_PRODUCT'; payload: FinalProductState }
   | { type: 'SET_PRODUCTS'; payload: FinalProductState[] }
@@ -40,7 +41,7 @@ function reducer(state: FinalProductListState, action: Action): FinalProductList
   }
 }
 
-const FinalProductListContext = createContext<
+export const FinalProductListContext = createContext<
   | {
       state: FinalProductListState;
       dispatch: React.Dispatch<Action>;
@@ -68,11 +69,4 @@ export const FinalProductListProvider = ({ children }: { children: ReactNode }) 
       {children}
     </FinalProductListContext.Provider>
   );
-};
-
-export const useFinalProductListContext = () => {
-  const context = useContext(FinalProductListContext);
-  if (!context)
-    throw new Error('useFinalProductListContext deve ser usado dentro de FinalProductListProvider');
-  return context;
 };
