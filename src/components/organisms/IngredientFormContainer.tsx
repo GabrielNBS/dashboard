@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Button from '@/components/atoms/Button';
 import { PlusIcon } from 'lucide-react';
 import clsx from 'clsx';
-import RegisterProductForm from '@/components/molecules/RegisterProductForm';
+import RegisterProductForm from '@/components/molecules/RegisterIngredientForm';
 export default function ProductFormContainer() {
   const [openForm, setOpenForm] = useState(false);
 

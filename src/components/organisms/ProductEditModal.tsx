@@ -3,24 +3,26 @@
 import Button from '@/components/atoms/Button';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { Product } from '@/types/ProductProps';
-import { useProductContext } from '@/hooks/useProductContext';
+import { Ingredient } from '@/types/ingredients';
+import { useIngredientContext } from '@/hooks/useIngredientContext';
 
 export default function ProductEditModal() {
-  const { state, dispatch } = useProductContext();
-  const { isModalOpen, productToEdit } = state;
+  const { state, dispatch } = useIngredientContext();
+  const { isModalOpen, ingredientToEdit } = state;
 
-  const [editedProduct, setEditedProduct] = useState<Product>(productToEdit || ({} as Product));
+  const [editedIngredient, setEditedIngredient] = useState<Ingredient>(
+    ingredientToEdit || ({} as Ingredient)
+  );
 
   useEffect(() => {
-    if (productToEdit) {
-      setEditedProduct(productToEdit);
+    if (ingredientToEdit) {
+      setEditedIngredient(ingredientToEdit);
     }
-  }, [productToEdit]);
+  }, [ingredientToEdit]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditedProduct(prev => ({
+    setEditedIngredient(prev => ({
       ...prev,
       [name]:
         name === 'quantity' || name === 'buyPrice' || name === 'sellPrice' ? Number(value) : value,
@@ -29,7 +31,7 @@ export default function ProductEditModal() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch({ type: 'EDIT_PRODUCT', payload: editedProduct });
+    dispatch({ type: 'EDIT_INGREDIENT', payload: editedIngredient });
     dispatch({ type: 'CLOSE_EDIT_MODAL' });
   };
 
@@ -51,15 +53,15 @@ export default function ProductEditModal() {
             className={inputStyle}
             type="text"
             name="name"
-            value={editedProduct.name || ''}
+            value={editedIngredient.name || ''}
             onChange={handleChange}
-            placeholder="Nome do produto"
+            placeholder="Nome do ingrediente"
           />
           <input
             className={inputStyle}
             type="number"
             name="quantity"
-            value={editedProduct.quantity || 0}
+            value={editedIngredient.quantity || 0}
             onChange={handleChange}
             placeholder="Quantidade"
           />
@@ -67,7 +69,7 @@ export default function ProductEditModal() {
             className={inputStyle}
             type="number"
             name="buyPrice"
-            value={editedProduct.buyPrice || 0}
+            value={editedIngredient.buyPrice || 0}
             onChange={handleChange}
             placeholder="Preço de compra"
           />
@@ -75,7 +77,7 @@ export default function ProductEditModal() {
             className={inputStyle}
             type="number"
             name="sellPrice"
-            value={editedProduct.sellPrice || 0}
+            value={editedIngredient.sellPrice || 0}
             onChange={handleChange}
             placeholder="Preço de venda"
           />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { tv } from 'tailwind-variants';
-import { ButtonProps } from '@/types/buttonProps';
+import { ButtonProps } from '@/types/button';
 
 export const button = tv({
   base: 'inline-flex cursor-pointer items-center justify-center rounded-md text-paragraph font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',

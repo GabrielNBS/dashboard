@@ -1,5 +1,5 @@
 import ImageBox from '@/components/atoms/ImageBox';
-import ProductFormContainer from '@/components/organisms/ProductFormContainer';
+import IngredientFormContainer from '@/components/organisms/IngredientFormContainer';
 import CategorySection from '@/components/organisms/CategorySection';
 
 export default function ProductTemplate() {
@@ -9,8 +9,8 @@ export default function ProductTemplate() {
       <ImageBox />
       <div className="w-full max-w-7xl rounded-lg">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr]">
-          <ProductFormContainer />
-          <CategorySection />
+          <IngredientFormContainer />
+          {/* <CategorySection /> */}
         </div>
       </div>
     </div>

@@ -1,18 +1,18 @@
 import Button from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
 import { useState } from 'react';
-import { Product } from '@/types/ProductProps';
-import { useProductContext } from '@/hooks/useProductContext';
+import { Ingredient } from '@/types/ingredients';
+import { useIngredientContext } from '@/hooks/useIngredientContext';
 
-export default function ProductForm() {
+export default function IngredientForm() {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [buyPrice, setBuyPrice] = useState('');
   const [sellPrice, setSellPrice] = useState('');
-  const { dispatch } = useProductContext();
+  const { dispatch } = useIngredientContext();
 
-  function handleAddProduct(product: Product) {
-    dispatch({ type: 'ADD_PRODUCT', payload: product });
+  function handleAddIngredient(ingredient: Ingredient) {
+    dispatch({ type: 'ADD_INGREDIENT', payload: ingredient });
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,22 +23,23 @@ export default function ProductForm() {
       alert('Preencha todos os campos');
       return;
     }
-    // se todos os campos estão preenchidos, adiciona o produto seguindo a tipagem do Product
-    handleAddProduct({
+    // se todos os campos estão preenchidos, adiciona o ingrediente seguindo a tipagem do Product
+    handleAddIngredient({
       id: Date.now(),
       name,
       quantity: parseInt(quantity),
       stockStatus: 'Em estoque',
       buyPrice: parseFloat(buyPrice),
       sellPrice: parseFloat(sellPrice),
+      totalValue: parseInt(quantity) * parseFloat(buyPrice),
     });
 
-    // limpando os campos após o produto ser adicionado
+    // limpando os campos após o ingrediente ser adicionado
     setName('');
     setQuantity('');
     setBuyPrice('');
     setSellPrice('');
-    alert('Produto adicionado com sucesso');
+    alert('Ingrediente adicionado com sucesso');
   };
 
   return (
@@ -47,7 +48,7 @@ export default function ProductForm() {
         <Input
           type="text-hero"
           value={name}
-          placeholder="Nome do produto"
+          placeholder="Nome do ingrediente"
           onChange={e => setName(e.target.value)}
           id="name"
         />
@@ -86,7 +87,7 @@ export default function ProductForm() {
         />
       </div>
       <Button variant="accept" type="submit">
-        Adicionar produto
+        Adicionar
       </Button>
     </form>
   );

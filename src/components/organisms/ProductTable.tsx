@@ -1,19 +1,19 @@
 import Button from '@/components/atoms/Button';
 import { formatCurrency } from '@/utils/icons/formatCurrency';
-import { useProductContext } from '@/hooks/useProductContext';
-import { Product } from '@/types/ProductProps';
+import { useIngredientContext } from '@/hooks/useIngredientContext';
+import { Ingredient } from '@/types/ingredients';
 import { useHydrated } from '@/hooks/useHydrated';
 
-export default function ProductTable() {
-  const { state, dispatch } = useProductContext();
-  const { products } = state;
+export default function IngredientTable() {
+  const { state, dispatch } = useIngredientContext();
+  const { ingredients } = state;
 
-  function handleDeleteProduct(productId: number) {
-    dispatch({ type: 'DELETE_PRODUCT', payload: productId });
+  function handleDeleteIngredient(ingredientId: number) {
+    dispatch({ type: 'DELETE_INGREDIENT', payload: ingredientId });
   }
 
-  function handleEditProduct(product: Product) {
-    dispatch({ type: 'OPEN_EDIT_MODAL', payload: product });
+  function handleEditIngredient(ingredient: Ingredient) {
+    dispatch({ type: 'OPEN_EDIT_MODAL', payload: ingredient });
   }
 
   const hydrated = useHydrated();
@@ -35,19 +35,19 @@ export default function ProductTable() {
         </tr>
       </thead>
       <tbody className="text-hero-sm">
-        {products.map(product => (
-          <tr key={product.id}>
-            <td className="p-2">{product.name}</td>
-            <td className="p-2">{product.quantity}</td>
-            <td className="p-2">{formatCurrency(product.buyPrice)}</td>
-            <td className="p-2">{formatCurrency(product.sellPrice)}</td>
-            <td className="p-2">{product.stockStatus}</td>
+        {ingredients.map(ingredient => (
+          <tr key={ingredient.id}>
+            <td className="p-2">{ingredient.name}</td>
+            <td className="p-2">{ingredient.quantity}</td>
+            <td className="p-2">{formatCurrency(ingredient.buyPrice)}</td>
+            <td className="p-2">{formatCurrency(ingredient.sellPrice)}</td>
+            <td className="p-2">{ingredient.stockStatus}</td>
             <td className="p-2">
               <div className="flex gap-2">
-                <Button variant="edit" onClick={() => handleEditProduct(product)}>
+                <Button variant="edit" onClick={() => handleEditIngredient(ingredient)}>
                   Editar
                 </Button>
-                <Button variant="destructive" onClick={() => handleDeleteProduct(product.id)}>
+                <Button variant="destructive" onClick={() => handleDeleteIngredient(ingredient.id)}>
                   Deletar
                 </Button>
               </div>
