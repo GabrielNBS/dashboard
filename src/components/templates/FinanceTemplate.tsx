@@ -1,31 +1,60 @@
+'use client';
+
 import React from 'react';
+import { useSalesContext } from '@/hooks/useSalesContext';
 import CardFinance from '../molecules/CardFinance';
 
-function FinanceTemplate() {
+export default function FinanceTemplate() {
+  const { state } = useSalesContext();
+
+  // Cálculos de totais
+  const totalFaturamento = state.sales.reduce(
+    (acc, sale) => acc + sale.unitPrice * sale.quantity,
+    0
+  );
+
+  const totalCusto = state.sales.reduce((acc, sale) => acc + sale.costPrice, 0);
+
+  const lucroLiquido = totalFaturamento - totalCusto;
+
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-title text-bold">Finance</h1>
-      <CardFinance />
-      <table className="w-full">
+      <h1 className="text-title text-bold">Financeiro</h1>
+
+      {/* Cartão com resumo financeiro */}
+      <CardFinance faturamento={totalFaturamento} custo={totalCusto} lucro={lucroLiquido} />
+
+      {/* Tabela de vendas */}
+      <table className="w-full text-left">
         <thead className="bg-gray-100">
-          <tr className="text-hero-left">
+          <tr>
             <th className="p-2">Data</th>
-            <th className="p-2">Descrição</th>
-            <th className="p-2">Valor</th>
-            <th className="p-2">Tipo</th>
+            <th className="p-2">Produto</th>
+            <th className="p-2">Qtd</th>
+            <th className="p-2">Valor unitário</th>
+            <th className="p-2">Total</th>
           </tr>
         </thead>
         <tbody className="bg-white">
-          <tr className="border-b border-gray-200">
-            <td className="p-2">2021-01-01</td>
-            <td className="p-2">Compra de produtos</td>
-            <td className="p-2">100</td>
-            <td className="p-2">Entrada</td>
-          </tr>
+          {state.sales.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="p-4 text-center text-gray-400">
+                Nenhuma venda registrada.
+              </td>
+            </tr>
+          ) : (
+            state.sales.map(sale => (
+              <tr key={sale.id} className="border-b border-gray-200">
+                <td className="p-2">{new Date(sale.date).toLocaleDateString()}</td>
+                <td className="p-2">{sale.productName}</td>
+                <td className="p-2">{sale.quantity}</td>
+                <td className="p-2">R$ {sale.unitPrice.toFixed(2)}</td>
+                <td className="p-2">R$ {(sale.unitPrice * sale.quantity).toFixed(2)}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
   );
 }
-
-export default FinanceTemplate;

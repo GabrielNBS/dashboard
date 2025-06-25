@@ -5,6 +5,7 @@ import MainSection from '@/components/organisms/Main';
 import { IngredientProvider } from '@/contexts/IngredientContext';
 import { ProductBuilderProvider } from '@/contexts/ProductBuilderContext';
 import { FinalProductListProvider } from '@/contexts/FinalProductListContext';
+import { SalesProvider } from '@/contexts/SalesContext';
 
 export default function RootLayout({
   children,
@@ -17,11 +18,13 @@ export default function RootLayout({
         <IngredientProvider>
           <ProductBuilderProvider>
             <FinalProductListProvider>
-              <div className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
-                <DashboardHeader />
-                <DashboardAside />
-                <MainSection>{children}</MainSection>
-              </div>
+              <SalesProvider>
+                <div className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
+                  <DashboardHeader />
+                  <DashboardAside />
+                  <MainSection>{children}</MainSection>
+                </div>
+              </SalesProvider>
             </FinalProductListProvider>
           </ProductBuilderProvider>
         </IngredientProvider>

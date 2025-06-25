@@ -1,46 +1,25 @@
-import { ArrowDownRight, ArrowUpRight, Wallet } from 'lucide-react';
-import React from 'react';
-import clsx from 'clsx';
-import { formatCurrency } from '@/utils/icons/formatCurrency';
+// src/components/molecules/CardFinance.tsx
+interface CardFinanceProps {
+  faturamento: number;
+  custo: number;
+  lucro: number;
+}
 
-const cardFinanceVariants = [
-  {
-    title: 'Saldo',
-    value: 1200,
-    icon: <ArrowDownRight />,
-    color: 'bg-primary text-base',
-  },
-  {
-    title: 'Saldo',
-    value: 1000,
-    icon: <ArrowUpRight />,
-    color: 'bg-primary text-base',
-  },
-  {
-    title: 'Saldo',
-    value: 3000,
-    icon: <Wallet />,
-    color: 'bg-primary text-base',
-  },
-];
-
-function CardFinance() {
+export default function CardFinance({ faturamento, custo, lucro }: CardFinanceProps) {
   return (
-    <div className="text-subtitle grid grid-cols-3 gap-4">
-      {cardFinanceVariants.map((item, index) => (
-        <div
-          className={clsx('centralize-column gap-2 rounded-lg px-8 py-4', item.color)}
-          key={index}
-        >
-          <h2 className="text-hero-subtitle flex items-center gap-2 font-bold">
-            {item.title}
-            {item.icon}
-          </h2>
-          <span>{formatCurrency(item.value)}</span>
-        </div>
-      ))}
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="rounded bg-green-100 p-4">
+        <span className="block font-semibold text-green-800">Faturamento Bruto</span>
+        <span className="text-xl font-bold">R$ {faturamento?.toFixed(2) || '0.00'}</span>
+      </div>
+      <div className="rounded bg-yellow-100 p-4">
+        <span className="block font-semibold text-yellow-800">Custo Total</span>
+        <span className="text-xl font-bold">R$ {custo?.toFixed(2) || '0.00'}</span>
+      </div>
+      <div className="rounded bg-purple-100 p-4">
+        <span className="block font-semibold text-purple-800">Lucro Líquido</span>
+        <span className="text-xl font-bold">R$ {lucro?.toFixed(2) || '0.00'}</span>
+      </div>
     </div>
   );
 }
-
-export default CardFinance;
