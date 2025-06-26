@@ -9,7 +9,10 @@ interface SalesState {
   sales: Sale[];
 }
 
-type SalesAction = { type: 'ADD_SALE'; payload: Sale } | { type: 'SET_SALES'; payload: Sale[] };
+type SalesAction =
+  | { type: 'ADD_SALE'; payload: Sale }
+  | { type: 'SET_SALES'; payload: Sale[] }
+  | { type: 'REMOVE_SALE'; payload: number };
 
 const initialState: SalesState = {
   sales: [],
@@ -21,6 +24,8 @@ function salesReducer(state: SalesState, action: SalesAction): SalesState {
       return { ...state, sales: [...state.sales, action.payload] };
     case 'SET_SALES':
       return { ...state, sales: action.payload };
+    case 'REMOVE_SALE':
+      return { ...state, sales: state.sales.filter(sale => sale.id !== action.payload) };
     default:
       return state;
   }

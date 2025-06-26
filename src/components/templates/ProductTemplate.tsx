@@ -29,12 +29,12 @@ export default function ProductFormContainer() {
             <p className="text-gray-500">Nenhum produto cadastrado.</p>
           ) : (
             <ul className="space-y-4">
-              {state.products.map((prod, index) => {
+              {state.products.map(prod => {
                 const total = prod.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
                 const lucro = total * 0.2;
 
                 return (
-                  <li key={index} className="rounded border bg-white p-4 text-sm shadow-sm">
+                  <li key={prod.id} className="rounded border bg-white p-4 text-sm shadow-sm">
                     <h3 className="text-lg font-semibold">{prod.name}</h3>
                     <p className="text-gray-600">Categoria: {prod.category}</p>
                     <ul className="mt-2">

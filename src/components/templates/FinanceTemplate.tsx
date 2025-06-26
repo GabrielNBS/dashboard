@@ -3,9 +3,10 @@
 import React from 'react';
 import { useSalesContext } from '@/hooks/useSalesContext';
 import CardFinance from '../molecules/CardFinance';
+import Button from '../atoms/Button';
 
 export default function FinanceTemplate() {
-  const { state } = useSalesContext();
+  const { state, dispatch } = useSalesContext();
 
   // Cálculos de totais
   const totalFaturamento = state.sales.reduce(
@@ -16,6 +17,10 @@ export default function FinanceTemplate() {
   const totalCusto = state.sales.reduce((acc, sale) => acc + sale.costPrice, 0);
 
   const lucroLiquido = totalFaturamento - totalCusto;
+
+  const handleRemoveSale = (id: number) => {
+    dispatch({ type: 'REMOVE_SALE', payload: id });
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -33,6 +38,7 @@ export default function FinanceTemplate() {
             <th className="p-2">Qtd</th>
             <th className="p-2">Valor unitário</th>
             <th className="p-2">Total</th>
+            <th className="p-2">Acoes</th>
           </tr>
         </thead>
         <tbody className="bg-white">
@@ -50,6 +56,14 @@ export default function FinanceTemplate() {
                 <td className="p-2">{sale.quantity}</td>
                 <td className="p-2">R$ {sale.unitPrice.toFixed(2)}</td>
                 <td className="p-2">R$ {(sale.unitPrice * sale.quantity).toFixed(2)}</td>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleRemoveSale.bind(null, sale.id)}
+                >
+                  {' '}
+                  excluir
+                </Button>
               </tr>
             ))
           )}
