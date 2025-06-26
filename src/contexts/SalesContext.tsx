@@ -12,7 +12,7 @@ interface SalesState {
 type SalesAction =
   | { type: 'ADD_SALE'; payload: Sale }
   | { type: 'SET_SALES'; payload: Sale[] }
-  | { type: 'REMOVE_SALE'; payload: number };
+  | { type: 'REMOVE_SALE'; payload: string };
 
 const initialState: SalesState = {
   sales: [],

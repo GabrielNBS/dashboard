@@ -1,5 +1,5 @@
 export interface Sale {
-  id: number;
+  id: string;
   productName: string;
   quantity: number;
   unitPrice: number;

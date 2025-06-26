@@ -42,7 +42,7 @@ export default function RegisterSaleForm() {
     const costPrice = selectedProduct.ingredients.reduce((acc, i) => acc + i.totalValue, 0);
 
     const sale: Sale = {
-      id: Number(uuidv4().replace(/\D/g, '').slice(0, 8)),
+      id: uuidv4(),
       productName: selectedProduct.name,
       quantity,
       unitPrice: costPrice + costPrice * 0.2, // 20% lucro

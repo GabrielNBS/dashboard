@@ -18,7 +18,7 @@ export default function FinanceTemplate() {
 
   const lucroLiquido = totalFaturamento - totalCusto;
 
-  const handleRemoveSale = (id: number) => {
+  const handleRemoveSale = (id: string) => {
     dispatch({ type: 'REMOVE_SALE', payload: id });
   };
 
