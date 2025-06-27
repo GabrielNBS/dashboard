@@ -8,7 +8,7 @@ import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
 
 export default function ProductFormContainer() {
   const [openForm, setOpenForm] = useState(false);
-  const { state } = useFinalProductListContext();
+  const { state, dispatch } = useFinalProductListContext();
 
   const handleToggleForm = () => setOpenForm(prev => !prev);
 
@@ -35,11 +35,18 @@ export default function ProductFormContainer() {
 
                 return (
                   <li key={prod.id} className="rounded border bg-white p-4 text-sm shadow-sm">
+                    <Button
+                      type="button"
+                      onClick={() => dispatch({ type: 'REMOVE_FINAL_PRODUCT', payload: prod.id })}
+                      variant="ghost"
+                    >
+                      remover
+                    </Button>
                     <h3 className="text-lg font-semibold">{prod.name}</h3>
                     <p className="text-gray-600">Categoria: {prod.category}</p>
                     <ul className="mt-2">
-                      {prod.ingredients.map((ingredient, i) => (
-                        <li key={i}>
+                      {prod.ingredients.map(ingredient => (
+                        <li key={ingredient.id} className="flex justify-between">
                           - {ingredient.name} ({ingredient.quantity} x R$
                           {ingredient.sellPrice.toFixed(2)}) = R$
                           {ingredient.totalValue.toFixed(2)}

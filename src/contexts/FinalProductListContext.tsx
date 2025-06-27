@@ -27,7 +27,7 @@ function reducer(state: FinalProductListState, action: Action): FinalProductList
     case 'REMOVE_FINAL_PRODUCT':
       return {
         ...state,
-        products: state.products.filter(product => product.name !== action.payload),
+        products: state.products.filter(product => product.id !== action.payload),
       };
     case 'EDIT_FINAL_PRODUCT':
       return {
