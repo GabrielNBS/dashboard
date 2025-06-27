@@ -56,14 +56,15 @@ export default function FinanceTemplate() {
                 <td className="p-2">{sale.quantity}</td>
                 <td className="p-2">R$ {sale.unitPrice.toFixed(2)}</td>
                 <td className="p-2">R$ {(sale.unitPrice * sale.quantity).toFixed(2)}</td>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={handleRemoveSale.bind(null, sale.id)}
-                >
-                  {' '}
-                  excluir
-                </Button>
+                <td className="p-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleRemoveSale(sale.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remover
+                  </Button>
+                </td>
               </tr>
             ))
           )}
