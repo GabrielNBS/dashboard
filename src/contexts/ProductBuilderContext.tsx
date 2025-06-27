@@ -1,4 +1,3 @@
-// src/contexts/FinalProductContext.tsx
 'use client';
 
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
@@ -13,6 +12,7 @@ type ProductBuilderAction =
   | { type: 'RESET_PRODUCT' };
 
 const initialState: FinalProductState = {
+  id: '',
   name: '',
   category: '',
   ingredients: [],

@@ -20,15 +20,22 @@ export default function RegisterSaleForm() {
   const handleRegisterSale = () => {
     if (!selectedProduct || quantity <= 0) return;
 
+    // Validação: todos os ingredientes disponíveis no estoque?
+    const faltando = selectedProduct.ingredients.find(ingredient => {
+      const estoqueItem = estoque.ingredients.find(p => p.id === ingredient.id);
+      const totalToRemove = ingredient.quantity * quantity;
+      return !estoqueItem || estoqueItem.quantity < totalToRemove;
+    });
+
+    if (faltando) {
+      alert(`Estoque insuficiente para o ingrediente: ${faltando.name}`);
+      return;
+    }
+
     // Subtrair ingredientes do estoque
     selectedProduct.ingredients.forEach(ingredient => {
       const totalToRemove = ingredient.quantity * quantity;
-      const estoqueItem = estoque.ingredients.find(p => p.id === ingredient.id);
-
-      if (!estoqueItem || estoqueItem.quantity < totalToRemove) {
-        alert(`Estoque insuficiente para ${ingredient.name}`);
-        return;
-      }
+      const estoqueItem = estoque.ingredients.find(p => p.id === ingredient.id)!;
 
       estoqueDispatch({
         type: 'EDIT_INGREDIENT',
@@ -37,22 +44,25 @@ export default function RegisterSaleForm() {
           quantity: estoqueItem.quantity - totalToRemove,
         },
       });
+
+      alert(`Venda registrada com sucesso! Ingrediente ${ingredient.name} atualizado no estoque.`);
     });
 
+    // Cálculo do preço de custo e preço de venda
     const costPrice = selectedProduct.ingredients.reduce((acc, i) => acc + i.totalValue, 0);
 
     const sale: Sale = {
       id: uuidv4(),
       productName: selectedProduct.name,
       quantity,
-      unitPrice: costPrice + costPrice * 0.2, // 20% lucro
-      costPrice: costPrice,
+      unitPrice: costPrice + costPrice * 0.2, // margem de lucro de 20%
+      costPrice,
       date: new Date().toISOString(),
     };
 
     salesDispatch({ type: 'ADD_SALE', payload: sale });
 
-    // Resetar
+    // Resetar os campos
     setQuantity(1);
     setSelectedProductName('');
   };
