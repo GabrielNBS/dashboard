@@ -28,8 +28,8 @@ export default function IngredientTable() {
         <tr className="border-b border-gray-200 bg-gray-50">
           <th className="p-2">Nome</th>
           <th className="p-2">Quantidade</th>
+          <th className="p-2">unidade</th>
           <th className="p-2">Preço de compra</th>
-          <th className="p-2">Preço de venda</th>
           <th className="p-2">Status</th>
           <th className="p-2">Ações</th>
         </tr>
@@ -39,8 +39,8 @@ export default function IngredientTable() {
           <tr key={ingredient.id}>
             <td className="p-2">{ingredient.name}</td>
             <td className="p-2">{ingredient.quantity}</td>
-            <td className="p-2">{formatCurrency(ingredient.buyPrice)}</td>
-            <td className="p-2">{formatCurrency(ingredient.sellPrice)}</td>
+            <td className="p-2">{ingredient.unit}</td>
+            <td className="p-2">{formatCurrency(ingredient.buyPrice ?? 0)}</td>
             <td className="p-2">{ingredient.stockStatus}</td>
             <td className="p-2">
               <div className="flex gap-2">

@@ -37,9 +37,10 @@ export default function IngredientSelector() {
       payload: {
         id: selectedIngredient.id,
         name: selectedIngredient.name,
-        sellPrice: selectedIngredient.sellPrice,
+        buyPrice: selectedIngredient.buyPrice,
+        unit: selectedIngredient.unit,
         quantity,
-        totalValue: quantity * selectedIngredient.sellPrice,
+        totalValue: quantity * (selectedIngredient.buyPrice ?? 0),
       },
     });
 
@@ -78,9 +79,9 @@ export default function IngredientSelector() {
       )}
 
       {selectedIngredient && (
-        <div className="flex items-center gap-4">
+        <div key={selectedIngredient.id} className="flex items-center gap-4">
           <span className="font-medium">
-            Valor unitário: R$ {selectedIngredient.sellPrice.toFixed(2)}
+            Valor unitário: R$ {(selectedIngredient.buyPrice ?? 0).toFixed(2)}
           </span>
           <input
             type="number"
@@ -90,7 +91,7 @@ export default function IngredientSelector() {
             min={0}
             className="w-24 rounded border p-2"
           />
-          <span>Total: R$ {(selectedIngredient.sellPrice * quantity).toFixed(2)}</span>
+          <span>Total: R$ {((selectedIngredient.buyPrice ?? 0) * quantity).toFixed(2)}</span>
           <button
             type="button"
             onClick={handleAddIngredient}
@@ -106,7 +107,8 @@ export default function IngredientSelector() {
         {finalProduct.ingredients.map(ingredient => (
           <div key={ingredient.id} className="flex items-center gap-2">
             <span className="rounded bg-purple-100 px-3 py-1 text-sm text-purple-800">
-              {ingredient.name} | {ingredient.quantity} x R${ingredient.sellPrice.toFixed(2)} = R$
+              {ingredient.name} | {ingredient.quantity} x R${(ingredient.buyPrice ?? 0).toFixed(2)}{' '}
+              = R$
               {ingredient.totalValue.toFixed(2)}
             </span>
             <button

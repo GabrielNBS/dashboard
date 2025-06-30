@@ -9,13 +9,17 @@ type ProductBuilderAction =
   | { type: 'SET_CATEGORY'; payload: string }
   | { type: 'ADD_INGREDIENT'; payload: Ingredient }
   | { type: 'REMOVE_INGREDIENT'; payload: number }
-  | { type: 'RESET_PRODUCT' };
+  | { type: 'RESET_PRODUCT' }
+  | { type: 'SET_PRODUCTION_MODE'; payload: 'individual' | 'lote' }
+  | { type: 'SET_YIELD_QUANTITY'; payload: number };
 
 const initialState: FinalProductState = {
   id: '',
   name: '',
   category: '',
   ingredients: [],
+  productionMode: 'individual',
+  yieldQuantity: 1,
 };
 
 function finalProductReducer(
@@ -33,6 +37,10 @@ function finalProductReducer(
       return { ...state, ingredients: state.ingredients.filter(i => i.id !== action.payload) };
     case 'RESET_PRODUCT':
       return initialState;
+    case 'SET_PRODUCTION_MODE':
+      return { ...state, productionMode: action.payload };
+    case 'SET_YIELD_QUANTITY':
+      return { ...state, yieldQuantity: action.payload };
     default:
       return state;
   }

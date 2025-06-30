@@ -3,7 +3,7 @@
 import Button from '@/components/atoms/Button';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { Ingredient } from '@/types/ingredients';
+import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/hooks/useIngredientContext';
 
 export default function ProductEditModal() {
@@ -24,8 +24,7 @@ export default function ProductEditModal() {
     const { name, value } = e.target;
     setEditedIngredient(prev => ({
       ...prev,
-      [name]:
-        name === 'quantity' || name === 'buyPrice' || name === 'sellPrice' ? Number(value) : value,
+      [name]: name === 'quantity' || name === 'buyPrice' || name === '' ? Number(value) : value,
     }));
   };
 
@@ -73,14 +72,20 @@ export default function ProductEditModal() {
             onChange={handleChange}
             placeholder="Preço de compra"
           />
-          <input
-            className={inputStyle}
-            type="number"
-            name="sellPrice"
-            value={editedIngredient.sellPrice || 0}
-            onChange={handleChange}
-            placeholder="Preço de venda"
-          />
+          <select
+            title="Campo de escolha de medida do produto"
+            value={editedIngredient.unit}
+            onChange={e =>
+              setEditedIngredient(prev => ({ ...prev, unit: e.target.value as UnitType }))
+            }
+          >
+            <option value="g">Grama (g)</option>
+            <option value="kg">Quilo (kg)</option>
+            <option value="ml">Mililitro (ml)</option>
+            <option value="l">Litro (l)</option>
+            <option value="unidade">Unidade</option>
+          </select>
+
           <div className="flex gap-2">
             <Button variant="accept" type="submit">
               Salvar

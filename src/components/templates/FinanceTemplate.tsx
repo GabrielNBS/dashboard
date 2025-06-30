@@ -9,14 +9,11 @@ export default function FinanceTemplate() {
   const { state, dispatch } = useSalesContext();
 
   // Cálculos de totais
-  const totalFaturamento = state.sales.reduce(
-    (acc, sale) => acc + sale.unitPrice * sale.quantity,
-    0
-  );
+  const totalBilling = state.sales.reduce((acc, sale) => acc + sale.unitPrice * sale.quantity, 0);
 
-  const totalCusto = state.sales.reduce((acc, sale) => acc + sale.costPrice, 0);
+  const totalCost = state.sales.reduce((acc, sale) => acc + sale.costPrice, 0);
 
-  const lucroLiquido = totalFaturamento - totalCusto;
+  const lucroLiquido = totalBilling - totalCost;
 
   const handleRemoveSale = (id: string) => {
     dispatch({ type: 'REMOVE_SALE', payload: id });
@@ -27,7 +24,7 @@ export default function FinanceTemplate() {
       <h1 className="text-title text-bold">Financeiro</h1>
 
       {/* Cartão com resumo financeiro */}
-      <CardFinance faturamento={totalFaturamento} custo={totalCusto} lucro={lucroLiquido} />
+      <CardFinance faturamento={totalBilling} custo={totalCost} lucro={lucroLiquido} />
 
       {/* Tabela de vendas */}
       <table className="w-full text-left">

@@ -1,14 +1,14 @@
 import Button from '@/components/atoms/Button';
 import Input from '@/components/atoms/Input';
 import { useState } from 'react';
-import { Ingredient } from '@/types/ingredients';
+import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/hooks/useIngredientContext';
 
 export default function IngredientForm() {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [buyPrice, setBuyPrice] = useState('');
-  const [sellPrice, setSellPrice] = useState('');
+  const [unit, setUnit] = useState<'kg' | 'g' | 'l' | 'ml' | 'unidade'>('kg'); // Default unit
   const { dispatch } = useIngredientContext();
 
   function handleAddIngredient(ingredient: Ingredient) {
@@ -19,7 +19,7 @@ export default function IngredientForm() {
     e.preventDefault();
 
     // validando os campos utilizando if statement pois eu preciso de um retorno boolean. Tem ou nao tem todos os campos preenchidos?
-    if (!name || !quantity || !buyPrice || !sellPrice) {
+    if (!name || !quantity || !buyPrice || !unit) {
       alert('Preencha todos os campos');
       return;
     }
@@ -28,17 +28,22 @@ export default function IngredientForm() {
       id: Date.now(),
       name,
       quantity: parseInt(quantity),
-      stockStatus: 'Em estoque',
+      unit,
+      stockStatus:
+        parseInt(quantity) === 0
+          ? 'Sem estoque'
+          : parseInt(quantity) < 3
+            ? 'Estoque baixo'
+            : 'Em estoque',
       buyPrice: parseFloat(buyPrice),
-      sellPrice: parseFloat(sellPrice),
       totalValue: parseInt(quantity) * parseFloat(buyPrice),
     });
 
     // limpando os campos após o ingrediente ser adicionado
     setName('');
+    setUnit('kg');
     setQuantity('');
     setBuyPrice('');
-    setSellPrice('');
     alert('Ingrediente adicionado com sucesso');
   };
 
@@ -65,6 +70,19 @@ export default function IngredientForm() {
         />
       </div>
       <div>
+        <select
+          title="Campo de escolha de medida do produto"
+          value={unit}
+          onChange={e => setUnit(e.target.value as UnitType)}
+        >
+          <option value="g">Grama (g)</option>
+          <option value="kg">Quilo (kg)</option>
+          <option value="ml">Mililitro (ml)</option>
+          <option value="l">Litro (l)</option>
+          <option value="unidade">Unidade</option>
+        </select>
+      </div>
+      <div>
         <Input
           type="number"
           value={buyPrice}
@@ -75,17 +93,7 @@ export default function IngredientForm() {
           min={0}
         />
       </div>
-      <div>
-        <Input
-          type="number"
-          value={sellPrice}
-          step={0.01}
-          placeholder="Preço de venda"
-          onChange={e => setSellPrice(e.target.value)}
-          id="sellPrice"
-          min={0}
-        />
-      </div>
+
       <Button variant="accept" type="submit">
         Adicionar
       </Button>

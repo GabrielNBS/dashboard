@@ -6,6 +6,7 @@ import IngredientSelector from './IngredientSelector';
 import { useProductBuilderContext } from '@/contexts/ProductBuilderContext';
 import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
 import CategoryList from './CategoryList';
+import Input from '../atoms/Input';
 
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
@@ -62,6 +63,38 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
 
         <CategoryList />
         <IngredientSelector />
+        <label className="block font-medium">Modo de produção:</label>
+
+        <select
+          title="Selecione o modo de produção"
+          value={finalProduct.productionMode}
+          onChange={e =>
+            dispatch({
+              type: 'SET_PRODUCTION_MODE',
+              payload: e.target.value as 'individual' | 'lote',
+            })
+          }
+          className="w-full rounded border p-2"
+        >
+          <option value="individual">Individual</option>
+          <option value="lote">Lote</option>
+        </select>
+
+        {finalProduct.productionMode === 'lote' && (
+          <div className="flex items-center gap-4">
+            <label className="block font-medium">Rendimento do lote:</label>
+            <Input
+              type="number"
+              value={finalProduct.yieldQuantity}
+              min={1}
+              placeholder="Quantidade total produzida"
+              onChange={e =>
+                dispatch({ type: 'SET_YIELD_QUANTITY', payload: Number(e.target.value) })
+              }
+              className="w-24 rounded border p-2"
+            />
+          </div>
+        )}
 
         <div className="absolute right-32 bottom-10 flex items-center gap-8">
           <div className="flex flex-col">
