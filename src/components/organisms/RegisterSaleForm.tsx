@@ -58,11 +58,14 @@ export default function RegisterSaleForm() {
       unitPrice: costPrice + costPrice * 0.2, // margem de lucro de 20%
       costPrice,
       date: new Date().toISOString(),
+      ingredientsUsed: selectedProduct.ingredients.map(ingredient => ({
+        ...ingredient,
+        quantity: ingredient.quantity * quantity,
+      })),
     };
 
     salesDispatch({ type: 'ADD_SALE', payload: sale });
 
-    // Resetar os campos
     setQuantity(1);
     setSelectedProductName('');
   };

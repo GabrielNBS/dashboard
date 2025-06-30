@@ -4,19 +4,48 @@ import React from 'react';
 import { useSalesContext } from '@/hooks/useSalesContext';
 import CardFinance from '../molecules/CardFinance';
 import Button from '../atoms/Button';
+import { useIngredientContext } from '@/hooks/useIngredientContext';
 
 export default function FinanceTemplate() {
-  const { state, dispatch } = useSalesContext();
+  const { state: salesState, dispatch: salesDispatch } = useSalesContext();
+  const { state: storeState, dispatch: storeDispatch } = useIngredientContext();
 
   // Cálculos de totais
-  const totalBilling = state.sales.reduce((acc, sale) => acc + sale.unitPrice * sale.quantity, 0);
+  const totalBilling = salesState.sales.reduce(
+    (acc, sale) => acc + sale.unitPrice * sale.quantity,
+    0
+  );
 
-  const totalCost = state.sales.reduce((acc, sale) => acc + sale.costPrice, 0);
+  const totalCost = salesState.sales.reduce((acc, sale) => acc + sale.costPrice, 0);
 
   const lucroLiquido = totalBilling - totalCost;
 
-  const handleRemoveSale = (id: string) => {
-    dispatch({ type: 'REMOVE_SALE', payload: id });
+  const handleRemoveSale = (saleId: string) => {
+    const sale = salesState.sales.find(s => s.id === saleId);
+    if (!sale) return;
+
+    // 1. Confirmar
+    const confirm = window.confirm(
+      'Deseja realmente excluir esta venda? Os ingredientes serão restaurados.'
+    );
+    if (!confirm) return;
+
+    // 2. Restaurar estoque
+    sale.ingredientsUsed.forEach(used => {
+      const estoqueItem = storeState.ingredients.find(i => i.id === used.id);
+      if (estoqueItem) {
+        storeDispatch({
+          type: 'EDIT_INGREDIENT',
+          payload: {
+            ...estoqueItem,
+            quantity: estoqueItem.quantity + used.quantity,
+          },
+        });
+      }
+    });
+
+    // 3. Remover venda
+    salesDispatch({ type: 'REMOVE_SALE', payload: sale.id });
   };
 
   return (
@@ -39,14 +68,14 @@ export default function FinanceTemplate() {
           </tr>
         </thead>
         <tbody className="bg-white">
-          {state.sales.length === 0 ? (
+          {salesState.sales.length === 0 ? (
             <tr>
               <td colSpan={5} className="p-4 text-center text-gray-400">
                 Nenhuma venda registrada.
               </td>
             </tr>
           ) : (
-            state.sales.map(sale => (
+            salesState.sales.map(sale => (
               <tr key={sale.id} className="border-b border-gray-200">
                 <td className="p-2">{new Date(sale.date).toLocaleDateString()}</td>
                 <td className="p-2">{sale.productName}</td>
