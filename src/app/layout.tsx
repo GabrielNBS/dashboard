@@ -1,11 +1,10 @@
-import DashboardHeader from '@/components/organisms/DashboardHeader';
 import '../styles/global.css';
-import DashboardAside from '@/components/molecules/DashboardAside';
-import MainSection from '@/components/organisms/Main';
+import Aside from '@/components/dashboard/home/Aside';
 import { IngredientProvider } from '@/contexts/IngredientContext';
 import { ProductBuilderProvider } from '@/contexts/ProductBuilderContext';
 import { FinalProductListProvider } from '@/contexts/FinalProductListContext';
 import { SalesProvider } from '@/contexts/SalesContext';
+import MobileHeader from '@/components/mobile/MobileHeader';
 
 export default function RootLayout({
   children,
@@ -20,9 +19,11 @@ export default function RootLayout({
             <FinalProductListProvider>
               <SalesProvider>
                 <div className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
-                  <DashboardHeader />
-                  <DashboardAside />
-                  <MainSection>{children}</MainSection>
+                  <MobileHeader />
+                  <Aside />
+                  <main className="outline-accent h-dvh min-h-dvh w-full px-4 outline-1 transition-all">
+                    {children}
+                  </main>
                 </div>
               </SalesProvider>
             </FinalProductListProvider>

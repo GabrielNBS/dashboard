@@ -1,5 +1,5 @@
-import RegisterSaleForm from '@/components/organisms/RegisterSaleForm';
-import FinanceTemplate from '@/components/templates/FinanceTemplate';
+import RegisterSaleForm from '@/components/dashboard/finance/RegisterSaleForm';
+import FinanceTemplate from '@/components/dashboard/finance/Finance';
 
 export default function DashboardPage() {
   return (

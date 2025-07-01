@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/atoms/Button';
+import Button from '@/components/ui/Button';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { Ingredient, UnitType } from '@/types/ingredients';

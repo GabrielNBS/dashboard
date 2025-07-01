@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import IconHamburger from '@/components/atoms/IconHamburguer';
-import NavMenu from '@/components/molecules/NavMenu';
+import IconHamburger from '@/components/ui/IconHamburguer';
+import NavMenu from '@/components/dashboard/home/NavMenu';
 
-export default function DashboardHeader() {
+export default function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleStateMenu = () => setIsMenuOpen(prev => !prev);
 

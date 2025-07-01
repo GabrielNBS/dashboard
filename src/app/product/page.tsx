@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Button from '@/components/atoms/Button';
+import Button from '@/components/ui/Button';
 import { PlusIcon } from 'lucide-react';
-import RegisterIngredientForm from '@/components/molecules/RegisterIngredientForm';
 import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
+import RegisterIngredientForm from '@/components/dashboard/product/RegisterIngredientForm';
 
-export default function ProductFormContainer() {
+export default function Product() {
   const [openForm, setOpenForm] = useState(false);
   const { state, dispatch } = useFinalProductListContext();
   const handleToggleForm = () => setOpenForm(prev => !prev);

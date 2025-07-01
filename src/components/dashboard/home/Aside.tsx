@@ -6,16 +6,15 @@ import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 
 import { Home, BadgeDollarSign, ScanBarcode, Package, LogOut } from 'lucide-react';
-import Image from 'next/image';
 
-export default function DashboardAside() {
+export default function Aside() {
   const pathname = usePathname();
 
   const menuItems = [
     { label: 'Dashboard', href: '/', icon: Home },
-    { label: 'Estoque', href: '/estoque', icon: Package },
-    { label: 'Financeiro', href: '/financeiro', icon: BadgeDollarSign },
-    { label: 'Produto', href: '/produto', icon: ScanBarcode },
+    { label: 'Estoque', href: '/store', icon: Package },
+    { label: 'Financeiro', href: '/finance', icon: BadgeDollarSign },
+    { label: 'Produto', href: '/product', icon: ScanBarcode },
     { label: 'Logout', href: '/logout', icon: LogOut },
   ];
 

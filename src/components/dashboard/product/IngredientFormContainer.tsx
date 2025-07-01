@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Button from '@/components/atoms/Button';
+import Button from '@/components/ui/Button';
 import { PlusIcon } from 'lucide-react';
 import clsx from 'clsx';
-import RegisterProductForm from '@/components/molecules/RegisterIngredientForm';
+import RegisterIngredientForm from './RegisterIngredientForm';
 export default function ProductFormContainer() {
   const [openForm, setOpenForm] = useState(false);
 
@@ -16,7 +16,7 @@ export default function ProductFormContainer() {
   return (
     <div className="p-default relative max-h-[512px] min-h-[400px] w-full rounded-lg shadow-md">
       {openForm ? (
-        <RegisterProductForm />
+        <RegisterIngredientForm />
       ) : (
         <Button
           onClick={handleAddProduct}

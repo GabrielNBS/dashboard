@@ -2,15 +2,14 @@
 
 import React from 'react';
 import { useSalesContext } from '@/hooks/useSalesContext';
-import CardFinance from '../molecules/CardFinance';
-import Button from '../atoms/Button';
+import CardFinance from '../../ui/CardFinance';
+import Button from '../../ui/Button';
 import { useIngredientContext } from '@/hooks/useIngredientContext';
 
-export default function FinanceTemplate() {
+export default function Finance() {
   const { state: salesState, dispatch: salesDispatch } = useSalesContext();
   const { state: storeState, dispatch: storeDispatch } = useIngredientContext();
 
-  // Cálculos de totais
   const totalBilling = salesState.sales.reduce(
     (acc, sale) => acc + sale.unitPrice * sale.quantity,
     0

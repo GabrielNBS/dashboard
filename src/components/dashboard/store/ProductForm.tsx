@@ -1,5 +1,5 @@
-import Button from '@/components/atoms/Button';
-import Input from '@/components/atoms/Input';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 import { useState } from 'react';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/hooks/useIngredientContext';

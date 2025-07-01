@@ -1,12 +1,13 @@
 'use client';
 
-import Button from '@/components/atoms/Button';
+import Button from '@/components/ui/Button';
 import { CheckIcon } from 'lucide-react';
-import IngredientSelector from './IngredientSelector';
+
 import { useProductBuilderContext } from '@/contexts/ProductBuilderContext';
 import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
-import CategoryList from './CategoryList';
-import Input from '../atoms/Input';
+import CategoryList from '@/components/ui/CategoryList';
+import IngredientSelector from './IngredientSelector';
+import Input from '@/components/ui/Input';
 
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();

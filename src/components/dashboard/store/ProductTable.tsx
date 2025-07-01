@@ -1,4 +1,4 @@
-import Button from '@/components/atoms/Button';
+import Button from '@/components/ui/Button';
 import { formatCurrency } from '@/utils/icons/formatCurrency';
 import { useIngredientContext } from '@/hooks/useIngredientContext';
 import { Ingredient } from '@/types/ingredients';
