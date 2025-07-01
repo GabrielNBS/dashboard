@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useReducer, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
 import { Ingredient } from '@/types/ingredients';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
@@ -13,7 +13,7 @@ interface IngredientState {
 
 type IngredientAction =
   | { type: 'ADD_INGREDIENT'; payload: Ingredient }
-  | { type: 'DELETE_INGREDIENT'; payload: number }
+  | { type: 'DELETE_INGREDIENT'; payload: string }
   | { type: 'EDIT_INGREDIENT'; payload: Ingredient }
   | { type: 'SET_INGREDIENTS'; payload: Ingredient[] }
   | { type: 'OPEN_EDIT_MODAL'; payload: Ingredient }
@@ -70,10 +70,4 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
   return (
     <IngredientContext.Provider value={{ state, dispatch }}>{children}</IngredientContext.Provider>
   );
-};
-
-export const useIngredientContext = () => {
-  const context = useContext(IngredientContext);
-  if (!context) throw new Error('useIngredientContext deve ser usado dentro de IngredientProvider');
-  return context;
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useIngredientContext } from '@/contexts/Ingredients/IngredientsContext';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { Ingredient } from '@/types/ingredients';
+import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();

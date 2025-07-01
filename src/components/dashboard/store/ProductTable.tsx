@@ -8,12 +8,21 @@ export default function IngredientTable() {
   const { state, dispatch } = useIngredientContext();
   const { ingredients } = state;
 
-  function handleDeleteIngredient(ingredientId: number) {
+  function handleDeleteIngredient(ingredientId: string) {
     dispatch({ type: 'DELETE_INGREDIENT', payload: ingredientId });
   }
 
   function handleEditIngredient(ingredient: Ingredient) {
     dispatch({ type: 'OPEN_EDIT_MODAL', payload: ingredient });
+  }
+
+  function getStockStatus(quantity: number): 'Em estoque' | 'Estoque baixo' | 'Sem estoque' {
+    if (quantity === 0) {
+      return 'Sem estoque';
+    } else if (quantity < 3) {
+      return 'Estoque baixo';
+    }
+    return 'Em estoque';
   }
 
   const hydrated = useHydrated();
@@ -41,7 +50,7 @@ export default function IngredientTable() {
             <td className="p-2">{ingredient.quantity}</td>
             <td className="p-2">{ingredient.unit}</td>
             <td className="p-2">{formatCurrency(ingredient.buyPrice ?? 0)}</td>
-            <td className="p-2">{ingredient.stockStatus}</td>
+            <td className="p-2">{getStockStatus(ingredient.quantity)}</td>
             <td className="p-2">
               <div className="flex gap-2">
                 <Button variant="edit" onClick={() => handleEditIngredient(ingredient)}>

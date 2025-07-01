@@ -1,12 +1,11 @@
 export type UnitType = 'kg' | 'g' | 'l' | 'ml' | 'unidade';
 
 export type Ingredient = {
-  id: number;
+  id: string;
   name: string;
   buyPrice?: number;
   quantity: number;
   unit: UnitType;
-  stockStatus?: 'Em estoque' | 'Sem estoque' | 'Estoque baixo';
   totalValue: number;
 };
 

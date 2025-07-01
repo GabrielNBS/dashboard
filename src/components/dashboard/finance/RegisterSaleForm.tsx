@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useFinalProductListContext } from '@/contexts/products/useFinalProductContext';
+import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { Sale } from '@/types/sale';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function RegisterSaleForm() {
-  const { state: finalProducts } = useFinalProductListContext();
+  const { state: finalProducts } = useFinalProductContext();
   const { dispatch: salesDispatch } = useSalesContext();
   const { state: estoque, dispatch: estoqueDispatch } = useIngredientContext();
 

@@ -8,7 +8,7 @@ type ProductBuilderAction =
   | { type: 'SET_NAME'; payload: string }
   | { type: 'SET_CATEGORY'; payload: string }
   | { type: 'ADD_INGREDIENT'; payload: Ingredient }
-  | { type: 'REMOVE_INGREDIENT'; payload: number }
+  | { type: 'REMOVE_INGREDIENT'; payload: string }
   | { type: 'RESET_PRODUCT' }
   | { type: 'SET_PRODUCTION_MODE'; payload: 'individual' | 'lote' }
   | { type: 'SET_YIELD_QUANTITY'; payload: number };
