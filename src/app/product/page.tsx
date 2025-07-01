@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import { PlusIcon } from 'lucide-react';
-import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
+import { useFinalProductListContext } from '@/contexts/products/useFinalProductContext';
 import RegisterIngredientForm from '@/components/dashboard/product/RegisterIngredientForm';
 
 export default function Product() {

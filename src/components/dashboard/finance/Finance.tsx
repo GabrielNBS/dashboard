@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useSalesContext } from '@/hooks/useSalesContext';
+import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import CardFinance from '../../ui/CardFinance';
 import Button from '../../ui/Button';
-import { useIngredientContext } from '@/hooks/useIngredientContext';
+import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 
 export default function Finance() {
   const { state: salesState, dispatch: salesDispatch } = useSalesContext();

@@ -3,15 +3,15 @@
 import Button from '@/components/ui/Button';
 import { CheckIcon } from 'lucide-react';
 
-import { useProductBuilderContext } from '@/contexts/ProductBuilderContext';
-import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
+import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
+import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
 import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
 
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
-  const { state: listState, dispatch: listDispatch } = useFinalProductListContext();
+  const { state: listState, dispatch: listDispatch } = useFinalProductContext();
 
   const total = finalProduct.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
   const lucro = total * 0.2;

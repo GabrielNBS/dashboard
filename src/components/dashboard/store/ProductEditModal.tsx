@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { Ingredient, UnitType } from '@/types/ingredients';
-import { useIngredientContext } from '@/hooks/useIngredientContext';
+import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 
 export default function ProductEditModal() {
   const { state, dispatch } = useIngredientContext();

@@ -1,6 +1,6 @@
 import Button from '@/components/ui/Button';
 import { formatCurrency } from '@/utils/icons/formatCurrency';
-import { useIngredientContext } from '@/hooks/useIngredientContext';
+import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { Ingredient } from '@/types/ingredients';
 import { useHydrated } from '@/hooks/useHydrated';
 

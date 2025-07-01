@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useFinalProductListContext } from '@/hooks/useFinalProductListContext';
-import { useSalesContext } from '@/hooks/useSalesContext';
-import { useIngredientContext } from '@/hooks/useIngredientContext';
+import { useFinalProductListContext } from '@/contexts/products/useFinalProductContext';
+import { useSalesContext } from '@/contexts/sales/useSalesContext';
+import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { Sale } from '@/types/sale';
 import { v4 as uuidv4 } from 'uuid';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useProductBuilderContext } from '@/contexts/ProductBuilderContext';
+import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 
 const categories = ['Tradicionais', 'Especiais', 'Gourmet', 'Bebidas'];
 

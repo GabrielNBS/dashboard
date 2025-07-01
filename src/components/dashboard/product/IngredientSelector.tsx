@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useIngredientContext } from '@/contexts/IngredientContext';
-import { useProductBuilderContext } from '@/contexts/ProductBuilderContext';
+import { useIngredientContext } from '@/contexts/Ingredients/IngredientsContext';
+import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { Ingredient } from '@/types/ingredients';
 
 export default function IngredientSelector() {

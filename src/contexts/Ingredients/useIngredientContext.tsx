@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { IngredientContext } from '@/contexts/IngredientContext';
+import { IngredientContext } from '@/contexts/Ingredients/IngredientsContext';
 
 export const useIngredientContext = () => {
   const context = useContext(IngredientContext);

@@ -8,7 +8,7 @@ interface FinalProductListState {
   products: FinalProductState[];
 }
 
-type Action =
+type finalProductAction =
   | { type: 'ADD_FINAL_PRODUCT'; payload: FinalProductState }
   | { type: 'SET_PRODUCTS'; payload: FinalProductState[] }
   | { type: 'REMOVE_FINAL_PRODUCT'; payload: string }
@@ -18,7 +18,7 @@ const initialState: FinalProductListState = {
   products: [],
 };
 
-function reducer(state: FinalProductListState, action: Action): FinalProductListState {
+function reducer(state: FinalProductListState, action: finalProductAction): FinalProductListState {
   switch (action.type) {
     case 'ADD_FINAL_PRODUCT':
       return { ...state, products: [...state.products, action.payload] };
@@ -44,12 +44,12 @@ function reducer(state: FinalProductListState, action: Action): FinalProductList
 export const FinalProductListContext = createContext<
   | {
       state: FinalProductListState;
-      dispatch: React.Dispatch<Action>;
+      dispatch: React.Dispatch<finalProductAction>;
     }
   | undefined
 >(undefined);
 
-export const FinalProductListProvider = ({ children }: { children: ReactNode }) => {
+export const FinalProductProvider = ({ children }: { children: ReactNode }) => {
   const [storedProducts, setStoredProducts] = useLocalStorage<FinalProductState[]>(
     'finalProducts',
     []

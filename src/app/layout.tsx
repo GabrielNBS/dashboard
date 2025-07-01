@@ -1,9 +1,9 @@
 import '../styles/global.css';
 import Aside from '@/components/dashboard/home/Aside';
-import { IngredientProvider } from '@/contexts/IngredientContext';
-import { ProductBuilderProvider } from '@/contexts/ProductBuilderContext';
-import { FinalProductListProvider } from '@/contexts/FinalProductListContext';
-import { SalesProvider } from '@/contexts/SalesContext';
+import { IngredientProvider } from '@/contexts/Ingredients/IngredientsContext';
+import { ProductBuilderProvider } from '@/contexts/products/ProductBuilderContext';
+import { FinalProductProvider } from '@/contexts/products/FinalProductContext';
+import { SalesProvider } from '@/contexts/sales/SalesContext';
 import MobileHeader from '@/components/mobile/MobileHeader';
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
       <body>
         <IngredientProvider>
           <ProductBuilderProvider>
-            <FinalProductListProvider>
+            <FinalProductProvider>
               <SalesProvider>
                 <div className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
                   <MobileHeader />
@@ -26,7 +26,7 @@ export default function RootLayout({
                   </main>
                 </div>
               </SalesProvider>
-            </FinalProductListProvider>
+            </FinalProductProvider>
           </ProductBuilderProvider>
         </IngredientProvider>
       </body>
