@@ -12,10 +12,10 @@ function ProductsList() {
         const lucro = total * 0.2;
 
         return (
-          <li key={prod.id} className="rounded border bg-white p-4 text-sm shadow-sm">
+          <li key={prod.uid} className="rounded border bg-white p-4 text-sm shadow-sm">
             <Button
               type="button"
-              onClick={() => dispatch({ type: 'REMOVE_FINAL_PRODUCT', payload: prod.id })}
+              onClick={() => dispatch({ type: 'REMOVE_FINAL_PRODUCT', payload: prod.uid })}
               variant="ghost"
             >
               remover

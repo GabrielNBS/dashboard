@@ -45,7 +45,7 @@ export default function IngredientTable() {
       </thead>
       <tbody className="text-hero-sm">
         {ingredients.map(ingredient => (
-          <tr key={ingredient.id}>
+          <tr key={ingredient.uid}>
             <td className="p-2">{ingredient.name}</td>
             <td className="p-2">{ingredient.quantity}</td>
             <td className="p-2">{ingredient.unit}</td>

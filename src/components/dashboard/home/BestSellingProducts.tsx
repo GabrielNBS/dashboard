@@ -1,6 +1,5 @@
 import { formatCurrency } from '@/utils/icons/formatCurrency';
 import React from 'react';
-import Image from 'next/image';
 
 type Product = {
   id: string;

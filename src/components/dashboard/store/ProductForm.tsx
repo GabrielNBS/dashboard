@@ -3,7 +3,6 @@ import Input from '@/components/ui/Input';
 import { useState } from 'react';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import { v4 as uuv4 } from 'uuid'; // Importando a função para gerar IDs únicos
 
 export default function IngredientForm() {
   const [name, setName] = useState('');
@@ -26,7 +25,7 @@ export default function IngredientForm() {
     }
     // se todos os campos estão preenchidos, adiciona o ingrediente seguindo a tipagem do Product
     handleAddIngredient({
-      id: uuv4(),
+      id: '',
       name,
       quantity: parseInt(quantity),
       unit,

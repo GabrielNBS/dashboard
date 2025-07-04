@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { Ingredient } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();
   const { dispatch, state: finalProduct } = useProductBuilderContext();
@@ -21,7 +20,10 @@ export default function IngredientSelector() {
   };
 
   const handleAddIngredient = () => {
-    if (!selectedIngredient || quantity <= 0) return;
+    if (!selectedIngredient || quantity <= 0 || !selectedIngredient.name) {
+      alert('Preencha todos os campos');
+      return;
+    }
 
     const alreadyAdded = finalProduct.ingredients.some(
       ingredient => ingredient.id === selectedIngredient.id
@@ -79,7 +81,7 @@ export default function IngredientSelector() {
       )}
 
       {selectedIngredient && (
-        <div key={selectedIngredient.id} className="flex items-center gap-4">
+        <div className="flex items-center gap-4">
           <span className="font-medium">
             Valor unitário: R$ {(selectedIngredient.buyPrice ?? 0).toFixed(2)}
           </span>
@@ -105,7 +107,7 @@ export default function IngredientSelector() {
       {/* Ingredientes selecionados */}
       <div className="mt-4 flex flex-wrap gap-2">
         {finalProduct.ingredients.map(ingredient => (
-          <div key={ingredient.id} className="flex items-center gap-2">
+          <div key={finalProduct.uid} className="flex items-center gap-2">
             <span className="rounded bg-purple-100 px-3 py-1 text-sm text-purple-800">
               {ingredient.name} | {ingredient.quantity} x R${(ingredient.buyPrice ?? 0).toFixed(2)}{' '}
               = R$
@@ -113,7 +115,7 @@ export default function IngredientSelector() {
             </span>
             <button
               type="button"
-              onClick={() => dispatch({ type: 'REMOVE_INGREDIENT', payload: ingredient.id })}
+              onClick={() => dispatch({ type: 'REMOVE_INGREDIENT', payload: finalProduct.id })}
               className="text-xs text-red-500 hover:underline"
             >
               Remover

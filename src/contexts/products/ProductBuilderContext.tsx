@@ -1,8 +1,9 @@
 'use client';
 
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { Ingredient } from '@/types/ingredients';
 import { FinalProductState } from '@/types/finalProduct';
+import { Ingredient } from '@/types/ingredients';
+import { v4 as uuid } from 'uuid';
 
 type ProductBuilderAction =
   | { type: 'SET_NAME'; payload: string }
@@ -14,6 +15,7 @@ type ProductBuilderAction =
   | { type: 'SET_YIELD_QUANTITY'; payload: number };
 
 const initialState: FinalProductState = {
+  uid: uuid(),
   id: '',
   name: '',
   category: '',
@@ -29,18 +31,31 @@ function finalProductReducer(
   switch (action.type) {
     case 'SET_NAME':
       return { ...state, name: action.payload };
+
     case 'SET_CATEGORY':
       return { ...state, category: action.payload };
+
     case 'ADD_INGREDIENT':
       return { ...state, ingredients: [...state.ingredients, action.payload] };
+
     case 'REMOVE_INGREDIENT':
-      return { ...state, ingredients: state.ingredients.filter(i => i.id !== action.payload) };
+      return {
+        ...state,
+        ingredients: state.ingredients.filter(i => i.id !== action.payload),
+      };
+
     case 'RESET_PRODUCT':
-      return initialState;
+      return {
+        ...initialState,
+        uid: uuid(), // gera novo uid ao resetar
+      };
+
     case 'SET_PRODUCTION_MODE':
       return { ...state, productionMode: action.payload };
+
     case 'SET_YIELD_QUANTITY':
       return { ...state, yieldQuantity: action.payload };
+
     default:
       return state;
   }
@@ -66,7 +81,8 @@ export const ProductBuilderProvider = ({ children }: { children: ReactNode }) =>
 
 export const useProductBuilderContext = () => {
   const context = useContext(ProductBuilderContext);
-  if (!context)
+  if (!context) {
     throw new Error('useProductBuilderContext deve ser usado dentro de ProductBuilderProvider');
+  }
   return context;
 };

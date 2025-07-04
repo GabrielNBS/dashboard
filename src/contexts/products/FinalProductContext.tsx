@@ -27,13 +27,13 @@ function reducer(state: FinalProductListState, action: finalProductAction): Fina
     case 'REMOVE_FINAL_PRODUCT':
       return {
         ...state,
-        products: state.products.filter(product => product.id !== action.payload),
+        products: state.products.filter(product => product.uid !== action.payload),
       };
     case 'EDIT_FINAL_PRODUCT':
       return {
         ...state,
         products: state.products.map(product =>
-          product.id === action.payload.id ? action.payload : product
+          product.uid === action.payload.uid ? action.payload : product
         ),
       };
     default:
