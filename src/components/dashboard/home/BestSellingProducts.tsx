@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/utils/icons/formatCurrency';
+import { formatCurrency } from '@/utils/formatCurrency';
 import React from 'react';
 
 type Product = {

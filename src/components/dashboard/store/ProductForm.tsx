@@ -1,15 +1,20 @@
+'use client';
+
+import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { useState } from 'react';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
+import { normalizeQuantity } from '@/utils/normalizeQuantity';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function IngredientForm() {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [buyPrice, setBuyPrice] = useState('');
-  const [unit, setUnit] = useState<'kg' | 'g' | 'l' | 'ml' | 'unidade'>('kg'); // Default unit
+  const [unit, setUnit] = useState<UnitType>('kg');
   const { dispatch } = useIngredientContext();
+  const { toast } = useToast();
 
   function handleAddIngredient(ingredient: Ingredient) {
     dispatch({ type: 'ADD_INGREDIENT', payload: ingredient });
@@ -18,75 +23,92 @@ export default function IngredientForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // validando os campos utilizando if statement pois eu preciso de um retorno boolean. Tem ou nao tem todos os campos preenchidos?
-    if (!name || !quantity || !buyPrice || !unit) {
-      alert('Preencha todos os campos');
+    const rawQuantity = parseFloat(quantity);
+    const rawPrice = parseFloat(buyPrice);
+
+    if (!name || isNaN(rawQuantity) || isNaN(rawPrice) || !unit) {
+      toast({
+        title: 'Erro ao adicionar ingrediente',
+        description: 'Preencha todos os campos corretamente.',
+        variant: 'destructive',
+      });
       return;
     }
-    // se todos os campos estão preenchidos, adiciona o ingrediente seguindo a tipagem do Product
-    handleAddIngredient({
-      id: '',
-      name,
-      quantity: parseInt(quantity),
-      unit,
-      buyPrice: parseFloat(buyPrice),
-      totalValue: parseInt(quantity) * parseFloat(buyPrice),
-    });
 
-    // limpando os campos após o ingrediente ser adicionado
+    if (rawQuantity <= 0 || rawPrice <= 0) {
+      toast({
+        title: 'Valores Inválidos',
+        description: 'Quantidade e preço devem ser maiores que zero.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const normalizedQuantity = normalizeQuantity(rawQuantity, unit);
+
+    const newIngredient: Ingredient = {
+      id: '', // Gerado no reducer
+      name,
+      quantity: normalizedQuantity,
+      unit,
+      buyPrice: rawPrice,
+      totalValue: normalizedQuantity * rawPrice,
+    };
+
+    handleAddIngredient(newIngredient);
+
     setName('');
-    setUnit('kg');
     setQuantity('');
     setBuyPrice('');
-    alert('Ingrediente adicionado com sucesso');
+    setUnit('kg');
+
+    toast({
+      title: 'Ingrediente adicionado',
+      description: `\"${name}\" cadastrado com sucesso.`,
+      variant: 'default',
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex w-1/2 gap-4">
-      <div>
-        <Input
-          type="text-hero"
-          value={name}
-          placeholder="Nome do ingrediente"
-          onChange={e => setName(e.target.value)}
-          id="name"
-        />
-      </div>
-      <div>
-        <Input
-          type="number"
-          value={quantity}
-          step={0.01}
-          placeholder="Quantidade"
-          onChange={e => setQuantity(e.target.value)}
-          id="quantity"
-          min={0}
-        />
-      </div>
-      <div>
-        <select
-          title="Campo de escolha de medida do produto"
-          value={unit}
-          onChange={e => setUnit(e.target.value as UnitType)}
-        >
-          <option value="g">Grama (g)</option>
-          <option value="kg">Quilo (kg)</option>
-          <option value="ml">Mililitro (ml)</option>
-          <option value="l">Litro (l)</option>
-          <option value="unidade">Unidade</option>
-        </select>
-      </div>
-      <div>
-        <Input
-          type="number"
-          value={buyPrice}
-          step={0.01}
-          placeholder="Preço de compra"
-          onChange={e => setBuyPrice(e.target.value)}
-          id="buyPrice"
-          min={0}
-        />
-      </div>
+      <Input
+        type="text"
+        value={name}
+        placeholder="Nome do ingrediente"
+        onChange={e => setName(e.target.value)}
+        id="name"
+      />
+
+      <Input
+        type="number"
+        value={quantity}
+        step="any"
+        placeholder={`Quantidade (${unit})`}
+        onChange={e => setQuantity(e.target.value)}
+        id="quantity"
+        min={0}
+      />
+
+      <select
+        title="Campo de medida do produto"
+        value={unit}
+        onChange={e => setUnit(e.target.value as UnitType)}
+        className="rounded border p-2"
+      >
+        <option value="kg">Quilo (kg)</option>
+        <option value="l">Litro (l)</option>
+        <option value="un">Unidade</option>
+      </select>
+
+      <Input
+        type="number"
+        value={buyPrice}
+        step="0.01"
+        placeholder="Preço de compra"
+        onChange={e => setBuyPrice(e.target.value)}
+        id="buyPrice"
+        min={0}
+      />
 
       <Button variant="accept" type="submit">
         Adicionar
