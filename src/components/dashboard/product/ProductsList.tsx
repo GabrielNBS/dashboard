@@ -9,7 +9,7 @@ function ProductsList() {
     <ul className="space-y-4">
       {state.products.map(prod => {
         const total = prod.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
-        const lucro = total * 0.2;
+        const lucro = total - total * 0.2;
 
         return (
           <li key={prod.uid} className="rounded border bg-white p-4 text-sm shadow-sm">

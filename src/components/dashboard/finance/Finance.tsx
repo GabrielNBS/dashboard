@@ -10,14 +10,14 @@ export default function Finance() {
   const { state: salesState, dispatch: salesDispatch } = useSalesContext();
   const { state: storeState, dispatch: storeDispatch } = useIngredientContext();
 
-  const totalBilling = salesState.sales.reduce(
+  const totalRevenue = salesState.sales.reduce(
     (acc, sale) => acc + sale.unitPrice * sale.quantity,
     0
   );
 
   const totalCost = salesState.sales.reduce((acc, sale) => acc + sale.costPrice, 0);
 
-  const lucroLiquido = totalBilling - totalCost;
+  const profit = totalRevenue - totalCost;
 
   const handleRemoveSale = (saleId: string) => {
     const sale = salesState.sales.find(s => s.id === saleId);
@@ -52,7 +52,14 @@ export default function Finance() {
       <h1 className="text-title text-bold">Financeiro</h1>
 
       {/* Cartão com resumo financeiro */}
-      <CardFinance faturamento={totalBilling} custo={totalCost} lucro={lucroLiquido} />
+      <CardFinance
+        totalRevenue={totalRevenue}
+        totalVariableCost={totalCost}
+        totalFixedCost={0}
+        grossProfit={profit}
+        netProfit={profit}
+        margin={profit}
+      />
 
       {/* Tabela de vendas */}
       <table className="w-full text-left">
