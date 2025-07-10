@@ -7,6 +7,7 @@ import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { normalizeQuantity } from '@/utils/normalizeQuantity';
 import { useToast } from '@/components/ui/use-toast';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function IngredientForm() {
   const [name, setName] = useState('');
@@ -47,7 +48,7 @@ export default function IngredientForm() {
     const normalizedQuantity = normalizeQuantity(rawQuantity, unit);
 
     const newIngredient: Ingredient = {
-      id: '', // Gerado no reducer
+      id: uuidv4(),
       name,
       quantity: normalizedQuantity,
       unit,
@@ -65,7 +66,7 @@ export default function IngredientForm() {
     toast({
       title: 'Ingrediente adicionado',
       description: `\"${name}\" cadastrado com sucesso.`,
-      variant: 'default',
+      variant: 'accept',
     });
   };
 
