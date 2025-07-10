@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 
-import { Home, BadgeDollarSign, ScanBarcode, Package, LogOut } from 'lucide-react';
+import { Home, BadgeDollarSign, ScanBarcode, Package, LogOut, ShoppingCart } from 'lucide-react';
 
 export default function Aside() {
   const pathname = usePathname();
@@ -13,8 +13,9 @@ export default function Aside() {
   const menuItems = [
     { label: 'Dashboard', href: '/', icon: Home },
     { label: 'Estoque', href: '/store', icon: Package },
-    { label: 'Financeiro', href: '/finance', icon: BadgeDollarSign },
     { label: 'Produto', href: '/product', icon: ScanBarcode },
+    { label: 'PDV', href: '/pdv', icon: ShoppingCart },
+    { label: 'Financeiro', href: '/finance', icon: BadgeDollarSign },
     { label: 'Logout', href: '/logout', icon: LogOut },
   ];
 

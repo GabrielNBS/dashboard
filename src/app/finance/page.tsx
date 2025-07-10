@@ -1,4 +1,3 @@
-import RegisterSaleForm from '@/components/dashboard/finance/RegisterSaleForm';
 import FinanceTemplate from '@/components/dashboard/finance/Finance';
 
 export default function DashboardPage() {
@@ -6,7 +5,6 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-4">
       <h1 className="text-hero font-bold">Bem-vindo ao Financeiro!</h1>
       <FinanceTemplate />
-      <RegisterSaleForm />
     </div>
   );
 }
