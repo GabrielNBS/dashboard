@@ -9,17 +9,30 @@ import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
 
+import { useState } from 'react';
+import { toast } from '@/components/ui/use-toast';
+
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
   const { state: listState, dispatch: listDispatch } = useFinalProductContext();
 
-  const total = finalProduct.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
-  const lucro = total * 0.2;
+  //  Estado local para margem customizável
+  const [customMargin, setCustomMargin] = useState(33); // % padrão
+
+  //  Cálculos baseados nos ingredientes
+  const totalCost = finalProduct.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
+  const sellingPrice = totalCost + totalCost * (customMargin / 100);
+
+  // Se for produção em lote, divide o valor total pelo rendimento
+  const unitPrice =
+    finalProduct.productionMode === 'lote' && (finalProduct.yieldQuantity ?? 0) > 0
+      ? sellingPrice / (finalProduct.yieldQuantity ?? 1)
+      : sellingPrice;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!finalProduct.name.trim() && !finalProduct.category.trim()) {
+    if (!finalProduct.name.trim() || !finalProduct.category.trim()) {
       alert('Preencha o nome e a categoria do produto.');
       return;
     }
@@ -40,19 +53,31 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
       return;
     }
 
-    // Salva no contexto
-    listDispatch({ type: 'ADD_FINAL_PRODUCT', payload: finalProduct });
+    // Salva no contexto com o preço sugerido incluído
+    listDispatch({
+      type: 'ADD_FINAL_PRODUCT',
+      payload: {
+        ...finalProduct,
+        totalCost,
+        sellingPrice: unitPrice,
+        profitMargin: customMargin,
+      },
+    });
 
-    // Limpa o formulário
     dispatch({ type: 'RESET_PRODUCT' });
     if (onClose) onClose();
 
-    alert('Produto cadastrado com sucesso!');
+    toast({
+      title: 'Produto adicionado com sucesso!',
+      description: `\"${finalProduct.name}\" foi adicionado à lista de produtos.`,
+      variant: 'accept',
+    });
   };
 
   return (
     <>
       <h2 className="p-default text-hero-2xl font-bold">Adicionar produto</h2>
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="text"
@@ -64,8 +89,8 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
 
         <CategoryList />
         <IngredientSelector />
-        <label className="block font-medium">Modo de produção:</label>
 
+        <label className="block font-medium">Modo de produção:</label>
         <select
           title="Selecione o modo de produção"
           value={finalProduct.productionMode}
@@ -97,14 +122,26 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
           </div>
         )}
 
-        <div className="absolute right-32 bottom-10 flex items-center gap-8">
-          <div className="flex flex-col">
-            <span>Valor Total</span>
-            <span>R$ {total.toFixed(2)}</span>
+        <div className="flex items-center gap-4">
+          <label className="block font-medium">Margem de Lucro (%):</label>
+          <Input
+            type="number"
+            min={0}
+            step={1}
+            value={customMargin}
+            onChange={e => setCustomMargin(Number(e.target.value))}
+            className="w-24 rounded border p-2"
+          />
+        </div>
+
+        <div className="absolute right-32 bottom-10 flex flex-col gap-2">
+          <div>
+            <span className="text-sm font-semibold">Custo Total:</span>
+            <span className="block text-xl">R$ {totalCost.toFixed(2)}</span>
           </div>
-          <div className="flex flex-col">
-            <span>Margem de lucro</span>
-            <span>R$ {lucro.toFixed(2)}</span>
+          <div>
+            <span className="text-sm font-semibold">Preço de Venda Sugerido:</span>
+            <span className="block text-xl text-green-700">R$ {unitPrice.toFixed(2)}</span>
           </div>
         </div>
 

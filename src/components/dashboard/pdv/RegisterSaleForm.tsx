@@ -6,6 +6,7 @@ import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { Sale } from '@/types/sale';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from '@/components/ui/use-toast';
 
 export default function RegisterSaleForm() {
   const { state: finalProducts } = useFinalProductContext();
@@ -45,7 +46,11 @@ export default function RegisterSaleForm() {
         },
       });
 
-      alert(`Venda registrada com sucesso! Ingrediente ${ingredient.name} atualizado no estoque.`);
+      toast({
+        title: 'Venda concluída com sucesso!',
+        description: `\"${selectedProductName}\" foi adicionado a tela de vendas.`,
+        variant: 'accept',
+      });
     });
 
     // Cálculo do preço de custo e preço de venda
