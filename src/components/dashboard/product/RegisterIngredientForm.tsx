@@ -1,67 +1,90 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon, X } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { finalProductSchema } from '@/schemas/finalProductSchema';
+import { z } from 'zod';
 
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
 import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
-import { X } from 'lucide-react';
-
-import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
+
+// Tipagem automática derivada do schema Zod
+type FinalProductFormData = z.infer<typeof finalProductSchema>;
 
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
   const { state: listState, dispatch: listDispatch } = useFinalProductContext();
 
-  //  Estado local para margem customizável
-  const [customMargin, setCustomMargin] = useState(33); // % padrão
+  // Hook do react-hook-form com zod
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FinalProductFormData>({
+    resolver: zodResolver(finalProductSchema),
+    defaultValues: {
+      name: finalProduct.name,
+      category: finalProduct.category,
+      productionMode: finalProduct.productionMode,
+      yieldQuantity: finalProduct.yieldQuantity,
+      profitMargin: 33, // margem padrão
+    },
+  });
 
-  //  Cálculos baseados nos ingredientes
+  const watchedYield = watch('yieldQuantity');
+  const watchedProfitMargin = watch('profitMargin');
+  const watchedProductionMode = watch('productionMode');
+
   const totalCost = finalProduct.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
-  const sellingPrice = totalCost + totalCost * (customMargin / 100);
-
-  // Se for produção em lote, divide o valor total pelo rendimento
+  const sellingPrice = totalCost + totalCost * (watchedProfitMargin / 100);
   const unitPrice =
-    finalProduct.productionMode === 'lote' && (finalProduct.yieldQuantity ?? 0) > 0
-      ? sellingPrice / (finalProduct.yieldQuantity ?? 1)
+    watchedProductionMode === 'lote' && watchedYield && watchedYield > 0
+      ? sellingPrice / watchedYield
       : sellingPrice;
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!finalProduct.name.trim() || !finalProduct.category.trim()) {
-      alert('Preencha o nome e a categoria do produto.');
-      return;
-    }
-
+  const onSubmit = (data: FinalProductFormData) => {
     if (finalProduct.ingredients.length === 0) {
-      alert('Adicione pelo menos um ingrediente.');
+      toast({
+        title: 'Erro',
+        description: 'Adicione pelo menos um ingrediente.',
+        variant: 'destructive',
+      });
       return;
     }
 
     const isDuplicate = listState.products.some(
       p =>
-        p.name.toLowerCase() === finalProduct.name.toLowerCase() &&
-        p.category.toLowerCase() === finalProduct.category.toLowerCase()
+        p.name.toLowerCase() === data.name.toLowerCase() &&
+        p.category.toLowerCase() === data.category.toLowerCase()
     );
 
     if (isDuplicate) {
-      alert('Já existe um produto com esse nome e categoria.');
+      toast({
+        title: 'Erro',
+        description: 'Já existe um produto com esse nome e categoria.',
+        variant: 'destructive',
+      });
       return;
     }
 
-    // Salva no contexto com o preço sugerido incluído
     listDispatch({
       type: 'ADD_FINAL_PRODUCT',
       payload: {
         ...finalProduct,
+        name: data.name,
+        category: data.category,
+        productionMode: data.productionMode,
+        yieldQuantity: data.yieldQuantity,
+        profitMargin: data.profitMargin,
         totalCost,
         sellingPrice: unitPrice,
-        profitMargin: customMargin,
       },
     });
 
@@ -70,7 +93,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
 
     toast({
       title: 'Produto adicionado com sucesso!',
-      description: `\"${finalProduct.name}\" foi adicionado à lista de produtos.`,
+      description: `"${data.name}" foi adicionado à lista de produtos.`,
       variant: 'accept',
     });
   };
@@ -84,47 +107,34 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
     <>
       <h2 className="p-default text-hero-2xl font-bold">Adicionar produto</h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="text"
-          placeholder="Nome do produto"
-          value={finalProduct.name}
-          onChange={e => dispatch({ type: 'SET_NAME', payload: e.target.value })}
-          className="rounded border p-2"
-        />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <input {...register('name')} placeholder="Nome do produto" className="rounded border p-2" />
+        {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
 
         <CategoryList />
         <IngredientSelector />
 
         <label className="block font-medium">Modo de produção:</label>
-        <select
-          title="Selecione o modo de produção"
-          value={finalProduct.productionMode}
-          onChange={e =>
-            dispatch({
-              type: 'SET_PRODUCTION_MODE',
-              payload: e.target.value as 'individual' | 'lote',
-            })
-          }
-          className="w-full rounded border p-2"
-        >
+        <select {...register('productionMode')} className="w-full rounded border p-2">
           <option value="individual">Individual</option>
           <option value="lote">Lote</option>
         </select>
+        {errors.productionMode && (
+          <span className="text-sm text-red-500">{errors.productionMode.message}</span>
+        )}
 
-        {finalProduct.productionMode === 'lote' && (
+        {watchedProductionMode === 'lote' && (
           <div className="flex items-center gap-4">
             <label className="block font-medium">Rendimento do lote:</label>
             <Input
               type="number"
-              value={finalProduct.yieldQuantity}
-              min={1}
+              {...register('yieldQuantity', { valueAsNumber: true })}
               placeholder="Quantidade total produzida"
-              onChange={e =>
-                dispatch({ type: 'SET_YIELD_QUANTITY', payload: Number(e.target.value) })
-              }
               className="w-24 rounded border p-2"
             />
+            {errors.yieldQuantity && (
+              <span className="text-sm text-red-500">{errors.yieldQuantity.message}</span>
+            )}
           </div>
         )}
 
@@ -132,12 +142,12 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
           <label className="block font-medium">Margem de Lucro (%):</label>
           <Input
             type="number"
-            min={0}
-            step={1}
-            value={customMargin}
-            onChange={e => setCustomMargin(Number(e.target.value))}
+            {...register('profitMargin', { valueAsNumber: true })}
             className="w-24 rounded border p-2"
           />
+          {errors.profitMargin && (
+            <span className="text-sm text-red-500">{errors.profitMargin.message}</span>
+          )}
         </div>
 
         <div className="absolute right-48 bottom-10 flex gap-8">
