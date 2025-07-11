@@ -75,6 +75,11 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
     });
   };
 
+  const handleCloseForm = () => {
+    dispatch({ type: 'RESET_PRODUCT' });
+    if (onClose) onClose();
+  };
+
   return (
     <>
       <h2 className="p-default text-hero-2xl font-bold">Adicionar produto</h2>
@@ -155,6 +160,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
         <Button
           type="button"
           className="absolute right-26 bottom-10 h-16 w-16 rounded-full bg-red-300 hover:bg-red-400"
+          onClick={handleCloseForm}
         >
           <X className="h-10 w-10" strokeWidth={2} />
         </Button>
