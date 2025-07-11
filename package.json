@@ -13,11 +13,13 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.7.3",
     "lucide-react": "^0.488.0",
-    "next": "15.3.0",
+    "next": "^15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.60.0",
     "tailwind-variants": "^1.0.0",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
