@@ -8,6 +8,7 @@ import { useFinalProductContext } from '@/contexts/products/useFinalProductConte
 import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
+import { X } from 'lucide-react';
 
 import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
@@ -134,7 +135,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
           />
         </div>
 
-        <div className="absolute right-32 bottom-10 flex flex-col gap-2">
+        <div className="absolute right-48 bottom-10 flex gap-8">
           <div>
             <span className="text-sm font-semibold">Custo Total:</span>
             <span className="block text-xl">R$ {totalCost.toFixed(2)}</span>
@@ -145,8 +146,17 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
           </div>
         </div>
 
-        <Button type="submit" className="absolute right-6 bottom-10 h-16 w-16 rounded-full">
+        <Button
+          type="submit"
+          className="absolute right-6 bottom-10 h-16 w-16 rounded-full bg-green-300 hover:bg-green-400"
+        >
           <CheckIcon className="h-10 w-10" strokeWidth={2} />
+        </Button>
+        <Button
+          type="button"
+          className="absolute right-26 bottom-10 h-16 w-16 rounded-full bg-red-300 hover:bg-red-400"
+        >
+          <X className="h-10 w-10" strokeWidth={2} />
         </Button>
       </form>
     </>

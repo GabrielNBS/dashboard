@@ -13,7 +13,7 @@ export default function Product() {
   const handleToggleForm = () => setOpenForm(prev => !prev);
 
   return (
-    <div className="p-default relative w-full rounded-lg shadow-md">
+    <div className="p-default w-full rounded-lg shadow-md">
       {openForm ? (
         <RegisterIngredientForm onClose={handleToggleForm} />
       ) : (
