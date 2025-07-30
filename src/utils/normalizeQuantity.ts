@@ -62,10 +62,10 @@ export function calculateUnitCost(totalValue: number, quantity: number, unit: Un
 export function formatQuantity(quantity: number, unit: UnitType): string {
   switch (unit) {
     case 'kg':
-      return `${quantity.toFixed(3)} kg`;
+      return `${quantity.toFixed(1)} kg`;
 
     case 'l':
-      return `${quantity.toFixed(3)} l`;
+      return `${quantity.toFixed(1)} l`;
 
     case 'un':
     default:
