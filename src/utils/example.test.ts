@@ -8,7 +8,7 @@ import {
   formatQuantity,
   getBaseUnit,
 } from './normalizeQuantity';
-import { validateQuantityByUnit } from './validationSchemas';
+import { validateQuantityByUnit } from '../schemas/validationSchemas';
 
 // Testes de normalização
 console.log('=== Testes de Normalização ===');

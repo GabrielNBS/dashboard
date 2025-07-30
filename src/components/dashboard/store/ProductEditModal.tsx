@@ -14,7 +14,7 @@ import {
   ingredientSchema,
   type IngredientFormData,
   validateQuantityByUnit,
-} from '@/utils/validationSchemas';
+} from '@/schemas/validationSchemas';
 import UnitTypeInfo from './UnitTypeInfo';
 
 export default function ProductEditModal() {
@@ -132,7 +132,7 @@ export default function ProductEditModal() {
     >
       <div className="flex w-96 flex-col gap-4 rounded-md bg-white p-4 shadow-md">
         <h2 className="text-hero-lg font-bold">Editar ingrediente</h2>
-        
+
         {/* Informações sobre o tipo de unidade selecionado */}
         <UnitTypeInfo unit={watchedUnit} />
 

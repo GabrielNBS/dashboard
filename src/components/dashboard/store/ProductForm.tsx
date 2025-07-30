@@ -12,7 +12,7 @@ import {
   ingredientSchema,
   type IngredientFormData,
   validateQuantityByUnit,
-} from '@/utils/validationSchemas';
+} from '@/schemas/validationSchemas';
 import UnitTypeInfo from './UnitTypeInfo';
 import { v4 as uuidv4 } from 'uuid';
 import { IngredientsFormData, ingredientsSchema } from '@/schemas/ingredientsSchema';
