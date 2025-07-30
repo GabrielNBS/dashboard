@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Ingredient, UnitType } from '@/types/ingredients';
@@ -65,13 +66,12 @@ export default function IngredientForm() {
     dispatch({ type: 'ADD_INGREDIENT', payload: ingredient });
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = (data: IngredientFormData) => {
+    const rawQuantity = parseFloat(data.quantity);
+    const rawPrice = parseFloat(data.buyPrice);
 
-    const rawQuantity = parseFloat(quantity);
-    const rawPrice = parseFloat(buyPrice);
-
-    if (!name || isNaN(rawQuantity) || isNaN(rawPrice) || !unit) {
+    const unitValidationError = validateQuantityByUnit(rawQuantity, data.unit);
+    if (unitValidationError) {
       toast({
         title: 'Erro de validação',
         description: unitValidationError,
@@ -80,40 +80,26 @@ export default function IngredientForm() {
       return;
     }
 
-    if (rawQuantity <= 0 || rawPrice <= 0) {
-      toast({
-        title: 'Valores Inválidos',
-        description: 'Quantidade e preço devem ser maiores que zero.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    const normalizedQuantity = normalizeQuantity(rawQuantity, unit);
+    const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
+    const totalValue = normalizedQuantity * rawPrice;
 
     const newIngredient: Ingredient = {
       id: uuidv4(),
-      name,
+      name: data.name.trim(),
       quantity: normalizedQuantity,
-      unit,
+      unit: data.unit,
       buyPrice: rawPrice,
       totalValue,
     };
 
     handleAddIngredient(newIngredient);
-
-    setName('');
-    setQuantity('');
-    setBuyPrice('');
-    setUnit('kg');
+    reset();
 
     toast({
       title: 'Ingrediente adicionado',
       description: `"${data.name}" cadastrado com sucesso.`,
       variant: 'accept',
     });
-
-    reset();
   };
 
   const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -126,49 +112,86 @@ export default function IngredientForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-1/2 gap-4">
-      <Input
-        type="text"
-        value={name}
-        placeholder="Nome do ingrediente"
-        onChange={e => setName(e.target.value)}
-        id="name"
-      />
+    <div className="w-full">
+      <UnitTypeInfo unit={watchedUnit} />
 
-      <Input
-        type="number"
-        value={quantity}
-        step="any"
-        placeholder={`Quantidade (${unit})`}
-        onChange={e => setQuantity(e.target.value)}
-        id="quantity"
-        min={0}
-      />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-wrap gap-4">
+        <div className="min-w-[200px] flex-1">
+          <Input
+            type="text"
+            placeholder="Nome do ingrediente"
+            {...register('name')}
+            id="name"
+            aria-invalid={!!errors.name}
+            className={errors.name ? 'border-red-500' : ''}
+          />
+          {errors.name && (
+            <span className="mt-1 block text-sm text-red-500">{errors.name.message}</span>
+          )}
+        </div>
 
-      <select
-        title="Campo de medida do produto"
-        value={unit}
-        onChange={e => setUnit(e.target.value as UnitType)}
-        className="rounded border p-2"
-      >
-        <option value="kg">Quilo (kg)</option>
-        <option value="l">Litro (l)</option>
-        <option value="un">Unidade</option>
-      </select>
+        <div className="min-w-[200px] flex-1">
+          <Input
+            type="number"
+            step={watchedUnit === 'un' ? '1' : '0.001'}
+            placeholder={`Quantidade (${watchedUnit})`}
+            {...register('quantity', {
+              onChange: e => validateQuantity(e.target.value),
+            })}
+            id="quantity"
+            min={watchedUnit === 'un' ? '1' : '0.001'}
+            aria-invalid={!!errors.quantity}
+            className={errors.quantity ? 'border-red-500' : ''}
+            title="Insira a quantidade conforme a unidade selecionada"
+          />
+          {errors.quantity && (
+            <span className="mt-1 block text-sm text-red-500">{errors.quantity.message}</span>
+          )}
+        </div>
 
-      <Input
-        type="number"
-        value={buyPrice}
-        step="0.01"
-        placeholder="Preço de compra"
-        onChange={e => setBuyPrice(e.target.value)}
-        id="buyPrice"
-        min={0}
-      />
+        <div className="min-w-[200px] flex-1">
+          <select
+            title="Campo de medida do produto"
+            {...register('unit')}
+            onChange={handleUnitChange}
+            aria-invalid={!!errors.unit}
+            className={`w-full rounded border p-2 ${errors.unit ? 'border-red-500' : ''}`}
+          >
+            <option value="kg">Quilo (kg)</option>
+            <option value="l">Litro (l)</option>
+            <option value="un">Unidade</option>
+          </select>
+          {errors.unit && (
+            <span className="mt-1 block text-sm text-red-500">{errors.unit.message}</span>
+          )}
+        </div>
 
-      <Button variant="accept" type="submit">
-        Adicionar
-      </Button>
-    </form>
+        <div className="min-w-[200px] flex-1">
+          <Input
+            type="number"
+            step="0.01"
+            placeholder="Preço de compra"
+            {...register('buyPrice')}
+            id="buyPrice"
+            min="0"
+            aria-invalid={!!errors.buyPrice}
+            className={errors.buyPrice ? 'border-red-500' : ''}
+          />
+          {errors.buyPrice && (
+            <span className="mt-1 block text-sm text-red-500">{errors.buyPrice.message}</span>
+          )}
+        </div>
+
+        <Button
+          variant="accept"
+          type="submit"
+          disabled={isSubmitting}
+          className="min-w-[120px] self-end"
+          aria-label="Adicionar ingrediente"
+        >
+          {isSubmitting ? 'Adicionando...' : 'Adicionar'}
+        </Button>
+      </form>
+    </div>
   );
 }
