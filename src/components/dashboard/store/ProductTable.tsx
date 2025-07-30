@@ -6,6 +6,7 @@ import { Ingredient } from '@/types/ingredients';
 import { useHydrated } from '@/hooks/useHydrated';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { formatUnitDisplay, getStockStatus } from '@/utils/ingredientUtils';
+import { formatQuantity } from '@/utils/normalizeQuantity';
 
 export default function IngredientTable() {
   const { state, dispatch } = useIngredientContext();
@@ -38,7 +39,7 @@ export default function IngredientTable() {
         {ingredients.map(ingredient => (
           <tr key={ingredient.id} className="border-b">
             <td className="p-2">{ingredient.name}</td>
-            <td className="p-2">{formatUnitDisplay(ingredient.quantity, ingredient.unit)}</td>
+            <td className="p-2">{formatQuantity(ingredient.quantity, ingredient.unit)}</td>
             <td className="p-2">{ingredient.unit}</td>
             <td className="p-2">{formatCurrency(ingredient.buyPrice ?? 0)}</td>
             <td className="p-2">{getStockStatus(ingredient.quantity, ingredient.unit)}</td>

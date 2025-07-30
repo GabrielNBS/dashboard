@@ -1,80 +1,103 @@
 'use client';
 
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { normalizeQuantity } from '@/utils/normalizeQuantity';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  ingredientSchema,
+  type IngredientFormData,
+  validateQuantityByUnit,
+} from '@/utils/validationSchemas';
+import UnitTypeInfo from './UnitTypeInfo';
 
 export default function ProductEditModal() {
   const { state, dispatch } = useIngredientContext();
   const { isModalOpen, ingredientToEdit } = state;
   const { toast } = useToast();
-  const [editedIngredient, setEditedIngredient] = useState<Ingredient>(
-    ingredientToEdit || ({} as Ingredient)
-  );
 
-  // Atualiza o estado local quando o modal é aberto
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+  } = useForm<IngredientFormData>({
+    resolver: zodResolver(ingredientSchema),
+    defaultValues: {
+      name: '',
+      quantity: '',
+      unit: 'kg',
+      buyPrice: '',
+    },
+  });
+
+  const watchedUnit = watch('unit');
+  const watchedQuantity = watch('quantity');
+
+  // Atualiza o formulário quando o modal é aberto
   useEffect(() => {
     if (ingredientToEdit) {
-      setEditedIngredient(ingredientToEdit);
+      reset({
+        name: ingredientToEdit.name,
+        quantity: ingredientToEdit.quantity.toString(),
+        unit: ingredientToEdit.unit,
+        buyPrice: ingredientToEdit.buyPrice?.toString() || '',
+      });
     }
-  }, [ingredientToEdit]);
+  }, [ingredientToEdit, reset]);
 
-  //  Função para tratar inputs
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  // Validação em tempo real para quantidade baseada na unidade
+  const validateQuantity = (value: string) => {
+    if (!value) return true;
 
-    setEditedIngredient(prev => ({
-      ...prev,
-      [name]: name === 'quantity' || name === 'buyPrice' ? Number(value) : value,
-    }));
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return true;
+
+    const unitError = validateQuantityByUnit(numValue, watchedUnit);
+    if (unitError) {
+      setError('quantity', { message: unitError });
+      return false;
+    } else {
+      clearErrors('quantity');
+      return true;
+    }
   };
 
-  // Tratamento especial para a unidade (select)
-  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedUnit = e.target.value as UnitType;
+  const onSubmit = (data: IngredientFormData) => {
+    const rawQuantity = parseFloat(data.quantity);
+    const rawPrice = parseFloat(data.buyPrice);
 
-    setEditedIngredient(prev => ({
-      ...prev,
-      unit: selectedUnit,
-    }));
-  };
-
-  //  Valida os campos antes de salvar
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const { name, quantity, buyPrice, unit } = editedIngredient;
-
-    const rawQuantity = parseFloat(quantity.toString());
-    const rawPrice = parseFloat(buyPrice?.toString() || '0');
-
-    if (!name || isNaN(rawQuantity) || isNaN(rawPrice) || !unit) {
+    // Validação adicional para quantidade baseada na unidade
+    const unitValidationError = validateQuantityByUnit(rawQuantity, data.unit);
+    if (unitValidationError) {
       toast({
-        title: 'Preencha todos os campos corretamente',
+        title: 'Erro de validação',
+        description: unitValidationError,
         variant: 'destructive',
       });
       return;
     }
 
-    if (rawQuantity <= 0 || rawPrice <= 0) {
-      toast({
-        title: 'Valores Inválidos',
-        description: 'Quantidade e preço devem ser maiores que zero.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    const normalizedQuantity = normalizeQuantity(rawQuantity, unit);
+    const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
+    const totalValue = normalizedQuantity * rawPrice;
 
     const updatedIngredient: Ingredient = {
-      ...editedIngredient,
+      ...ingredientToEdit!,
+      name: data.name.trim(),
       quantity: normalizedQuantity,
-      totalValue: normalizedQuantity * rawPrice,
+      unit: data.unit,
+      buyPrice: rawPrice,
+      totalValue,
     };
 
     dispatch({ type: 'EDIT_INGREDIENT', payload: updatedIngredient });
@@ -82,11 +105,21 @@ export default function ProductEditModal() {
 
     toast({
       title: 'Ingrediente atualizado com sucesso!',
+      description: `"${data.name}" foi atualizado.`,
       variant: 'accept',
     });
   };
 
-  const inputStyle = 'rounded-md border border-gray-300 p-2 w-full h-full';
+  // Atualizar validação quando a unidade muda
+  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newUnit = e.target.value as UnitType;
+    setValue('unit', newUnit);
+
+    // Revalidar quantidade se houver valor
+    if (watchedQuantity) {
+      validateQuantity(watchedQuantity);
+    }
+  };
 
   return (
     <div
@@ -97,56 +130,83 @@ export default function ProductEditModal() {
         }
       )}
     >
-      <div className="flex w-96 flex-col gap-2 rounded-md bg-white p-4 shadow-md">
+      <div className="flex w-96 flex-col gap-4 rounded-md bg-white p-4 shadow-md">
         <h2 className="text-hero-lg font-bold">Editar ingrediente</h2>
-        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-          <input
-            className={inputStyle}
-            type="text"
-            name="name"
-            value={editedIngredient.name || ''}
-            onChange={handleChange}
-            placeholder="Nome do ingrediente"
-          />
-          <input
-            className={inputStyle}
-            type="number"
-            name="quantity"
-            value={editedIngredient.quantity || 0}
-            onChange={handleChange}
-            min={0}
-            step="any"
-            placeholder="Quantidade"
-          />
-          <input
-            className={inputStyle}
-            type="number"
-            name="buyPrice"
-            value={editedIngredient.buyPrice ?? ''}
-            onChange={handleChange}
-            min={0}
-            step={0.01}
-            placeholder="Preço de compra"
-          />
-          <select
-            title="Campo de escolha de medida do produto"
-            value={editedIngredient.unit}
-            onChange={handleUnitChange}
-            className={inputStyle}
-          >
-            <option value="kg">Quilo (kg)</option>
-            <option value="l">Litro (l)</option>
-            <option value="un">Unidade</option>
-          </select>
+        
+        {/* Informações sobre o tipo de unidade selecionado */}
+        <UnitTypeInfo unit={watchedUnit} />
+
+        <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <Input
+              type="text"
+              placeholder="Nome do ingrediente"
+              {...register('name')}
+              id="name"
+              className={errors.name ? 'border-red-500' : ''}
+            />
+            {errors.name && (
+              <span className="mt-1 block text-sm text-red-500">{errors.name.message}</span>
+            )}
+          </div>
+
+          <div>
+            <Input
+              type="number"
+              step={watchedUnit === 'un' ? '1' : 'any'}
+              placeholder={`Quantidade (${watchedUnit})`}
+              {...register('quantity', {
+                onChange: e => validateQuantity(e.target.value),
+              })}
+              id="quantity"
+              min={watchedUnit === 'un' ? '1' : '0.001'}
+              className={errors.quantity ? 'border-red-500' : ''}
+            />
+            {errors.quantity && (
+              <span className="mt-1 block text-sm text-red-500">{errors.quantity.message}</span>
+            )}
+          </div>
+
+          <div>
+            <Input
+              type="number"
+              step="0.01"
+              placeholder="Preço de compra"
+              {...register('buyPrice')}
+              id="buyPrice"
+              min="0"
+              className={errors.buyPrice ? 'border-red-500' : ''}
+            />
+            {errors.buyPrice && (
+              <span className="mt-1 block text-sm text-red-500">{errors.buyPrice.message}</span>
+            )}
+          </div>
+
+          <div>
+            <select
+              title="Campo de medida do produto"
+              {...register('unit')}
+              onChange={handleUnitChange}
+              className={`w-full rounded border p-2 ${errors.unit ? 'border-red-500' : ''}`}
+            >
+              <option value="kg">Quilo (kg)</option>
+              <option value="l">Litro (l)</option>
+              <option value="un">Unidade</option>
+            </select>
+            {errors.unit && (
+              <span className="mt-1 block text-sm text-red-500">{errors.unit.message}</span>
+            )}
+          </div>
 
           <div className="flex gap-2">
-            <Button variant="accept" type="submit">
-              Salvar
+            <Button variant="accept" type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting ? 'Salvando...' : 'Salvar'}
             </Button>
             <Button
               variant="destructive"
               type="button"
               onClick={() => dispatch({ type: 'CLOSE_EDIT_MODAL' })}
+              className="flex-1"
             >
               Cancelar
             </Button>

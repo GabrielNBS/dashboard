@@ -30,7 +30,7 @@ export default function Finance() {
   const grossProfit = getGrossProfit(totalRevenue, totalVariableCost);
   const netProfit = getNetProfit(totalRevenue, totalVariableCost, totalFixedCost);
   const margin = getProfitMargin(netProfit, totalRevenue);
-  const valueToSave = getValueToSave(netProfit, 10); // 10% de reserva, configurável
+  const valueToSave = getValueToSave(netProfit, 0); // 10% de reserva, configurável
 
   //  Remoção de venda
   const handleRemoveSale = (saleId: string) => {
