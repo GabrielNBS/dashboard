@@ -50,6 +50,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
       : sellingPrice;
 
   const onSubmit = (data: FinalProductFormData) => {
+    console.log('Final Product Data:', data);
     if (finalProduct.ingredients.length === 0) {
       toast({
         title: 'Erro',
@@ -81,7 +82,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
         name: data.name,
         category: data.category,
         productionMode: data.productionMode,
-        yieldQuantity: data.yieldQuantity,
+        yieldQuantity: data.productionMode,
         profitMargin: data.profitMargin,
         totalCost,
         sellingPrice: unitPrice,
