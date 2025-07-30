@@ -25,9 +25,16 @@ export const button = tv({
   },
 });
 
-export default function Button({ children, variant, size, className, ...props }: ButtonProps) {
+export default function Button({
+  children,
+  variant,
+  size,
+  className,
+  disabled,
+  ...props
+}: ButtonProps) {
   return (
-    <button className={button({ variant, size, className })} {...props}>
+    <button className={button({ variant, size, className })} disabled={disabled} {...props}>
       {children}
     </button>
   );

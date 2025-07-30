@@ -1,11 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { normalizeQuantity } from '@/utils/normalizeQuantity';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  ingredientSchema,
+  type IngredientFormData,
+  validateQuantityByUnit,
+} from '@/utils/validationSchemas';
+import UnitTypeInfo from './UnitTypeInfo';
 import { v4 as uuidv4 } from 'uuid';
 import { IngredientsFormData, ingredientsSchema } from '@/schemas/ingredientsSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,11 +25,14 @@ export default function IngredientForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
     watch,
-  } = useForm<IngredientsFormData>({
-    resolver: zodResolver(ingredientsSchema),
+    setValue,
+    setError,
+    clearErrors,
+  } = useForm<IngredientFormData>({
+    resolver: zodResolver(ingredientSchema),
     defaultValues: {
       name: '',
       quantity: '',
@@ -31,33 +41,71 @@ export default function IngredientForm() {
     },
   });
 
-  const unit = watch('unit');
+  const watchedUnit = watch('unit');
+  const watchedQuantity = watch('quantity');
 
-  const onSubmit = (data: IngredientsFormData) => {
-    const rawQuantity = parseFloat(data.quantity);
-    const rawPrice = parseFloat(data.buyPrice);
+  // Validação em tempo real para quantidade baseada na unidade
+  const validateQuantity = (value: string) => {
+    if (!value) return true;
 
-    if (isNaN(rawQuantity) || isNaN(rawPrice)) {
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return true;
+
+    const unitError = validateQuantityByUnit(numValue, watchedUnit);
+    if (unitError) {
+      setError('quantity', { message: unitError });
+      return false;
+    } else {
+      clearErrors('quantity');
+      return true;
+    }
+  };
+
+  function handleAddIngredient(ingredient: Ingredient) {
+    dispatch({ type: 'ADD_INGREDIENT', payload: ingredient });
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const rawQuantity = parseFloat(quantity);
+    const rawPrice = parseFloat(buyPrice);
+
+    if (!name || isNaN(rawQuantity) || isNaN(rawPrice) || !unit) {
       toast({
-        title: 'Erro ao adicionar ingrediente',
-        description: 'Preencha todos os campos corretamente.',
+        title: 'Erro de validação',
+        description: unitValidationError,
         variant: 'destructive',
       });
       return;
     }
 
-    const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit as UnitType);
+    if (rawQuantity <= 0 || rawPrice <= 0) {
+      toast({
+        title: 'Valores Inválidos',
+        description: 'Quantidade e preço devem ser maiores que zero.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const normalizedQuantity = normalizeQuantity(rawQuantity, unit);
 
     const newIngredient: Ingredient = {
       id: uuidv4(),
-      name: data.name,
+      name,
       quantity: normalizedQuantity,
-      unit: data.unit as UnitType,
+      unit,
       buyPrice: rawPrice,
-      totalValue: normalizedQuantity * rawPrice,
+      totalValue,
     };
 
-    dispatch({ type: 'ADD_INGREDIENT', payload: newIngredient });
+    handleAddIngredient(newIngredient);
+
+    setName('');
+    setQuantity('');
+    setBuyPrice('');
+    setUnit('kg');
 
     toast({
       title: 'Ingrediente adicionado',
@@ -68,49 +116,55 @@ export default function IngredientForm() {
     reset();
   };
 
+  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newUnit = e.target.value as UnitType;
+    setValue('unit', newUnit);
+
+    if (watchedQuantity) {
+      validateQuantity(watchedQuantity);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex w-1/2 gap-4">
-      <div className="flex flex-col">
-        <Input type="text" placeholder="Nome do ingrediente" id="name" {...register('name')} />
-        {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
-      </div>
+    <form onSubmit={handleSubmit} className="flex w-1/2 gap-4">
+      <Input
+        type="text"
+        value={name}
+        placeholder="Nome do ingrediente"
+        onChange={e => setName(e.target.value)}
+        id="name"
+      />
 
-      <div className="flex flex-col">
-        <Input
-          type="number"
-          step="any"
-          placeholder={`Quantidade (${unit})`}
-          id="quantity"
-          min={0}
-          {...register('quantity')}
-        />
-        {errors.quantity && <span className="text-sm text-red-500">{errors.quantity.message}</span>}
-      </div>
+      <Input
+        type="number"
+        value={quantity}
+        step="any"
+        placeholder={`Quantidade (${unit})`}
+        onChange={e => setQuantity(e.target.value)}
+        id="quantity"
+        min={0}
+      />
 
-      <div className="flex flex-col">
-        <select
-          title="Campo de medida do produto"
-          className="rounded border p-2"
-          {...register('unit')}
-        >
-          <option value="kg">Quilo (kg)</option>
-          <option value="l">Litro (l)</option>
-          <option value="un">Unidade</option>
-        </select>
-        {errors.unit && <span className="text-sm text-red-500">{errors.unit.message}</span>}
-      </div>
+      <select
+        title="Campo de medida do produto"
+        value={unit}
+        onChange={e => setUnit(e.target.value as UnitType)}
+        className="rounded border p-2"
+      >
+        <option value="kg">Quilo (kg)</option>
+        <option value="l">Litro (l)</option>
+        <option value="un">Unidade</option>
+      </select>
 
-      <div className="flex flex-col">
-        <Input
-          type="number"
-          step="0.01"
-          placeholder="Preço de compra"
-          id="buyPrice"
-          min={0}
-          {...register('buyPrice')}
-        />
-        {errors.buyPrice && <span className="text-sm text-red-500">{errors.buyPrice.message}</span>}
-      </div>
+      <Input
+        type="number"
+        value={buyPrice}
+        step="0.01"
+        placeholder="Preço de compra"
+        onChange={e => setBuyPrice(e.target.value)}
+        id="buyPrice"
+        min={0}
+      />
 
       <Button variant="accept" type="submit">
         Adicionar
