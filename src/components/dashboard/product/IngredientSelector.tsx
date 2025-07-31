@@ -5,6 +5,7 @@ import { useProductBuilderContext } from '@/contexts/products/ProductBuilderCont
 import { Ingredient } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { getBaseUnit, normalizeQuantity } from '@/utils/normalizeQuantity';
+import AddIngredientList from './addIngredientList';
 
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();
@@ -153,24 +154,7 @@ export default function IngredientSelector() {
         </div>
       )}
 
-      {/* Lista de ingredientes adicionados ao produto */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {finalProduct.ingredients.map(ingredient => (
-          <div key={ingredient.id} className="flex items-center gap-2">
-            <span className="rounded bg-purple-100 px-3 py-1 text-sm text-purple-800">
-              {ingredient.name} | {ingredient.quantity} {getBaseUnit(ingredient.unit)} x R$
-              {(ingredient.buyPrice ?? 0).toFixed(2)} = R${ingredient.totalValue.toFixed(2)}
-            </span>
-            <button
-              type="button"
-              onClick={() => dispatch({ type: 'REMOVE_INGREDIENT', payload: ingredient.id })}
-              className="text-xs text-red-500 hover:underline"
-            >
-              Remover
-            </button>
-          </div>
-        ))}
-      </div>
+      <AddIngredientList />
     </div>
   );
 }
