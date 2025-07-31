@@ -5,32 +5,51 @@ import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import CardFinance from '../../ui/CardFinance';
 import Button from '../../ui/Button';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import {
-  getTotalRevenue,
-  getTotalVariableCost,
-  getTotalFixedCost,
-  getGrossProfit,
-  getNetProfit,
-  getProfitMargin,
-  getValueToSave,
-} from '@/utils/finance';
 import { FixedCost } from '@/types/sale';
+import { useFinanceSummary } from '@/hooks/useSummaryFinance';
 
 export default function Finance() {
   const { state: salesState, dispatch: salesDispatch } = useSalesContext();
   const { state: storeState, dispatch: storeDispatch } = useIngredientContext();
 
   // 🔸 Mock de custos fixos (pode substituir por contexto futuro)
-  const fixedCosts: FixedCost[] = [];
+  const fixedCosts: FixedCost[] = [
+    {
+      id: '1',
+      name: 'Aluguel',
+      amount: 1500,
+      recurrence: 'mensal',
+    },
+    {
+      id: '2',
+      name: 'Internet',
+      amount: 200,
+      recurrence: 'mensal',
+    },
+    {
+      id: '3',
+      name: 'Salário Funcionários',
+      amount: 3000,
+      recurrence: 'mensal',
+    },
+    {
+      id: '4',
+      name: 'Manutenção Equipamentos',
+      amount: 500,
+      recurrence: 'anual',
+    },
+  ];
 
-  //  Cálculos usando as funções utilitárias
-  const totalRevenue = getTotalRevenue(salesState.sales);
-  const totalVariableCost = getTotalVariableCost(salesState.sales);
-  const totalFixedCost = getTotalFixedCost(fixedCosts);
-  const grossProfit = getGrossProfit(totalRevenue, totalVariableCost);
-  const netProfit = getNetProfit(totalRevenue, totalVariableCost, totalFixedCost);
-  const margin = getProfitMargin(netProfit, totalRevenue);
-  const valueToSave = getValueToSave(netProfit, 0); // 10% de reserva, configurável
+  // 🔸 Cálculo do resumo financeiro
+  const {
+    totalRevenue,
+    totalVariableCost,
+    totalFixedCost,
+    grossProfit,
+    netProfit,
+    margin,
+    valueToSave,
+  } = useFinanceSummary(salesState.sales, fixedCosts, 0.1);
 
   //  Remoção de venda
   const handleRemoveSale = (saleId: string) => {
