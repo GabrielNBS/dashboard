@@ -15,9 +15,7 @@ import {
 } from '@/schemas/validationSchemas';
 import UnitTypeInfo from './UnitTypeInfo';
 import { v4 as uuidv4 } from 'uuid';
-import { IngredientsFormData, ingredientsSchema } from '@/schemas/ingredientsSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { getQuantityInputConfig } from '@/utils/quantityInputConfig';
 
 export default function IngredientForm() {
   const { dispatch } = useIngredientContext();
@@ -131,30 +129,11 @@ export default function IngredientForm() {
         </div>
 
         <div className="min-w-[200px] flex-1">
-          <Input
-            type="number"
-            step={watchedUnit === 'un' ? '1' : '0.001'}
-            placeholder={`Quantidade (${watchedUnit})`}
-            {...register('quantity', {
-              onChange: e => validateQuantity(e.target.value),
-            })}
-            id="quantity"
-            min={watchedUnit === 'un' ? '1' : '0.001'}
-            aria-invalid={!!errors.quantity}
-            className={errors.quantity ? 'border-red-500' : ''}
-            title="Insira a quantidade conforme a unidade selecionada"
-          />
-          {errors.quantity && (
-            <span className="mt-1 block text-sm text-red-500">{errors.quantity.message}</span>
-          )}
-        </div>
-
-        <div className="min-w-[200px] flex-1">
           <select
             title="Campo de medida do produto"
             {...register('unit')}
             onChange={handleUnitChange}
-            aria-invalid={!!errors.unit}
+            aria-invalid={errors.unit ? 'false' : 'true'}
             className={`w-full rounded border p-2 ${errors.unit ? 'border-red-500' : ''}`}
           >
             <option value="kg">Quilo (kg)</option>
@@ -163,6 +142,30 @@ export default function IngredientForm() {
           </select>
           {errors.unit && (
             <span className="mt-1 block text-sm text-red-500">{errors.unit.message}</span>
+          )}
+        </div>
+
+        <div className="min-w-[200px] flex-1">
+          {(() => {
+            const { step, min, placeholder } = getQuantityInputConfig(watchedUnit);
+
+            return (
+              <Input
+                type="number"
+                step={step}
+                min={min}
+                placeholder={placeholder}
+                {...register('quantity', {
+                  onChange: e => validateQuantity(e.target.value),
+                })}
+                id="quantity"
+                className={errors.quantity ? 'border-red-500' : ''}
+              />
+            );
+          })()}
+
+          {errors.quantity && (
+            <span className="mt-1 block text-sm text-red-500">{errors.quantity.message}</span>
           )}
         </div>
 
@@ -176,6 +179,7 @@ export default function IngredientForm() {
             min="0"
             aria-invalid={!!errors.buyPrice}
             className={errors.buyPrice ? 'border-red-500' : ''}
+            title='Insira o preço de compra do ingrediente, por exemplo: "10.50" para R$10,50'
           />
           {errors.buyPrice && (
             <span className="mt-1 block text-sm text-red-500">{errors.buyPrice.message}</span>

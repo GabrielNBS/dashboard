@@ -59,18 +59,24 @@ export function calculateUnitCost(totalValue: number, quantity: number, unit: Un
 }
 
 // Função para formatar quantidade para exibição
-export function formatQuantity(quantity: number, unit: UnitType): string {
-  switch (unit) {
-    case 'kg':
-      return `${quantity.toFixed(1)} kg`;
+export function formatQuantity(quantity: number, unit: string): string {
+  const baseUnit = getBaseUnit(unit as UnitType);
 
-    case 'l':
-      return `${quantity.toFixed(1)} l`;
-
-    case 'un':
-    default:
-      return `${Math.round(quantity)} un`;
+  if (baseUnit === 'g') {
+    if (quantity >= 1000) return `${(quantity / 1000).toFixed(2)} kg`;
+    return `${quantity} g`;
   }
+
+  if (baseUnit === 'ml') {
+    if (quantity >= 1000) return `${(quantity / 1000).toFixed(2)} l`;
+    return `${quantity} ml`;
+  }
+
+  if (baseUnit === 'un') {
+    return `${quantity} un`;
+  }
+
+  return `${quantity} ${unit}`; // fallback
 }
 
 // Função para obter a unidade de medida base para cálculos

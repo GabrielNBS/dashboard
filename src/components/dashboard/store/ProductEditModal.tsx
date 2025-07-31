@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { useEffect } from 'react';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import { normalizeQuantity } from '@/utils/normalizeQuantity';
+import { denormalizeQuantity, normalizeQuantity } from '@/utils/normalizeQuantity';
 import { useToast } from '@/components/ui/use-toast';
 import {
   ingredientSchema,
@@ -16,6 +16,7 @@ import {
   validateQuantityByUnit,
 } from '@/schemas/validationSchemas';
 import UnitTypeInfo from './UnitTypeInfo';
+import { getQuantityInputConfig } from '@/utils/quantityInputConfig';
 
 export default function ProductEditModal() {
   const { state, dispatch } = useIngredientContext();
@@ -49,7 +50,7 @@ export default function ProductEditModal() {
     if (ingredientToEdit) {
       reset({
         name: ingredientToEdit.name,
-        quantity: ingredientToEdit.quantity.toString(),
+        quantity: denormalizeQuantity(ingredientToEdit.quantity, ingredientToEdit.unit).toString(),
         unit: ingredientToEdit.unit,
         buyPrice: ingredientToEdit.buyPrice?.toString() || '',
       });
@@ -151,17 +152,24 @@ export default function ProductEditModal() {
           </div>
 
           <div>
-            <Input
-              type="number"
-              step={watchedUnit === 'un' ? '1' : 'any'}
-              placeholder={`Quantidade (${watchedUnit})`}
-              {...register('quantity', {
-                onChange: e => validateQuantity(e.target.value),
-              })}
-              id="quantity"
-              min={watchedUnit === 'un' ? '1' : '0.001'}
-              className={errors.quantity ? 'border-red-500' : ''}
-            />
+            {(() => {
+              const { step, min, placeholder } = getQuantityInputConfig(watchedUnit);
+
+              return (
+                <Input
+                  type="number"
+                  step={step}
+                  min={min}
+                  placeholder={placeholder}
+                  {...register('quantity', {
+                    onChange: e => validateQuantity(e.target.value),
+                  })}
+                  id="quantity"
+                  className={errors.quantity ? 'border-red-500' : ''}
+                />
+              );
+            })()}
+
             {errors.quantity && (
               <span className="mt-1 block text-sm text-red-500">{errors.quantity.message}</span>
             )}
