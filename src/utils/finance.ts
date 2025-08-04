@@ -13,7 +13,7 @@ import { FixedCost } from '@/types/sale';
  */
 export function getTotalRevenue(sales: Sale[]): number {
   return sales.reduce((total, sale) => {
-    const revenue = sale.unitPrice * sale.quantity;
+    const revenue = (sale.sellingPrice ?? 0) * (sale.yieldQuantity ?? 0);
     // Validação para evitar NaN no resultado
     return total + (isNaN(revenue) ? 0 : revenue);
   }, 0);
@@ -36,10 +36,12 @@ export function getTotalVariableCost(sales: Sale[]): number {
   return sales.reduce((total, sale) => {
     // Se há ingredientes detalhados, calcula baseado neles
     const ingredientsCost =
-      sale.ingredientsUsed?.reduce((sum, ing) => {
+      sale.ingredients?.reduce((sum, ing) => {
         // Usa o totalValue do ingrediente que já representa o custo total
         return sum + (isNaN(ing.totalValue) ? 0 : ing.totalValue);
-      }, 0) ?? sale.costPrice * sale.quantity;
+      }, 0) ??
+      sale.totalCost ??
+      0;
 
     return total + ingredientsCost;
   }, 0);

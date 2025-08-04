@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import { Sale } from '@/types/sale';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/components/ui/use-toast';
+import { Sale } from '@/types/sale';
 
 export default function RegisterSaleForm() {
   const { state: finalProducts } = useFinalProductContext();
@@ -58,15 +58,18 @@ export default function RegisterSaleForm() {
 
     const sale: Sale = {
       id: uuidv4(),
-      productName: selectedProduct.name,
-      quantity,
-      unitPrice: costPrice + costPrice * 0.2, // margem de lucro de 20%
-      costPrice,
       date: new Date().toISOString(),
-      ingredientsUsed: selectedProduct.ingredients.map(ingredient => ({
+      uid: uuidv4(),
+      name: selectedProduct.name,
+      yieldQuantity: quantity,
+      sellingPrice: selectedProduct.sellingPrice,
+      totalCost: costPrice,
+      ingredients: selectedProduct.ingredients.map(ingredient => ({
         ...ingredient,
         quantity: ingredient.quantity * quantity,
       })),
+      category: selectedProduct.category,
+      productionMode: selectedProduct.productionMode,
     };
 
     salesDispatch({ type: 'ADD_SALE', payload: sale });

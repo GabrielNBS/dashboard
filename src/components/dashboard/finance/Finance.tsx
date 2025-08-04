@@ -20,24 +20,6 @@ export default function Finance() {
       amount: 1500,
       recurrence: 'mensal',
     },
-    {
-      id: '2',
-      name: 'Internet',
-      amount: 200,
-      recurrence: 'mensal',
-    },
-    {
-      id: '3',
-      name: 'Salário Funcionários',
-      amount: 3000,
-      recurrence: 'mensal',
-    },
-    {
-      id: '4',
-      name: 'Manutenção Equipamentos',
-      amount: 500,
-      recurrence: 'anual',
-    },
   ];
 
   // 🔸 Cálculo do resumo financeiro
@@ -61,7 +43,7 @@ export default function Finance() {
     );
     if (!confirm) return;
 
-    sale.ingredientsUsed.forEach(used => {
+    sale.ingredients.forEach(used => {
       const estoqueItem = storeState.ingredients.find(ingredient => ingredient.id === used.id);
       if (estoqueItem) {
         storeDispatch({
@@ -115,10 +97,12 @@ export default function Finance() {
             salesState.sales.map(sale => (
               <tr key={sale.id} className="border-b border-gray-200">
                 <td className="p-2">{new Date(sale.date).toLocaleDateString()}</td>
-                <td className="p-2">{sale.productName}</td>
-                <td className="p-2">{sale.quantity}</td>
-                <td className="p-2">R$ {sale.unitPrice.toFixed(2)}</td>
-                <td className="p-2">R$ {(sale.unitPrice * sale.quantity).toFixed(2)}</td>
+                <td className="p-2">{sale.name}</td>
+                <td className="p-2">{sale.yieldQuantity}</td>
+                <td className="p-2">R$ {sale.sellingPrice?.toFixed(2)}</td>
+                <td className="p-2">
+                  R$ {((sale.sellingPrice ?? 0) * (sale.yieldQuantity ?? 0)).toFixed(2)}
+                </td>
                 <td className="p-2">
                   <Button
                     variant="ghost"

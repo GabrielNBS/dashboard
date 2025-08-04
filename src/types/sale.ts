@@ -1,4 +1,4 @@
-import { Ingredient } from './ingredients';
+import { FinalProductState } from './finalProduct';
 
 export interface FixedCost {
   id: string;
@@ -7,14 +7,9 @@ export interface FixedCost {
   recurrence: 'mensal' | 'anual';
 }
 
-export interface Sale {
+export interface Sale extends FinalProductState {
   id: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-  costPrice: number;
   date: string;
-  ingredientsUsed: Ingredient[];
 }
 
 export interface CardFinanceProps {
