@@ -2,11 +2,28 @@
 
 import { motion } from 'framer-motion';
 
+/**
+ * Props do componente IconHamburger
+ */
 type Props = {
+  /** Se o menu está aberto */
   isOpen: boolean;
+  /** Função chamada ao clicar no ícone */
   onClick: () => void;
 };
 
+/**
+ * Componente IconHamburger - Ícone de menu hambúrguer animado
+ *
+ * Exibe um ícone de menu que se transforma em X quando aberto,
+ * com animações suaves usando Framer Motion.
+ *
+ * @param isOpen - Se o menu está aberto
+ * @param onClick - Função chamada ao clicar no ícone
+ *
+ * @example
+ * <IconHamburger isOpen={menuOpen} onClick={toggleMenu} />
+ */
 export default function IconHamburger({ isOpen, onClick }: Props) {
   return (
     <motion.button
@@ -16,6 +33,7 @@ export default function IconHamburger({ isOpen, onClick }: Props) {
       initial={false}
       animate={isOpen ? 'open' : 'closed'}
     >
+      {/* Linha superior do hambúrguer */}
       <motion.span
         className="bg-base h-0.5 w-6"
         variants={{
@@ -24,6 +42,8 @@ export default function IconHamburger({ isOpen, onClick }: Props) {
         }}
         transition={{ duration: 0.2 }}
       />
+
+      {/* Linha do meio do hambúrguer */}
       <motion.span
         className="bg-base h-0.5 w-6"
         variants={{
@@ -32,6 +52,8 @@ export default function IconHamburger({ isOpen, onClick }: Props) {
         }}
         transition={{ duration: 0.2 }}
       />
+
+      {/* Linha inferior do hambúrguer */}
       <motion.span
         className="bg-base h-0.5 w-6"
         variants={{

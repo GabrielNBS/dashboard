@@ -1,15 +1,12 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import { CheckIcon } from 'lucide-react';
-
+import { CheckIcon, X } from 'lucide-react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
 import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
-import { X } from 'lucide-react';
-
 import { useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -17,18 +14,20 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
   const { state: finalProduct, dispatch } = useProductBuilderContext();
   const { state: listState, dispatch: listDispatch } = useFinalProductContext();
 
-  //  Estado local para margem customizável
-  const [customMargin, setCustomMargin] = useState(33); // % padrão
+  const [customMargin, setCustomMargin] = useState(33);
+  const [manualSellingPrice, setManualSellingPrice] = useState(0); // Preço de venda manual
 
-  //  Cálculos baseados nos ingredientes
   const totalCost = finalProduct.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
-  const sellingPrice = totalCost + totalCost * (customMargin / 100);
 
-  // Se for produção em lote, divide o valor total pelo rendimento
-  const unitPrice =
+  // Preço sugerido com base na margem customizada
+  const suggestedPrice =
     finalProduct.productionMode === 'lote' && (finalProduct.yieldQuantity ?? 0) > 0
-      ? sellingPrice / (finalProduct.yieldQuantity ?? 1)
-      : sellingPrice;
+      ? (totalCost + totalCost * (customMargin / 100)) / finalProduct.yieldQuantity!
+      : totalCost + totalCost * (customMargin / 100);
+
+  // Margem de lucro real com base no preço informado manualmente
+  const realProfitMargin =
+    manualSellingPrice > 0 ? ((manualSellingPrice - totalCost) / totalCost) * 100 : 0;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +42,11 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
       return;
     }
 
+    if (manualSellingPrice <= 0) {
+      alert('Informe um preço de venda válido.');
+      return;
+    }
+
     const isDuplicate = listState.products.some(
       p =>
         p.name.toLowerCase() === finalProduct.name.toLowerCase() &&
@@ -54,14 +58,13 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
       return;
     }
 
-    // Salva no contexto com o preço sugerido incluído
     listDispatch({
       type: 'ADD_FINAL_PRODUCT',
       payload: {
         ...finalProduct,
         totalCost,
-        sellingPrice: unitPrice,
-        profitMargin: customMargin,
+        sellingPrice: manualSellingPrice, // usamos o valor manual
+        profitMargin: realProfitMargin, // margem real calculada
       },
     });
 
@@ -129,7 +132,19 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
         )}
 
         <div className="flex items-center gap-4">
-          <label className="block font-medium">Margem de Lucro (%):</label>
+          <label className="block font-medium">Preço de Venda (R$):</label>
+          <Input
+            type="number"
+            min={0}
+            step={0.01}
+            value={manualSellingPrice}
+            onChange={e => setManualSellingPrice(Number(e.target.value))}
+            className="w-32 rounded border p-2"
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <label className="block font-medium">Margem Sugerida (%):</label>
           <Input
             type="number"
             min={0}
@@ -146,8 +161,12 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
             <span className="block text-xl">R$ {totalCost.toFixed(2)}</span>
           </div>
           <div>
-            <span className="text-sm font-semibold">Preço de Venda Sugerido:</span>
-            <span className="block text-xl text-green-700">R$ {unitPrice.toFixed(2)}</span>
+            <span className="text-sm font-semibold">Preço Sugerido:</span>
+            <span className="block text-xl text-gray-500">R$ {suggestedPrice.toFixed(2)}</span>
+          </div>
+          <div>
+            <span className="text-sm font-semibold">Lucro Real:</span>
+            <span className="block text-xl text-green-700">{realProfitMargin.toFixed(2)}%</span>
           </div>
         </div>
 

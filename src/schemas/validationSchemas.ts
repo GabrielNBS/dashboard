@@ -1,7 +1,12 @@
 import { z } from 'zod';
 import { UnitType } from '@/types/ingredients';
 
-// Schema para validação de ingredientes
+/**
+ * Schema para validação de ingredientes
+ *
+ * Define as regras de validação para criação e edição de ingredientes,
+ * incluindo validações de nome, quantidade, unidade e preço.
+ */
 export const ingredientSchema = z.object({
   name: z
     .string()
@@ -27,9 +32,7 @@ export const ingredientSchema = z.object({
       );
     }, 'Quantidade inválida para o tipo de unidade'),
 
-  unit: z.enum(['kg', 'l', 'un'], {
-    required_error: 'Unidade é obrigatória',
-  }),
+  unit: z.enum(['kg', 'l', 'un']),
 
   buyPrice: z
     .string()
@@ -40,9 +43,25 @@ export const ingredientSchema = z.object({
     }, 'Preço deve ser um número maior que zero'),
 });
 
+/**
+ * Tipo inferido do schema de ingredientes
+ */
 export type IngredientFormData = z.infer<typeof ingredientSchema>;
 
-// Função para validação dinâmica da quantidade por unidade
+/**
+ * Função para validação dinâmica da quantidade por unidade
+ *
+ * Valida se a quantidade está dentro dos limites aceitáveis
+ * para cada tipo de unidade de medida.
+ *
+ * @param quantity - Quantidade a ser validada
+ * @param unit - Unidade de medida
+ * @returns Mensagem de erro ou null se válido
+ *
+ * @example
+ * const error = validateQuantityByUnit(1500, 'kg');
+ * if (error) console.log(error); // "Quantidade em kg não pode ser maior que 1000"
+ */
 export function validateQuantityByUnit(quantity: number, unit: UnitType): string | null {
   switch (unit) {
     case 'kg':

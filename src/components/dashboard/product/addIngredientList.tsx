@@ -3,11 +3,11 @@ import { getBaseUnit } from '@/utils/normalizeQuantity';
 import React from 'react';
 
 function AddIngredientList() {
-  const { dispatch, state: finalProduct } = useProductBuilderContext();
+  const { dispatch, state } = useProductBuilderContext();
 
   return (
     <div className="mt-4 flex flex-wrap gap-2">
-      {finalProduct.ingredients.map(ingredient => (
+      {state.ingredients.map(ingredient => (
         <div key={ingredient.id} className="flex items-center gap-2">
           <span className="rounded bg-purple-100 px-3 py-1 text-sm text-purple-800">
             {ingredient.name} | {ingredient.quantity} {getBaseUnit(ingredient.unit)} x R$

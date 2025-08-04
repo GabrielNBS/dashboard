@@ -2,6 +2,11 @@ import React from 'react';
 import { tv } from 'tailwind-variants';
 import { ButtonProps } from '@/types/button';
 
+/**
+ * Configuração de variantes do botão usando tailwind-variants
+ *
+ * Define as classes CSS para diferentes variantes e tamanhos
+ */
 export const button = tv({
   base: 'inline-flex cursor-pointer items-center justify-center rounded-md text-paragraph font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
   variants: {
@@ -25,6 +30,24 @@ export const button = tv({
   },
 });
 
+/**
+ * Componente Button - Botão customizável com variantes
+ *
+ * Suporta diferentes variantes visuais, tamanhos e todas as
+ * propriedades nativas do elemento button HTML.
+ *
+ * @param variant - Variante visual do botão
+ * @param size - Tamanho do botão
+ * @param className - Classes CSS adicionais
+ * @param disabled - Se o botão está desabilitado
+ * @param children - Conteúdo do botão
+ * @param props - Demais propriedades do elemento button
+ *
+ * @example
+ * <Button variant="accept" size="md" onClick={handleClick}>
+ *   Salvar
+ * </Button>
+ */
 export default function Button({
   children,
   variant,

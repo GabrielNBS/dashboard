@@ -99,7 +99,7 @@ export default function Finance() {
             <th className="p-2">Data</th>
             <th className="p-2">Produto</th>
             <th className="p-2">Qtd</th>
-            <th className="p-2">Valor unitário</th>
+            <th className="p-2">Valor de venda</th>
             <th className="p-2">Total</th>
             <th className="p-2">Ações</th>
           </tr>

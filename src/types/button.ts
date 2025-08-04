@@ -1,9 +1,20 @@
-export type ButtonProps = {
-  variant?: 'accept' | 'edit' | 'destructive' | 'outline' | 'ghost';
+import React from 'react';
+
+/**
+ * Props do componente Button
+ *
+ * Estende as propriedades nativas do elemento button HTML
+ * e adiciona propriedades customizadas para variantes e tamanhos.
+ */
+export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  /** Variante visual do botão */
+  variant?: 'default' | 'accept' | 'edit' | 'destructive' | 'outline' | 'ghost';
+  /** Tamanho do botão */
   size?: 'sm' | 'md' | 'lg';
-  onClick?: () => void;
+  /** Conteúdo do botão */
   children: React.ReactNode;
+  /** Classes CSS adicionais */
   className?: string;
-  type?: 'button' | 'submit' | 'reset';
+  /** Se o botão está desabilitado */
   disabled?: boolean;
 };

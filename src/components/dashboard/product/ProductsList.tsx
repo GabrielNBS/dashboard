@@ -8,8 +8,9 @@ function ProductsList() {
   return (
     <ul className="space-y-4">
       {state.products.map(prod => {
-        const total = prod.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
-        const lucro = total - total * 0.2;
+        const totalCost = prod.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
+        const sellingPrice = prod.sellingPrice ?? 0;
+        const profitMargin = ((sellingPrice - (prod.totalCost ?? 0)) / sellingPrice) * 100 || 0;
 
         return (
           <li key={prod.uid} className="rounded border bg-white p-4 text-sm shadow-sm">
@@ -35,9 +36,10 @@ function ProductsList() {
                 </li>
               ))}
             </ul>
-            <div className="mt-2 flex justify-between font-medium">
-              <span>Total: R${total.toFixed(2)}</span>
-              <span>Lucro: R${lucro.toFixed(2)}</span>
+            <div className="mt-2 flex justify-end gap-4 font-medium">
+              <span>Preço de custo: R${totalCost.toFixed(2)}</span>
+              <span>Preço de venda: R${sellingPrice.toFixed(2)}</span>
+              <span>Margem de lucro: {profitMargin.toFixed(2)}%</span>
             </div>
           </li>
         );
