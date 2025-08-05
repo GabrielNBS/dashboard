@@ -102,5 +102,12 @@ export function useFinanceCards(summary: FinanceSummary): FinanceCard[] {
       bgColor: 'bg-orange-100',
       textColor: 'text-orange-800',
     },
+    {
+      title: 'Ponto de Equilíbrio',
+      value: summary.breakEven ?? 0,
+      type: 'currency',
+      bgColor: 'bg-gray-100',
+      textColor: 'text-gray-800',
+    },
   ];
 }

@@ -20,6 +20,7 @@ export default function Finance() {
     netProfit,
     margin,
     valueToSave,
+    breakEven,
   } = useFinanceSummary(salesState.sales);
 
   // 🔸 Criar cards financeiros usando o hook
@@ -31,6 +32,7 @@ export default function Finance() {
     netProfit,
     margin,
     valueToSave,
+    breakEven,
   });
 
   //  Remoção de venda

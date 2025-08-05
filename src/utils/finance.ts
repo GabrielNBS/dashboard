@@ -1,5 +1,5 @@
 import { Sale } from '@/types/sale';
-import { FixedCostSettings } from '@/types/settings';
+import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
 
 /**
  * Calcula a receita total das vendas (sem descontos).
@@ -20,30 +20,52 @@ export function getTotalRevenue(sales: Sale[]): number {
 }
 
 /**
- * Calcula o custo variável total com base nos ingredientes usados nas vendas.
+ * Calcula o custo variável total com base nas configurações fornecidas.
  *
- * Se a venda tiver ingredientes detalhados, usa eles. Caso contrário,
- * usa o custo unitário multiplicado pela quantidade.
+ * Essa função considera dois tipos de custos variáveis:
+ * - Percentual sobre a receita total de vendas (ex: comissões de plataformas)
+ * - Valor fixo por unidade vendida (ex: custo de embalagem por item)
  *
- * @param sales - Array de vendas realizadas
- * @returns Custo variável total em reais
+ * Ambos os valores podem coexistir em um mesmo custo, e são somados.
+ *
+ * @param variableCosts - Lista de custos variáveis configurados no sistema
+ * @param totalRevenue - Receita bruta total gerada pelas vendas (em reais)
+ * @param totalUnitsSold - Quantidade total de unidades vendidas no período
+ * @returns Número representando o custo variável total em reais
  *
  * @example
- * const variableCost = getTotalVariableCost(sales);
- * console.log(variableCost); // 800.00
+ * const variableCosts: VariableCostSettings[] = [
+ *   { id: '1', name: 'Embalagem', type: 'embalagens', fixedValue: 0.5, category: 'materia_prima' },
+ *   { id: '2', name: 'Comissão iFood', type: 'comissoes', percentage: 12, category: 'comercial' },
+ * ];
+ *
+ * const totalRevenue = 1000; // R$ 1.000 de receita bruta
+ * const totalUnitsSold = 200; // 200 unidades vendidas
+ *
+ * const result = getTotalVariableCost(variableCosts, totalRevenue, totalUnitsSold);
+ * console.log(result); // 220 (100 de embalagens + 120 de comissão)
  */
-export function getTotalVariableCost(sales: Sale[]): number {
-  return sales.reduce((total, sale) => {
-    // Se há ingredientes detalhados, calcula baseado neles
-    const ingredientsCost =
-      sale.ingredients?.reduce((sum, ing) => {
-        // Usa o totalValue do ingrediente que já representa o custo total
-        return sum + (isNaN(ing.totalValue) ? 0 : ing.totalValue);
-      }, 0) ??
-      sale.totalCost ??
-      0;
+export function getTotalVariableCost(
+  variableCosts: VariableCostSettings[],
+  totalRevenue: number,
+  totalUnitsSold: number
+): number {
+  return variableCosts.reduce((total, cost) => {
+    let costValue = 0;
 
-    return total + ingredientsCost;
+    if (typeof cost.percentage === 'number') {
+      // Se houver um percentual definido, calcula o valor com base na receita total
+      const percentValue = (cost.percentage / 100) * totalRevenue;
+      costValue += isNaN(percentValue) ? 0 : percentValue;
+    }
+
+    if (typeof cost.fixedValue === 'number') {
+      // Se houver um valor fixo por unidade, multiplica pela quantidade total vendida
+      const fixedTotal = cost.fixedValue * totalUnitsSold;
+      costValue += isNaN(fixedTotal) ? 0 : fixedTotal;
+    }
+
+    return total + costValue;
   }, 0);
 }
 
@@ -159,24 +181,67 @@ export function getValueToSave(netProfit: number, percentageToSave: number = 20)
   return Number(((netProfit * percentageToSave) / 100).toFixed(2));
 }
 
-/*
-Exemplos de uso da função getTotalFixedCost:
+/**
+ * Calcula o ponto de equilíbrio financeiro (break-even).
+ *
+ * O ponto de equilíbrio representa o valor de receita necessário para cobrir
+ * todos os custos fixos, considerando a margem de contribuição (lucro bruto proporcional).
+ *
+ * Fórmula: Ponto de Equilíbrio = Custos Fixos / (1 - (Custos Variáveis / Receita Total))
+ *
+ * @param fixedCosts - Total de custos fixos (aluguel, salários, etc.)
+ * @param variableCosts - Total de custos variáveis (embalagens, comissão, etc.)
+ * @param totalRevenue - Receita bruta total obtida pelas vendas
+ * @returns Valor da receita mínima necessária para atingir o ponto de equilíbrio
+ *
+ * @example
+ * const breakEven = getBreakEven(2000, 800, 4000);
+ * console.log(breakEven); // 2857.14
+ */
+export function getBreakEven(
+  fixedCosts: number,
+  variableCosts: number,
+  totalRevenue: number
+): number {
+  // Validações para evitar divisões inválidas
+  if (fixedCosts <= 0 || totalRevenue <= 0 || variableCosts < 0 || variableCosts > totalRevenue) {
+    console.warn('Dados inválidos para cálculo do ponto de equilíbrio.');
+    return 0;
+  }
 
-const custosFixos = [
-  { id: '1', name: 'Aluguel', amount: 1000, recurrence: 'mensal', category: 'aluguel' },
-  { id: '2', name: 'Energia', amount: 200, recurrence: 'mensal', category: 'energia' },
-  { id: '3', name: 'Limpeza', amount: 50, recurrence: 'semanal', category: 'outros' },
-  { id: '4', name: 'Seguro', amount: 1200, recurrence: 'anual', category: 'outros' },
-  { id: '5', name: 'Café', amount: 5, recurrence: 'diario', category: 'outros' },
-];
+  // Margem de contribuição = Receita líquida proporcional após custos variáveis
+  const contributionMargin = 1 - variableCosts / totalRevenue;
 
-const totalMensal = getTotalFixedCost(custosFixos);
-// Resultado: 1000 + 200 + (50 * 4.33) + (1200 / 12) + (5 * 30) = 1000 + 200 + 216.5 + 100 + 150 = 1666.50
+  if (contributionMargin <= 0) {
+    console.warn('Margem de contribuição inválida ou zero.');
+    return 0;
+  }
 
-Cálculos:
-- Mensal: 1000 + 200 = 1200
-- Semanal: 50 * 4.33 = 216.5
-- Anual: 1200 / 12 = 100
-- Diário: 5 * 30 = 150
-- Total: 1666.50
-*/
+  // Retorna o valor necessário para cobrir os custos fixos
+  return fixedCosts / contributionMargin;
+}
+
+/**
+ * Calcula a quantidade total de unidades vendidas.
+ *
+ * Essa função é usada principalmente para cálculos de custos variáveis
+ * baseados em valor fixo por unidade vendida.
+ *
+ * Se `yieldQuantity` estiver ausente ou inválido, considera zero.
+ *
+ * @param sales - Lista de vendas realizadas
+ * @returns Quantidade total de unidades vendidas
+ *
+ * @example
+ * const total = getTotalUnitsSold(sales);
+ * console.log(total); // 42
+ */
+
+export function getTotalUnitsSold(sales: Sale[]): number {
+  return sales.reduce((total, sale) => {
+    const quantidade =
+      typeof sale.yieldQuantity === 'number' && !isNaN(sale.yieldQuantity) ? sale.yieldQuantity : 0;
+
+    return total + quantidade;
+  }, 0);
+}

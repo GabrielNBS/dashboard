@@ -4,7 +4,7 @@
 import { useMemo } from 'react';
 import { Sale } from '@/types/sale';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { FixedCostSettings } from '@/types/settings';
+import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
 import {
   getTotalRevenue,
   getTotalVariableCost,
@@ -13,6 +13,8 @@ import {
   getNetProfit,
   getProfitMargin,
   getValueToSave,
+  getBreakEven,
+  getTotalUnitsSold,
 } from '@/utils/finance';
 
 /**
@@ -26,6 +28,8 @@ export interface FinanceSummary {
   netProfit: number;
   margin: number;
   valueToSave?: number;
+  breakEven?: number;
+  totalUnitsSold?: number;
 }
 
 /**
@@ -46,6 +50,7 @@ export interface FinanceSummary {
 export function useFinanceSummary(
   sales: Sale[],
   fixedCosts?: FixedCostSettings[],
+  variableCosts?: VariableCostSettings[],
   savingRate?: number
 ): FinanceSummary {
   const { state: settings } = useSettings();
@@ -54,14 +59,24 @@ export function useFinanceSummary(
     // Usa custos fixos das configurações se não fornecidos
     const effectiveFixedCosts = fixedCosts || settings.fixedCosts;
 
+    // Usa custos fixos das configurações se não fornecidos
+    const effectiveVariableCosts = variableCosts || settings.variableCosts;
+
     // Usa taxa de poupança das configurações se não fornecida
     const effectiveSavingRate = savingRate ?? settings.financial.emergencyReservePercentage / 100;
 
     // Calcula receita total das vendas
     const totalRevenue = getTotalRevenue(sales);
 
-    // Calcula custo variável total (ingredientes utilizados)
-    const totalVariableCost = getTotalVariableCost(sales);
+    // Calcula a quantidade de unidades vendidas
+    const totalUnitsSold = getTotalUnitsSold(sales);
+
+    // Calcula custo variável total (ingredientes, embalagens ... utilizados)
+    const totalVariableCost = getTotalVariableCost(
+      effectiveVariableCosts,
+      totalRevenue,
+      totalUnitsSold
+    );
 
     // Calcula custo fixo total mensal
     const totalFixedCost = getTotalFixedCost(effectiveFixedCosts);
@@ -78,6 +93,9 @@ export function useFinanceSummary(
     // Calcula valor a ser reservado do lucro
     const valueToSave = getValueToSave(netProfit, effectiveSavingRate);
 
+    // Calcula o valor necessário para alcançar o ponto de equilíbrio entre despesas fixas e variáveis quando comparado ao lucro total
+    const breakEven = getBreakEven(totalFixedCost, totalVariableCost, totalRevenue);
+
     return {
       totalRevenue,
       totalVariableCost,
@@ -86,6 +104,7 @@ export function useFinanceSummary(
       netProfit,
       margin,
       valueToSave,
+      breakEven,
     };
   }, [sales, fixedCosts, savingRate, settings]);
 }

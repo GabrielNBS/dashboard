@@ -8,14 +8,6 @@ import { SettingsProvider } from '@/contexts/settings/SettingsContext';
 import MobileHeader from '@/components/mobile/MobileHeader';
 import { ToastProvider, ToastGlobalRegister } from '@/components/ui/use-toast';
 
-/**
- * Layout principal da aplicação
- *
- * Configura a estrutura HTML base, providers de contexto
- * e layout responsivo com sidebar e header mobile.
- *
- * @param children - Componentes filhos (páginas)
- */
 export default function RootLayout({
   children,
 }: Readonly<{
