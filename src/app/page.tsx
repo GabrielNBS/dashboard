@@ -1,5 +1,5 @@
 import BestSellingProducts from '@/components/dashboard/home/BestSellingProducts';
-import CardFinance from '@/components/ui/CardFinance';
+import CardFinance, { useFinanceCards } from '@/components/ui/CardFinance';
 
 /**
  * Página principal do dashboard
@@ -28,12 +28,15 @@ export default function Dashboard() {
     valueToSave: 1000,
   };
 
+  // Criar cards financeiros usando o hook
+  const financeCards = useFinanceCards(financeData);
+
   return (
     <>
       {/* Header da página com título e card financeiro */}
       <div className="mt-4 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-hero font-bold">Olá, seja bem vindo!</h1>
-        <CardFinance {...financeData} />
+        <CardFinance cards={financeCards} />
       </div>
 
       {/* Grid principal com gráfico e cards de produtos */}

@@ -1,5 +1,5 @@
 import { Sale } from '@/types/sale';
-import { FixedCost } from '@/types/sale';
+import { FixedCostSettings } from '@/types/settings';
 
 /**
  * Calcula a receita total das vendas (sem descontos).
@@ -50,8 +50,11 @@ export function getTotalVariableCost(sales: Sale[]): number {
 /**
  * Calcula o total de custos fixos mensais.
  *
- * Se a despesa for anual, ela é automaticamente dividida por 12
- * para obter o valor mensal equivalente.
+ * Converte automaticamente diferentes recorrências para o valor mensal equivalente:
+ * - Mensal: mantém o valor
+ * - Anual: divide por 12
+ * - Semanal: multiplica por 4.33 (média de semanas por mês)
+ * - Diário: multiplica por 30 (média de dias por mês)
  *
  * @param fixedCosts - Array de custos fixos
  * @returns Custo fixo total mensal em reais
@@ -60,17 +63,29 @@ export function getTotalVariableCost(sales: Sale[]): number {
  * const fixedCost = getTotalFixedCost(fixedCosts);
  * console.log(fixedCost); // 1200.00
  */
-export function getTotalFixedCost(fixedCosts: FixedCost[]): number {
+export function getTotalFixedCost(fixedCosts: FixedCostSettings[]): number {
   return fixedCosts.reduce((total, cost) => {
     let monthlyAmount = 0;
 
-    if (cost.recurrence === 'mensal') {
-      monthlyAmount = cost.amount;
-    } else if (cost.recurrence === 'anual') {
-      // Converte custo anual para mensal
-      monthlyAmount = cost.amount / 12;
-    } else {
-      console.warn(`Recorrência desconhecida: ${cost.recurrence}`);
+    switch (cost.recurrence) {
+      case 'mensal':
+        monthlyAmount = cost.amount;
+        break;
+      case 'anual':
+        // Converte custo anual para mensal
+        monthlyAmount = cost.amount / 12;
+        break;
+      case 'semanal':
+        // Converte custo semanal para mensal (4.33 semanas por mês)
+        monthlyAmount = cost.amount * 4.33;
+        break;
+      case 'diario':
+        // Converte custo diário para mensal (30 dias por mês)
+        monthlyAmount = cost.amount * 30;
+        break;
+      default:
+        console.warn(`Recorrência desconhecida: ${cost.recurrence}`);
+        monthlyAmount = 0;
     }
 
     // Validação para evitar NaN no resultado
@@ -126,7 +141,7 @@ export function getNetProfit(
  */
 export function getProfitMargin(netProfit: number, totalRevenue: number): number {
   if (totalRevenue <= 0) return 0;
-  return (netProfit / totalRevenue) * 100;
+  return Number(((netProfit / totalRevenue) * 100).toFixed(2));
 }
 
 /**
@@ -141,5 +156,27 @@ export function getProfitMargin(netProfit: number, totalRevenue: number): number
  * console.log(valueToSave); // 100.00
  */
 export function getValueToSave(netProfit: number, percentageToSave: number = 20): number {
-  return (netProfit * percentageToSave) / 100;
+  return Number(((netProfit * percentageToSave) / 100).toFixed(2));
 }
+
+/*
+Exemplos de uso da função getTotalFixedCost:
+
+const custosFixos = [
+  { id: '1', name: 'Aluguel', amount: 1000, recurrence: 'mensal', category: 'aluguel' },
+  { id: '2', name: 'Energia', amount: 200, recurrence: 'mensal', category: 'energia' },
+  { id: '3', name: 'Limpeza', amount: 50, recurrence: 'semanal', category: 'outros' },
+  { id: '4', name: 'Seguro', amount: 1200, recurrence: 'anual', category: 'outros' },
+  { id: '5', name: 'Café', amount: 5, recurrence: 'diario', category: 'outros' },
+];
+
+const totalMensal = getTotalFixedCost(custosFixos);
+// Resultado: 1000 + 200 + (50 * 4.33) + (1200 / 12) + (5 * 30) = 1000 + 200 + 216.5 + 100 + 150 = 1666.50
+
+Cálculos:
+- Mensal: 1000 + 200 = 1200
+- Semanal: 50 * 4.33 = 216.5
+- Anual: 1200 / 12 = 100
+- Diário: 5 * 30 = 150
+- Total: 1666.50
+*/

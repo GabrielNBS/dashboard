@@ -3,7 +3,8 @@
 
 import { useMemo } from 'react';
 import { Sale } from '@/types/sale';
-import { FixedCost } from '@/types/sale';
+import { useSettings } from '@/contexts/settings/SettingsContext';
+import { FixedCostSettings } from '@/types/settings';
 import {
   getTotalRevenue,
   getTotalVariableCost,
@@ -17,14 +18,14 @@ import {
 /**
  * Interface para o resumo financeiro calculado
  */
-interface FinanceSummary {
+export interface FinanceSummary {
   totalRevenue: number;
-  totalVariableCost: number;
-  totalFixedCost: number;
+  totalVariableCost?: number;
+  totalFixedCost?: number;
   grossProfit: number;
   netProfit: number;
   margin: number;
-  valueToSave: number;
+  valueToSave?: number;
 }
 
 /**
@@ -34,8 +35,8 @@ interface FinanceSummary {
  * e custos fixos fornecidos.
  *
  * @param sales - Array de vendas realizadas
- * @param fixedCosts - Array de custos fixos mensais
- * @param savingRate - Taxa de poupança em percentual (padrão: 10%)
+ * @param fixedCosts - Array de custos fixos (opcional, usa configurações se não fornecido)
+ * @param savingRate - Taxa de poupança em percentual (opcional, usa configurações se não fornecido)
  * @returns Objeto com todos os cálculos financeiros
  *
  * @example
@@ -44,10 +45,18 @@ interface FinanceSummary {
  */
 export function useFinanceSummary(
   sales: Sale[],
-  fixedCosts: FixedCost[],
-  savingRate = 0.1
+  fixedCosts?: FixedCostSettings[],
+  savingRate?: number
 ): FinanceSummary {
+  const { state: settings } = useSettings();
+
   return useMemo(() => {
+    // Usa custos fixos das configurações se não fornecidos
+    const effectiveFixedCosts = fixedCosts || settings.fixedCosts;
+
+    // Usa taxa de poupança das configurações se não fornecida
+    const effectiveSavingRate = savingRate ?? settings.financial.emergencyReservePercentage / 100;
+
     // Calcula receita total das vendas
     const totalRevenue = getTotalRevenue(sales);
 
@@ -55,7 +64,7 @@ export function useFinanceSummary(
     const totalVariableCost = getTotalVariableCost(sales);
 
     // Calcula custo fixo total mensal
-    const totalFixedCost = getTotalFixedCost(fixedCosts);
+    const totalFixedCost = getTotalFixedCost(effectiveFixedCosts);
 
     // Calcula lucro bruto (receita - custo variável)
     const grossProfit = getGrossProfit(totalRevenue, totalVariableCost);
@@ -67,7 +76,7 @@ export function useFinanceSummary(
     const margin = getProfitMargin(netProfit, totalRevenue);
 
     // Calcula valor a ser reservado do lucro
-    const valueToSave = getValueToSave(netProfit, savingRate);
+    const valueToSave = getValueToSave(netProfit, effectiveSavingRate);
 
     return {
       totalRevenue,
@@ -78,5 +87,5 @@ export function useFinanceSummary(
       margin,
       valueToSave,
     };
-  }, [sales, fixedCosts, savingRate]);
+  }, [sales, fixedCosts, savingRate, settings]);
 }

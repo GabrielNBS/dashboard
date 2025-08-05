@@ -2,25 +2,14 @@
 
 import React from 'react';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
-import CardFinance from '../../ui/CardFinance';
+import CardFinance, { useFinanceCards } from '../../ui/CardFinance';
 import Button from '../../ui/Button';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import { FixedCost } from '@/types/sale';
 import { useFinanceSummary } from '@/hooks/useSummaryFinance';
 
 export default function Finance() {
   const { state: salesState, dispatch: salesDispatch } = useSalesContext();
   const { state: storeState, dispatch: storeDispatch } = useIngredientContext();
-
-  // 🔸 Mock de custos fixos (pode substituir por contexto futuro)
-  const fixedCosts: FixedCost[] = [
-    {
-      id: '1',
-      name: 'Aluguel',
-      amount: 1500,
-      recurrence: 'mensal',
-    },
-  ];
 
   // 🔸 Cálculo do resumo financeiro
   const {
@@ -31,7 +20,18 @@ export default function Finance() {
     netProfit,
     margin,
     valueToSave,
-  } = useFinanceSummary(salesState.sales, fixedCosts, 0.1);
+  } = useFinanceSummary(salesState.sales);
+
+  // 🔸 Criar cards financeiros usando o hook
+  const financeCards = useFinanceCards({
+    totalRevenue,
+    totalVariableCost,
+    totalFixedCost,
+    grossProfit,
+    netProfit,
+    margin,
+    valueToSave,
+  });
 
   //  Remoção de venda
   const handleRemoveSale = (saleId: string) => {
@@ -64,15 +64,7 @@ export default function Finance() {
       <h1 className="text-title text-bold">Financeiro</h1>
 
       {/*  Resumo financeiro */}
-      <CardFinance
-        totalRevenue={totalRevenue}
-        totalVariableCost={totalVariableCost}
-        totalFixedCost={totalFixedCost}
-        grossProfit={grossProfit}
-        netProfit={netProfit}
-        margin={margin}
-        valueToSave={valueToSave}
-      />
+      <CardFinance cards={financeCards} />
 
       {/*  Tabela de vendas */}
       <table className="w-full text-left">

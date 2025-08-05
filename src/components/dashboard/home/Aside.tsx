@@ -5,7 +5,15 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
 
-import { Home, BadgeDollarSign, ScanBarcode, Package, LogOut, ShoppingCart } from 'lucide-react';
+import {
+  Home,
+  BadgeDollarSign,
+  ScanBarcode,
+  Package,
+  LogOut,
+  ShoppingCart,
+  Settings,
+} from 'lucide-react';
 
 export default function Aside() {
   const pathname = usePathname();
@@ -16,6 +24,7 @@ export default function Aside() {
     { label: 'Produto', href: '/product', icon: ScanBarcode },
     { label: 'PDV', href: '/pdv', icon: ShoppingCart },
     { label: 'Financeiro', href: '/finance', icon: BadgeDollarSign },
+    { label: 'Configurações', href: '/settings', icon: Settings },
     { label: 'Logout', href: '/logout', icon: LogOut },
   ];
 
