@@ -1,9 +1,13 @@
 import Button from '@/components/ui/Button';
-import { useFinalProductContext } from '@/contexts/products/ProductContext';
+import { useProductContext } from '@/contexts/products/ProductContext';
 import React from 'react';
 
 function ProductsList() {
-  const { state, dispatch } = useFinalProductContext();
+  const { state, dispatch } = useProductContext();
+
+  if (!state) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ul className="space-y-4">
@@ -16,7 +20,14 @@ function ProductsList() {
           <li key={prod.uid} className="rounded border bg-white p-4 text-sm shadow-sm">
             <Button
               type="button"
-              onClick={() => dispatch({ type: 'REMOVE_PRODUCT', payload: prod.uid })}
+              onClick={() => {
+                const confirm = window.confirm(
+                  `Tem certeza que deseja remover o produto ${prod.name}?`
+                );
+                if (confirm) {
+                  dispatch({ type: 'REMOVE_PRODUCT', payload: prod.uid });
+                }
+              }}
               variant="ghost"
             >
               remover

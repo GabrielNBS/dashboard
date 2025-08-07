@@ -5,11 +5,11 @@ import Button from '@/components/ui/Button';
 import { PlusIcon } from 'lucide-react';
 import RegisterIngredientForm from '@/components/dashboard/product/RegisterIngredientForm';
 import ProductsList from '@/components/dashboard/product/ProductsList';
-import { useFinalProductContext } from '@/contexts/products/ProductContext';
+import { useProductContext } from '@/contexts/products/ProductContext';
 
 export default function Product() {
   const [openForm, setOpenForm] = useState(false);
-  const { state, dispatch } = useFinalProductContext();
+  const { state, dispatch } = useProductContext();
   const { productToEdit, products } = state;
 
   useEffect(() => {

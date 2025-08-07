@@ -6,10 +6,10 @@ import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContex
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/components/ui/use-toast';
 import { Sale } from '@/types/sale';
-import { useFinalProductContext } from '@/contexts/products/ProductContext';
+import { useProductContext } from '@/contexts/products/ProductContext';
 
 export default function RegisterSaleForm() {
-  const { state: finalProducts } = useFinalProductContext();
+  const { state: finalProducts } = useProductContext();
   const { dispatch: salesDispatch } = useSalesContext();
   const { state: estoque, dispatch: estoqueDispatch } = useIngredientContext();
 

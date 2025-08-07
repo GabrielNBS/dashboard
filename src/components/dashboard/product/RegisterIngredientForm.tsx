@@ -8,11 +8,11 @@ import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { useFinalProductContext } from '@/contexts/products/ProductContext';
+import { useProductContext } from '@/contexts/products/ProductContext';
 
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
-  const { state: listState, dispatch: listDispatch } = useFinalProductContext();
+  const { state: listState, dispatch: listDispatch } = useProductContext();
 
   const [customMargin, setCustomMargin] = useState(33);
   const [manualSellingPrice, setManualSellingPrice] = useState(0);

@@ -2,7 +2,7 @@ import '../styles/global.css';
 import Aside from '@/components/dashboard/home/Aside';
 import { IngredientProvider } from '@/contexts/Ingredients/IngredientsContext';
 import { ProductBuilderProvider } from '@/contexts/products/ProductBuilderContext';
-import { FinalProductProvider } from '@/contexts/products/ProductContext';
+import { ProductProvider } from '@/contexts/products/ProductContext';
 import { SalesProvider } from '@/contexts/sales/SalesContext';
 import { SettingsProvider } from '@/contexts/settings/SettingsContext';
 import MobileHeader from '@/components/mobile/MobileHeader';
@@ -25,7 +25,7 @@ export default function RootLayout({
             {/* Provider do contexto de construção de produtos */}
             <ProductBuilderProvider>
               {/* Provider do contexto de produtos finais */}
-              <FinalProductProvider>
+              <ProductProvider>
                 {/* Provider do contexto de vendas */}
                 <SalesProvider>
                   {/* Provider do contexto de configurações */}
@@ -45,7 +45,7 @@ export default function RootLayout({
                     </div>
                   </SettingsProvider>
                 </SalesProvider>
-              </FinalProductProvider>
+              </ProductProvider>
             </ProductBuilderProvider>
           </IngredientProvider>
         </ToastProvider>

@@ -64,7 +64,7 @@ function reducer(state: ProductListState, action: ProductAction): ProductListSta
   }
 }
 
-export const FinalProductListContext = createContext<
+export const ProductListContext = createContext<
   | {
       state: ProductListState;
       dispatch: React.Dispatch<ProductAction>;
@@ -72,7 +72,7 @@ export const FinalProductListContext = createContext<
   | undefined
 >(undefined);
 
-export const FinalProductProvider = ({ children }: { children: ReactNode }) => {
+export const ProductProvider = ({ children }: { children: ReactNode }) => {
   const [storedProducts, setStoredProducts] = useLocalStorage<ProductState[]>('finalProducts', []);
 
   const [state, dispatch] = useReducer(reducer, {
@@ -85,15 +85,14 @@ export const FinalProductProvider = ({ children }: { children: ReactNode }) => {
   }, [state.products]);
 
   return (
-    <FinalProductListContext.Provider value={{ state, dispatch }}>
+    <ProductListContext.Provider value={{ state, dispatch }}>
       {children}
-    </FinalProductListContext.Provider>
+    </ProductListContext.Provider>
   );
 };
 
-export const useFinalProductContext = () => {
-  const context = useContext(FinalProductListContext);
-  if (!context)
-    throw new Error('useFinalProductContext deve ser usado dentro de FinalProductProvider');
+export const useProductContext = () => {
+  const context = useContext(ProductListContext);
+  if (!context) throw new Error('useProductContext deve ser usado dentro de ProductProvider');
   return context;
 };
