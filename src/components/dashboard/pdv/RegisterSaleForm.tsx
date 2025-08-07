@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/components/ui/use-toast';
 import { Sale } from '@/types/sale';
+import { useFinalProductContext } from '@/contexts/products/FinalProductContext';
 
 export default function RegisterSaleForm() {
   const { state: finalProducts } = useFinalProductContext();

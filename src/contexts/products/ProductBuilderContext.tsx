@@ -15,7 +15,8 @@ type ProductBuilderAction =
   | { type: 'REMOVE_INGREDIENT'; payload: string }
   | { type: 'RESET_PRODUCT' }
   | { type: 'SET_PRODUCTION_MODE'; payload: 'individual' | 'lote' }
-  | { type: 'SET_YIELD_QUANTITY'; payload: number };
+  | { type: 'SET_YIELD_QUANTITY'; payload: number }
+  | { type: 'SET_INGREDIENTS'; payload: Ingredient[] };
 
 /**
  * Estado inicial para construção de produtos
@@ -67,6 +68,9 @@ function finalProductReducer(
 
     case 'SET_YIELD_QUANTITY':
       return { ...state, yieldQuantity: action.payload };
+
+    case 'SET_INGREDIENTS':
+      return { ...state, ingredients: action.payload };
 
     default:
       return state;

@@ -63,7 +63,6 @@ export default function IngredientSelector() {
       },
     });
 
-    // Resetar inputs após adicionar
     setSelectedIngredient(null);
     setQuantity('1');
     setInputValue('');

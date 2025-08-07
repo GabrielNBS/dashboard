@@ -1,5 +1,5 @@
 import Button from '@/components/ui/Button';
-import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
+import { useFinalProductContext } from '@/contexts/products/FinalProductContext';
 import React from 'react';
 
 function ProductsList() {
@@ -20,6 +20,19 @@ function ProductsList() {
               variant="ghost"
             >
               remover
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
+
+                setTimeout(() => {
+                  dispatch({ type: 'SET_PRODUCT_TO_EDIT', payload: prod });
+                }, 0);
+              }}
+              variant="ghost"
+            >
+              editar
             </Button>
             <h3 className="text-lg font-semibold">{prod.name}</h3>
             <p className="text-gray-600">Categoria: {prod.category}</p>

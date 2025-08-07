@@ -3,31 +3,44 @@
 import Button from '@/components/ui/Button';
 import { CheckIcon, X } from 'lucide-react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
-import { useFinalProductContext } from '@/contexts/products/useFinalProductContext';
 import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import { useFinalProductContext } from '@/contexts/products/FinalProductContext';
 
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
   const { state: listState, dispatch: listDispatch } = useFinalProductContext();
 
   const [customMargin, setCustomMargin] = useState(33);
-  const [manualSellingPrice, setManualSellingPrice] = useState(0); // Preço de venda manual
+  const [manualSellingPrice, setManualSellingPrice] = useState(0);
+
+  const { isEditMode, productToEdit } = listState;
 
   const totalCost = finalProduct.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
 
-  // Preço sugerido com base na margem customizada
   const suggestedPrice =
     finalProduct.productionMode === 'lote' && (finalProduct.yieldQuantity ?? 0) > 0
       ? (totalCost + totalCost * (customMargin / 100)) / finalProduct.yieldQuantity!
       : totalCost + totalCost * (customMargin / 100);
 
-  // Margem de lucro real com base no preço informado manualmente
   const realProfitMargin =
     manualSellingPrice > 0 ? ((manualSellingPrice - totalCost) / totalCost) * 100 : 0;
+
+  // Pré-carrega o formulário se estiver editando
+  useEffect(() => {
+    if (!isEditMode || !productToEdit) return;
+    dispatch({ type: 'SET_NAME', payload: productToEdit.name });
+    dispatch({ type: 'SET_CATEGORY', payload: productToEdit.category });
+    dispatch({ type: 'SET_PRODUCTION_MODE', payload: productToEdit.productionMode });
+    dispatch({ type: 'SET_YIELD_QUANTITY', payload: productToEdit.yieldQuantity ?? 1 });
+    dispatch({ type: 'SET_INGREDIENTS', payload: productToEdit.ingredients });
+
+    setManualSellingPrice(productToEdit.sellingPrice ?? 0);
+    setCustomMargin(productToEdit.profitMargin ?? 33);
+  }, [isEditMode, productToEdit, dispatch]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,45 +60,77 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
       return;
     }
 
-    const isDuplicate = listState.products.some(
-      p =>
-        p.name.toLowerCase() === finalProduct.name.toLowerCase() &&
-        p.category.toLowerCase() === finalProduct.category.toLowerCase()
-    );
+    if (isEditMode && productToEdit) {
+      listDispatch({
+        type: 'EDIT_FINAL_PRODUCT',
+        payload: {
+          ...productToEdit,
+          ...finalProduct,
+          totalCost,
+          sellingPrice: manualSellingPrice,
+          profitMargin: realProfitMargin,
+          uid: productToEdit.uid,
+        },
+      });
 
-    if (isDuplicate) {
-      alert('Já existe um produto com esse nome e categoria.');
-      return;
+      listDispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
+
+      toast({
+        title: 'Produto atualizado!',
+        description: `"${finalProduct.name}" foi editado com sucesso.`,
+        variant: 'accept',
+      });
+    } else {
+      const isDuplicate = listState.products.some(
+        p =>
+          p.name.toLowerCase() === finalProduct.name.toLowerCase() &&
+          p.category.toLowerCase() === finalProduct.category.toLowerCase()
+      );
+
+      if (isDuplicate) {
+        alert('Já existe um produto com esse nome e categoria.');
+        return;
+      }
+
+      listDispatch({
+        type: 'ADD_FINAL_PRODUCT',
+        payload: {
+          ...finalProduct,
+          totalCost,
+          sellingPrice: manualSellingPrice,
+          profitMargin: realProfitMargin,
+        },
+      });
+
+      toast({
+        title: 'Produto adicionado com sucesso!',
+        description: `"${finalProduct.name}" foi adicionado à lista de produtos.`,
+        variant: 'accept',
+      });
     }
-
-    listDispatch({
-      type: 'ADD_FINAL_PRODUCT',
-      payload: {
-        ...finalProduct,
-        totalCost,
-        sellingPrice: manualSellingPrice, // usamos o valor manual
-        profitMargin: realProfitMargin, // margem real calculada
-      },
-    });
 
     dispatch({ type: 'RESET_PRODUCT' });
     if (onClose) onClose();
-
-    toast({
-      title: 'Produto adicionado com sucesso!',
-      description: `\"${finalProduct.name}\" foi adicionado à lista de produtos.`,
-      variant: 'accept',
-    });
   };
 
   const handleCloseForm = () => {
     dispatch({ type: 'RESET_PRODUCT' });
+    listDispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
     if (onClose) onClose();
   };
 
   return (
     <>
-      <h2 className="p-default text-hero-2xl font-bold">Adicionar produto</h2>
+      <h2 className="p-default text-hero-2xl font-bold">
+        {isEditMode ? 'Editar produto' : 'Adicionar produto'}
+      </h2>
+
+      {isEditMode && productToEdit && (
+        <div className="rounded bg-yellow-100 p-2 text-sm text-yellow-700">
+          Editando: <strong>{productToEdit.name}</strong> — qualquer alteração será aplicada ao
+          produto existente.
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
