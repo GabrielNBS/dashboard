@@ -2,7 +2,7 @@ import { Ingredient } from './ingredients';
 
 type ProductionMode = 'individual' | 'lote';
 
-export interface FinalProductState {
+export interface ProductState {
   uid: string; // identificador único do produto
   name: string;
   category: string;

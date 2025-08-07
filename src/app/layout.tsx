@@ -2,7 +2,7 @@ import '../styles/global.css';
 import Aside from '@/components/dashboard/home/Aside';
 import { IngredientProvider } from '@/contexts/Ingredients/IngredientsContext';
 import { ProductBuilderProvider } from '@/contexts/products/ProductBuilderContext';
-import { FinalProductProvider } from '@/contexts/products/FinalProductContext';
+import { FinalProductProvider } from '@/contexts/products/ProductContext';
 import { SalesProvider } from '@/contexts/sales/SalesContext';
 import { SettingsProvider } from '@/contexts/settings/SettingsContext';
 import MobileHeader from '@/components/mobile/MobileHeader';

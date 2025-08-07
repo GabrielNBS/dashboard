@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { FinalProductState } from '@/types/finalProduct';
+import { ProductState } from '@/types/finalProduct';
 import { Ingredient } from '@/types/ingredients';
 import { v4 as uuid } from 'uuid';
 
@@ -21,7 +21,7 @@ type ProductBuilderAction =
 /**
  * Estado inicial para construção de produtos
  */
-const initialState: FinalProductState = {
+const initialState: ProductState = {
   uid: uuid(),
   name: '',
   category: '',
@@ -37,10 +37,7 @@ const initialState: FinalProductState = {
  * @param action - Ação a ser executada
  * @returns Novo estado do produto
  */
-function finalProductReducer(
-  state: FinalProductState,
-  action: ProductBuilderAction
-): FinalProductState {
+function finalProductReducer(state: ProductState, action: ProductBuilderAction): ProductState {
   switch (action.type) {
     case 'SET_NAME':
       return { ...state, name: action.payload };
@@ -81,7 +78,7 @@ function finalProductReducer(
  * Tipo do contexto de construção de produtos
  */
 interface ProductBuilderContextType {
-  state: FinalProductState;
+  state: ProductState;
   dispatch: React.Dispatch<ProductBuilderAction>;
 }
 

@@ -8,7 +8,7 @@ import IngredientSelector from './IngredientSelector';
 import Input from '@/components/ui/Input';
 import { useEffect, useState } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { useFinalProductContext } from '@/contexts/products/FinalProductContext';
+import { useFinalProductContext } from '@/contexts/products/ProductContext';
 
 export default function RegisterIngredientForm({ onClose }: { onClose?: () => void }) {
   const { state: finalProduct, dispatch } = useProductBuilderContext();
@@ -62,7 +62,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
 
     if (isEditMode && productToEdit) {
       listDispatch({
-        type: 'EDIT_FINAL_PRODUCT',
+        type: 'EDIT_PRODUCT',
         payload: {
           ...productToEdit,
           ...finalProduct,
@@ -93,7 +93,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
       }
 
       listDispatch({
-        type: 'ADD_FINAL_PRODUCT',
+        type: 'ADD_PRODUCT',
         payload: {
           ...finalProduct,
           totalCost,

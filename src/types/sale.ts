@@ -1,5 +1,5 @@
-import { FinalProductState } from './finalProduct';
-export interface Sale extends FinalProductState {
+import { ProductState } from './finalProduct';
+export interface Sale extends ProductState {
   id: string;
   date: string;
 }
