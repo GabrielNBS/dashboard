@@ -7,6 +7,13 @@ import { SalesProvider } from '@/contexts/sales/SalesContext';
 import { SettingsProvider } from '@/contexts/settings/SettingsContext';
 import MobileHeader from '@/components/mobile/MobileHeader';
 import { ToastProvider, ToastGlobalRegister } from '@/components/ui/use-toast';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export default function RootLayout({
   children,

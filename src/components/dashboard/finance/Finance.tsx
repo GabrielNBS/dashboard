@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
-import CardFinance, { useFinanceCards } from '../../ui/CardFinance';
 import Button from '../../ui/Button';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { useFinanceSummary } from '@/hooks/useSummaryFinance';
+import CardWrapper from './cards/CardWrapper';
 
 export default function Finance() {
   const { state: salesState, dispatch: salesDispatch } = useSalesContext();
@@ -22,18 +22,6 @@ export default function Finance() {
     valueToSave,
     breakEven,
   } = useFinanceSummary(salesState.sales);
-
-  // 🔸 Criar cards financeiros usando o hook
-  const financeCards = useFinanceCards({
-    totalRevenue,
-    totalVariableCost,
-    totalFixedCost,
-    grossProfit,
-    netProfit,
-    margin,
-    valueToSave,
-    breakEven,
-  });
 
   //  Remoção de venda
   const handleRemoveSale = (saleId: string) => {
@@ -66,7 +54,16 @@ export default function Finance() {
       <h1 className="text-title text-bold">Financeiro</h1>
 
       {/*  Resumo financeiro */}
-      <CardFinance cards={financeCards} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <CardWrapper title="Receita Total" value={totalRevenue} type="currency" />
+        <CardWrapper title="Custo Variável Total" value={totalVariableCost ?? 0} type="currency" />
+        <CardWrapper title="Custo Fixo Total" value={totalFixedCost ?? 0} type="currency" />
+        <CardWrapper title="Lucro Bruto" value={grossProfit} type="currency" />
+        <CardWrapper title="Lucro Líquido" value={netProfit} type="currency" />
+        <CardWrapper title="Margem de Lucro" value={margin} type="percent" />
+        <CardWrapper title="Valor a Pagar" value={valueToSave ?? 0} type="currency" />
+        <CardWrapper title="Ponto de Equilíbrio" value={breakEven ?? 0} type="currency" />
+      </div>
 
       {/*  Tabela de vendas */}
       <table className="w-full text-left">

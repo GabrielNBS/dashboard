@@ -1,13 +1,21 @@
-import BestSellingProducts from '@/components/dashboard/home/BestSellingProducts';
-import CardFinance, { useFinanceCards } from '@/components/ui/CardFinance';
+'use client';
 
-/**
- * Página principal do dashboard
- *
- * Exibe o resumo financeiro e gráficos de produtos mais vendidos.
- * Os dados são mockados para demonstração.
- */
+import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
+import RevenueCard from '@/components/dashboard/finance/cards/RevenueCard';
+import VariableCostCard from '@/components/dashboard/finance/cards/VariableCostCard';
+import BestSellingProducts from '@/components/dashboard/home/BestSellingProducts';
+import { useSalesContext } from '@/contexts/sales/useSalesContext';
+import { useSettings } from '@/contexts/settings/SettingsContext';
+import { useFinanceSummary } from '@/hooks/useSummaryFinance';
+
 export default function Dashboard() {
+  const { state: settings } = useSettings();
+  const { state: salesState } = useSalesContext();
+
+  const revenue = useFinanceSummary(salesState.sales);
+  const netProfit = useFinanceSummary(salesState.sales);
+  const variableCost = useFinanceSummary(salesState.sales);
+
   // Dados mockados para produtos mais vendidos
   const bestSellingProducts = [
     { id: '1', name: 'Produto 1', quantity: 10, price: 100, image: 'https://placehold.co/150' },
@@ -17,26 +25,18 @@ export default function Dashboard() {
     { id: '5', name: 'Produto 5', quantity: 10, price: 100, image: 'https://placehold.co/150' },
   ];
 
-  // Dados mockados para o card financeiro
-  const financeData = {
-    totalRevenue: 15000,
-    totalVariableCost: 8000,
-    totalFixedCost: 2000,
-    grossProfit: 7000,
-    netProfit: 5000,
-    margin: 33.33,
-    valueToSave: 1000,
-  };
-
-  // Criar cards financeiros usando o hook
-  const financeCards = useFinanceCards(financeData);
-
   return (
     <>
       {/* Header da página com título e card financeiro */}
       <div className="mt-4 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-hero font-bold">Olá, seja bem vindo!</h1>
-        <CardFinance cards={financeCards} />
+        <h1 className="text-hero self-start font-bold">
+          Seja bem vindo, <strong className="text-accent">{settings.store.storeName}</strong>!
+        </h1>
+        <div className="centralize gap-default">
+          <NetProfitCard summary={netProfit} />
+          <RevenueCard summary={revenue} />
+          <VariableCostCard summary={variableCost} />
+        </div>
       </div>
 
       {/* Grid principal com gráfico e cards de produtos */}
