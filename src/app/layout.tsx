@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>
+      <body className={`${inter.variable} `}>
         {/* Provider do sistema de toast */}
         <ToastProvider>
           <ToastGlobalRegister />

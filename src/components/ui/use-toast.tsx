@@ -2,35 +2,19 @@
 
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 
-/**
- * Variantes de toast disponíveis
- */
 export type ToastVariant = 'default' | 'accept' | 'edit' | 'destructive';
 
-/**
- * Props para criar um toast
- */
 export type ToastProps = {
-  /** Título do toast */
   title: string;
-  /** Descrição opcional do toast */
   description?: string;
-  /** Variante visual do toast */
   variant?: ToastVariant;
-  /** Duração em milissegundos */
   duration?: number;
 };
 
-/**
- * Tipo do contexto de toast
- */
 export type ToastContextType = {
   toast: (props: ToastProps) => void;
 };
 
-/**
- * Contexto para gerenciar toasts
- */
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 /**

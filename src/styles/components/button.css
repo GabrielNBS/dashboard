@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+.btn {
+  @apply rounded-[var(--radius-md)] px-4 py-2 font-semibold transition-all duration-300;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn--secondary {
+  background-color: var(--color-secondary);
+}

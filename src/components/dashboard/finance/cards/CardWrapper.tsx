@@ -12,7 +12,7 @@ export default function CardWrapper({ title, value, type, bgColor, textColor }: 
   const formattedValue = type === 'currency' ? formatCurrency(value) : formatPercent(value);
 
   return (
-    <div className={`rounded p-4 ${bgColor}`}>
+    <div className={`card--neu ${bgColor}`}>
       <span className={`block font-semibold ${textColor}`}>{title}</span>
       <span className={`text-xl font-bold ${textColor}`}>{formattedValue}</span>
     </div>
