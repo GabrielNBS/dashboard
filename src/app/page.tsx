@@ -32,7 +32,7 @@ export default function Dashboard() {
         <h1 className="text-hero self-start font-bold">
           Seja bem vindo, <strong className="text-accent">{settings.store.storeName}</strong>!
         </h1>
-        <div className="centralize gap-default">
+        <div className="gap-sm flex">
           <NetProfitCard summary={netProfit} />
           <RevenueCard summary={revenue} />
           <VariableCostCard summary={variableCost} />
