@@ -1,14 +1,9 @@
-import { FinanceSummary } from '@/hooks/useSummaryFinance';
-import CardWrapper from './CardWrapper';
+import { WithSummary } from '@/types/WithSummary';
+import CardWrapper, { CardWrapperProps } from './CardWrapper';
 
-export default function NetProfitCard({ summary }: { summary: FinanceSummary }) {
-  return (
-    <CardWrapper
-      title="Lucro Líquido"
-      value={summary.netProfit}
-      type="currency"
-      bgColor="bg-purple-100"
-      textColor="text-purple-800"
-    />
-  );
+export default function NetProfitCard({
+  summary,
+  ...props
+}: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
+  return <CardWrapper title="Lucro Líquido" value={summary.netProfit} type="currency" {...props} />;
 }

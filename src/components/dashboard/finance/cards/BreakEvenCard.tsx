@@ -1,14 +1,16 @@
-import { FinanceSummary } from '@/hooks/useSummaryFinance';
-import CardWrapper from './CardWrapper';
+import CardWrapper, { CardWrapperProps } from './CardWrapper';
+import { WithSummary } from '@/types/WithSummary';
 
-export default function BreakEvenCard({ summary }: { summary: FinanceSummary }) {
+export default function BreakEvenCard({
+  summary,
+  ...props
+}: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
     <CardWrapper
       title="Ponto de Equilíbrio"
       value={summary.breakEven ?? 0}
       type="currency"
-      bgColor="bg-gray-100"
-      textColor="text-gray-800"
+      {...props}
     />
   );
 }

@@ -1,67 +1,75 @@
 'use client';
 
 import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
+import ProfitMarginCard from '@/components/dashboard/finance/cards/ProfitMarginCard';
 import RevenueCard from '@/components/dashboard/finance/cards/RevenueCard';
 import VariableCostCard from '@/components/dashboard/finance/cards/VariableCostCard';
-import BestSellingProducts from '@/components/dashboard/home/BestSellingProducts';
+
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useFinanceSummary } from '@/hooks/useSummaryFinance';
+import { ChartBarIcon, PercentIcon, DollarSign, CoinsIcon } from 'lucide-react';
 
-export default function Dashboard() {
+// pages/dashboard.tsx
+export default function DashboardContent() {
   const { state: settings } = useSettings();
   const { state: salesState } = useSalesContext();
 
   const revenue = useFinanceSummary(salesState.sales);
   const netProfit = useFinanceSummary(salesState.sales);
   const variableCost = useFinanceSummary(salesState.sales);
+  const margin = useFinanceSummary(salesState.sales);
 
-  // Dados mockados para produtos mais vendidos
-  const bestSellingProducts = [
-    { id: '1', name: 'Produto 1', quantity: 10, price: 100, image: 'https://placehold.co/150' },
-    { id: '2', name: 'Produto 2', quantity: 10, price: 100, image: 'https://placehold.co/150' },
-    { id: '3', name: 'Produto 3', quantity: 10, price: 100, image: 'https://placehold.co/150' },
-    { id: '4', name: 'Produto 4', quantity: 10, price: 100, image: 'https://placehold.co/150' },
-    { id: '5', name: 'Produto 5', quantity: 10, price: 100, image: 'https://placehold.co/150' },
-  ];
+  const { storeName } = settings.store;
 
   return (
-    <>
-      {/* Header da página com título e card financeiro */}
-      <div className="mt-4 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-hero self-start font-bold">
-          Seja bem vindo, <strong className="text-accent">{settings.store.storeName}</strong>!
+    <main className="min-h-screen flex-1 bg-gray-50 p-6">
+      {/* Cabeçalho */}
+      <header className="mb-6">
+        <h1 className="text-primary text-hero font-bold">
+          Bom dia, <strong className="text-accent">{storeName}</strong>
         </h1>
-        <div className="gap-sm flex">
-          <NetProfitCard summary={netProfit} />
-          <RevenueCard summary={revenue} />
-          <VariableCostCard summary={variableCost} />
-        </div>
-      </div>
+        <p className="text-lg text-gray-500">Resumo das métricas e atividades recentes.</p>
+      </header>
 
-      {/* Grid principal com gráfico e cards de produtos */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[65%_auto]">
-        {/* Área do gráfico */}
-        <div className="h-[300px] rounded-lg bg-red-100 p-4 sm:h-[400px] md:h-[500px]">
-          <canvas id="myChart" className="h-full w-full"></canvas>
-        </div>
+      {/* Grade de Cards */}
+      <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <NetProfitCard summary={netProfit} bgColor="bg-inflow" icon={<DollarSign />} />
+        <RevenueCard summary={revenue} icon={<ChartBarIcon />} />
+        <VariableCostCard summary={variableCost} icon={<CoinsIcon />} />
+        <ProfitMarginCard summary={margin} icon={<PercentIcon />} />
+      </section>
 
-        {/* Cards de produtos mais vendidos e estoque crítico */}
-        <div className="flex flex-col gap-4">
-          {/* Card de produtos mais vendidos */}
-          <div className="rounded-lg bg-blue-100 p-4">
-            <BestSellingProducts products={bestSellingProducts} title="Top Vendas" />
-          </div>
-
-          {/* Card de produtos com estoque crítico */}
-          <div className="rounded-lg bg-blue-100 p-4">
-            <BestSellingProducts
-              products={bestSellingProducts}
-              title="Produtos com estoque crítico"
-            />
+      {/* Grid maior para gráficos e listas */}
+      <section className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Gráfico grande */}
+        <div className="rounded-xl bg-white p-4 shadow-sm lg:col-span-2">
+          <h2 className="text-lg font-semibold text-gray-800">Vendas por Mês</h2>
+          <div className="mt-4 flex h-64 items-center justify-center text-gray-400">
+            {/* Aqui vai o componente de gráfico */}
+            Gráfico Placeholder
           </div>
         </div>
-      </div>
-    </>
+
+        {/* Lista lateral */}
+        <div className="rounded-xl bg-white p-4 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-800">Últimas Transações</h2>
+          <ul className="mt-4 space-y-3">
+            <li className="flex justify-between text-sm text-gray-600">
+              <span>Venda #1023</span>
+              <span className="font-medium text-green-600">+ R$ 75,00</span>
+            </li>
+            <li className="flex justify-between text-sm text-gray-600">
+              <span>Venda #1022</span>
+              <span className="font-medium text-green-600">+ R$ 120,00</span>
+            </li>
+            <li className="flex justify-between text-sm text-gray-600">
+              <span>Compra de Estoque</span>
+              <span className="font-medium text-red-600">- R$ 340,00</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
   );
 }

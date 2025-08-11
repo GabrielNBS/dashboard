@@ -1,14 +1,16 @@
-import { FinanceSummary } from '@/hooks/useSummaryFinance';
-import CardWrapper from './CardWrapper';
+import { WithSummary } from '@/types/WithSummary';
+import CardWrapper, { CardWrapperProps } from './CardWrapper';
 
-export default function ValueToSaveCard({ summary }: { summary: FinanceSummary }) {
+export default function ValueToSaveCard({
+  summary,
+  ...props
+}: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
     <CardWrapper
       title="Valor a Guardar"
       value={summary.valueToSave ?? 0}
       type="currency"
-      bgColor="bg-orange-100"
-      textColor="text-orange-800"
+      {...props}
     />
   );
 }

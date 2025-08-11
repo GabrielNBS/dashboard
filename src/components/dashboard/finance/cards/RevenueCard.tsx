@@ -1,14 +1,11 @@
-import { FinanceSummary } from '@/hooks/useSummaryFinance';
-import CardWrapper from './CardWrapper';
+import CardWrapper, { CardWrapperProps } from './CardWrapper';
+import { WithSummary } from '@/types/WithSummary';
 
-export default function RevenueCard({ summary }: { summary: FinanceSummary }) {
+export default function RevenueCard({
+  summary,
+  ...props
+}: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
-    <CardWrapper
-      title="Receita Total"
-      value={summary.totalRevenue}
-      type="currency"
-      bgColor="bg-green-100"
-      textColor="text-green-800"
-    />
+    <CardWrapper title="Receita Total" value={summary.totalRevenue} type="currency" {...props} />
   );
 }

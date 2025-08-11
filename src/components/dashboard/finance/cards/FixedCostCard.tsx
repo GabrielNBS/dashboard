@@ -1,14 +1,16 @@
-import { FinanceSummary } from '@/hooks/useSummaryFinance';
-import CardWrapper from './CardWrapper';
+import CardWrapper, { CardWrapperProps } from './CardWrapper';
+import { WithSummary } from '@/types/WithSummary';
 
-export default function FixedCostCard({ summary }: { summary: FinanceSummary }) {
+export default function FixedCostCard({
+  summary,
+  ...props
+}: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
     <CardWrapper
       title="Custo Fixo Total"
       value={summary.totalFixedCost ?? 0}
       type="currency"
-      bgColor="bg-yellow-100"
-      textColor="text-yellow-800"
+      {...props}
     />
   );
 }
