@@ -8,7 +8,7 @@ import React from 'react';
  */
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Variante visual do botão */
-  variant?: 'default' | 'accept' | 'edit' | 'destructive' | 'outline' | 'ghost';
+  variant?: 'default' | 'accept' | 'edit' | 'destructive' | 'outline' | 'ghost' | 'link';
   /** Tamanho do botão */
   size?: 'sm' | 'md' | 'lg';
   /** Conteúdo do botão */

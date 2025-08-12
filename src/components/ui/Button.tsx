@@ -8,20 +8,21 @@ import { ButtonProps } from '@/types/button';
  * Define as classes CSS para diferentes variantes e tamanhos
  */
 export const button = tv({
-  base: 'inline-flex cursor-pointer items-center justify-center rounded-md text-paragraph font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
+  base: 'inline-flex cursor-pointer items-center justify-center rounded-md font-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
   variants: {
     variant: {
-      default: 'bg-accent hover:bg-accent/80 text-white',
-      accept: 'bg-green-600 hover:bg-green-700 text-white',
-      edit: 'bg-yellow-600 hover:bg-yellow-700 text-white',
-      destructive: 'bg-red-600 hover:bg-red-700 text-white',
+      default: 'bg-accent hover:bg-accent/80 text-primary',
+      accept: 'bg-great hover:bg-great-hover text-on-great',
+      edit: 'bg-warning hover:bg-warning-hover text-on-warning',
+      destructive: 'bg-critical hover:bg-critical-hover text-on-critical',
       outline: 'border border-gray-300 text-gray-700 hover:bg-gray-100',
       ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
+      link: 'bg-transparent underline-offset-4 hover:underline text-blue-600 hover:bg-transparent',
     },
     size: {
-      sm: 'px-3 py-1 text-paragraph',
-      md: 'px-4 py-2 text-subtitle',
-      lg: 'px-6 py-3 text-title',
+      sm: 'px-3 py-1 text-sm',
+      md: 'px-4 py-2 text-lg',
+      lg: 'px-6 py-3 text-xl',
     },
   },
   defaultVariants: {

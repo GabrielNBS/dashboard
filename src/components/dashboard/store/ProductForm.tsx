@@ -16,10 +16,13 @@ import {
 import UnitTypeInfo from './UnitTypeInfo';
 import { v4 as uuidv4 } from 'uuid';
 import { getQuantityInputConfig } from '@/utils/quantityInputConfig';
+import { useState } from 'react';
+import { ArrowLeftFromLine, Info } from 'lucide-react';
 
 export default function IngredientForm() {
   const { dispatch } = useIngredientContext();
   const { toast } = useToast();
+  const [toggle, setToggle] = useState(false);
 
   const {
     register,
@@ -111,8 +114,6 @@ export default function IngredientForm() {
 
   return (
     <div className="w-full">
-      <UnitTypeInfo unit={watchedUnit} />
-
       <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-wrap gap-4">
         <div className="min-w-[200px] flex-1">
           <Input
@@ -196,6 +197,12 @@ export default function IngredientForm() {
           {isSubmitting ? 'Adicionando...' : 'Adicionar'}
         </Button>
       </form>
+      <Button variant="link" className="mb-2 p-0" type="button">
+        <span onClick={() => setToggle(!toggle)} className="text-sm text-blue-600 hover:underline">
+          {toggle ? <ArrowLeftFromLine /> : <Info />}
+        </span>
+      </Button>
+      {toggle && <UnitTypeInfo unit={watchedUnit} />}
     </div>
   );
 }

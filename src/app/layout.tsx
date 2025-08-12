@@ -8,6 +8,7 @@ import { SettingsProvider } from '@/contexts/settings/SettingsContext';
 import MobileHeader from '@/components/mobile/MobileHeader';
 import { ToastProvider, ToastGlobalRegister } from '@/components/ui/use-toast';
 import { Inter } from 'next/font/google';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,36 +26,38 @@ export default function RootLayout({
       <body className={`${inter.variable} `}>
         {/* Provider do sistema de toast */}
         <ToastProvider>
-          <ToastGlobalRegister />
+          <TooltipProvider>
+            <ToastGlobalRegister />
 
-          {/* Provider do contexto de ingredientes */}
-          <IngredientProvider>
-            {/* Provider do contexto de construção de produtos */}
-            <ProductBuilderProvider>
-              {/* Provider do contexto de produtos finais */}
-              <ProductProvider>
-                {/* Provider do contexto de vendas */}
-                <SalesProvider>
-                  {/* Provider do contexto de configurações */}
-                  <SettingsProvider>
-                    {/* Layout principal com grid responsivo */}
-                    <div className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
-                      {/* Header mobile para dispositivos pequenos */}
-                      <MobileHeader />
+            {/* Provider do contexto de ingredientes */}
+            <IngredientProvider>
+              {/* Provider do contexto de construção de produtos */}
+              <ProductBuilderProvider>
+                {/* Provider do contexto de produtos finais */}
+                <ProductProvider>
+                  {/* Provider do contexto de vendas */}
+                  <SalesProvider>
+                    {/* Provider do contexto de configurações */}
+                    <SettingsProvider>
+                      {/* Layout principal com grid responsivo */}
+                      <div className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
+                        {/* Header mobile para dispositivos pequenos */}
+                        <MobileHeader />
 
-                      {/* Sidebar com navegação */}
-                      <Aside />
+                        {/* Sidebar com navegação */}
+                        <Aside />
 
-                      {/* Área principal de conteúdo */}
-                      <main className="outline-accent h-dvh min-h-dvh w-full overflow-hidden px-4 outline-1 transition-all">
-                        {children}
-                      </main>
-                    </div>
-                  </SettingsProvider>
-                </SalesProvider>
-              </ProductProvider>
-            </ProductBuilderProvider>
-          </IngredientProvider>
+                        {/* Área principal de conteúdo */}
+                        <main className="outline-accent h-dvh min-h-dvh w-full overflow-hidden px-4 outline-1 transition-all">
+                          {children}
+                        </main>
+                      </div>
+                    </SettingsProvider>
+                  </SalesProvider>
+                </ProductProvider>
+              </ProductBuilderProvider>
+            </IngredientProvider>
+          </TooltipProvider>
         </ToastProvider>
       </body>
     </html>

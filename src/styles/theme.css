@@ -19,9 +19,19 @@
 
 
   --color-great: hsl(140, 80%, 90%);
+  --color-great-hover: hsl(140, 80%, 70%);
   --color-warning: hsl(35, 100%, 90%);
+  --color-warning-hover: hsl(35, 100%, 70%);
   --color-bad: hsl(0, 80%, 90%);
+  --color-bad-hover: hsl(0, 80%, 70%);
   --color-critical: hsl(0, 60%, 70%);
+  --color-critical-hover: hsl(0, 60%, 50%);
+
+  /* Tipografia contrastante */
+  --color-on-great: hsl(140, 80%, 20%);
+  --color-on-warning: hsl(35, 100%, 25%);
+  --color-on-bad: hsl(0, 80%, 25%);
+  --color-on-critical: hsl(0, 60%, 15%);
 
   /* Tipografia */
   --text-xs: clamp(0.7rem, 0.68rem + 0.2vw, 0.75rem);

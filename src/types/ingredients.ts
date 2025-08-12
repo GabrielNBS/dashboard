@@ -5,6 +5,7 @@ export type Ingredient = {
   name: string;
   buyPrice?: number;
   quantity: number;
+  maxQuantity?: number;
   unit: UnitType;
   totalValue: number;
 };
