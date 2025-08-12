@@ -9,15 +9,13 @@
   --color-accent: hsl(33, 100%, 49%);
 
   /* Cores financeiras */
-  --color-inflow: hsl(135, 100%, 66%);
+  --color-inflow: hsl(120, 100%, 66%);
   --color-expense: hsl(0, 70%, 75%);
   --color-text-primary: hsl(0, 0%, 13%);
 
-
   /* Sombras */
-  --shadow-light: hsla(0, 0%, 100%, 0.7);
-  --shadow-dark: hsla(0, 0%, 0%, 0.15);
-
+  --shadow-light: 10px 10px 10px hsla(0, 0%, 100%, 0.7);
+  --shadow-dark: 10px 10px 0 hsla(0, 0%, 0%, 1);
 
 
   --color-great: hsl(140, 80%, 90%);

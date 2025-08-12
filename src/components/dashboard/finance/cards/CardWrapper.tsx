@@ -36,7 +36,7 @@ export default function CardWrapper({
 
   return (
     <div
-      className={`rounded-lg p-4 shadow ${bgColor} ${textColor} flex ${
+      className={`rounded-lg p-4 shadow-md transition hover:translate-y-[-4px] ${bgColor} ${textColor} flex ${
         layout === 'horizontal' ? 'flex-row items-center gap-4' : 'flex-col'
       }`}
     >
@@ -46,14 +46,15 @@ export default function CardWrapper({
           {title}
         </h3>
         <p className="text-xl font-bold">{formatValue()}</p>
-        <p className="flex items-center gap-1 text-sm">
+        <div className="flex items-center gap-1 text-sm">
           <div className="items-center gap-2 text-green-500">
-            <strong>
+            <strong className="flex items-center gap-1">
               <TrendingUp />
+              15%
             </strong>
           </div>
-          vs mes passado{' '}
-        </p>
+          <p>vs mes passado</p>
+        </div>
       </div>
     </div>
   );
