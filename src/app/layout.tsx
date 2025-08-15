@@ -40,7 +40,7 @@ export default function RootLayout({
                     {/* Provider do contexto de configurações */}
                     <SettingsProvider>
                       {/* Layout principal com grid responsivo */}
-                      <div className={`antialiased sm:grid sm:grid-cols-[15%_85%]`}>
+                      <div className={`overflow-hidden antialiased sm:grid sm:grid-cols-[15%_85%]`}>
                         {/* Header mobile para dispositivos pequenos */}
                         <MobileHeader />
 
@@ -48,7 +48,7 @@ export default function RootLayout({
                         <Aside />
 
                         {/* Área principal de conteúdo */}
-                        <main className="outline-accent h-dvh min-h-dvh w-full overflow-hidden px-4 outline-1 transition-all">
+                        <main className="outline-accent z-0 h-dvh min-h-dvh w-full overflow-hidden px-4 outline-1 transition-all">
                           {children}
                         </main>
                       </div>
