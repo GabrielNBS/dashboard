@@ -11,7 +11,7 @@ function AddIngredientList() {
         <div key={ingredient.id} className="flex items-center gap-2">
           <span className="rounded bg-purple-100 px-3 py-1 text-sm text-purple-800">
             {ingredient.name} | {ingredient.quantity} {getBaseUnit(ingredient.unit)} x R$
-            {(ingredient.buyPrice ?? 0).toFixed(2)} = R${ingredient.totalValue.toFixed(2)}
+            {(ingredient.buyPrice ?? 0).toFixed(3)} = R${ingredient.totalValue.toFixed(2)}
           </span>
           <button
             type="button"

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { ProductState } from '@/types/finalProduct';
+import { ProductState } from '@/types/products';
 import { Ingredient } from '@/types/ingredients';
 import { v4 as uuid } from 'uuid';
 

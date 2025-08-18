@@ -1,12 +1,7 @@
 import React from 'react';
 import { tv } from 'tailwind-variants';
-import { ButtonProps } from '@/types/button';
+import { ButtonProps } from '@/types/components';
 
-/**
- * Configuração de variantes do botão usando tailwind-variants
- *
- * Define as classes CSS para diferentes variantes e tamanhos
- */
 export const button = tv({
   base: 'inline-flex cursor-pointer items-center justify-center rounded-md font-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
   variants: {

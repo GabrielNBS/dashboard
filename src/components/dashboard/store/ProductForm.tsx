@@ -13,11 +13,29 @@ import {
   type IngredientFormData,
   validateQuantityByUnit,
 } from '@/schemas/validationSchemas';
-import UnitTypeInfo from './UnitTypeInfo';
+
 import { v4 as uuidv4 } from 'uuid';
 import { getQuantityInputConfig } from '@/utils/quantityInputConfig';
 import { useState } from 'react';
-import { ArrowLeftFromLine, Info } from 'lucide-react';
+import { CheckCheck, Plus } from 'lucide-react';
+
+// componentes shadcn
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function IngredientForm() {
   const { dispatch } = useIngredientContext();
@@ -91,6 +109,7 @@ export default function IngredientForm() {
       unit: data.unit,
       buyPrice: rawPrice,
       totalValue,
+      maxQuantity: normalizeQuantity(10, data.unit), // Exemplo: limite padrão de 100 unidades na unidade base
     };
 
     handleAddIngredient(newIngredient);
@@ -103,9 +122,8 @@ export default function IngredientForm() {
     });
   };
 
-  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newUnit = e.target.value as UnitType;
-    setValue('unit', newUnit);
+  const handleUnitChange = (newUnit: string) => {
+    setValue('unit', newUnit as UnitType);
 
     if (watchedQuantity) {
       validateQuantity(watchedQuantity);
@@ -113,96 +131,135 @@ export default function IngredientForm() {
   };
 
   return (
-    <div className="w-full">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-wrap gap-4">
-        <div className="min-w-[200px] flex-1">
-          <Input
-            type="text"
-            placeholder="Nome do ingrediente"
-            {...register('name')}
-            id="name"
-            aria-invalid={!!errors.name}
-            className={errors.name ? 'border-red-500' : ''}
-          />
-          {errors.name && (
-            <span className="mt-1 block text-sm text-red-500">{errors.name.message}</span>
-          )}
-        </div>
-
-        <div className="min-w-[200px] flex-1">
-          <select
-            title="Campo de medida do produto"
-            {...register('unit')}
-            onChange={handleUnitChange}
-            aria-invalid={errors.unit ? 'false' : 'true'}
-            className={`w-full rounded border p-2 ${errors.unit ? 'border-red-500' : ''}`}
+    <>
+      <Sheet open={toggle} onOpenChange={setToggle}>
+        <SheetTrigger asChild>
+          <Button
+            variant="accept"
+            className="absolute top-4 right-4 z-10"
+            type="button"
+            aria-label={toggle ? 'Fechar formulário' : 'Abrir formulário de ingrediente'}
           >
-            <option value="kg">Quilo (kg)</option>
-            <option value="l">Litro (l)</option>
-            <option value="un">Unidade</option>
-          </select>
-          {errors.unit && (
-            <span className="mt-1 block text-sm text-red-500">{errors.unit.message}</span>
-          )}
-        </div>
+            <Plus className="mr-1" />
+            {!toggle && 'Adicionar ingrediente'}
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="overflow-y-auto">
+          <SheetHeader className="mb-6 flex flex-col items-center">
+            <SheetTitle className="text-lg">Adicionar novo ingrediente</SheetTitle>
+            <SheetDescription>
+              Preencha os campos abaixo para registrar um novo ingrediente
+            </SheetDescription>
+          </SheetHeader>
 
-        <div className="min-w-[200px] flex-1">
-          {(() => {
-            const { step, min, placeholder } = getQuantityInputConfig(watchedUnit);
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <Label htmlFor="name" className="mb-2 block">
+                  Nome do ingrediente
+                </Label>
+                <Input
+                  type="text"
+                  placeholder="Ex: Farinha de trigo"
+                  {...register('name')}
+                  id="name"
+                  aria-invalid={!!errors.name}
+                  className={errors.name ? 'border-destructive' : ''}
+                />
+                {errors.name && (
+                  <span className="text-destructive mt-1 block text-sm">{errors.name.message}</span>
+                )}
+              </div>
 
-            return (
-              <Input
-                type="number"
-                step={step}
-                min={min}
-                placeholder={placeholder}
-                {...register('quantity', {
-                  onChange: e => validateQuantity(e.target.value),
-                })}
-                id="quantity"
-                className={errors.quantity ? 'border-red-500' : ''}
-              />
-            );
-          })()}
+              <div>
+                <Label htmlFor="unit" className="mb-2 block">
+                  Unidade de medida
+                </Label>
+                <Select onValueChange={handleUnitChange} value={watchedUnit}>
+                  <SelectTrigger aria-invalid={!!errors.unit}>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="kg">Quilo (kg)</SelectItem>
+                    <SelectItem value="l">Litro (l)</SelectItem>
+                    <SelectItem value="un">Unidade</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.unit && (
+                  <span className="text-destructive mt-1 block text-sm">{errors.unit.message}</span>
+                )}
+              </div>
+            </div>
 
-          {errors.quantity && (
-            <span className="mt-1 block text-sm text-red-500">{errors.quantity.message}</span>
-          )}
-        </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <Label htmlFor="quantity" className="mb-2 block">
+                  Quantidade
+                </Label>
+                {(() => {
+                  const { step, min, placeholder } = getQuantityInputConfig(watchedUnit);
+                  return (
+                    <Input
+                      type="number"
+                      step={step}
+                      min={min}
+                      placeholder={placeholder}
+                      {...register('quantity', {
+                        onChange: e => validateQuantity(e.target.value),
+                      })}
+                      id="quantity"
+                      className={errors.quantity ? 'border-destructive' : ''}
+                    />
+                  );
+                })()}
+                {errors.quantity && (
+                  <span className="text-destructive mt-1 block text-sm">
+                    {errors.quantity.message}
+                  </span>
+                )}
+              </div>
 
-        <div className="min-w-[200px] flex-1">
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="Preço de compra"
-            {...register('buyPrice')}
-            id="buyPrice"
-            min="0"
-            aria-invalid={!!errors.buyPrice}
-            className={errors.buyPrice ? 'border-red-500' : ''}
-            title='Insira o preço de compra do ingrediente, por exemplo: "10.50" para R$10,50'
-          />
-          {errors.buyPrice && (
-            <span className="mt-1 block text-sm text-red-500">{errors.buyPrice.message}</span>
-          )}
-        </div>
+              <div>
+                <Label htmlFor="buyPrice" className="mb-2 block">
+                  Preço de compra (R$)
+                </Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="Ex: R$5,99"
+                  {...register('buyPrice')}
+                  id="buyPrice"
+                  min="0"
+                  aria-invalid={!!errors.buyPrice}
+                  className={errors.buyPrice ? 'border-destructive' : ''}
+                />
+                {errors.buyPrice && (
+                  <span className="text-destructive mt-1 block text-sm">
+                    {errors.buyPrice.message}
+                  </span>
+                )}
+              </div>
+            </div>
 
-        <Button
-          variant="accept"
-          type="submit"
-          disabled={isSubmitting}
-          className="min-w-[120px] self-end"
-          aria-label="Adicionar ingrediente"
-        >
-          {isSubmitting ? 'Adicionando...' : 'Adicionar'}
-        </Button>
-      </form>
-      <Button variant="link" className="mb-2 p-0" type="button">
-        <span onClick={() => setToggle(!toggle)} className="text-sm text-blue-600 hover:underline">
-          {toggle ? <ArrowLeftFromLine /> : <Info />}
-        </span>
-      </Button>
-      {toggle && <UnitTypeInfo unit={watchedUnit} />}
-    </div>
+            <div className="flex justify-end gap-3 pt-4">
+              <Button variant="outline" type="button" onClick={() => setToggle(false)}>
+                Cancelar
+              </Button>
+              <Button variant="accept" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  'Adicionando...'
+                ) : (
+                  <p className="flex h-12 items-center gap-1 rounded-xl text-base font-bold">
+                    {' '}
+                    <CheckCheck />
+                    Adicionar ingrediente
+                  </p>
+                )}
+              </Button>
+            </div>
+          </form>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

@@ -106,7 +106,7 @@ export default function IngredientSelector() {
           <div className="flex flex-wrap items-center gap-4">
             <span className="font-medium">
               Valor por {getBaseUnit(selectedIngredient.unit)}: R${' '}
-              {(selectedIngredient.buyPrice ?? 0).toFixed(2)}
+              {(selectedIngredient.buyPrice ?? 0).toFixed(3)}
             </span>
 
             {/* Input de quantidade (será normalizada se necessário) */}

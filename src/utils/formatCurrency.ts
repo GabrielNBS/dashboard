@@ -18,12 +18,12 @@ export function formatCurrency(value: number): string {
       style: 'currency',
       currency: 'BRL',
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      maximumFractionDigits: 3,
     }).format(value);
   } catch (error) {
     console.error('Erro ao formatar moeda:', error);
     // Fallback para formatação manual
-    return `R$ ${value.toFixed(2).replace('.', ',')}`;
+    return `R$ ${value.toFixed(3).replace('.', ',')}`;
   }
 }
 

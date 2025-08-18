@@ -38,7 +38,7 @@
   --text-sm: clamp(0.8rem, 0.75rem + 0.3vw, 0.875rem);
   --text-md: clamp(0.95rem, 0.9rem + 0.35vw, 1rem);
   --text-lg: clamp(1.1rem, 1rem + 0.4vw, 1.25rem);
-  --text-xl: clamp(1.3rem, 1.2rem + 0.45vw, 1.5rem);
+  --text-xl: clamp(1.7rem, 1.6rem + 0.7vw, 2.1rem);
   --text-hero: clamp(2.5rem, 2.5rem + 1.5vw, 3rem);
 
   /* Espaçamento e borda */

@@ -4,9 +4,13 @@ import ProductForm from '@/components/dashboard/store/ProductForm';
 import ProductEditModal from '@/components/dashboard/store/ProductEditModal';
 import ProductTable from '@/components/dashboard/store/ProductTable';
 
-export default function DashboardPage() {
+export default function Store() {
   return (
     <div className="relative flex flex-col items-center justify-center gap-4 p-6">
+      <div className="flex w-full flex-col items-start justify-start">
+        <h2 className="text-xl font-bold">Controle de Estoque</h2>
+        <p className="text-md text-foreground">Gerencie seus ingrediente e produtos </p>
+      </div>
       <ProductForm />
       <ProductTable />
       <ProductEditModal />

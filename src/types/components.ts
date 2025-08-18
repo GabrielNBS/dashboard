@@ -18,3 +18,14 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Se o botão está desabilitado */
   disabled?: boolean;
 };
+
+export interface FormErrorProps {
+  message?: string;
+  className?: string;
+}
+
+export interface NumericInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  error?: string;
+  quickIncrements?: number[];
+}

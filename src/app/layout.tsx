@@ -48,7 +48,7 @@ export default function RootLayout({
                         <Aside />
 
                         {/* Área principal de conteúdo */}
-                        <main className="outline-accent z-0 h-dvh min-h-dvh w-full overflow-hidden px-4 outline-1 transition-all">
+                        <main className="outline-accent z-0 h-dvh min-h-dvh w-full overflow-y-scroll px-4 outline-1 transition-all">
                           {children}
                         </main>
                       </div>

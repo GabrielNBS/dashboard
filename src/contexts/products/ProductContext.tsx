@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useReducer, ReactNode, useEffect, useContext } from 'react';
-import { ProductState } from '@/types/finalProduct';
+import { ProductState } from '@/types/products';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 interface ProductListState {
