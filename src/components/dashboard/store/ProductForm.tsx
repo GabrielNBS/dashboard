@@ -225,7 +225,7 @@ export default function IngredientForm() {
                 </Label>
                 <Input
                   type="number"
-                  step="0.01"
+                  step="0.001"
                   placeholder="Ex: R$5,99"
                   {...register('buyPrice')}
                   id="buyPrice"

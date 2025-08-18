@@ -23,7 +23,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip } from '@radix-ui/react-tooltip';
 import { TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import CardWrapper from '../finance/cards/CardWrapper';
-import SearchInput from '@/components/ui/SearchInput';
 
 function getStockStatus(quantity: number, maxQuantity: number) {
   if (!maxQuantity) return 'normal';
@@ -71,7 +70,7 @@ export default function IngredientCardList() {
   return (
     <>
       {/* Cards de Resumo */}
-      <div className="flex w-full flex-col items-end justify-between gap-4 sm:flex-row">
+      <div className="flex w-full flex-row justify-between gap-6 lg:flex-col">
         <div className="flex gap-6">
           <CardWrapper
             title="Ingredientes"
@@ -103,11 +102,10 @@ export default function IngredientCardList() {
             subtitle={'em estoque'}
           />
         </div>
-        <SearchInput />
       </div>
 
       {/* Lista de Ingredientes */}
-      <div className="mt-6 grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-2">
+      <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-2">
         {sortedIngredients.map(ingredient => {
           const status = getStockStatus(ingredient.quantity, ingredient.maxQuantity ?? 100);
           const stockPercentage = (ingredient.quantity / (ingredient.maxQuantity ?? 100)) * 100;

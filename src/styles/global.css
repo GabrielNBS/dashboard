@@ -3,7 +3,6 @@
 @import './components/button.css';
 @import './components/card.css';
 @import './components/toast.css';
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 

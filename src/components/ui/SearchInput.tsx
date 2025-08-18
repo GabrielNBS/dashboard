@@ -1,31 +1,67 @@
-import { useState } from 'react';
-import { Search, X } from 'lucide-react'; // Ícones do lucide-react
+// components/ui/SearchInput.tsx
+'use client';
 
-export default function SearchInput() {
-  const [query, setQuery] = useState('');
+import { SearchableInputProps } from '@/types/components';
+import { useState, useEffect } from 'react';
+
+export default function SearchableInput<T>({
+  items,
+  onSelectItem,
+  displayAttribute,
+  placeholder = 'Buscar...',
+  className = '',
+  onInputChange,
+  inputValue = '',
+}: SearchableInputProps<T>) {
+  const [localValue, setLocalValue] = useState(inputValue);
+
+  useEffect(() => {
+    setLocalValue(inputValue);
+  }, [inputValue]);
+
+  const filteredItems = items.filter(item =>
+    String(item[displayAttribute]).toLowerCase().includes(localValue.toLowerCase())
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocalValue(value);
+    if (onInputChange) onInputChange(value);
+  };
+
+  const handleSelect = (item: T) => {
+    if (onSelectItem) {
+      onSelectItem(item);
+    }
+    setLocalValue('');
+    if (onInputChange) onInputChange('');
+  };
 
   return (
-    <div className="relative flex">
-      {/* Ícone de busca */}
-      <Search className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" size={18} />
-
-      {/* Campo de busca */}
+    <div className={`relative ${className}`}>
       <input
         type="text"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        placeholder="Buscar Ingrediente"
-        className="w-full rounded-xl border border-gray-300 bg-white py-2 pr-10 pl-10 text-sm text-gray-700 shadow-sm transition outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+        placeholder={placeholder}
+        value={localValue}
+        onChange={handleChange}
+        className="w-full rounded border p-2"
       />
 
-      {/* Botão de limpar */}
-      {query && (
-        <button
-          onClick={() => setQuery('')}
-          className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100"
-        >
-          <X size={14} />
-        </button>
+      {localValue && (
+        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded bg-white shadow-lg">
+          {filteredItems.map((item, index) => (
+            <li
+              key={index}
+              onClick={() => handleSelect(item)}
+              className="cursor-pointer px-4 py-2 hover:bg-gray-100"
+            >
+              {String(item[displayAttribute])}
+            </li>
+          ))}
+          {filteredItems.length === 0 && (
+            <li className="px-4 py-2 text-sm text-gray-400">Nenhum item encontrado</li>
+          )}
+        </ul>
       )}
     </div>
   );

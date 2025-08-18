@@ -28,7 +28,6 @@ export default function RootLayout({
         <ToastProvider>
           <TooltipProvider>
             <ToastGlobalRegister />
-
             {/* Provider do contexto de ingredientes */}
             <IngredientProvider>
               {/* Provider do contexto de construção de produtos */}

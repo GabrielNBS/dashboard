@@ -6,6 +6,7 @@ import { Ingredient } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { getBaseUnit, normalizeQuantity } from '@/utils/normalizeQuantity';
 import AddIngredientList from './addIngredientList';
+import SearchableInput from '@/components/ui/SearchInput';
 
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();
@@ -15,14 +16,9 @@ export default function IngredientSelector() {
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
   const [quantity, setQuantity] = useState<string>('1');
 
-  // Filtro em tempo real dos ingredientes com base no input
-  const filtered = estoque.ingredients.filter(ingredient =>
-    ingredient.name.toLowerCase().includes(inputValue.toLowerCase())
-  );
-
   const handleSelectIngredient = (ingredient: Ingredient) => {
     setSelectedIngredient(ingredient);
-    setInputValue(ingredient.name); // Preenche o campo com o nome selecionado
+    setInputValue(ingredient.name);
   };
 
   const handleAddIngredient = () => {
@@ -39,7 +35,6 @@ export default function IngredientSelector() {
       return;
     }
 
-    // Converte automaticamente kg → g, l → ml, etc
     const normalizedQuantity = normalizeQuantity(parsedInput, selectedIngredient.unit);
 
     const alreadyAdded = finalProduct.ingredients.some(
@@ -58,8 +53,8 @@ export default function IngredientSelector() {
         name: selectedIngredient.name,
         buyPrice: selectedIngredient.buyPrice,
         unit: selectedIngredient.unit,
-        quantity: normalizedQuantity, // Quantidade já normalizada
-        totalValue: normalizedQuantity * (selectedIngredient.buyPrice ?? 0), // Preço por unidade base
+        quantity: normalizedQuantity,
+        totalValue: normalizedQuantity * (selectedIngredient.buyPrice ?? 0),
       },
     });
 
@@ -70,37 +65,15 @@ export default function IngredientSelector() {
 
   return (
     <div className="relative w-full space-y-4">
-      {/* Input de busca de ingrediente */}
-      <input
-        type="text"
+      <SearchableInput<Ingredient>
+        items={estoque.ingredients}
+        onSelectItem={handleSelectIngredient}
+        displayAttribute="name"
         placeholder="Digite o nome do ingrediente"
-        value={inputValue}
-        onChange={e => {
-          setInputValue(e.target.value);
-          setSelectedIngredient(null); // Limpa a seleção ao digitar novamente
-        }}
-        className="w-full rounded border p-2"
+        inputValue={inputValue}
+        onInputChange={setInputValue}
       />
 
-      {/* Lista de sugestões */}
-      {inputValue && !selectedIngredient && (
-        <ul className="absolute z-10 mt-1 w-full rounded bg-white shadow-lg">
-          {filtered.map(item => (
-            <li
-              key={item.id}
-              onClick={() => handleSelectIngredient(item)}
-              className="cursor-pointer px-4 py-2 hover:bg-gray-100"
-            >
-              {item.name}
-            </li>
-          ))}
-          {filtered.length === 0 && (
-            <li className="px-4 py-2 text-sm text-gray-400">Nenhum ingrediente encontrado</li>
-          )}
-        </ul>
-      )}
-
-      {/* Formulário com ingrediente selecionado */}
       {selectedIngredient && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-4">
@@ -109,7 +82,6 @@ export default function IngredientSelector() {
               {(selectedIngredient.buyPrice ?? 0).toFixed(3)}
             </span>
 
-            {/* Input de quantidade (será normalizada se necessário) */}
             <input
               type="number"
               placeholder="Quantidade"
@@ -120,7 +92,6 @@ export default function IngredientSelector() {
               className="w-24 rounded border p-2"
             />
 
-            {/* Cálculo em tempo real do valor total com base na unidade base */}
             <span>
               Total: R${' '}
               {(() => {
@@ -140,7 +111,6 @@ export default function IngredientSelector() {
             </button>
           </div>
 
-          {/* Exibe a quantidade já convertida */}
           <span className="ml-[2px] text-xs text-gray-500">
             Quantidade normalizada:{' '}
             {(() => {

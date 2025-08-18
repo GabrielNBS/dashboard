@@ -29,3 +29,13 @@ export interface NumericInputProps extends React.InputHTMLAttributes<HTMLInputEl
   error?: string;
   quickIncrements?: number[];
 }
+
+export type SearchableInputProps<T> = {
+  items: T[];
+  onSelectItem?: (item: T) => void;
+  displayAttribute: keyof T;
+  placeholder?: string;
+  className?: string;
+  onInputChange?: (value: string) => void;
+  inputValue?: string;
+};
