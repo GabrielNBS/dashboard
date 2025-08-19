@@ -21,7 +21,7 @@ import {
   DrawerDescription,
   DrawerFooter,
 } from '@/components/ui/drawer';
-import { TooltipTrigger, Tooltip, TooltipContent } from '@/components/ui/tooltip';
+
 import React from 'react';
 
 import EditFormFields from '@/components/ui/EditFormField';
@@ -115,45 +115,32 @@ export default function IngredientEditPanel() {
           </div>
 
           <DrawerFooter className="flex flex-row justify-center gap-3 border-t bg-gray-50 px-6 pt-4 pb-6">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  className="flex h-12 max-w-[150px] gap-1 rounded-xl text-base font-bold"
-                  onClick={handleClose}
-                >
-                  <CircleX className="h-4 w-4" />
-                  Cancelar
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Cancelar edição</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="submit"
-                  form="ingredient-edit-form"
-                  variant="accept"
-                  className="flex h-12 max-w-[150px] gap-1 rounded-xl text-base font-bold"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    'Salvando...'
-                  ) : (
-                    <>
-                      <CheckCheck />
-                      Salvar
-                    </>
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Salvar alterações</p>
-              </TooltipContent>
-            </Tooltip>
+            <Button
+              type="button"
+              variant="destructive"
+              className="flex h-12 max-w-[150px] gap-1 rounded-xl text-base font-bold"
+              onClick={handleClose}
+            >
+              <CircleX className="h-4 w-4" />
+              Cancelar
+            </Button>
+
+            <Button
+              type="submit"
+              form="ingredient-edit-form"
+              variant="accept"
+              className="flex h-12 max-w-[150px] gap-1 rounded-xl text-base font-bold"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                'Salvando...'
+              ) : (
+                <>
+                  <CheckCheck />
+                  Salvar
+                </>
+              )}
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </div>

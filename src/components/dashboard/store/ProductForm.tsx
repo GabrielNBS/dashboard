@@ -135,13 +135,14 @@ export default function IngredientForm() {
       <Sheet open={toggle} onOpenChange={setToggle}>
         <SheetTrigger asChild>
           <Button
-            variant="accept"
-            className="absolute top-4 right-4 z-10"
+            variant="default"
+            className="fixed right-15 bottom-4 z-10"
             type="button"
             aria-label={toggle ? 'Fechar formulário' : 'Abrir formulário de ingrediente'}
+            size="xl"
+            tooltip={{ tooltipContent: 'Adicionar novo ingrediente' }}
           >
             <Plus className="mr-1" />
-            {!toggle && 'Adicionar ingrediente'}
           </Button>
         </SheetTrigger>
         <SheetContent className="overflow-y-auto">

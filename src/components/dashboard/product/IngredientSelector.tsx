@@ -6,7 +6,7 @@ import { Ingredient } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { getBaseUnit, normalizeQuantity } from '@/utils/normalizeQuantity';
 import AddIngredientList from './addIngredientList';
-import SearchableInput from '@/components/ui/SearchInput';
+import SearchableInput from '@/components/ui/SearcheableInput';
 
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();

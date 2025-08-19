@@ -40,7 +40,7 @@ export default function CardWrapper({
 
   return (
     <div
-      className={`w-full rounded-lg p-4 shadow-md transition hover:translate-y-[-4px] ${bgColor} ${textColor} flex ${
+      className={`w-full rounded-lg p-4 shadow-md transition ${bgColor} ${textColor} hover:border-primary hover:${bgColor} flex border-b-4 border-transparent ${
         layout === 'horizontal' ? 'flex-row items-center gap-4' : 'flex-col'
       }`}
     >

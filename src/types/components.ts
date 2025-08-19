@@ -7,16 +7,14 @@ import React from 'react';
  * e adiciona propriedades customizadas para variantes e tamanhos.
  */
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  /** Variante visual do botão */
   variant?: 'default' | 'accept' | 'edit' | 'destructive' | 'outline' | 'ghost' | 'link';
-  /** Tamanho do botão */
-  size?: 'sm' | 'md' | 'lg';
-  /** Conteúdo do botão */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   children: React.ReactNode;
-  /** Classes CSS adicionais */
   className?: string;
-  /** Se o botão está desabilitado */
   disabled?: boolean;
+  tooltip?: {
+    tooltipContent: string;
+  };
 };
 
 export interface FormErrorProps {
