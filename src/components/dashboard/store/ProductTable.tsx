@@ -8,40 +8,106 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import { formatQuantity } from '@/utils/normalizeQuantity';
 import { Trash2, Edit3, Package, BadgeDollarSign, AlertTriangle, AlertOctagon } from 'lucide-react';
 
-// Components
+// UI Components
 import Button from '@/components/ui/Button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/Progress';
 import { Badge } from '@/components/ui/badge';
 import CardWrapper from '../finance/cards/CardWrapper';
 import SearchInput from '@/components/ui/SearchInput';
-import FilterSelect from '@/components/ui/FilterSelect';
+import StatusPulse from '@/components/ui/StatusPulse';
 
-type StockStatus = 'critico' | 'atencao' | 'normal';
-type StatusFilter = StockStatus | 'all';
+// ============================================================
+// 🔹 Tipos e constantes auxiliares
+// ============================================================
 
-// Função pura para calcular status do estoque
-function getStockStatus(quantity: number, maxQuantity: number): StockStatus {
+// Status possíveis para ingredientes
+type StatusFilter = 'critico' | 'atencao' | 'normal' | 'all';
+
+// Definição dos filtros rápidos
+const FILTERS = [
+  { id: 'all', label: 'Todos', color: 'bg-gray-100' },
+  { id: 'critico', label: 'Crítico', color: 'bg-red-100' },
+  { id: 'atencao', label: 'Atenção', color: 'bg-yellow-100' },
+  { id: 'normal', label: 'Normal', color: 'bg-green-100' },
+] as const;
+
+// Ordem de prioridade usada no sort
+const priorityOrder: Record<'critico' | 'atencao' | 'normal', number> = {
+  critico: 0,
+  atencao: 1,
+  normal: 2,
+};
+
+// ============================================================
+// 🔹 Componente de Filtros Rápidos
+// ============================================================
+function QuickFilters({
+  activeFilter,
+  onChange,
+}: {
+  activeFilter: StatusFilter;
+  onChange: (v: StatusFilter) => void;
+}) {
+  const statusColors: Record<StatusFilter, string> = {
+    critico: 'bg-red-500',
+    atencao: 'bg-yellow-500',
+    normal: 'bg-green-500',
+    all: 'bg-gray-400',
+  };
+
+  return (
+    <div className="flex flex-wrap gap-3">
+      {FILTERS.map(filter => (
+        <button
+          key={filter.id}
+          onClick={() => onChange(filter.id as StatusFilter)}
+          className="relative w-full sm:w-auto"
+        >
+          {/* Badge pulse no canto superior direito */}
+          <div className="absolute top-2 right-2">
+            <StatusPulse color={statusColors[filter.id as StatusFilter]} />
+          </div>
+
+          <CardWrapper
+            title={filter.label}
+            value=""
+            bgColor={activeFilter === filter.id ? `${filter.color} border-primary` : 'bg-surface'}
+            textColor={activeFilter === filter.id ? 'text-primary' : 'text-muted-foreground'}
+            layout="vertical"
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// 🔹 Função utilitária para calcular status do estoque
+// ============================================================
+function getStockStatus(quantity: number, maxQuantity: number) {
   if (!maxQuantity || maxQuantity <= 0) return 'normal';
-
   const percentage = (quantity / maxQuantity) * 100;
   if (percentage < 15) return 'critico';
   if (percentage < 30) return 'atencao';
   return 'normal';
 }
 
+// ============================================================
+// 🔹 Card de um ingrediente individual
+// ============================================================
 interface IngredientCardProps {
   ingredient: Ingredient;
   onEdit: (ingredient: Ingredient) => void;
   onDelete: (ingredientId: string) => void;
 }
 
-// Componente de card individual refatorado
 const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) => {
   const maxQuantity = ingredient.maxQuantity ?? 0;
   const status = getStockStatus(ingredient.quantity, maxQuantity);
   const stockPercentage = maxQuantity > 0 ? (ingredient.quantity / maxQuantity) * 100 : 0;
 
+  // Configuração de status para exibição
   const statusConfig = {
     critico: {
       text: 'Crítico',
@@ -64,6 +130,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
 
   return (
     <Card className="transition-shadow hover:shadow-md">
+      {/* Cabeçalho */}
       <CardHeader className="flex flex-row items-center gap-3">
         <CardTitle className="flex-1 truncate">{ingredient.name}</CardTitle>
         <Badge className="capitalize">{ingredient.unit}</Badge>
@@ -75,6 +142,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
         </Badge>
       </CardHeader>
 
+      {/* Conteúdo */}
       <CardContent className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-muted-foreground text-sm">Quantidade</p>
@@ -85,6 +153,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
           <p className="font-semibold">{formatCurrency(ingredient.buyPrice ?? 0)}</p>
         </div>
 
+        {/* Barra de progresso */}
         <div className="col-span-2 mt-3">
           <div className="text-foreground mb-1 flex justify-between text-sm">
             <span>Nível do Estoque</span>
@@ -94,23 +163,21 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
         </div>
       </CardContent>
 
+      {/* Rodapé com ações */}
       <CardFooter className="flex justify-end gap-2 pt-4">
         <Button
           size="sm"
           variant="edit"
           onClick={() => onEdit(ingredient)}
           aria-label={`Editar ${ingredient.name}`}
-          tooltip={{ tooltipContent: 'Editar ingrediente' }}
         >
           <Edit3 className="h-4 w-4" />
         </Button>
-
         <Button
           size="sm"
           variant="destructive"
           onClick={() => onDelete(ingredient.id)}
           aria-label={`Excluir ${ingredient.name}`}
-          tooltip={{ tooltipContent: 'Excluir ingrediente' }}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -119,16 +186,18 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
   );
 };
 
+// ============================================================
+// 🔹 Lista de Ingredientes (com filtros e resumo)
+// ============================================================
 export default function IngredientCardList() {
   const { state, dispatch } = useIngredientContext();
   const { ingredients } = state;
   const hydrated = useHydrated();
 
-  // Estados para filtragem
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
-  // Pré-calcula status e valores
+  // Calcula ingredientes com status + resumo
   const { ingredientsWithStatus, summary } = useMemo(() => {
     const ingredientsWithStatus = ingredients.map(ingredient => ({
       ...ingredient,
@@ -151,7 +220,7 @@ export default function IngredientCardList() {
     };
   }, [ingredients]);
 
-  // Filtragem e ordenação
+  // Aplica busca + filtro + ordenação
   const filteredIngredients = useMemo(() => {
     const searchLower = search.toLowerCase();
     return ingredientsWithStatus
@@ -161,15 +230,14 @@ export default function IngredientCardList() {
         return matchesSearch && matchesStatus;
       })
       .sort((a, b) => {
-        const priorityOrder: Record<StockStatus, number> = {
-          critico: 0,
-          atencao: 1,
-          normal: 2,
-        };
-        return priorityOrder[a.status] - priorityOrder[b.status];
+        return (
+          priorityOrder[a.status as keyof typeof priorityOrder] -
+          priorityOrder[b.status as keyof typeof priorityOrder]
+        );
       });
   }, [ingredientsWithStatus, search, statusFilter]);
 
+  // Evita erro no Next.js SSR
   if (!hydrated) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -178,6 +246,7 @@ export default function IngredientCardList() {
     );
   }
 
+  // Ações
   const handleDelete = (id: string) => {
     if (confirm('Tem certeza que deseja excluir este ingrediente?')) {
       dispatch({ type: 'DELETE_INGREDIENT', payload: id });
@@ -188,9 +257,12 @@ export default function IngredientCardList() {
     dispatch({ type: 'OPEN_EDIT_MODAL', payload: ingredient });
   };
 
+  // ============================================================
+  // Renderização final
+  // ============================================================
   return (
     <div className="w-full space-y-6">
-      {/* Cards de Resumo */}
+      {/* 🔸 Cards de Resumo */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <CardWrapper
           title="Ingredientes"
@@ -218,7 +290,7 @@ export default function IngredientCardList() {
         />
       </div>
 
-      {/* Filtros */}
+      {/* 🔸 Filtros */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <SearchInput
           placeholder="Buscar ingrediente..."
@@ -226,22 +298,10 @@ export default function IngredientCardList() {
           onChange={setSearch}
           className="flex-1"
         />
-
-        <div className="w-full sm:w-48">
-          <FilterSelect
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={[
-              { value: 'all', label: 'Todos' },
-              { value: 'critico', label: 'Crítico' },
-              { value: 'atencao', label: 'Atenção' },
-              { value: 'normal', label: 'Normal' },
-            ]}
-          />
-        </div>
+        <QuickFilters activeFilter={statusFilter} onChange={setStatusFilter} />
       </div>
 
-      {/* Lista de Ingredientes */}
+      {/* 🔸 Lista de Ingredientes */}
       {filteredIngredients.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {filteredIngredients.map(ingredient => (

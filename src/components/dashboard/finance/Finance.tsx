@@ -60,7 +60,7 @@ export default function Finance() {
         <CardWrapper title="Custo Fixo Total" value={totalFixedCost ?? 0} type="currency" />
         <CardWrapper title="Lucro Bruto" value={grossProfit} type="currency" />
         <CardWrapper title="Lucro Líquido" value={netProfit} type="currency" />
-        <CardWrapper title="Margem de Lucro" value={margin} type="percent" />
+        <CardWrapper title="Margem de Lucro" value={margin} type="percentage" />
         <CardWrapper title="Valor a Pagar" value={valueToSave ?? 0} type="currency" />
         <CardWrapper title="Ponto de Equilíbrio" value={breakEven ?? 0} type="currency" />
       </div>

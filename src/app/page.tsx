@@ -28,14 +28,14 @@ export default function DashboardContent() {
       {/* Cabeçalho */}
       <header className="grid-cols-1">
         <h1 className="text-primary text-hero font-bold">
-          Bom dia, <strong className="text-accent">{storeName}</strong>
+          Bom dia, <strong className="text-primary">{storeName}</strong>
         </h1>
-        <p className="text-lg text-gray-500">Resumo das métricas e atividades recentes.</p>
+        <p className="text-foreground text-lg">Resumo das métricas e atividades recentes.</p>
       </header>
 
       {/* Grade de Cards */}
       <section className="bg-surface grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <NetProfitCard summary={netProfit} bgColor="bg-inflow" icon={<DollarSign />} />
+        <NetProfitCard summary={netProfit} bgColor="bg-accent" icon={<DollarSign />} />
         <RevenueCard summary={revenue} icon={<ChartBarIcon />} />
         <VariableCostCard summary={variableCost} icon={<CoinsIcon />} />
         <ProfitMarginCard summary={margin} icon={<PercentIcon />} />
