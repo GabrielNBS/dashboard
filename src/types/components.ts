@@ -1,4 +1,5 @@
 import React from 'react';
+import { Ingredient } from './ingredients';
 
 /**
  * Props do componente Button
@@ -37,3 +38,11 @@ export type SearchableInputProps<T> = {
   onInputChange?: (value: string) => void;
   inputValue?: string;
 };
+
+export type StatusFilter = 'critico' | 'atencao' | 'normal' | 'all';
+
+export interface IngredientCardProps {
+  ingredient: Ingredient;
+  onEdit: (ingredient: Ingredient) => void;
+  onDelete: (ingredientId: string) => void;
+}

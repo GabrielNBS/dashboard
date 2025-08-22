@@ -1,45 +1,60 @@
-'use client';
-
-import { useState } from 'react';
-
-import { Filter } from 'lucide-react';
+import { StatusFilter } from '@/types/components';
 import CardWrapper from '../dashboard/finance/cards/CardWrapper';
+import StatusPulse from './StatusPulse';
 
-type FilterOption = {
-  id: string;
-  label: string;
-  color?: string;
-};
+function QuickFilters({
+  activeFilter,
+  onChange,
+}: {
+  activeFilter: StatusFilter;
+  onChange: (v: StatusFilter) => void;
+}) {
+  // Definição dos filtros rápidos
+  const FILTERS = [
+    { id: 'all', label: 'Todos', color: 'bg-gray-100' },
+    { id: 'critico', label: 'Crítico', color: 'bg-red-100' },
+    { id: 'atencao', label: 'Atenção', color: 'bg-yellow-100' },
+    { id: 'normal', label: 'Normal', color: 'bg-green-100' },
+  ] as const;
 
-const FILTERS: FilterOption[] = [
-  { id: 'today', label: 'Hoje', color: 'bg-blue-100' },
-  { id: 'week', label: 'Semana', color: 'bg-green-100' },
-  { id: 'month', label: 'Mês', color: 'bg-yellow-100' },
-  { id: 'year', label: 'Ano', color: 'bg-purple-100' },
-];
+  const statusColors: Record<StatusFilter, string> = {
+    critico: 'bg-on-bad',
+    atencao: 'bg-on-warning',
+    normal: 'bg-on-great',
+    all: 'bg-foreground',
+  };
 
-export default function QuickFilters() {
-  const [activeFilter, setActiveFilter] = useState<string>('today');
+  const backgroundStatusColors: Record<StatusFilter, string> = {
+    critico: 'bg-bad',
+    atencao: 'bg-warning',
+    normal: 'bg-great',
+    all: 'bg-surface',
+  };
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-3">
       {FILTERS.map(filter => (
         <button
           key={filter.id}
-          onClick={() => setActiveFilter(filter.id)}
-          className="w-full sm:w-auto"
+          onClick={() => onChange(filter.id as StatusFilter)}
+          className="relative w-full sm:w-auto"
         >
+          {/* Badge pulse no canto superior direito */}
+          <div className="absolute top-2 right-2">
+            <StatusPulse color={statusColors[filter.id as StatusFilter]} />
+          </div>
+
           <CardWrapper
             title={filter.label}
-            value={activeFilter === filter.id ? 'Ativo' : ''}
-            bgColor={activeFilter === filter.id ? `${filter.color} border-primary` : 'bg-surface'}
-            textColor={activeFilter === filter.id ? 'text-primary' : 'text-muted-foreground'}
+            value=""
+            bgColor={backgroundStatusColors[filter.id as StatusFilter]}
+            textColor={activeFilter === filter.id ? 'text-primary' : 'text-muteds'}
             layout="vertical"
-            icon={<Filter />}
-            subtitle={activeFilter === filter.id ? 'Filtrando...' : undefined}
           />
         </button>
       ))}
     </div>
   );
 }
+
+export default QuickFilters;

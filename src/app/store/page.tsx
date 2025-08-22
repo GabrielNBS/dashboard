@@ -2,7 +2,7 @@
 
 import ProductForm from '@/components/dashboard/store/ProductForm';
 import ProductEditModal from '@/components/dashboard/store/ProductEditModal';
-import ProductTable from '@/components/dashboard/store/ProductTable';
+import ProductTable from '@/components/dashboard/store/IngredientList';
 
 export default function Store() {
   return (

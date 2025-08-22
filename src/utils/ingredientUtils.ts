@@ -44,16 +44,11 @@ export function formatUnitDisplay(quantity: number, unit: string): string {
  * getStockStatus(2, 'un') // "Estoque baixo"
  * getStockStatus(10, 'un') // "Em estoque"
  */
-export function getStockStatus(
-  quantity: number,
-  unit: string
-): 'Em estoque' | 'Estoque baixo' | 'Sem estoque' {
-  // Define threshold baseado na unidade
-  // Para unidades: 3 unidades
-  // Para peso/volume: 300g ou 300ml (equivalente a ~3 unidades)
-  const threshold = unit === 'un' ? 3 : 300;
 
-  if (quantity === 0) return 'Sem estoque';
-  if (quantity < threshold) return 'Estoque baixo';
-  return 'Em estoque';
+export function getStockStatus(quantity: number, maxQuantity: number) {
+  if (!maxQuantity || maxQuantity <= 0) return 'normal';
+  const percentage = (quantity / maxQuantity) * 100;
+  if (percentage < 15) return 'critico';
+  if (percentage < 30) return 'atencao';
+  return 'normal';
 }
