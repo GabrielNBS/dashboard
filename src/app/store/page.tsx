@@ -1,7 +1,7 @@
 'use client';
 
-import ProductForm from '@/components/dashboard/store/ProductForm';
-import ProductEditModal from '@/components/dashboard/store/ProductEditModal';
+import ProductForm from '@/components/dashboard/store/IngredientForm';
+import ProductEditModal from '@/components/dashboard/store/IngredientEditPanel';
 import ProductTable from '@/components/dashboard/store/IngredientList';
 
 export default function Store() {

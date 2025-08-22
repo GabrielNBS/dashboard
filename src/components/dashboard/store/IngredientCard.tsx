@@ -76,6 +76,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
           variant="edit"
           onClick={() => onEdit(ingredient)}
           aria-label={`Editar ${ingredient.name}`}
+          tooltip={{ tooltipContent: 'Editar ingrediente' }}
         >
           <Edit3 className="h-4 w-4" />
         </Button>
@@ -84,6 +85,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
           variant="destructive"
           onClick={() => onDelete(ingredient.id)}
           aria-label={`Excluir ${ingredient.name}`}
+          tooltip={{ tooltipContent: 'Excluir ingrediente' }}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
