@@ -13,6 +13,7 @@ const badgeVariants = cva(
         normal: 'border-transparent bg-great text-on-great  [a&]:hover:bg-great',
         warning: 'border-transparent bg-warning text-on-warning [a&]:hover:bg-warning',
         danger: 'border-transparent bg-critical text-on-critical [a&]:hover:bg-critical',
+        outline: 'border-primary bg-transparent text-primary [a&]:hover:bg-primary/80',
       },
     },
     defaultVariants: {

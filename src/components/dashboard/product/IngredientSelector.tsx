@@ -64,7 +64,8 @@ export default function IngredientSelector() {
   };
 
   return (
-    <div className="relative w-full space-y-4">
+    <div className="relative w-full">
+      <label className="font-medium">Selecione os ingredientes</label>
       <SearchableInput<Ingredient>
         items={estoque.ingredients}
         onSelectItem={handleSelectIngredient}

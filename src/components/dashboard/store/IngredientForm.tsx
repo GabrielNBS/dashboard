@@ -139,10 +139,10 @@ export default function IngredientForm() {
             className="fixed right-15 bottom-4 z-10"
             type="button"
             aria-label={toggle ? 'Fechar formulário' : 'Abrir formulário de ingrediente'}
-            size="xl"
-            tooltip={{ tooltipContent: 'Adicionar novo ingrediente' }}
+            size="md"
           >
             <Plus className="mr-1" />
+            Adicionar ingrediente
           </Button>
         </SheetTrigger>
         <SheetContent className="overflow-y-auto">

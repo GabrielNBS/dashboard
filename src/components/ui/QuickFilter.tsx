@@ -6,7 +6,7 @@ function QuickFilters({
   activeFilter,
   onChange,
 }: {
-  activeFilter: StatusFilter;
+  activeFilter: StatusFilter | string;
   onChange: (v: StatusFilter) => void;
 }) {
   // Definição dos filtros rápidos

@@ -19,26 +19,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
   const profitValue = sellingPrice - totalCost;
 
   return (
-    <Card className="flex overflow-hidden rounded-xl border-0 py-0 shadow-lg transition-all hover:shadow-md">
+    <Card className="flex overflow-hidden rounded-xl border-0 shadow-lg transition-all hover:shadow-md">
       <div className="flex w-full flex-col">
         {/* Header com fundo colorido e informações principais */}
-        <CardHeader className="bg-muted-foreground/10 text-surface p-4">
+        <CardHeader className="text-surface p-4">
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className="text-primary mb-1 flex items-center gap-2 text-xl font-black">
+              <CardTitle className="text-muted-foreground mb-1 flex items-center gap-2 text-xl font-bold">
                 {product.name}
               </CardTitle>
               <div className="mt-2 flex items-center gap-2">
-                <Badge variant="default" className="bg-accent text-surface flex items-center gap-1">
+                <Badge variant="outline">
                   <Tag className="h-3 w-3" />
                   {product.category}
                 </Badge>
-                <Badge variant="default" className="bg-accent text-surface flex items-center gap-1">
+                <Badge variant="outline">
                   <Scale className="h-3 w-3" />
                   {product.productionMode === 'lote' ? 'Produção em Lote' : 'Unitário'}
                 </Badge>
                 {profitMargin < 0 && (
-                  <Badge variant="warning" className="flex items-center gap-1 py-1">
+                  <Badge variant="danger" className="flex items-center gap-1 py-1">
                     <AlertTriangle className="h-3 w-3" />
                     Prejuízo
                   </Badge>
@@ -52,6 +52,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                 variant="ghost"
                 className="text-primary hover:bg-primary/20 h-8 w-8 p-0"
                 aria-label="Remover produto"
+                tooltip={{ tooltipContent: 'remover produto' }}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -61,6 +62,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                 variant="ghost"
                 className="text-primary hover:bg-primary/20 h-8 w-8 p-0"
                 aria-label="Editar produto"
+                tooltip={{ tooltipContent: 'Editar produto' }}
               >
                 <Edit2 className="h-4 w-4" />
               </Button>
@@ -70,10 +72,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
 
         <CardContent className="p-4">
           {/* Margem com destaque visual */}
-          <div className={`mb-4 rounded-lg p-3 ${profitMargin >= 0 ? 'bg-great' : 'bg-bad'}`}>
+          <div className={`mb-4 rounded-lg p-3 ${profitMargin >= 0 ? 'bg-muted' : 'bg-bad'}`}>
             <p className="text-muted-foreground mb-1 text-xs font-medium">Margem</p>
             <div
-              className={`text-lg font-bold ${profitMargin >= 0 ? 'text-on-great' : 'text-on-critical'}`}
+              className={`text-xl font-bold ${profitMargin >= 0 ? 'text-primary' : 'text-on-critical'}`}
             >
               {profitMargin.toFixed(1)}%
               <span className="mt-1 block text-sm">
@@ -87,7 +89,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
           <div className="mb-4 grid grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3">
               <p className="text-muted-foreground mb-1 text-xs font-medium">Custo</p>
-              <p className="text-destructive text-lg font-bold">{formatCurrency(totalCost)}</p>
+              <p className="text-primary text-lg font-bold">{formatCurrency(totalCost)}</p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3">
               <p className="text-muted-foreground mb-1 text-xs font-medium">Venda</p>
@@ -107,7 +109,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             <Progress
               value={sellingPrice > 0 ? (totalCost / sellingPrice) * 100 : 0}
               className="h-2"
-              stats={profitMargin >= 0 ? 'bg-green-500' : 'bg-red-500'}
+              stats={profitMargin >= 0 ? 'bg-on-great' : 'bg-on-bad'}
             />
           </div>
 
@@ -142,7 +144,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               {product.ingredients.map(ingredient => (
                 <li
                   key={ingredient.id}
-                  className="bg-muted/30 flex justify-between rounded p-2 text-sm"
+                  className="bg-muted/30 flex justify-between rounded p-3 text-sm"
                 >
                   <span className="font-medium">- {ingredient.name}</span>
                   <span>
@@ -156,7 +158,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
           </details>
         </CardContent>
 
-        <CardFooter className="bg-muted/30 text-muted-foreground mb-2 flex justify-between px-4 py-2 text-xs">
+        <CardFooter className="text-muted-foreground mb-2 flex justify-between p-3 text-xs">
           <span>ID: {product.uid}</span>
           <span>Atualizado em: {new Date().toLocaleDateString()}</span>
         </CardFooter>
