@@ -1,75 +1,78 @@
+import React from 'react';
 import Button from '@/components/ui/Button';
 import { useProductContext } from '@/contexts/products/ProductContext';
-import React from 'react';
+import { ProductState } from '@/types/products';
+import { ProductCard } from './ProductCard';
+import { Package } from 'lucide-react';
 
-function ProductsList() {
+// Componente principal ProductsList
+const ProductsList: React.FC = () => {
   const { state, dispatch } = useProductContext();
 
   if (!state) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-center">
+          <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
+          <p>Carregando produtos...</p>
+        </div>
+      </div>
+    );
   }
 
+  if (state.products.length === 0) {
+    return (
+      <div className="py-12 text-center">
+        <Package className="text-muted-foreground mx-auto mb-4 h-16 w-16" />
+        <h3 className="mb-2 text-lg font-medium">Nenhum produto cadastrado</h3>
+        <p className="text-muted-foreground mb-4">
+          Comece adicionando seu primeiro produto à lista.
+        </p>
+        <Button onClick={() => dispatch({ type: 'TOGGLE_FORM_VISIBILITY' })}>
+          Adicionar Produto
+        </Button>
+      </div>
+    );
+  }
+
+  const handleRemoveProduct = (productId: string): void => {
+    const product = state.products.find(p => p.uid === productId);
+    if (product) {
+      const confirm = window.confirm(`Tem certeza que deseja remover o produto ${product.name}?`);
+      if (confirm) {
+        dispatch({ type: 'REMOVE_PRODUCT', payload: productId });
+      }
+    }
+  };
+
+  const handleSetProductToEdit = (product: ProductState): void => {
+    dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
+    setTimeout(() => {
+      dispatch({ type: 'SET_PRODUCT_TO_EDIT', payload: product });
+    }, 0);
+  };
+
   return (
-    <ul className="space-y-4">
-      {state.products.map(prod => {
-        const totalCost = prod.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
-        const sellingPrice = prod.sellingPrice ?? 0;
-        const profitMargin = ((sellingPrice - (prod.totalCost ?? 0)) / sellingPrice) * 100 || 0;
+    <div className="space-y-6">
+      <div className="flex items-center justify-self-end">
+        <span className="text-muted-foreground">
+          {state.products.length} {state.products.length === 1 ? 'produto' : 'produtos'}
+        </span>
+      </div>
 
-        return (
-          <li key={prod.uid} className="rounded border bg-white p-4 text-sm shadow-sm">
-            <Button
-              type="button"
-              onClick={() => {
-                const confirm = window.confirm(
-                  `Tem certeza que deseja remover o produto ${prod.name}?`
-                );
-                if (confirm) {
-                  dispatch({ type: 'REMOVE_PRODUCT', payload: prod.uid });
-                }
-              }}
-              variant="ghost"
-            >
-              remover
-            </Button>
-            <Button
-              type="button"
-              onClick={() => {
-                dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
-
-                setTimeout(() => {
-                  dispatch({ type: 'SET_PRODUCT_TO_EDIT', payload: prod });
-                }, 0);
-              }}
-              variant="ghost"
-            >
-              editar
-            </Button>
-            <h3 className="text-lg font-semibold">{prod.name}</h3>
-            <p className="text-gray-600">Categoria: {prod.category}</p>
-            <p className="text-gray-600">Receita: {prod.productionMode}</p>
-            {prod.productionMode === 'lote' && (
-              <p className="text-gray-600">Rendimento: {prod.yieldQuantity} unidades</p>
-            )}
-            <ul className="mt-2">
-              {prod.ingredients.map(ingredient => (
-                <li key={ingredient.id} className="flex justify-between">
-                  - {ingredient.name} ({ingredient.quantity} {ingredient.unit} x R$
-                  {(ingredient.buyPrice ?? 0).toFixed(2)}) = R$
-                  {ingredient.totalValue.toFixed(2)}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-2 flex justify-end gap-4 font-medium">
-              <span>Preço de custo: R${totalCost.toFixed(2)}</span>
-              <span>Preço de venda: R${sellingPrice.toFixed(2)}</span>
-              <span>Margem de lucro: {profitMargin.toFixed(2)}%</span>
-            </div>
+      <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-3">
+        {state.products.map(product => (
+          <li key={product.uid} className="list-none">
+            <ProductCard
+              product={product}
+              onEdit={handleSetProductToEdit}
+              onRemove={handleRemoveProduct}
+            />
           </li>
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+    </div>
   );
-}
+};
 
 export default ProductsList;

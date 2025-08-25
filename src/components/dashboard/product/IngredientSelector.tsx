@@ -105,13 +105,13 @@ export default function IngredientSelector() {
             <button
               type="button"
               onClick={handleAddIngredient}
-              className="rounded bg-purple-600 px-4 py-2 text-white"
+              className="bg-accent text-background rounded px-4 py-2"
             >
               Adicionar
             </button>
           </div>
 
-          <span className="ml-[2px] text-xs text-gray-500">
+          <span className="text-muted-foreground ml-[2px] text-xs">
             Quantidade normalizada:{' '}
             {(() => {
               const parsed = parseFloat(quantity);

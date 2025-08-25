@@ -32,20 +32,24 @@ export default function Product() {
   };
 
   return (
-    <div className="p-default w-full rounded-lg shadow-md">
+    <div className="p-default w-full rounded-lg">
       {openForm ? (
         <RegisterIngredientForm onClose={handleCloseForm} />
       ) : (
         <>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-bold">Produtos Cadastrados</h2>
-            <Button onClick={handleOpenNewForm} className="h-12 w-12 rounded-full">
-              <PlusIcon className="h-6 w-6" />
+            <Button
+              onClick={handleOpenNewForm}
+              className="absolute right-12 bottom-12 h-18 w-18 rounded-full"
+              tooltip={{ tooltipContent: 'criar novo produto' }}
+            >
+              <PlusIcon className="h-8 w-8" />
             </Button>
           </div>
 
           {products.length === 0 ? (
-            <span className="text-gray-500">Nenhum produto cadastrado.</span>
+            <span className="text-muted-foreground">Nenhum produto cadastrado.</span>
           ) : (
             <ProductsList />
           )}

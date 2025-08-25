@@ -126,7 +126,7 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
       </h2>
 
       {isEditMode && productToEdit && (
-        <div className="rounded bg-yellow-100 p-2 text-sm text-yellow-700">
+        <div className="bg-warning text-on-warning rounded p-2 text-sm">
           Editando: <strong>{productToEdit.name}</strong> — qualquer alteração será aplicada ao
           produto existente.
         </div>
@@ -207,11 +207,13 @@ export default function RegisterIngredientForm({ onClose }: { onClose?: () => vo
           </div>
           <div>
             <span className="text-sm font-semibold">Preço Sugerido:</span>
-            <span className="block text-xl text-gray-500">R$ {suggestedPrice.toFixed(2)}</span>
+            <span className="text-muted-foreground block text-xl">
+              R$ {suggestedPrice.toFixed(2)}
+            </span>
           </div>
           <div>
             <span className="text-sm font-semibold">Lucro Real:</span>
-            <span className="block text-xl text-green-700">{realProfitMargin.toFixed(2)}%</span>
+            <span className="text-on-great block text-xl">{realProfitMargin.toFixed(2)}%</span>
           </div>
         </div>
 
