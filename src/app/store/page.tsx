@@ -9,7 +9,7 @@ export default function Store() {
     <div className="relative flex flex-col items-center justify-center gap-6 p-6">
       <div className="flex w-full flex-col items-start justify-start">
         <h2 className="text-xl font-bold">Controle de Estoque</h2>
-        <p className="text-md text-foreground">Gerencie seus ingrediente e produtos </p>
+        <p className="text-md text-muted-foreground">Gerencie seus ingrediente e produtos </p>
       </div>
       <ProductForm />
       <ProductTable />

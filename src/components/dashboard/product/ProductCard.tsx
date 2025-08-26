@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Progress } from '@/components/ui/Progress';
 import { ProductState } from '@/types/products';
 import { formatCurrency } from '@/utils/formatCurrency';
-import { Edit2, List, PieChart, Scale, Tag, Trash2, AlertTriangle } from 'lucide-react';
+import { Edit2, List, PieChart, Scale, Tag, Trash2, AlertTriangle, InfoIcon } from 'lucide-react';
 
 interface ProductCardProps {
   product: ProductState;
@@ -73,7 +73,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
         <CardContent className="p-4">
           {/* Margem com destaque visual */}
           <div className={`mb-4 rounded-lg p-3 ${profitMargin >= 0 ? 'bg-muted' : 'bg-bad'}`}>
-            <p className="text-muted-foreground mb-1 text-xs font-medium">Margem</p>
+            <div className="flex justify-between">
+              <p className="text-muted-foreground mb-1 text-xs font-medium">Margem</p>
+              <InfoIcon className="h-4 w-4 cursor-pointer" />
+            </div>
             <div
               className={`text-xl font-bold ${profitMargin >= 0 ? 'text-primary' : 'text-on-critical'}`}
             >

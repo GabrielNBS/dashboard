@@ -115,8 +115,8 @@ export function SearchResultsContainer<T extends FilterableItem>({
     return (
       <div className="flex h-64 items-center justify-center rounded-lg border">
         <div className="flex flex-col items-center space-y-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
-          <p className="text-sm text-gray-500">Carregando...</p>
+          <div className="border-muted-foreground border-t-accent h-8 w-8 animate-spin rounded-full border-2"></div>
+          <p className="text-muted text-sm">Carregando...</p>
         </div>
       </div>
     );
@@ -133,10 +133,10 @@ export function SearchResultsContainer<T extends FilterableItem>({
     const finalEmptyState = { ...defaultEmptyState, ...emptyState };
 
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border py-12">
+      <div className="flex flex-col items-center justify-center gap-4 rounded-lg border py-12">
         {finalEmptyState.icon}
         <h3 className="text-lg font-medium">{finalEmptyState.title}</h3>
-        <p className="text-muted-foreground max-w-md text-center">{finalEmptyState.description}</p>
+        <p className="text-muted-foreground w-full text-center">{finalEmptyState.description}</p>
         {finalEmptyState.action && <div className="mt-4">{finalEmptyState.action}</div>}
       </div>
     );
@@ -176,13 +176,16 @@ export function FilterStats({
 
   return (
     <div
-      className={`flex items-center justify-between rounded-lg bg-blue-50 p-3 text-sm ${className}`}
+      className={`bg-accent/50 flex items-center justify-between rounded-lg p-3 text-sm ${className}`}
     >
-      <span className="text-blue-800">
+      <span className="text-primary">
         Mostrando <strong>{filteredCount}</strong> de <strong>{totalCount}</strong> itens
       </span>
       {onClearFilters && (
-        <button onClick={onClearFilters} className="font-medium text-blue-600 hover:text-blue-800">
+        <button
+          onClick={onClearFilters}
+          className="text-primary hover:text-primary/80 cursor-pointer font-medium"
+        >
           Limpar filtros
         </button>
       )}

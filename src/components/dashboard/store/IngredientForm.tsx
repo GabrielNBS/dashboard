@@ -246,14 +246,14 @@ export default function IngredientForm() {
               <Button variant="outline" type="button" onClick={() => setToggle(false)}>
                 Cancelar
               </Button>
-              <Button variant="accept" type="submit" disabled={isSubmitting}>
+              <Button className="p-4" variant="accept" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   'Adicionando...'
                 ) : (
-                  <p className="flex h-12 items-center gap-1 rounded-xl text-base font-bold">
+                  <p className="flex items-center gap-2">
                     {' '}
                     <CheckCheck />
-                    Adicionar ingrediente
+                    Adicionar
                   </p>
                 )}
               </Button>

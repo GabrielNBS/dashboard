@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
-import { Plus } from 'lucide-react';
+import { CheckCheck, Plus } from 'lucide-react';
 import ProductsList from '@/components/dashboard/product/ProductsList';
 import { useProductContext } from '@/contexts/products/ProductContext';
-import { CheckIcon, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import CategoryList from '@/components/ui/CategoryList';
 import Input from '@/components/ui/Input';
@@ -168,7 +168,7 @@ export default function Product() {
   return (
     <div className="w-full rounded-lg p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Produtos Cadastrados</h2>
+        <h2 className="text-xl font-bold">Produtos Cadastrados</h2>
         <Button size="md" onClick={handleOpenNewForm} className="fixed right-15 bottom-4 z-10">
           <Plus className="mr-1" />
           Novo Produto
@@ -188,7 +188,7 @@ export default function Product() {
 
       <Sheet open={openForm} onOpenChange={setOpenForm}>
         <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-2xl">
-          <SheetHeader>
+          <SheetHeader className="text-center">
             <SheetTitle>{isEditMode ? 'Editar produto' : 'Adicionar produto'}</SheetTitle>
             <SheetDescription>
               {isEditMode
@@ -277,8 +277,9 @@ export default function Product() {
                 <Input
                   type="number"
                   min={0}
-                  step={1}
-                  value={customMargin}
+                  max={99}
+                  step={0}
+                  value={customMargin.toFixed(0)}
                   onChange={e => setCustomMargin(Number(e.target.value))}
                   className="w-full rounded border p-2"
                 />
@@ -315,11 +316,8 @@ export default function Product() {
                   <X className="h-5 w-5" />
                   Cancelar
                 </Button>
-                <Button
-                  type="submit"
-                  className="bg-on-great hover:bg-great-hover flex items-center gap-2"
-                >
-                  <CheckIcon className="h-5 w-5" />
+                <Button type="submit" className="flex items-center gap-2 p-4" variant="accept">
+                  <CheckCheck className="h-5 w-5" />
                   {isEditMode ? 'Atualizar' : 'Adicionar'}
                 </Button>
               </div>

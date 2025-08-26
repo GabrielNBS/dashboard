@@ -37,8 +37,8 @@ export default function CategoryList() {
           onClick={() => handleSelect(category)}
           className={`rounded px-4 py-2 text-sm font-medium transition-colors ${
             state.category === category
-              ? 'bg-purple-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              ? 'bg-accent text-primary'
+              : 'bg-primary text-muted hover:bg-primary/90'
           }`}
         >
           {category}

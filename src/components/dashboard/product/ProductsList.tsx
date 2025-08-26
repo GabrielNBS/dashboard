@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { ProductState } from '@/types/products';
 import { ProductCard } from './ProductCard';
-import { Package, Plus } from 'lucide-react';
+import { Package, Plus, SearchIcon } from 'lucide-react';
 import SearchInput from '@/components/ui/SearchInput';
 
 // Importações dos componentes reutilizáveis
@@ -75,13 +75,14 @@ const ProductsList: React.FC = () => {
             {totalItems !== 1 ? 's' : ''}
           </span>
           {hasActiveFilters && (
-            <span className="text-sm text-blue-600">
+            <span className="text-accent text-sm">
               • {filteredCount} encontrado{filteredCount !== 1 ? 's' : ''}
             </span>
           )}
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <SearchIcon />
           <SearchInput
             placeholder="Buscar produtos..."
             value={search}
