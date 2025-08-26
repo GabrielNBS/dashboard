@@ -3,13 +3,13 @@ import { Ingredient } from './ingredients';
 type ProductionMode = 'individual' | 'lote';
 
 export interface ProductState {
-  uid: string; // identificador único do produto
+  uid: string;
   name: string;
   category: string;
   productionMode: ProductionMode;
   yieldQuantity?: number;
-  totalCost?: number; // custo total dos ingredientes
-  sellingPrice?: number; // preço de venda sugerido
-  profitMargin?: number; // margem de lucro customizada
+  totalCost: number;
+  sellingPrice: number;
+  profitMargin?: number;
   ingredients: Ingredient[];
 }

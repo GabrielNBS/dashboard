@@ -1,5 +1,5 @@
 // hooks/useSummaryFinance.tsx
-// Hook customizado para calcular resumos financeiros baseados em vendas e custos fixos
+// Hook customizado para calcular resumos financeiros baseados em vendas e custos fixos/variáveis
 
 import { useMemo } from 'react';
 import { Sale } from '@/types/sale';
@@ -17,9 +17,6 @@ import {
   getTotalUnitsSold,
 } from '@/utils/finance';
 
-/**
- * Interface para o resumo financeiro calculado
- */
 export interface FinanceSummary {
   totalRevenue: number;
   totalVariableCost?: number;
@@ -29,23 +26,14 @@ export interface FinanceSummary {
   margin: number;
   valueToSave?: number;
   breakEven?: number;
-  totalUnitsSold?: number;
+  totalUnitsSold?: number; // ✅ incluído no retorno
 }
 
 /**
  * Hook customizado para calcular resumos financeiros
  *
- * Calcula automaticamente receita, custos, lucros e margens baseado nas vendas
- * e custos fixos fornecidos.
- *
- * @param sales - Array de vendas realizadas
- * @param fixedCosts - Array de custos fixos (opcional, usa configurações se não fornecido)
- * @param savingRate - Taxa de poupança em percentual (opcional, usa configurações se não fornecido)
- * @returns Objeto com todos os cálculos financeiros
- *
- * @example
- * const summary = useFinanceSummary(sales, fixedCosts, 0.15);
- * console.log(summary.netProfit); // Lucro líquido
+ * Calcula automaticamente receita, custos, lucros e margens baseado nas vendas,
+ * custos fixos/variáveis e taxa de poupança configurada.
  */
 export function useFinanceSummary(
   sales: Sale[],
@@ -59,41 +47,41 @@ export function useFinanceSummary(
     // Usa custos fixos das configurações se não fornecidos
     const effectiveFixedCosts = fixedCosts || settings.fixedCosts;
 
-    // Usa custos fixos das configurações se não fornecidos
+    // Usa custos variáveis das configurações se não fornecidos
     const effectiveVariableCosts = variableCosts || settings.variableCosts;
 
     // Usa taxa de poupança das configurações se não fornecida
     const effectiveSavingRate = savingRate ?? settings.financial.emergencyReservePercentage / 100;
 
-    // Calcula receita total das vendas
+    // Receita total
     const totalRevenue = getTotalRevenue(sales);
 
-    // Calcula a quantidade de unidades vendidas
+    // Quantidade total de unidades vendidas
     const totalUnitsSold = getTotalUnitsSold(sales);
 
-    // Calcula custo variável total (ingredientes, embalagens ... utilizados)
+    // Custos variáveis totais (ingredientes, embalagens, etc.)
     const totalVariableCost = getTotalVariableCost(
       effectiveVariableCosts,
       totalRevenue,
       totalUnitsSold
     );
 
-    // Calcula custo fixo total mensal
+    // Custos fixos totais mensais
     const totalFixedCost = getTotalFixedCost(effectiveFixedCosts);
 
-    // Calcula lucro bruto (receita - custo variável)
+    // Lucro bruto
     const grossProfit = getGrossProfit(totalRevenue, totalVariableCost);
 
-    // Calcula lucro líquido (receita - custo variável - custo fixo)
+    // Lucro líquido
     const netProfit = getNetProfit(totalRevenue, totalVariableCost, totalFixedCost);
 
-    // Calcula margem de lucro percentual
+    // Margem de lucro (%)
     const margin = getProfitMargin(netProfit, totalRevenue);
 
-    // Calcula valor a ser reservado do lucro
+    // Valor a ser reservado (poupança)
     const valueToSave = getValueToSave(netProfit, effectiveSavingRate);
 
-    // Calcula o valor necessário para alcançar o ponto de equilíbrio entre despesas fixas e variáveis quando comparado ao lucro total
+    // Ponto de equilíbrio
     const breakEven = getBreakEven(totalFixedCost, totalVariableCost, totalRevenue);
 
     return {
@@ -105,6 +93,7 @@ export function useFinanceSummary(
       margin,
       valueToSave,
       breakEven,
+      totalUnitsSold, // ✅ agora incluso
     };
-  }, [sales, fixedCosts, savingRate, settings]);
+  }, [sales, fixedCosts, variableCosts, savingRate, settings]); // ✅ incluiu variableCosts
 }

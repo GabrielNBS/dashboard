@@ -286,17 +286,17 @@ export default function Product() {
               </div>
 
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="bg-muted rounded-lg p-3">
+                <div className="bg-muted flex flex-col rounded-lg p-3">
                   <span className="mb-1 block text-sm font-semibold">Custo Total:</span>
                   <span className="text-on-red text-xl font-bold">R$ {totalCost.toFixed(2)}</span>
                 </div>
-                <div className="bg-muted rounded-lg p-3">
+                <div className="bg-muted flex flex-col rounded-lg p-3">
                   <span className="mb-1 block text-sm font-semibold">Preço Sugerido:</span>
                   <span className="text-muted-foreground text-xl font-bold">
                     R$ {suggestedPrice.toFixed(2)}
                   </span>
                 </div>
-                <div className="bg-muted rounded-lg p-3">
+                <div className="bg-muted flex flex-col rounded-lg p-3">
                   <span className="mb-1 block text-sm font-semibold">Margem Real:</span>
                   <span
                     className={`text-xl font-bold ${realProfitMargin >= 0 ? 'text-on-great' : 'text-on-red'}`}

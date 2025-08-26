@@ -55,7 +55,7 @@ function SheetContent({
           'bg-surface data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
           // Estilos responsivos para desktop/mobile
           side === 'right' &&
-            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-xl',
+            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-2/5',
           side === 'left' &&
             'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-full max-w-[90vw] border-r md:max-w-md lg:max-w-lg xl:max-w-xl',
           side === 'top' &&

@@ -245,3 +245,15 @@ export function getTotalUnitsSold(sales: Sale[]): number {
     return total + quantidade;
   }, 0);
 }
+
+export interface StockValidation {
+  isValid: boolean;
+  missingIngredients?: string[];
+}
+
+export interface PriceCalculation {
+  subtotal: number;
+  discount: number;
+  fee: number;
+  total: number;
+}
