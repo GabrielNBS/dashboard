@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/base/Button';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { ProductState } from '@/types/products';
 import { ProductCard } from './ProductCard';
 import { Package, Plus, SearchIcon } from 'lucide-react';
-import SearchInput from '@/components/ui/SearchInput';
+import SearchInput from '@/components/ui/forms/SearchInput';
 
 // Importações dos componentes reutilizáveis
-import { useItemFilter, SearchResultsContainer, FilterStats } from '@/hooks/useFilter';
+import { useItemFilter, SearchResultsContainer, FilterStats } from '@/lib/hooks/ui/useFilter';
 
 // Componente principal ProductsList
 const ProductsList: React.FC = () => {

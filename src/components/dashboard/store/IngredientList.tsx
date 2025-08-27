@@ -3,19 +3,19 @@
 import { useMemo } from 'react';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { Ingredient } from '@/types/ingredients';
-import { useHydrated } from '@/hooks/useHydrated';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { useHydrated } from '@/lib/hooks/ui/useHydrated';
+import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
 import { Package, BadgeDollarSign, AlertTriangle, AlertOctagon } from 'lucide-react';
 
 // UI Components
 import CardWrapper from '../finance/cards/CardWrapper';
-import SearchInput from '@/components/ui/SearchInput';
+import SearchInput from '@/components/ui/forms/SearchInput';
 import QuickFilters from '@/components/ui/QuickFilter';
-import { getStockStatus } from '@/utils/ingredientUtils';
+import { getStockStatus } from '@/lib/utils/helpers/ingredientUtils';
 import IngredientCard from './IngredientCard';
 
 // Importações dos componentes reutilizáveis
-import { useItemFilter, SearchResultsContainer, FilterStats } from '@/hooks/useFilter';
+import { useItemFilter, SearchResultsContainer, FilterStats } from '@/lib/hooks/ui/useFilter';
 
 // Ordem de prioridade para ordenação
 const priorityOrder: Record<'critico' | 'atencao' | 'normal', number> = {

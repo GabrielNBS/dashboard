@@ -1,9 +1,9 @@
-import { Badge } from '@/components/ui/badge';
-import Button from '@/components/ui/Button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/base/Badge';
+import Button from '@/components/ui/base/Button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/base/Card';
 import { Progress } from '@/components/ui/Progress';
 import { ProductState } from '@/types/products';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
 import { Edit2, List, PieChart, Scale, Tag, Trash2, AlertTriangle, InfoIcon } from 'lucide-react';
 
 interface ProductCardProps {

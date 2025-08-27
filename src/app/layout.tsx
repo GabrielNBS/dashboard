@@ -1,14 +1,14 @@
 import '../styles/global.css';
-import Aside from '@/components/dashboard/home/Aside';
+import Aside from '@/components/layout/Navigation/Aside';
 import { IngredientProvider } from '@/contexts/Ingredients/IngredientsContext';
 import { ProductBuilderProvider } from '@/contexts/products/ProductBuilderContext';
 import { ProductProvider } from '@/contexts/products/ProductContext';
 import { SalesProvider } from '@/contexts/sales/SalesContext';
 import { SettingsProvider } from '@/contexts/settings/SettingsContext';
-import MobileHeader from '@/components/mobile/MobileHeader';
-import { ToastProvider, ToastGlobalRegister } from '@/components/ui/use-toast';
+import MobileHeader from '@/components/layout/Headers/MobileHeader';
+import { ToastProvider, ToastGlobalRegister } from '@/components/ui/feedback/use-toast';
 import { Inter } from 'next/font/google';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { TooltipProvider } from '@/components/ui/feedback/tooltip';
 
 const inter = Inter({
   subsets: ['latin'],

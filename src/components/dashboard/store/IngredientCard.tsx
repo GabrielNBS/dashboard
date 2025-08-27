@@ -1,11 +1,11 @@
-import { Badge } from '@/components/ui/badge';
-import Button from '@/components/ui/Button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/base/Badge';
+import Button from '@/components/ui/base/Button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/base/Card';
 import { Progress } from '@/components/ui/Progress';
 import { IngredientCardProps } from '@/types/components';
-import { formatCurrency } from '@/utils/formatCurrency';
-import { getStockStatus } from '@/utils/ingredientUtils';
-import { formatQuantity } from '@/utils/normalizeQuantity';
+import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
+import { getStockStatus } from '@/lib/utils/helpers/ingredientUtils';
+import { formatQuantity } from '@/lib/utils/helpers/normalizeQuantity';
 import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 
 const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) => {

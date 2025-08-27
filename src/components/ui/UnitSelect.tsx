@@ -2,9 +2,9 @@
 
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
-import FormError from './FormError';
+import FormError from './forms/FormError';
 import clsx from 'clsx';
-import { Label } from './label';
+import { Label } from './base/label';
 
 const UnitSelect = () => {
   const {

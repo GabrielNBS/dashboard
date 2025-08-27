@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { Info } from 'lucide-react';
 import React from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils/helpers/cn';
 
 interface RevenueGoalCardProps {
   goalAmount: number;

@@ -8,7 +8,7 @@ import { FinancialLineChart } from '@/components/dashboard/home/KpiMetrics';
 
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { useFinanceSummary } from '@/hooks/useSummaryFinance';
+import { useFinanceSummary } from '@/lib/hooks/business/useSummaryFinance';
 import { ChartBarIcon, PercentIcon, DollarSign, CoinsIcon } from 'lucide-react';
 
 // pages/dashboard.tsx

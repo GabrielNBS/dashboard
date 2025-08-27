@@ -1,9 +1,9 @@
 import React from 'react';
 import FormError from './FormError';
-import Button from './Button';
+import Button from '../base/Button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Label } from './label';
-import Input from './Input';
+import { Label } from '../base/label';
+import Input from '../base/Input';
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import clsx from 'clsx';
 import { useFormContext } from 'react-hook-form';

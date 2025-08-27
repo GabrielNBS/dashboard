@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import Input from '@/components/ui/Input';
+import Input from '@/components/ui/base/Input';
 import { Store, Upload } from 'lucide-react';
 
 export default function StoreSettingsSection() {
