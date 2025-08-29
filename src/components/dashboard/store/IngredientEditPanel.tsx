@@ -66,7 +66,7 @@ export default function IngredientEditPanel() {
     const rawQuantity = parseFloat(data.quantity);
     const rawPrice = data.buyPrice ? parseFloat(data.buyPrice) : 0;
     const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
-    const totalValue = normalizedQuantity * rawPrice;
+    const priceInStock = (rawPrice / normalizedQuantity) * normalizedQuantity;
 
     const updatedIngredient: Ingredient = {
       ...ingredientToEdit!,
@@ -74,7 +74,7 @@ export default function IngredientEditPanel() {
       quantity: normalizedQuantity,
       unit: data.unit,
       buyPrice: rawPrice,
-      totalValue,
+      priceInStock,
     };
 
     dispatch({ type: 'EDIT_INGREDIENT', payload: updatedIngredient });

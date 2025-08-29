@@ -67,7 +67,6 @@ const ProductsList: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header com contador e busca */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <span className="text-muted-foreground text-sm">
@@ -150,8 +149,8 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({ products }) => {
           };
         }
         acc[category].count += 1;
-        acc[category].totalValue += product.sellingPrice || 0;
-        acc[category].avgMargin += product.profitMargin || 0;
+        acc[category].totalValue += product.production.sellingPrice || 0;
+        acc[category].avgMargin += product.production.profitMargin || 0;
         return acc;
       },
       {} as Record<string, { count: number; totalValue: number; avgMargin: number }>

@@ -37,7 +37,7 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
                 <td className="p-2">{new Date(sale.date).toLocaleDateString()}</td>
                 <td className="p-2">{item.product.name}</td>
                 <td className="p-2">{item.quantity}</td>
-                <td className="p-2">R$ {item.product.sellingPrice.toFixed(2)}</td>
+                <td className="p-2">R$ {item.product.production.sellingPrice.toFixed(2)}</td>
                 <td className="p-2">R$ {item.subtotal.toFixed(2)}</td>
                 {/* total geral da venda aparece apenas na última linha do grupo */}
                 {idx === 0 ? (

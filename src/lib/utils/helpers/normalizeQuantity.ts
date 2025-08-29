@@ -64,7 +64,7 @@ export function denormalizeQuantity(normalizedQuantity: number, unit: UnitType):
 /**
  * Calcula o custo por unidade baseada no tipo de unidade.
  *
- * @param totalValue - Valor total pago
+ * @param buyPrice - Valor total pago
  * @param quantity - Quantidade comprada
  * @param unit - Unidade de medida
  * @returns Custo por unidade base
@@ -73,7 +73,7 @@ export function denormalizeQuantity(normalizedQuantity: number, unit: UnitType):
  * calculateUnitCost(100, 2, 'kg') // 0.05 (custo por grama)
  * calculateUnitCost(50, 10, 'un') // 5 (custo por unidade)
  */
-export function calculateUnitCost(totalValue: number, quantity: number, unit: UnitType): number {
+export function calculateUnitCost(buyPrice: number, quantity: number, unit: UnitType): number {
   const normalizedQty = normalizeQuantity(quantity, unit);
 
   if (normalizedQty === 0) return 0;
@@ -81,16 +81,16 @@ export function calculateUnitCost(totalValue: number, quantity: number, unit: Un
   switch (unit) {
     case 'kg':
       // Custo por grama
-      return totalValue / normalizedQty;
+      return buyPrice / normalizedQty;
 
     case 'l':
       // Custo por mililitro
-      return totalValue / normalizedQty;
+      return buyPrice / normalizedQty;
 
     case 'un':
     default:
       // Custo por unidade
-      return totalValue / normalizedQty;
+      return buyPrice / normalizedQty;
   }
 }
 

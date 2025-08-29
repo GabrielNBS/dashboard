@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Progress } from '@/components/ui/Progress';
 import { IngredientCardProps } from '@/types/components';
 import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
-import { getStockStatus } from '@/lib/utils/helpers/ingredientUtils';
+import { getStockStatus } from '@/lib/utils/calculations/calcSale';
 import { formatQuantity } from '@/lib/utils/helpers/normalizeQuantity';
 import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 

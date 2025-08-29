@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/Progress';
 import { ProductState } from '@/types/products';
 import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
 import { Edit2, List, PieChart, Scale, Tag, Trash2, AlertTriangle, InfoIcon } from 'lucide-react';
+import { calculateRealProfitMarginFromProduction } from '@/utils/calcSale';
 
 interface ProductCardProps {
   product: ProductState;
@@ -13,15 +14,15 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRemove }) => {
-  const totalCost = product.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
-  const sellingPrice = product.sellingPrice ?? 0;
-  const profitMargin = sellingPrice > 0 ? ((sellingPrice - totalCost) / sellingPrice) * 100 : 0;
-  const profitValue = sellingPrice - totalCost;
+  const { production, ingredients } = product;
+  const { totalCost, sellingPrice, mode, yieldQuantity } = production;
+
+  const realProfitValue = sellingPrice - totalCost;
+  const displayProfitMargin = calculateRealProfitMarginFromProduction(production, sellingPrice);
 
   return (
     <Card className="flex overflow-hidden rounded-xl border-0 shadow-lg transition-all hover:shadow-md">
       <div className="flex w-full flex-col">
-        {/* Header com fundo colorido e informações principais */}
         <CardHeader className="text-surface p-4">
           <div className="flex items-start justify-between">
             <div>
@@ -35,9 +36,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                 </Badge>
                 <Badge variant="outline">
                   <Scale className="h-3 w-3" />
-                  {product.productionMode === 'lote' ? 'Produção em Lote' : 'Unitário'}
+                  {mode === 'lote' ? 'Produção em Lote' : 'Unitário'}
                 </Badge>
-                {profitMargin < 0 && (
+                {displayProfitMargin < 0 && (
                   <Badge variant="danger" className="flex items-center gap-1 py-1">
                     <AlertTriangle className="h-3 w-3" />
                     Prejuízo
@@ -71,24 +72,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
         </CardHeader>
 
         <CardContent className="p-4">
-          {/* Margem com destaque visual */}
-          <div className={`mb-4 rounded-lg p-3 ${profitMargin >= 0 ? 'bg-muted' : 'bg-bad'}`}>
+          <div
+            className={`mb-4 rounded-lg p-3 ${displayProfitMargin >= 0 ? 'bg-muted' : 'bg-bad'}`}
+          >
             <div className="flex justify-between">
               <p className="text-muted-foreground mb-1 text-xs font-medium">Margem</p>
               <InfoIcon className="h-4 w-4 cursor-pointer" />
             </div>
             <div
-              className={`text-xl font-bold ${profitMargin >= 0 ? 'text-primary' : 'text-on-critical'}`}
+              className={`text-xl font-bold ${displayProfitMargin >= 0 ? 'text-primary' : 'text-on-critical'}`}
             >
-              {profitMargin.toFixed(1)}%
+              {displayProfitMargin.toFixed(1)}%
               <span className="mt-1 block text-sm">
-                {profitMargin >= 0 ? 'Lucro: ' : 'Prejuízo: '}
-                {formatCurrency(Math.abs(profitValue))}
+                {displayProfitMargin >= 0 ? 'Lucro: ' : 'Prejuízo: '}
+                {formatCurrency(Math.abs(realProfitValue))}
               </span>
             </div>
           </div>
 
-          {/* Resumo financeiro com layout melhorado */}
           <div className="mb-4 grid grid-cols-2 gap-3">
             <div className="bg-muted/50 rounded-lg p-3">
               <p className="text-muted-foreground mb-1 text-xs font-medium">Custo</p>
@@ -100,36 +101,33 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             </div>
           </div>
 
-          {/* Barra de lucro visual */}
           <div className="mb-4">
             <div className="text-muted-foreground mb-1 flex justify-between text-xs">
               <span>Custo: {formatCurrency(totalCost)}</span>
-              <span className={profitValue >= 0 ? 'text-on-great' : 'text-on-bad'}>
-                {profitValue >= 0 ? 'Lucro: ' : 'Prejuízo: '}
-                {formatCurrency(Math.abs(profitValue))}
+              <span className={realProfitValue >= 0 ? 'text-on-great' : 'text-on-bad'}>
+                {realProfitValue >= 0 ? 'Lucro: ' : 'Prejuízo: '}
+                {formatCurrency(Math.abs(realProfitValue))}
               </span>
             </div>
             <Progress
               value={sellingPrice > 0 ? (totalCost / sellingPrice) * 100 : 0}
               className="h-2"
-              stats={profitMargin >= 0 ? 'bg-on-great' : 'bg-on-bad'}
+              stats={displayProfitMargin >= 0 ? 'bg-on-great' : 'bg-on-bad'}
             />
           </div>
 
-          {/* Informações adicionais */}
-          {product.productionMode === 'lote' && product.yieldQuantity && (
+          {mode === 'lote' && yieldQuantity > 0 && (
             <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
               <PieChart className="h-4 w-4" />
-              <span>Rendimento: {product.yieldQuantity} unidades</span>
+              <span>Rendimento: {yieldQuantity} unidades</span>
             </div>
           )}
 
-          {/* Lista de ingredientes com acordeão */}
           <details className="group">
             <summary className="flex cursor-pointer items-center justify-between py-2 font-medium">
               <div className="flex items-center gap-2">
                 <List className="h-4 w-4" />
-                <span>Ingredientes ({product.ingredients.length})</span>
+                <span>Ingredientes ({ingredients.length})</span>
               </div>
               <svg
                 className="text-muted-foreground h-5 w-5 transition-transform group-open:rotate-180"
@@ -144,7 +142,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               </svg>
             </summary>
             <ul className="mt-3 space-y-2">
-              {product.ingredients.map(ingredient => (
+              {ingredients.map(ingredient => (
                 <li
                   key={ingredient.id}
                   className="bg-muted/30 flex justify-between rounded p-3 text-sm"

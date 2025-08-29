@@ -3,11 +3,11 @@ export type UnitType = 'kg' | 'l' | 'un';
 export type Ingredient = {
   id: string;
   name: string;
-  buyPrice?: number;
+  buyPrice: number;
   quantity: number;
   maxQuantity?: number;
   unit: UnitType;
-  totalValue: number;
+  priceInStock?: number;
 };
 
 export type IngredientTableProps = {

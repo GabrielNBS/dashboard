@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
-import { ProductState } from '@/types/products';
+import { ProductState, ProductionMode } from '@/types/products';
 import { Ingredient } from '@/types/ingredients';
 import { v4 as uuid } from 'uuid';
 
@@ -14,28 +14,38 @@ type ProductBuilderAction =
   | { type: 'ADD_INGREDIENT'; payload: Ingredient }
   | { type: 'REMOVE_INGREDIENT'; payload: string }
   | { type: 'RESET_PRODUCT' }
-  | { type: 'SET_PRODUCTION_MODE'; payload: 'individual' | 'lote' }
+  | { type: 'SET_PRODUCTION_MODE'; payload: ProductionMode }
   | { type: 'SET_YIELD_QUANTITY'; payload: number }
+  | { type: 'SET_TOTAL_COST'; payload: number }
+  | { type: 'SET_UNIT_COST'; payload: number }
+  | { type: 'SET_UNIT_SELLING_PRICE'; payload: number }
+  | { type: 'SET_UNIT_MARGIN'; payload: number }
+  | { type: 'SET_SELLING_PRICE'; payload: number }
+  | { type: 'SET_PROFIT_MARGIN'; payload: number }
   | { type: 'SET_INGREDIENTS'; payload: Ingredient[] };
 
 /**
- * Estado inicial para construção de produtos
+ * Estado inicial do produto
  */
 const initialState: ProductState = {
   uid: uuid(),
   name: '',
   category: '',
   ingredients: [],
-  productionMode: 'individual',
-  yieldQuantity: 1,
+  production: {
+    mode: 'individual',
+    yieldQuantity: 1,
+    totalCost: 0,
+    unitCost: 0,
+    unitSellingPrice: 0,
+    unitMargin: 0,
+    sellingPrice: 0,
+    profitMargin: 0,
+  },
 };
 
 /**
- * Reducer para gerenciar o estado de construção de produtos
- *
- * @param state - Estado atual do produto sendo construído
- * @param action - Ação a ser executada
- * @returns Novo estado do produto
+ * Reducer para gerenciar estado de construção de produtos
  */
 function finalProductReducer(state: ProductState, action: ProductBuilderAction): ProductState {
   switch (action.type) {
@@ -49,22 +59,34 @@ function finalProductReducer(state: ProductState, action: ProductBuilderAction):
       return { ...state, ingredients: [...state.ingredients, action.payload] };
 
     case 'REMOVE_INGREDIENT':
-      return {
-        ...state,
-        ingredients: state.ingredients.filter(i => i.id !== action.payload),
-      };
+      return { ...state, ingredients: state.ingredients.filter(i => i.id !== action.payload) };
 
     case 'RESET_PRODUCT':
-      return {
-        ...initialState,
-        uid: uuid(), // Gera novo uid ao resetar para evitar conflitos
-      };
+      return { ...initialState, uid: uuid() };
 
     case 'SET_PRODUCTION_MODE':
-      return { ...state, productionMode: action.payload };
+      return { ...state, production: { ...state.production, mode: action.payload } };
 
     case 'SET_YIELD_QUANTITY':
-      return { ...state, yieldQuantity: action.payload };
+      return { ...state, production: { ...state.production, yieldQuantity: action.payload } };
+
+    case 'SET_TOTAL_COST':
+      return { ...state, production: { ...state.production, totalCost: action.payload } };
+
+    case 'SET_UNIT_COST':
+      return { ...state, production: { ...state.production, unitCost: action.payload } };
+
+    case 'SET_UNIT_SELLING_PRICE':
+      return { ...state, production: { ...state.production, unitSellingPrice: action.payload } };
+
+    case 'SET_UNIT_MARGIN':
+      return { ...state, production: { ...state.production, unitMargin: action.payload } };
+
+    case 'SET_SELLING_PRICE':
+      return { ...state, production: { ...state.production, sellingPrice: action.payload } };
+
+    case 'SET_PROFIT_MARGIN':
+      return { ...state, production: { ...state.production, profitMargin: action.payload } };
 
     case 'SET_INGREDIENTS':
       return { ...state, ingredients: action.payload };
@@ -83,17 +105,12 @@ interface ProductBuilderContextType {
 }
 
 /**
- * Contexto para gerenciar estado de construção de produtos
+ * Contexto de construção de produtos
  */
 const ProductBuilderContext = createContext<ProductBuilderContextType | undefined>(undefined);
 
 /**
- * Provider do contexto de construção de produtos
- *
- * Gerencia o estado de produtos sendo construídos, permitindo
- * adicionar ingredientes, definir categorias e modos de produção.
- *
- * @param children - Componentes filhos que terão acesso ao contexto
+ * Provider do contexto
  */
 export const ProductBuilderProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(finalProductReducer, initialState);
@@ -106,14 +123,7 @@ export const ProductBuilderProvider = ({ children }: { children: ReactNode }) =>
 };
 
 /**
- * Hook customizado para usar o contexto de construção de produtos
- *
- * @returns Contexto de construção de produtos
- * @throws Error se usado fora do ProductBuilderProvider
- *
- * @example
- * const { state, dispatch } = useProductBuilderContext();
- * dispatch({ type: 'SET_NAME', payload: 'Novo Produto' });
+ * Hook customizado para usar o contexto
  */
 export const useProductBuilderContext = () => {
   const context = useContext(ProductBuilderContext);

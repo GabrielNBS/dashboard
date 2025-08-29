@@ -45,32 +45,40 @@ export function useSaleProcess() {
     setCart(prev => prev.filter(i => i.uid !== uid));
   }, []);
 
-  const updateQuantity = useCallback((uid: string, quantity: number) => {
-    if (quantity <= 0) return removeFromCart(uid);
-    setCart(prev => prev.map(i => (i.uid === uid ? { ...i, quantity } : i)));
-  }, [removeFromCart]);
+  const updateQuantity = useCallback(
+    (uid: string, quantity: number) => {
+      if (quantity <= 0) return removeFromCart(uid);
+      setCart(prev => prev.map(i => (i.uid === uid ? { ...i, quantity } : i)));
+    },
+    [removeFromCart]
+  );
 
   // Stock validation
-  const validateStock = useCallback((productUid: string, requestedQuantity: number) => {
-    const product = finalProducts.products.find(p => p.uid === productUid);
-    if (!product) return { isValid: false, missingIngredients: [] as string[] };
+  const validateStock = useCallback(
+    (productUid: string, requestedQuantity: number) => {
+      const product = finalProducts.products.find(p => p.uid === productUid);
+      if (!product) return { isValid: false, missingIngredients: [] as string[] };
 
-    const missingIngredients: string[] = [];
+      const missingIngredients: string[] = [];
 
-    const isValid = product.ingredients.every(ingredient => {
-      const estoqueItem = estoque.ingredients.find(i => i.id === ingredient.id);
-      const totalNeeded = ingredient.quantity * requestedQuantity;
-      const hasEnough = !!estoqueItem && (estoqueItem.quantity ?? 0) >= totalNeeded;
-      if (!hasEnough) missingIngredients.push(ingredient.name);
-      return hasEnough;
-    });
+      const isValid = product.ingredients.every(ingredient => {
+        const estoqueItem = estoque.ingredients.find(i => i.id === ingredient.id);
+        const totalNeeded = ingredient.quantity * requestedQuantity;
+        const hasEnough = !!estoqueItem && (estoqueItem.quantity ?? 0) >= totalNeeded;
+        if (!hasEnough) missingIngredients.push(ingredient.name);
+        return hasEnough;
+      });
 
-    return { isValid, missingIngredients };
-  }, [finalProducts.products, estoque.ingredients]);
+      return { isValid, missingIngredients };
+    },
+    [finalProducts.products, estoque.ingredients]
+  );
 
-  const canMakeProduct = useCallback((productUid: string, requestedQuantity: number) =>
-    validateStock(productUid, requestedQuantity).isValid
-  , [validateStock]);
+  const canMakeProduct = useCallback(
+    (productUid: string, requestedQuantity: number) =>
+      validateStock(productUid, requestedQuantity).isValid,
+    [validateStock]
+  );
 
   // Sale confirmation logic
   const confirmSale = useCallback(() => {
@@ -113,7 +121,7 @@ export function useSaleProcess() {
       return {
         product,
         quantity: item.quantity,
-        subtotal: (product.sellingPrice ?? 0) * item.quantity,
+        subtotal: (product.production.sellingPrice ?? 0) * item.quantity,
       };
     });
 
@@ -141,7 +149,15 @@ export function useSaleProcess() {
     });
 
     setCart([]);
-  }, [cart, payment, finalProducts.products, estoque.ingredients, estoqueDispatch, salesDispatch, validateStock]);
+  }, [
+    cart,
+    payment,
+    finalProducts.products,
+    estoque.ingredients,
+    estoqueDispatch,
+    salesDispatch,
+    validateStock,
+  ]);
 
   // Calculate real-time summary
   const sellingResume = calculateSellingResume(
@@ -152,7 +168,7 @@ export function useSaleProcess() {
         return {
           product,
           quantity: item.quantity,
-          subtotal: (product.sellingPrice ?? 0) * item.quantity,
+          subtotal: (product.production.sellingPrice ?? 0) * item.quantity,
         };
       })
       .filter(Boolean) as SaleItem[],
@@ -167,14 +183,14 @@ export function useSaleProcess() {
     payment,
     sellingResume,
     products: finalProducts.products,
-    
+
     // Actions
     addToCart,
     removeFromCart,
     updateQuantity,
     setPayment,
     confirmSale,
-    
+
     // Helpers
     canMakeProduct,
     validateStock,

@@ -2,15 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
-import { CheckCheck, Plus } from 'lucide-react';
+import { CheckCheck, Plus, X } from 'lucide-react';
 import ProductsList from '@/components/dashboard/product/ProductsList';
 import { useProductContext } from '@/contexts/products/ProductContext';
-import { X } from 'lucide-react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import CategoryList from '@/components/ui/CategoryList';
+import IngredientSelector from '@/components/dashboard/product/IngredientSelector';
 import Input from '@/components/ui/Input';
 import { toast } from '@/components/ui/use-toast';
-import IngredientSelector from '@/components/dashboard/product/IngredientSelector';
 import {
   Sheet,
   SheetContent,
@@ -18,50 +17,67 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { useSettings } from '@/contexts/settings/SettingsContext';
+
+import {
+  calculateSuggestedPrice,
+  calculateRealProfitMargin,
+  calculateUnitCost,
+} from '@/utils/calcSale';
 
 export default function Product() {
-  const [openForm, setOpenForm] = useState(false);
-  const [customMargin, setCustomMargin] = useState(33);
-  const [manualSellingPrice, setManualSellingPrice] = useState(0);
-
   const { state, dispatch } = useProductContext();
   const { productToEdit, products, isEditMode } = state;
+  const { state: settingsState } = useSettings();
+  const defaultMargin = settingsState.financial.defaultProfitMargin;
 
   const { state: builderState, dispatch: builderDispatch } = useProductBuilderContext();
   const finalProduct = builderState;
 
-  // Calcular custo total
-  const totalCost = finalProduct.ingredients.reduce((acc, ing) => acc + ing.totalValue, 0);
+  const [openForm, setOpenForm] = useState(false);
+  const [manualSellingPrice, setManualSellingPrice] = useState(0);
+  const [customMargin, setCustomMargin] = useState(defaultMargin);
 
-  // Calcular preço sugerido
-  const suggestedPrice =
-    finalProduct.productionMode === 'lote' && (finalProduct.yieldQuantity ?? 0) > 0
-      ? (totalCost + totalCost * (customMargin / 100)) / finalProduct.yieldQuantity!
-      : totalCost + totalCost * (customMargin / 100);
+  // Custo total baseado no priceInStock dos ingredientes (custo proporcional de cada ingrediente usado)
+  const totalCost = finalProduct.ingredients.reduce(
+    (acc, ing) => acc + (ing.buyPrice * ing.quantity || 0),
+    0
+  );
 
-  // Calcular margem de lucro real
-  const realProfitMargin =
-    manualSellingPrice > 0 ? ((manualSellingPrice - totalCost) / manualSellingPrice) * 100 : 0;
+  // Calcula preço sugerido baseado no production
+  const suggestedPrice = calculateSuggestedPrice(
+    totalCost,
+    customMargin,
+    finalProduct.production.mode,
+    finalProduct.production.yieldQuantity
+  );
 
-  // Abrir formulário quando houver produto para editar
+  // Calcula margem real
+  const realProfitMargin = calculateRealProfitMargin(
+    totalCost,
+    manualSellingPrice,
+    finalProduct.production.mode,
+    finalProduct.production.yieldQuantity
+  );
+
   useEffect(() => {
-    if (productToEdit) {
-      setOpenForm(true);
-    }
+    if (productToEdit) setOpenForm(true);
   }, [productToEdit]);
 
-  // Pré-carrega o formulário se estiver editando
   useEffect(() => {
     if (!isEditMode || !productToEdit) return;
 
     builderDispatch({ type: 'SET_NAME', payload: productToEdit.name });
     builderDispatch({ type: 'SET_CATEGORY', payload: productToEdit.category });
-    builderDispatch({ type: 'SET_PRODUCTION_MODE', payload: productToEdit.productionMode });
-    builderDispatch({ type: 'SET_YIELD_QUANTITY', payload: productToEdit.yieldQuantity ?? 1 });
+    builderDispatch({ type: 'SET_PRODUCTION_MODE', payload: productToEdit.production.mode });
+    builderDispatch({
+      type: 'SET_YIELD_QUANTITY',
+      payload: productToEdit.production.yieldQuantity,
+    });
     builderDispatch({ type: 'SET_INGREDIENTS', payload: productToEdit.ingredients });
 
-    setManualSellingPrice(productToEdit.sellingPrice ?? 0);
-    setCustomMargin(productToEdit.profitMargin ?? 33);
+    setManualSellingPrice(productToEdit.production.sellingPrice);
+    setCustomMargin(productToEdit.production.unitMargin);
   }, [isEditMode, productToEdit, builderDispatch]);
 
   const handleOpenNewForm = () => {
@@ -75,7 +91,7 @@ export default function Product() {
     builderDispatch({ type: 'RESET_PRODUCT' });
     setOpenForm(false);
     setManualSellingPrice(0);
-    setCustomMargin(33);
+    setCustomMargin(defaultMargin);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -108,27 +124,32 @@ export default function Product() {
       return;
     }
 
-    if (isEditMode && productToEdit) {
-      // Modo edição
-      dispatch({
-        type: 'EDIT_PRODUCT',
-        payload: {
-          ...productToEdit,
-          ...finalProduct,
-          totalCost,
-          sellingPrice: manualSellingPrice,
-          profitMargin: realProfitMargin,
-          uid: productToEdit.uid,
-        },
-      });
+    const production = {
+      ...finalProduct.production,
+      totalCost,
+      sellingPrice: manualSellingPrice,
+      unitSellingPrice:
+        finalProduct.production.mode === 'lote'
+          ? manualSellingPrice / finalProduct.production.yieldQuantity
+          : manualSellingPrice,
+      unitMargin: customMargin,
+      profitMargin: realProfitMargin,
+    };
 
+    const payloadProduct = {
+      ...finalProduct,
+      production,
+      uid: isEditMode && productToEdit ? productToEdit.uid : Date.now().toString(),
+    };
+
+    if (isEditMode && productToEdit) {
+      dispatch({ type: 'EDIT_PRODUCT', payload: payloadProduct });
       toast({
         title: 'Produto atualizado!',
         description: `"${finalProduct.name}" foi editado com sucesso.`,
         variant: 'accept',
       });
     } else {
-      // Modo criação
       const isDuplicate = products.some(
         p =>
           p.name.toLowerCase() === finalProduct.name.toLowerCase() &&
@@ -144,17 +165,7 @@ export default function Product() {
         return;
       }
 
-      dispatch({
-        type: 'ADD_PRODUCT',
-        payload: {
-          ...finalProduct,
-          totalCost,
-          sellingPrice: manualSellingPrice,
-          profitMargin: realProfitMargin,
-          uid: Date.now().toString(),
-        },
-      });
-
+      dispatch({ type: 'ADD_PRODUCT', payload: payloadProduct });
       toast({
         title: 'Produto adicionado com sucesso!',
         description: `"${finalProduct.name}" foi adicionado à lista de produtos.`,
@@ -165,11 +176,20 @@ export default function Product() {
     handleCloseForm();
   };
 
+  // Calcula o custo unitário baseado no modo de produção
+  const getUnitCost = () => {
+    return calculateUnitCost(
+      totalCost,
+      finalProduct.production.mode,
+      finalProduct.production.yieldQuantity
+    );
+  };
+
   return (
     <div className="w-full rounded-lg p-6">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold">Produtos Cadastrados</h2>
-        <Button size="md" onClick={handleOpenNewForm} className="fixed right-15 bottom-4 z-10">
+        <Button size="md" onClick={handleOpenNewForm}>
           <Plus className="mr-1" />
           Novo Produto
         </Button>
@@ -178,7 +198,7 @@ export default function Product() {
       {products.length === 0 ? (
         <div className="bg-muted rounded-lg py-12 text-center">
           <p className="text-muted-foreground">Nenhum produto cadastrado.</p>
-          <Button size="md" onClick={handleOpenNewForm} className="fixed right-15 bottom-4 z-10">
+          <Button size="md" onClick={handleOpenNewForm}>
             Criar Primeiro Produto
           </Button>
         </div>
@@ -206,6 +226,7 @@ export default function Product() {
             )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {/* Campos: nome, categoria, ingredientes, modo de produção, rendimento, preço, margem */}
               <div>
                 <label className="mb-1 block font-medium">Nome do produto:</label>
                 <input
@@ -224,8 +245,8 @@ export default function Product() {
               <div>
                 <label className="mb-1 block font-medium">Modo de produção:</label>
                 <select
-                  title="Modo de produção"
-                  value={finalProduct.productionMode}
+                  title="Selecione o modo de produção"
+                  value={finalProduct.production.mode}
                   onChange={e =>
                     builderDispatch({
                       type: 'SET_PRODUCTION_MODE',
@@ -240,27 +261,31 @@ export default function Product() {
                 </select>
               </div>
 
-              {finalProduct.productionMode === 'lote' && (
+              {finalProduct.production.mode === 'lote' && (
                 <div>
                   <label className="mb-1 block font-medium">Rendimento do lote:</label>
                   <Input
                     type="number"
-                    value={finalProduct.yieldQuantity || 1}
                     min={1}
-                    placeholder="Quantidade total produzida"
+                    value={finalProduct.production.yieldQuantity || 1}
                     onChange={e =>
                       builderDispatch({
                         type: 'SET_YIELD_QUANTITY',
                         payload: Number(e.target.value),
                       })
                     }
+                    placeholder="Quantidade total produzida"
                     className="w-full rounded border p-2"
                   />
                 </div>
               )}
 
               <div>
-                <label className="mb-1 block font-medium">Preço de Venda (R$):</label>
+                <label className="mb-1 block font-medium">
+                  {finalProduct.production.mode === 'lote'
+                    ? 'Preço de Venda por Unidade (R$):'
+                    : 'Preço de Venda (R$):'}
+                </label>
                 <Input
                   type="number"
                   min={0.01}
@@ -278,28 +303,42 @@ export default function Product() {
                   type="number"
                   min={0}
                   max={99}
-                  step={0}
-                  value={customMargin.toFixed(0)}
+                  value={customMargin}
                   onChange={e => setCustomMargin(Number(e.target.value))}
                   className="w-full rounded border p-2"
                 />
               </div>
 
+              {/* Previews de custo, preço sugerido e margem */}
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div className="bg-muted flex flex-col rounded-lg p-3">
-                  <span className="mb-1 block text-sm font-semibold">Custo Total:</span>
-                  <span className="text-on-red text-xl font-bold">R$ {totalCost.toFixed(2)}</span>
+                  <span className="mb-1 block text-sm font-semibold">
+                    {finalProduct.production.mode === 'individual'
+                      ? 'Custo total:'
+                      : 'Custo por unidade:'}
+                  </span>
+                  <span className="text-on-red text-xl font-bold">
+                    R$ {getUnitCost().toFixed(2)}
+                  </span>
                 </div>
+
                 <div className="bg-muted flex flex-col rounded-lg p-3">
-                  <span className="mb-1 block text-sm font-semibold">Preço Sugerido:</span>
+                  <span className="mb-1 block text-sm font-semibold">
+                    {finalProduct.production.mode === 'individual'
+                      ? 'Preço Sugerido:'
+                      : 'Preço Sugerido por unidade:'}
+                  </span>
                   <span className="text-muted-foreground text-xl font-bold">
                     R$ {suggestedPrice.toFixed(2)}
                   </span>
                 </div>
+
                 <div className="bg-muted flex flex-col rounded-lg p-3">
                   <span className="mb-1 block text-sm font-semibold">Margem Real:</span>
                   <span
-                    className={`text-xl font-bold ${realProfitMargin >= 0 ? 'text-on-great' : 'text-on-red'}`}
+                    className={`text-xl font-bold ${
+                      realProfitMargin >= 0 ? 'text-on-great' : 'text-on-red'
+                    }`}
                   >
                     {realProfitMargin.toFixed(2)}%
                   </span>
@@ -307,16 +346,11 @@ export default function Product() {
               </div>
 
               <div className="mt-6 flex justify-end gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCloseForm}
-                  className="flex items-center gap-2"
-                >
+                <Button type="button" variant="outline" onClick={handleCloseForm}>
                   <X className="h-5 w-5" />
                   Cancelar
                 </Button>
-                <Button type="submit" className="flex items-center gap-2 p-4" variant="accept">
+                <Button type="submit" variant="accept">
                   <CheckCheck className="h-5 w-5" />
                   {isEditMode ? 'Atualizar' : 'Adicionar'}
                 </Button>

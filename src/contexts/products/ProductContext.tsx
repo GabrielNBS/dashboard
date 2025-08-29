@@ -82,7 +82,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setStoredProducts(state.products);
-  }, [state.products]);
+  }, [state.products, setStoredProducts]);
 
   return (
     <ProductListContext.Provider value={{ state, dispatch }}>

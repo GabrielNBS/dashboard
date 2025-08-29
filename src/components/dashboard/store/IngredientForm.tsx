@@ -100,7 +100,7 @@ export default function IngredientForm() {
     }
 
     const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
-    const totalValue = normalizedQuantity * rawPrice;
+    const priceInStock = (rawPrice / normalizedQuantity) * normalizedQuantity;
 
     const newIngredient: Ingredient = {
       id: uuidv4(),
@@ -108,7 +108,7 @@ export default function IngredientForm() {
       quantity: normalizedQuantity,
       unit: data.unit,
       buyPrice: rawPrice,
-      totalValue,
+      priceInStock,
       maxQuantity: normalizeQuantity(10, data.unit), // Exemplo: limite padrão de 100 unidades na unidade base
     };
 

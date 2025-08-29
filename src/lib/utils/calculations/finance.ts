@@ -246,6 +246,8 @@ export function getTotalUnitsSold(sales: Sale[]): number {
   }, 0);
 }
 
+// utils/pricing.ts
+
 export interface StockValidation {
   isValid: boolean;
   missingIngredients?: string[];

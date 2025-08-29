@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
-import { Ingredient } from '@/types/ingredients';
+import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { getBaseUnit, normalizeQuantity } from '@/utils/normalizeQuantity';
 import AddIngredientList from './addIngredientList';
@@ -14,7 +14,32 @@ export default function IngredientSelector() {
 
   const [inputValue, setInputValue] = useState('');
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
-  const [quantity, setQuantity] = useState<string>('1');
+  const [quantityUtilized, setQuantity] = useState<string>('1');
+
+  const pricePerUnit = (buyPrice: number, quantity: number): number => buyPrice / quantity;
+
+  // Função para calcular o custo proporcional de um ingrediente utilizado
+  const getTotalPrice = (
+    quantityUtilized: string,
+    ingredient: {
+      unit: UnitType;
+      buyPrice: number;
+      quantity: number;
+    }
+  ): string => {
+    const parsed = parseFloat(quantityUtilized);
+
+    if (isNaN(parsed) || parsed <= 0) return '0.00';
+
+    // Converte a quantidade para unidade base (ex: g, ml, un)
+    const normalized = normalizeQuantity(parsed, ingredient.unit);
+
+    // Cálculo proporcional do custo
+    const unitPrice = pricePerUnit(ingredient.buyPrice, ingredient.quantity);
+    const total = normalized * unitPrice;
+
+    return total.toFixed(2); // string com 2 casas decimais
+  };
 
   const handleSelectIngredient = (ingredient: Ingredient) => {
     setSelectedIngredient(ingredient);
@@ -22,11 +47,11 @@ export default function IngredientSelector() {
   };
 
   const handleAddIngredient = () => {
-    const parsedInput = parseFloat(quantity);
+    const parsedInput = parseFloat(quantityUtilized);
 
     if (
       !selectedIngredient ||
-      !quantity ||
+      !quantityUtilized ||
       isNaN(parsedInput) ||
       parsedInput <= 0 ||
       !selectedIngredient.name
@@ -51,10 +76,9 @@ export default function IngredientSelector() {
       payload: {
         id: selectedIngredient.id,
         name: selectedIngredient.name,
-        buyPrice: selectedIngredient.buyPrice,
+        buyPrice: pricePerUnit(selectedIngredient.buyPrice, selectedIngredient.quantity),
         unit: selectedIngredient.unit,
         quantity: normalizedQuantity,
-        totalValue: normalizedQuantity * (selectedIngredient.buyPrice ?? 0),
       },
     });
 
@@ -80,28 +104,20 @@ export default function IngredientSelector() {
           <div className="flex flex-wrap items-center gap-4">
             <span className="font-medium">
               Valor por {getBaseUnit(selectedIngredient.unit)}: R${' '}
-              {(selectedIngredient.buyPrice ?? 0).toFixed(3)}
+              {pricePerUnit(selectedIngredient.buyPrice, selectedIngredient.quantity).toFixed(3)}
             </span>
 
             <input
               type="number"
               placeholder="Quantidade"
-              value={quantity}
+              value={quantityUtilized}
               onChange={e => setQuantity(e.target.value)}
               min={0}
               step="any"
               className="w-24 rounded border p-2"
             />
 
-            <span>
-              Total: R${' '}
-              {(() => {
-                const parsed = parseFloat(quantity);
-                if (!quantity || isNaN(parsed)) return '0.00';
-                const normalized = normalizeQuantity(parsed, selectedIngredient.unit);
-                return (normalized * (selectedIngredient.buyPrice ?? 0)).toFixed(2);
-              })()}
-            </span>
+            <span>Total: R$ {getTotalPrice(quantityUtilized, selectedIngredient)}</span>
 
             <button
               type="button"
@@ -115,8 +131,8 @@ export default function IngredientSelector() {
           <span className="text-muted-foreground ml-[2px] text-xs">
             Quantidade normalizada:{' '}
             {(() => {
-              const parsed = parseFloat(quantity);
-              if (!quantity || isNaN(parsed)) return 0;
+              const parsed = parseFloat(quantityUtilized);
+              if (!quantityUtilized || isNaN(parsed)) return 0;
               return normalizeQuantity(parsed, selectedIngredient.unit);
             })()}{' '}
             {getBaseUnit(selectedIngredient.unit)}

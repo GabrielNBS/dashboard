@@ -8,13 +8,14 @@ function AddIngredientList() {
   const { dispatch, state } = useProductBuilderContext();
 
   return (
-    <div className="mt-4 flex gap-2">
+    <div className="mt-4 grid grid-cols-3 gap-2">
       {state.ingredients.map(ingredient => (
-        <div key={ingredient.id} className="flex items-center gap-2">
+        <div key={ingredient.id} className="flex items-center gap-4">
           <div className="text-on-warning bg-warning flex gap-2 rounded px-3 py-1 text-sm">
             <span>
               {ingredient.name} | {ingredient.quantity} {getBaseUnit(ingredient.unit)} x R$
-              {(ingredient.buyPrice ?? 0).toFixed(3)} = R${ingredient.totalValue.toFixed(2)}
+              {ingredient.buyPrice.toFixed(3)} = R$
+              {(ingredient.buyPrice * ingredient.quantity).toFixed(2)}
             </span>
             <Button
               type="button"
