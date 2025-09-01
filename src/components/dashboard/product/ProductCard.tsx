@@ -113,6 +113,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               value={sellingPrice > 0 ? (totalCost / sellingPrice) * 100 : 0}
               className="h-2"
               stats={displayProfitMargin >= 0 ? 'bg-on-great' : 'bg-on-bad'}
+              max={100}
             />
           </div>
 
@@ -150,8 +151,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                   <span className="font-medium">- {ingredient.name}</span>
                   <span>
                     {ingredient.quantity} {ingredient.unit} ×{' '}
-                    {formatCurrency(ingredient.buyPrice ?? 0)} ={' '}
-                    {formatCurrency(ingredient.totalValue)}
+                    {formatCurrency(ingredient.buyPrice ?? 0)} = {formatCurrency(totalCost)}
                   </span>
                 </li>
               ))}

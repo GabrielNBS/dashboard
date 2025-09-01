@@ -105,16 +105,27 @@ export function useSaleProcess() {
       }
     }
 
-    // Create sale items and update stock
+    // Create sale items and update stocks
     const saleItems: SaleItem[] = cart.map(item => {
       const product = finalProducts.products.find(p => p.uid === item.uid)!;
 
       product.ingredients.forEach(ingredient => {
         const totalToRemove = ingredient.quantity * item.quantity;
         const estoqueItem = estoque.ingredients.find(i => i.id === ingredient.id)!;
+        const pricePerUnit =
+          estoqueItem.quantity > 0 ? estoqueItem.buyPrice / estoqueItem.quantity : 0;
+        const newQuantity = estoqueItem.quantity - totalToRemove;
+        const newPriceInStock = newQuantity * pricePerUnit;
+
         estoqueDispatch({
           type: 'EDIT_INGREDIENT',
-          payload: { ...estoqueItem, quantity: estoqueItem.quantity - totalToRemove },
+          payload: {
+            ...estoqueItem,
+
+            quantity: newQuantity,
+
+            priceInStock: newPriceInStock,
+          },
         });
       });
 

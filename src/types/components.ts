@@ -1,12 +1,6 @@
 import React from 'react';
 import { Ingredient } from './ingredients';
 
-/**
- * Props do componente Button
- *
- * Estende as propriedades nativas do elemento button HTML
- * e adiciona propriedades customizadas para variantes e tamanhos.
- */
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'default' | 'accept' | 'edit' | 'destructive' | 'outline' | 'ghost' | 'link';
   size?: 'sm' | 'md' | 'lg' | 'xl';

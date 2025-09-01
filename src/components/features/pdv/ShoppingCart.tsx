@@ -41,17 +41,13 @@ export default function ShoppingCart({
           {cart.map(item => {
             const product = products.find(p => p.uid === item.uid);
             if (!product) return null;
+            const sellingPrice = product.production.sellingPrice;
 
             return (
-              <div
-                key={item.uid}
-                className="flex items-center gap-3 rounded-lg border p-3"
-              >
+              <div key={item.uid} className="flex items-center gap-3 rounded-lg border p-3">
                 <div className="flex-1">
                   <p className="text-muted-foreground font-medium">{product.name}</p>
-                  <p className="text-muted-foreground text-sm">
-                    R$ {product.sellingPrice?.toFixed(2)} cada
-                  </p>
+                  <p className="text-muted-foreground text-sm">R$ {sellingPrice.toFixed(2)} cada</p>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -73,11 +69,7 @@ export default function ShoppingCart({
                   </Button>
                 </div>
 
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => onRemoveFromCart(item.uid)}
-                >
+                <Button size="sm" variant="destructive" onClick={() => onRemoveFromCart(item.uid)}>
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </div>

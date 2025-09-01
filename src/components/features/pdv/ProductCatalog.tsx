@@ -22,10 +22,6 @@ export default function ProductCatalog({
   return (
     <div className="lg:col-span-2">
       <div className="bg-surface rounded-lg p-6 shadow-sm">
-        <h2 className="text-muted-foreground mb-4 text-xl font-semibold">
-          Produtos Disponíveis
-        </h2>
-
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map(product => {
             const inCart = cart.find(item => item.uid === product.uid);
@@ -44,18 +40,14 @@ export default function ProductCatalog({
                 </div>
 
                 <div className="flex">
-                  <img
-                    className="rounded-xl"
-                    src={'https://placehold.co/250'}
-                    alt={product.name}
-                  />
+                  <img className="rounded-xl" src={'https://placehold.co/250'} alt={product.name} />
                 </div>
 
                 <div className="mb-3">
                   <p
                     className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-on-great'}`}
                   >
-                    R$ {(product.sellingPrice ?? 0).toFixed(2)}
+                    R$ {(product.production.sellingPrice ?? 0).toFixed(2)}
                   </p>
                 </div>
 
@@ -78,7 +70,7 @@ export default function ProductCatalog({
                 </Button>
 
                 {!canMake && (
-                  <p className="text-on-critical mt-1 text-xs">Estoque insuficiente</p>
+                  <p className="text-on-critical z-10 mt-1 text-xs">Estoque insuficiente</p>
                 )}
               </div>
             );

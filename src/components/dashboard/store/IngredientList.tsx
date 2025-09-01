@@ -16,7 +16,6 @@ import IngredientCard from './IngredientCard';
 
 // Importações dos componentes reutilizáveis
 import { useItemFilter, SearchResultsContainer, FilterStats } from '@/lib/hooks/ui/useFilter';
-import { denormalizeQuantity } from '@/utils/normalizeQuantity';
 
 // Ordem de prioridade para ordenação
 const priorityOrder: Record<'critico' | 'atencao' | 'normal', number> = {
@@ -66,13 +65,7 @@ export default function IngredientCardList() {
 
   // Calcular resumo
   const summary = useMemo(() => {
-    const totalValue = ingredients.reduce(
-      (total, item) =>
-        total +
-        (denormalizeQuantity(item.quantity, item.unit) * (item.buyPrice ?? 0)) /
-          denormalizeQuantity(item.quantity, item.unit),
-      0
-    );
+    const totalValue = ingredients.reduce((total, item) => total + item.priceInStock!, 0);
 
     return {
       total: ingredients.length,

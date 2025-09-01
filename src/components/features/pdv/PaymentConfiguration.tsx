@@ -53,9 +53,7 @@ export default function PaymentConfiguration({
                 <Icon className="h-4 w-4" />
                 <span className="font-medium">{option.label}</span>
                 {option.fee > 0 && (
-                  <span className="text-muted-foreground ml-auto text-xs">
-                    +{option.fee}%
-                  </span>
+                  <span className="text-muted-foreground ml-auto text-xs">+{option.fee}%</span>
                 )}
               </button>
             );
