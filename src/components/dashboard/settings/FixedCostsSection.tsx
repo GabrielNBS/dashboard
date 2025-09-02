@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { FixedCostSettings } from '@/types/settings';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
+import Input from '@/components/ui/base/Input';
+import Button from '@/components/ui/base/Button';
 import { DollarSign, Plus, Edit, Trash2 } from 'lucide-react';
 import { getTotalFixedCost } from '@/utils/finance';
 

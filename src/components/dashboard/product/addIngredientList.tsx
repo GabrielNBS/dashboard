@@ -1,4 +1,4 @@
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/base/Button';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { getBaseUnit } from '@/utils/normalizeQuantity';
 import { Trash2 } from 'lucide-react';

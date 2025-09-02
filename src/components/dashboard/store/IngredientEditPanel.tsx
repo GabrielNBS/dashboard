@@ -5,9 +5,9 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { CircleX, CheckCheck } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/base/Button';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/feedback/use-toast';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { denormalizeQuantity, normalizeQuantity } from '@/utils/normalizeQuantity';
@@ -20,11 +20,11 @@ import {
   DrawerTitle,
   DrawerDescription,
   DrawerFooter,
-} from '@/components/ui/drawer';
+} from '@/components/ui/feedback/drawer';
 
 import React from 'react';
 
-import EditFormFields from '@/components/ui/EditFormField';
+import EditFormFields from '@/components/ui/forms/EditFormField';
 
 export default function IngredientEditPanel() {
   const { state, dispatch } = useIngredientContext();

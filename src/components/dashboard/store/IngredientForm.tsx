@@ -2,12 +2,12 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import Button from '@/components/ui/base/Button';
+import Input from '@/components/ui/base/Input';
 import { Ingredient, UnitType, PurchaseBatch } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { normalizeQuantity } from '@/utils/normalizeQuantity';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/components/ui/feedback/use-toast';
 import {
   ingredientSchema,
   type IngredientFormData,
@@ -27,15 +27,15 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Label } from '@/components/ui/label';
+} from '@/components/ui/feedback/sheet';
+import { Label } from '@/components/ui/base/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/forms/select';
 
 export default function IngredientForm() {
   const { dispatch, state, addBatch, getIngredientById } = useIngredientContext();

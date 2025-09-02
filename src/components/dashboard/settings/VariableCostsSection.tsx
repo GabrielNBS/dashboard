@@ -6,8 +6,8 @@
 import React, { useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { VariableCostSettings } from '@/types/settings';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
+import Input from '@/components/ui/base/Input';
+import Button from '@/components/ui/base/Button';
 import { Calculator, Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function VariableCostsSection() {

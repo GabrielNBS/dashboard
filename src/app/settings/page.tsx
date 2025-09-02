@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { Settings, Store, DollarSign, Calculator, Cog, Save, RotateCcw } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/base/Button';
 
 // Componentes das seções
 import StoreSettingsSection from '@/components/dashboard/settings/StoreSettingsSection';

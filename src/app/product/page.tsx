@@ -1,22 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/base/Button';
 import { CheckCheck, Plus, X } from 'lucide-react';
 import ProductsList from '@/components/dashboard/product/ProductsList';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from '@/components/dashboard/product/IngredientSelector';
-import Input from '@/components/ui/Input';
-import { toast } from '@/components/ui/use-toast';
+import Input from '@/components/ui/base/Input';
+import { toast } from '@/components/ui/feedback/use-toast';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from '@/components/ui/feedback/sheet';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 
 import {

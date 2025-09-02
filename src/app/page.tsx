@@ -1,5 +1,10 @@
 'use client';
 
+import { useHydrated } from '@/lib/hooks/ui/useHydrated';
+import { useSalesContext } from '@/contexts/sales/useSalesContext';
+import { useSettings } from '@/contexts/settings/SettingsContext';
+import { useFinanceSummary } from '@/lib/hooks/business/useSummaryFinance';
+
 import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
 import ProfitMarginCard from '@/components/dashboard/finance/cards/ProfitMarginCard';
 import RevenueCard from '@/components/dashboard/finance/cards/RevenueCard';
@@ -7,9 +12,6 @@ import VariableCostCard from '@/components/dashboard/finance/cards/VariableCostC
 import TopSellingItems from '@/components/dashboard/home/BestSellingProducts';
 import FinancialChart from '@/components/dashboard/home/KpiMetrics';
 
-import { useSalesContext } from '@/contexts/sales/useSalesContext';
-import { useSettings } from '@/contexts/settings/SettingsContext';
-import { useFinanceSummary } from '@/lib/hooks/business/useSummaryFinance';
 import { ChartBarIcon, PercentIcon, DollarSign, CoinsIcon } from 'lucide-react';
 
 // pages/dashboard.tsx
@@ -21,8 +23,13 @@ export default function DashboardContent() {
   const netProfit = useFinanceSummary(salesState.sales);
   const variableCost = useFinanceSummary(salesState.sales);
   const margin = useFinanceSummary(salesState.sales);
+  const hydrated = useHydrated();
 
   const { storeName } = settings.store;
+
+  if (!hydrated) {
+    return <p>Carregando ...</p>;
+  }
 
   return (
     <main className="bg-surface grid min-h-screen flex-1 grid-cols-1 gap-6 p-6 lg:grid-cols-[3fr_1fr]">

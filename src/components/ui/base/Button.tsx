@@ -1,7 +1,7 @@
 import React from 'react';
 import { tv } from 'tailwind-variants';
 import { ButtonProps } from '@/types/components';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/feedback/tooltip';
 
 export const button = tv({
   base: 'inline-flex cursor-pointer items-center justify-center rounded-md font-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2',
