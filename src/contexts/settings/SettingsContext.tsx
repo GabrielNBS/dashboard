@@ -1,6 +1,3 @@
-// src/contexts/settings/SettingsContext.tsx
-// Contexto para gerenciar configurações da aplicação
-
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
@@ -12,6 +9,7 @@ import {
   FinancialSettings,
   SystemSettings,
 } from '@/types/settings';
+import { useLocalStorage } from '@/lib/hooks/ui/useLocalStorage';
 
 // Tipos de ações do reducer
 type SettingsAction =
@@ -83,20 +81,14 @@ const defaultSettings: AppSettings = {
   },
 };
 
-// Função reducer para gerenciar o estado
+// Reducer
 function settingsReducer(state: AppSettings, action: SettingsAction): AppSettings {
   switch (action.type) {
     case 'UPDATE_STORE':
-      return {
-        ...state,
-        store: { ...state.store, ...action.payload },
-      };
+      return { ...state, store: { ...state.store, ...action.payload } };
 
     case 'ADD_FIXED_COST':
-      return {
-        ...state,
-        fixedCosts: [...state.fixedCosts, action.payload],
-      };
+      return { ...state, fixedCosts: [...state.fixedCosts, action.payload] };
 
     case 'UPDATE_FIXED_COST':
       return {
@@ -113,10 +105,7 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
       };
 
     case 'ADD_VARIABLE_COST':
-      return {
-        ...state,
-        variableCosts: [...state.variableCosts, action.payload],
-      };
+      return { ...state, variableCosts: [...state.variableCosts, action.payload] };
 
     case 'UPDATE_VARIABLE_COST':
       return {
@@ -133,16 +122,10 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
       };
 
     case 'UPDATE_FINANCIAL':
-      return {
-        ...state,
-        financial: { ...state.financial, ...action.payload },
-      };
+      return { ...state, financial: { ...state.financial, ...action.payload } };
 
     case 'UPDATE_SYSTEM':
-      return {
-        ...state,
-        system: { ...state.system, ...action.payload },
-      };
+      return { ...state, system: { ...state.system, ...action.payload } };
 
     case 'LOAD_SETTINGS':
       return action.payload;
@@ -155,75 +138,41 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
   }
 }
 
-// Interface do contexto
+// Contexto
 interface SettingsContextType {
   state: AppSettings;
   dispatch: React.Dispatch<SettingsAction>;
-  saveSettings: () => void;
-  loadSettings: () => void;
   resetSettings: () => void;
 }
 
-// Criação do contexto
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-// Provider do contexto
+// Provider
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(settingsReducer, defaultSettings);
+  const [persistedSettings, setPersistedSettings] = useLocalStorage<AppSettings>(
+    'dashboard-settings',
+    defaultSettings
+  );
 
-  // Carregar configurações do localStorage na inicialização
+  const [state, dispatch] = useReducer(settingsReducer, persistedSettings);
+
+  // Sincroniza reducer com o localStorage
   useEffect(() => {
-    const savedSettings = localStorage.getItem('dashboard-settings');
-    if (savedSettings) {
-      try {
-        const parsedSettings = JSON.parse(savedSettings);
-        dispatch({ type: 'LOAD_SETTINGS', payload: parsedSettings });
-      } catch (error) {
-        console.error('Erro ao carregar configurações:', error);
-      }
-    }
-  }, []);
+    setPersistedSettings(state);
+  }, [state, setPersistedSettings]);
 
-  // Salvar configurações no localStorage sempre que houver mudanças
-  useEffect(() => {
-    localStorage.setItem('dashboard-settings', JSON.stringify(state));
-  }, [state]);
-
-  // Função para salvar configurações
-  const saveSettings = () => {
-    localStorage.setItem('dashboard-settings', JSON.stringify(state));
-  };
-
-  // Função para carregar configurações
-  const loadSettings = () => {
-    const savedSettings = localStorage.getItem('dashboard-settings');
-    if (savedSettings) {
-      try {
-        const parsedSettings = JSON.parse(savedSettings);
-        dispatch({ type: 'LOAD_SETTINGS', payload: parsedSettings });
-      } catch (error) {
-        console.error('Erro ao carregar configurações:', error);
-      }
-    }
-  };
-
-  // Função para resetar configurações
   const resetSettings = () => {
     dispatch({ type: 'RESET_SETTINGS' });
   };
 
-  const value: SettingsContextType = {
-    state,
-    dispatch,
-    saveSettings,
-    loadSettings,
-    resetSettings,
-  };
-
-  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
+  return (
+    <SettingsContext.Provider value={{ state, dispatch, resetSettings }}>
+      {children}
+    </SettingsContext.Provider>
+  );
 }
 
-// Hook para usar o contexto
+// Hook de acesso
 export function useSettings() {
   const context = useContext(SettingsContext);
   if (context === undefined) {

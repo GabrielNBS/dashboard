@@ -1,5 +1,3 @@
-// ===================== COMPONENTES REUTILIZÁVEIS =====================
-
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
 import FormError from './forms/FormError';
