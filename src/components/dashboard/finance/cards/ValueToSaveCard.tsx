@@ -6,11 +6,6 @@ export default function ValueToSaveCard({
   ...props
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
-    <CardWrapper
-      title="Valor a Guardar"
-      value={summary.valueToSave ?? 0}
-      type="currency"
-      {...props}
-    />
+    <CardWrapper title="Valor a Guardar" value={summary.valueToSave} type="currency" {...props} />
   );
 }

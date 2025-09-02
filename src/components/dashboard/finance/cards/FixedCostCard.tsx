@@ -8,7 +8,7 @@ export default function FixedCostCard({
   return (
     <CardWrapper
       title="Custo Fixo Total"
-      value={summary.totalFixedCost ?? 0}
+      value={summary.totalFixedCost}
       type="currency"
       {...props}
     />

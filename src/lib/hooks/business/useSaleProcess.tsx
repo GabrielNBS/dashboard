@@ -23,7 +23,7 @@ import {
 export function useSaleProcess() {
   const { state: finalProducts } = useProductContext();
   const { dispatch: salesDispatch } = useSalesContext();
-  const { state: estoque, dispatch: estoqueDispatch } = useIngredientContext();
+  const { state: store, dispatch: storeDispatch } = useIngredientContext();
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [payment, setPayment] = useState<PaymentConfig>({
@@ -62,16 +62,16 @@ export function useSaleProcess() {
       const missingIngredients: string[] = [];
 
       const isValid = product.ingredients.every(ingredient => {
-        const estoqueItem = estoque.ingredients.find(i => i.id === ingredient.id);
-        const totalNeeded = ingredient.totalQuantity ?? 0 * requestedQuantity;
-        const hasEnough = !!estoqueItem && (estoqueItem.totalQuantity ?? 0) >= totalNeeded;
+        const storeItem = store.ingredients.find(i => i.id === ingredient.id);
+        const totalNeeded = ingredient.totalQuantity * requestedQuantity;
+        const hasEnough = !!storeItem && storeItem.totalQuantity >= totalNeeded;
         if (!hasEnough) missingIngredients.push(ingredient.name);
         return hasEnough;
       });
 
       return { isValid, missingIngredients };
     },
-    [finalProducts.products, estoque.ingredients]
+    [finalProducts.products, store.ingredients]
   );
 
   const canMakeProduct = useCallback(
@@ -97,7 +97,7 @@ export function useSaleProcess() {
       if (!validation.isValid) {
         const product = finalProducts.products.find(p => p.uid === item.uid);
         toast({
-          title: 'Estoque insuficiente',
+          title: 'store insuficiente',
           description: `Não há ingredientes suficientes para "${product?.name}". Faltam: ${validation.missingIngredients.join(', ')}`,
           variant: 'destructive',
         });
@@ -111,13 +111,13 @@ export function useSaleProcess() {
 
       product.ingredients.forEach(ingredient => {
         const totalToRemove = ingredient.totalQuantity * item.quantity;
-        const estoqueItem = estoque.ingredients.find(i => i.id === ingredient.id)!;
-        const newQuantity = estoqueItem.totalQuantity - totalToRemove;
+        const storeItem = store.ingredients.find(i => i.id === ingredient.id)!;
+        const newQuantity = storeItem.totalQuantity - totalToRemove;
 
-        estoqueDispatch({
+        storeDispatch({
           type: 'EDIT_INGREDIENT',
           payload: {
-            ...estoqueItem,
+            ...storeItem,
 
             totalQuantity: newQuantity,
           },
@@ -127,7 +127,7 @@ export function useSaleProcess() {
       return {
         product,
         quantity: item.quantity,
-        subtotal: (product.production.sellingPrice ?? 0) * item.quantity,
+        subtotal: product.production.sellingPrice * item.quantity,
       };
     });
 
@@ -159,8 +159,8 @@ export function useSaleProcess() {
     cart,
     payment,
     finalProducts.products,
-    estoque.ingredients,
-    estoqueDispatch,
+    store.ingredients,
+    storeDispatch,
     salesDispatch,
     validateStock,
   ]);
@@ -174,7 +174,7 @@ export function useSaleProcess() {
         return {
           product,
           quantity: item.quantity,
-          subtotal: (product.production.sellingPrice ?? 0) * item.quantity,
+          subtotal: product.production.sellingPrice * item.quantity,
         };
       })
       .filter(Boolean) as SaleItem[],

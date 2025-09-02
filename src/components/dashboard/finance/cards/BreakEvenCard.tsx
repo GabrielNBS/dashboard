@@ -6,11 +6,6 @@ export default function BreakEvenCard({
   ...props
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
-    <CardWrapper
-      title="Ponto de Equilíbrio"
-      value={summary.breakEven ?? 0}
-      type="currency"
-      {...props}
-    />
+    <CardWrapper title="Ponto de Equilíbrio" value={summary.breakEven} type="currency" {...props} />
   );
 }

@@ -8,7 +8,7 @@ export default function VariableCostCard({
   return (
     <CardWrapper
       title="Custo com Ingredientes"
-      value={summary.totalVariableCost ?? 0}
+      value={summary.totalVariableCost}
       type="currency"
       {...props}
     />

@@ -9,8 +9,8 @@ import { formatQuantity } from '@/lib/utils/helpers/normalizeQuantity';
 import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 
 const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) => {
-  const maxQuantity = ingredient.maxQuantity ?? 0;
-  const status = getStockStatus(ingredient.totalQuantity ?? 0, maxQuantity);
+  const maxQuantity = ingredient.maxQuantity;
+  const status = getStockStatus(ingredient.totalQuantity, maxQuantity);
   const stockPercentage = maxQuantity > 0 ? (ingredient.totalQuantity / maxQuantity) * 100 : 0;
 
   // Configuração de status para exibição
@@ -58,7 +58,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
         </div>
         <div>
           <p className="text-muted-foreground text-sm">Preço de compra</p>
-          <p className="font-semibold">{formatCurrency(ingredient.averageUnitPrice ?? 0)}</p>
+          <p className="font-semibold">{formatCurrency(ingredient.averageUnitPrice)}</p>
         </div>
 
         {/* Barra de progresso */}

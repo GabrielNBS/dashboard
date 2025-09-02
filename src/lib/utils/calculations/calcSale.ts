@@ -120,14 +120,14 @@ export function calculateSellingResume(
   discount?: PaymentDiscount,
   feesConfig: PaymentFees = DEFAULT_PAYMENT_FEES
 ): SellingResume {
-  const subtotal = items.reduce((acc, item) => acc + (item.subtotal ?? 0), 0);
+  const subtotal = items.reduce((acc, item) => acc + item.subtotal, 0);
   const discountValue = discount
     ? discount.type === 'percentage'
       ? (subtotal * discount.value) / 100
       : discount.value
     : 0;
 
-  const feePercentage = paymentMethod === 'cash' ? 0 : ((feesConfig as any)[paymentMethod] ?? 0);
+  const feePercentage = paymentMethod === 'cash' ? 0 : feesConfig[paymentMethod];
   const fees = ((subtotal - discountValue) * feePercentage) / 100;
   const totalValue = subtotal - discountValue + fees;
 

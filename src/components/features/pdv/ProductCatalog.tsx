@@ -25,7 +25,7 @@ export default function ProductCatalog({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map(product => {
             const inCart = cart.find(item => item.uid === product.uid);
-            const canMake = canMakeProduct(product.uid, (inCart?.quantity ?? 0) + 1);
+            const canMake = canMakeProduct(product.uid, inCart?.quantity ?? 0 + 1);
 
             return (
               <div
@@ -47,7 +47,7 @@ export default function ProductCatalog({
                   <p
                     className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-on-great'}`}
                   >
-                    R$ {(product.production.sellingPrice ?? 0).toFixed(2)}
+                    R$ {product.production.sellingPrice.toFixed(2)}
                   </p>
                 </div>
 

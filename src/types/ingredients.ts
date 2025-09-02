@@ -17,7 +17,7 @@ export type Ingredient = {
   totalQuantity: number; // Quantidade total atual (soma de todos os batches)
   averageUnitPrice: number; // Preço médio ponderado atual
   batches: PurchaseBatch[]; // Histórico de compras (batches)
-  maxQuantity?: number;
+  maxQuantity: number;
 };
 
 export type IngredientTableProps = {

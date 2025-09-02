@@ -3,7 +3,6 @@ import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
 
 /**
  * Calcula a receita total das vendas (sem descontos).
- *
  * @param sales - Array de vendas realizadas
  * @returns Receita total em reais
  *
@@ -13,7 +12,7 @@ import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
  */
 export function getTotalRevenue(sales: Sale[]): number {
   return sales.reduce((total, sale) => {
-    const revenue = (sale.sellingPrice ?? 0) * (sale.yieldQuantity ?? 0);
+    const revenue = sale.sellingResume.totalValue * (sale.yieldQuantity ?? 0);
     // Validação para evitar NaN no resultado
     return total + (isNaN(revenue) ? 0 : revenue);
   }, 0);
