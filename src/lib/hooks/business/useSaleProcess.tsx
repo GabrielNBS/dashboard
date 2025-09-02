@@ -63,8 +63,8 @@ export function useSaleProcess() {
 
       const isValid = product.ingredients.every(ingredient => {
         const estoqueItem = estoque.ingredients.find(i => i.id === ingredient.id);
-        const totalNeeded = ingredient.quantity * requestedQuantity;
-        const hasEnough = !!estoqueItem && (estoqueItem.quantity ?? 0) >= totalNeeded;
+        const totalNeeded = ingredient.totalQuantity ?? 0 * requestedQuantity;
+        const hasEnough = !!estoqueItem && (estoqueItem.totalQuantity ?? 0) >= totalNeeded;
         if (!hasEnough) missingIngredients.push(ingredient.name);
         return hasEnough;
       });
@@ -110,21 +110,16 @@ export function useSaleProcess() {
       const product = finalProducts.products.find(p => p.uid === item.uid)!;
 
       product.ingredients.forEach(ingredient => {
-        const totalToRemove = ingredient.quantity * item.quantity;
+        const totalToRemove = ingredient.totalQuantity * item.quantity;
         const estoqueItem = estoque.ingredients.find(i => i.id === ingredient.id)!;
-        const pricePerUnit =
-          estoqueItem.quantity > 0 ? estoqueItem.buyPrice / estoqueItem.quantity : 0;
-        const newQuantity = estoqueItem.quantity - totalToRemove;
-        const newPriceInStock = newQuantity * pricePerUnit;
+        const newQuantity = estoqueItem.totalQuantity - totalToRemove;
 
         estoqueDispatch({
           type: 'EDIT_INGREDIENT',
           payload: {
             ...estoqueItem,
 
-            quantity: newQuantity,
-
-            priceInStock: newPriceInStock,
+            totalQuantity: newQuantity,
           },
         });
       });

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
-import { Ingredient } from '@/types/ingredients';
+import { Ingredient, PurchaseBatch } from '@/types/ingredients';
 import { useLocalStorage } from '@/lib/hooks/ui/useLocalStorage';
 
 /**
@@ -18,6 +18,8 @@ interface IngredientState {
  */
 type IngredientAction =
   | { type: 'ADD_INGREDIENT'; payload: Ingredient }
+  | { type: 'ADD_BATCH'; payload: { ingredientId: string; batch: PurchaseBatch } }
+  | { type: 'CONSUME_INGREDIENT'; payload: { ingredientId: string; quantity: number } }
   | { type: 'DELETE_INGREDIENT'; payload: string }
   | { type: 'EDIT_INGREDIENT'; payload: Ingredient }
   | { type: 'SET_INGREDIENTS'; payload: Ingredient[] }
@@ -25,16 +27,93 @@ type IngredientAction =
   | { type: 'CLOSE_EDIT_MODAL' };
 
 /**
+ * Utilitários para cálculos com batches
+ */
+const calculateAverageUnitPrice = (batches: PurchaseBatch[]): number => {
+  const totalValue = batches.reduce(
+    (sum, batch) => sum + batch.currentQuantity * batch.unitPrice,
+    0
+  );
+  const totalQuantity = batches.reduce((sum, batch) => sum + batch.currentQuantity, 0);
+
+  return totalQuantity > 0 ? totalValue / totalQuantity : 0;
+};
+
+const calculateTotalQuantity = (batches: PurchaseBatch[]): number => {
+  return batches.reduce((sum, batch) => sum + batch.currentQuantity, 0);
+};
+
+/**
+ * Consome quantidade usando FIFO (primeiro que entra, primeiro que sai)
+ */
+const consumeQuantityFIFO = (
+  batches: PurchaseBatch[],
+  quantityToConsume: number
+): PurchaseBatch[] => {
+  let remainingToConsume = quantityToConsume;
+
+  return batches
+    .map(batch => {
+      if (remainingToConsume <= 0) return batch;
+
+      const consumeFromThisBatch = Math.min(batch.currentQuantity, remainingToConsume);
+      remainingToConsume -= consumeFromThisBatch;
+
+      return {
+        ...batch,
+        currentQuantity: batch.currentQuantity - consumeFromThisBatch,
+      };
+    })
+    .filter(batch => batch.currentQuantity > 0); // Remove batches vazios
+};
+
+/**
  * Reducer para gerenciar o estado dos ingredientes
- *
- * @param state - Estado atual
- * @param action - Ação a ser executada
- * @returns Novo estado
  */
 function ingredientReducer(state: IngredientState, action: IngredientAction): IngredientState {
   switch (action.type) {
     case 'ADD_INGREDIENT':
       return { ...state, ingredients: [...state.ingredients, action.payload] };
+
+    case 'ADD_BATCH': {
+      const { ingredientId, batch } = action.payload;
+
+      return {
+        ...state,
+        ingredients: state.ingredients.map(ingredient => {
+          if (ingredient.id !== ingredientId) return ingredient;
+
+          const updatedBatches = [...ingredient.batches, batch];
+
+          return {
+            ...ingredient,
+            batches: updatedBatches,
+            totalQuantity: calculateTotalQuantity(updatedBatches),
+            averageUnitPrice: calculateAverageUnitPrice(updatedBatches),
+          };
+        }),
+      };
+    }
+
+    case 'CONSUME_INGREDIENT': {
+      const { ingredientId, quantity } = action.payload;
+
+      return {
+        ...state,
+        ingredients: state.ingredients.map(ingredient => {
+          if (ingredient.id !== ingredientId) return ingredient;
+
+          const updatedBatches = consumeQuantityFIFO(ingredient.batches, quantity);
+
+          return {
+            ...ingredient,
+            batches: updatedBatches,
+            totalQuantity: calculateTotalQuantity(updatedBatches),
+            averageUnitPrice: calculateAverageUnitPrice(updatedBatches),
+          };
+        }),
+      };
+    }
 
     case 'DELETE_INGREDIENT':
       return {
@@ -68,6 +147,10 @@ function ingredientReducer(state: IngredientState, action: IngredientAction): In
 interface IngredientContextType {
   state: IngredientState;
   dispatch: React.Dispatch<IngredientAction>;
+  // Funções auxiliares para facilitar o uso
+  addBatch: (ingredientId: string, batch: Omit<PurchaseBatch, 'id'>) => void;
+  consumeIngredient: (ingredientId: string, quantity: number) => void;
+  getIngredientById: (id: string) => Ingredient | undefined;
 }
 
 /**
@@ -77,20 +160,13 @@ export const IngredientContext = createContext<IngredientContextType | undefined
 
 /**
  * Provider do contexto de ingredientes
- *
- * Gerencia o estado dos ingredientes com persistência no localStorage
- * e sincronização automática entre componentes.
- *
- * @param children - Componentes filhos que terão acesso ao contexto
  */
 export const IngredientProvider = ({ children }: { children: ReactNode }) => {
-  // Hook para persistir ingredientes no localStorage
   const [storedIngredients, setStoredIngredients] = useLocalStorage<Ingredient[]>(
     'ingredients',
     []
   );
 
-  // Estado inicial do reducer
   const [state, dispatch] = useReducer(ingredientReducer, {
     ingredients: storedIngredients,
     ingredientToEdit: null,
@@ -102,7 +178,35 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
     setStoredIngredients(state.ingredients);
   }, [state.ingredients, setStoredIngredients]);
 
+  // Funções auxiliares
+  const addBatch = (ingredientId: string, batchData: Omit<PurchaseBatch, 'id'>) => {
+    const batch: PurchaseBatch = {
+      ...batchData,
+      id: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+
+    dispatch({ type: 'ADD_BATCH', payload: { ingredientId, batch } });
+  };
+
+  const consumeIngredient = (ingredientId: string, quantity: number) => {
+    dispatch({ type: 'CONSUME_INGREDIENT', payload: { ingredientId, quantity } });
+  };
+
+  const getIngredientById = (id: string): Ingredient | undefined => {
+    return state.ingredients.find(ingredient => ingredient.id === id);
+  };
+
   return (
-    <IngredientContext.Provider value={{ state, dispatch }}>{children}</IngredientContext.Provider>
+    <IngredientContext.Provider
+      value={{
+        state,
+        dispatch,
+        addBatch,
+        consumeIngredient,
+        getIngredientById,
+      }}
+    >
+      {children}
+    </IngredientContext.Provider>
   );
 };

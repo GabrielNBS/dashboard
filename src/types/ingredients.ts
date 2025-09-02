@@ -1,13 +1,23 @@
 export type UnitType = 'kg' | 'l' | 'un';
 
+export type PurchaseBatch = {
+  id: string;
+  purchaseDate: Date;
+  buyPrice: number; // preço total pago nesta compra
+  originalQuantity: number; // quantidade original comprada
+  currentQuantity: number; // quantidade atual restante
+  unitPrice: number; // preço por unidade base desta compra
+  supplier?: string;
+};
+
 export type Ingredient = {
   id: string;
   name: string;
-  buyPrice: number;
-  quantity: number;
-  maxQuantity?: number;
   unit: UnitType;
-  priceInStock?: number;
+  totalQuantity: number; // Quantidade total atual (soma de todos os batches)
+  averageUnitPrice: number; // Preço médio ponderado atual
+  batches: PurchaseBatch[]; // Histórico de compras (batches)
+  maxQuantity?: number;
 };
 
 export type IngredientTableProps = {

@@ -53,9 +53,12 @@ export default function IngredientEditPanel() {
 
     reset({
       name: ingredientToEdit.name,
-      quantity: denormalizeQuantity(ingredientToEdit.quantity, ingredientToEdit.unit).toString(),
+      quantity: denormalizeQuantity(
+        ingredientToEdit.totalQuantity,
+        ingredientToEdit.unit
+      ).toString(),
       unit: ingredientToEdit.unit as UnitType,
-      buyPrice: ingredientToEdit.buyPrice?.toString() || '',
+      buyPrice: ingredientToEdit.averageUnitPrice?.toString() || '',
     });
   }, [isModalOpen, ingredientToEdit, reset]);
 
@@ -66,15 +69,13 @@ export default function IngredientEditPanel() {
     const rawQuantity = parseFloat(data.quantity);
     const rawPrice = data.buyPrice ? parseFloat(data.buyPrice) : 0;
     const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
-    const priceInStock = (rawPrice / normalizedQuantity) * normalizedQuantity;
 
     const updatedIngredient: Ingredient = {
       ...ingredientToEdit!,
       name: data.name.trim(),
-      quantity: normalizedQuantity,
+      totalQuantity: normalizedQuantity,
       unit: data.unit,
-      buyPrice: rawPrice,
-      priceInStock,
+      averageUnitPrice: rawPrice,
     };
 
     dispatch({ type: 'EDIT_INGREDIENT', payload: updatedIngredient });

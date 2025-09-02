@@ -40,7 +40,7 @@ export default function Product() {
 
   // Custo total baseado no priceInStock dos ingredientes (custo proporcional de cada ingrediente usado)
   const totalCost = finalProduct.ingredients.reduce(
-    (acc, ing) => acc + (ing.buyPrice * ing.quantity || 0),
+    (acc, ing) => acc + (ing.averageUnitPrice * ing.totalQuantity || 0),
     0
   );
 

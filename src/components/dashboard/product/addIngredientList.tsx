@@ -13,9 +13,9 @@ function AddIngredientList() {
         <div key={ingredient.id} className="flex items-center gap-4">
           <div className="text-on-warning bg-warning flex gap-2 rounded px-3 py-1 text-sm">
             <span>
-              {ingredient.name} | {ingredient.quantity} {getBaseUnit(ingredient.unit)} x R$
-              {ingredient.buyPrice.toFixed(3)} = R$
-              {(ingredient.buyPrice * ingredient.quantity).toFixed(2)}
+              {ingredient.name} | {ingredient.totalQuantity} {getBaseUnit(ingredient.unit)} x R$
+              {ingredient.averageUnitPrice.toFixed(3)} = R$
+              {(ingredient.averageUnitPrice * ingredient.totalQuantity).toFixed(2)}
             </span>
             <Button
               type="button"

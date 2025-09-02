@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { Ingredient, UnitType } from '@/types/ingredients';
+import { Ingredient, UnitType, PurchaseBatch } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { normalizeQuantity } from '@/utils/normalizeQuantity';
 import { useToast } from '@/components/ui/use-toast';
@@ -17,7 +17,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { getQuantityInputConfig } from '@/utils/quantityInputConfig';
 import { useState } from 'react';
-import { CheckCheck, Plus } from 'lucide-react';
+import { CheckCheck, Plus, Package } from 'lucide-react';
 
 // componentes shadcn
 import {
@@ -38,9 +38,13 @@ import {
 } from '@/components/ui/select';
 
 export default function IngredientForm() {
-  const { dispatch } = useIngredientContext();
+  const { dispatch, state, addBatch, getIngredientById } = useIngredientContext();
   const { toast } = useToast();
   const [toggle, setToggle] = useState(false);
+  const [isRestock, setIsRestock] = useState(false);
+  const [selectedExistingIngredient, setSelectedExistingIngredient] = useState<Ingredient | null>(
+    null
+  );
 
   const {
     register,
@@ -63,6 +67,12 @@ export default function IngredientForm() {
 
   const watchedUnit = watch('unit');
   const watchedQuantity = watch('quantity');
+  const watchedName = watch('name');
+
+  // Verifica se existe ingrediente com mesmo nome
+  const existingIngredient = state.ingredients.find(
+    ing => ing.name.toLowerCase().trim() === watchedName.toLowerCase().trim()
+  );
 
   // Validação em tempo real para quantidade baseada na unidade
   const validateQuantity = (value: string) => {
@@ -81,13 +91,66 @@ export default function IngredientForm() {
     }
   };
 
-  function handleAddIngredient(ingredient: Ingredient) {
-    dispatch({ type: 'ADD_INGREDIENT', payload: ingredient });
-  }
+  const createNewIngredient = (data: IngredientFormData): Ingredient => {
+    const rawQuantity = parseFloat(data.quantity);
+    const rawPrice = parseFloat(data.buyPrice);
+    const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
+    const unitPrice = rawPrice / normalizedQuantity;
+
+    const batch: PurchaseBatch = {
+      id: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      purchaseDate: new Date(),
+      buyPrice: rawPrice,
+      originalQuantity: normalizedQuantity,
+      currentQuantity: normalizedQuantity,
+      unitPrice,
+    };
+
+    return {
+      id: uuidv4(),
+      name: data.name.trim(),
+      unit: data.unit,
+      totalQuantity: normalizedQuantity,
+      averageUnitPrice: unitPrice,
+      batches: [batch],
+      maxQuantity: normalizeQuantity(10, data.unit),
+    };
+  };
+
+  const handleAddBatchToExisting = (data: IngredientFormData, ingredient: Ingredient) => {
+    const rawQuantity = parseFloat(data.quantity);
+    const rawPrice = parseFloat(data.buyPrice);
+    const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
+
+    // Verifica se a unidade é compatível
+    if (ingredient.unit !== data.unit) {
+      toast({
+        title: 'Erro de unidade',
+        description: `O ingrediente "${ingredient.name}" já existe com a unidade "${ingredient.unit}". Use a mesma unidade.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const newBatch = {
+      purchaseDate: new Date(),
+      buyPrice: rawPrice,
+      originalQuantity: normalizedQuantity,
+      currentQuantity: normalizedQuantity,
+      unitPrice: rawPrice / normalizedQuantity,
+    };
+
+    addBatch(ingredient.id, newBatch);
+
+    toast({
+      title: 'Lote adicionado',
+      description: `Novo lote de "${ingredient.name}" adicionado ao estoque.`,
+      variant: 'accept',
+    });
+  };
 
   const onSubmit = (data: IngredientFormData) => {
     const rawQuantity = parseFloat(data.quantity);
-    const rawPrice = parseFloat(data.buyPrice);
 
     const unitValidationError = validateQuantityByUnit(rawQuantity, data.unit);
     if (unitValidationError) {
@@ -99,27 +162,23 @@ export default function IngredientForm() {
       return;
     }
 
-    const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
-    const priceInStock = (rawPrice / normalizedQuantity) * normalizedQuantity;
+    // Verifica se é reabastecimento ou novo ingrediente
+    if (existingIngredient) {
+      handleAddBatchToExisting(data, existingIngredient);
+    } else {
+      const newIngredient = createNewIngredient(data);
+      dispatch({ type: 'ADD_INGREDIENT', payload: newIngredient });
 
-    const newIngredient: Ingredient = {
-      id: uuidv4(),
-      name: data.name.trim(),
-      quantity: normalizedQuantity,
-      unit: data.unit,
-      buyPrice: rawPrice,
-      priceInStock,
-      maxQuantity: normalizeQuantity(10, data.unit), // Exemplo: limite padrão de 100 unidades na unidade base
-    };
+      toast({
+        title: 'Ingrediente criado',
+        description: `"${data.name}" cadastrado com sucesso.`,
+        variant: 'accept',
+      });
+    }
 
-    handleAddIngredient(newIngredient);
     reset();
-
-    toast({
-      title: 'Ingrediente adicionado',
-      description: `"${data.name}" cadastrado com sucesso.`,
-      variant: 'accept',
-    });
+    setToggle(false);
+    setSelectedExistingIngredient(null);
   };
 
   const handleUnitChange = (newUnit: string) => {
@@ -147,11 +206,32 @@ export default function IngredientForm() {
         </SheetTrigger>
         <SheetContent className="overflow-y-auto">
           <SheetHeader className="mb-6 flex flex-col items-center">
-            <SheetTitle className="text-lg">Adicionar novo ingrediente</SheetTitle>
+            <SheetTitle className="flex items-center gap-2 text-lg">
+              {existingIngredient ? <Package className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+              {existingIngredient ? 'Reabastecer ingrediente' : 'Adicionar novo ingrediente'}
+            </SheetTitle>
             <SheetDescription>
-              Preencha os campos abaixo para registrar um novo ingrediente
+              {existingIngredient
+                ? `Adicionar novo lote ao ingrediente "${existingIngredient.name}"`
+                : 'Preencha os campos abaixo para registrar um novo ingrediente'}
             </SheetDescription>
           </SheetHeader>
+
+          {/* Aviso de reabastecimento */}
+          {existingIngredient && (
+            <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
+              <h4 className="mb-1 font-medium text-blue-800">Reabastecimento detectado</h4>
+              <p className="text-sm text-blue-600">
+                Estoque atual: {existingIngredient.totalQuantity} {existingIngredient.unit}
+              </p>
+              <p className="text-sm text-blue-600">
+                Preço médio atual: R$ {existingIngredient.averageUnitPrice.toFixed(3)}
+              </p>
+              <p className="text-sm text-blue-600">
+                Batches ativos: {existingIngredient.batches.length}
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -166,6 +246,7 @@ export default function IngredientForm() {
                   id="name"
                   aria-invalid={!!errors.name}
                   className={errors.name ? 'border-destructive' : ''}
+                  disabled={!!existingIngredient}
                 />
                 {errors.name && (
                   <span className="text-destructive mt-1 block text-sm">{errors.name.message}</span>
@@ -176,7 +257,11 @@ export default function IngredientForm() {
                 <Label htmlFor="unit" className="mb-2 block">
                   Unidade de medida
                 </Label>
-                <Select onValueChange={handleUnitChange} value={watchedUnit}>
+                <Select
+                  onValueChange={handleUnitChange}
+                  value={watchedUnit}
+                  disabled={!!existingIngredient}
+                >
                   <SelectTrigger aria-invalid={!!errors.unit}>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
@@ -195,7 +280,7 @@ export default function IngredientForm() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <Label htmlFor="quantity" className="mb-2 block">
-                  Quantidade
+                  Quantidade {existingIngredient ? 'do novo lote' : ''}
                 </Label>
                 {(() => {
                   const { step, min, placeholder } = getQuantityInputConfig(watchedUnit);
@@ -222,7 +307,7 @@ export default function IngredientForm() {
 
               <div>
                 <Label htmlFor="buyPrice" className="mb-2 block">
-                  Preço de compra (R$)
+                  Preço de compra {existingIngredient ? 'do novo lote' : ''} (R$)
                 </Label>
                 <Input
                   type="number"
@@ -242,6 +327,39 @@ export default function IngredientForm() {
               </div>
             </div>
 
+            {/* Preview do novo preço médio para reabastecimento */}
+            {existingIngredient && watchedQuantity && watch('buyPrice') && (
+              <div className="rounded-lg border bg-gray-50 p-3">
+                <h4 className="mb-2 font-medium text-gray-800">Preview do novo preço médio</h4>
+                {(() => {
+                  const newQuantity = normalizeQuantity(parseFloat(watchedQuantity), watchedUnit);
+                  const newPrice = parseFloat(watch('buyPrice'));
+                  const newUnitPrice = newPrice / newQuantity;
+
+                  // Calcular novo preço médio ponderado
+                  const currentTotalValue =
+                    existingIngredient.totalQuantity * existingIngredient.averageUnitPrice;
+                  const newTotalValue = newQuantity * newUnitPrice;
+                  const combinedValue = currentTotalValue + newTotalValue;
+                  const combinedQuantity = existingIngredient.totalQuantity + newQuantity;
+                  const newAveragePrice = combinedValue / combinedQuantity;
+
+                  return (
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <p>Preço atual: R$ {existingIngredient.averageUnitPrice.toFixed(3)}</p>
+                      <p>Preço do novo lote: R$ {newUnitPrice.toFixed(3)}</p>
+                      <p className="font-medium">
+                        Novo preço médio: R$ {newAveragePrice.toFixed(3)}
+                      </p>
+                      <p>
+                        Quantidade total: {combinedQuantity} {watchedUnit}
+                      </p>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
             <div className="flex justify-end gap-3 pt-4">
               <Button variant="outline" type="button" onClick={() => setToggle(false)}>
                 Cancelar
@@ -251,9 +369,8 @@ export default function IngredientForm() {
                   'Adicionando...'
                 ) : (
                   <p className="flex items-center gap-2">
-                    {' '}
-                    <CheckCheck />
-                    Adicionar
+                    {existingIngredient ? <Package /> : <CheckCheck />}
+                    {existingIngredient ? 'Reabastecer' : 'Adicionar'}
                   </p>
                 )}
               </Button>

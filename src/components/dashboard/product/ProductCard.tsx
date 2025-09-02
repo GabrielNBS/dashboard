@@ -150,8 +150,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                 >
                   <span className="font-medium">- {ingredient.name}</span>
                   <span>
-                    {ingredient.quantity} {ingredient.unit} ×{' '}
-                    {formatCurrency(ingredient.buyPrice ?? 0)} = {formatCurrency(totalCost)}
+                    {ingredient.totalQuantity} {ingredient.unit} ×{' '}
+                    {formatCurrency(ingredient.averageUnitPrice ?? 0)} = {formatCurrency(totalCost)}
                   </span>
                 </li>
               ))}

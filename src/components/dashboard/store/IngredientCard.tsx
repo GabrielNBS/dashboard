@@ -10,8 +10,8 @@ import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 
 const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) => {
   const maxQuantity = ingredient.maxQuantity ?? 0;
-  const status = getStockStatus(ingredient.quantity, maxQuantity);
-  const stockPercentage = maxQuantity > 0 ? (ingredient.quantity / maxQuantity) * 100 : 0;
+  const status = getStockStatus(ingredient.totalQuantity ?? 0, maxQuantity);
+  const stockPercentage = maxQuantity > 0 ? (ingredient.totalQuantity / maxQuantity) * 100 : 0;
 
   // Configuração de status para exibição
   const statusConfig = {
@@ -52,11 +52,13 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
       <CardContent className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-muted-foreground text-sm">Quantidade</p>
-          <p className="font-semibold">{formatQuantity(ingredient.quantity, ingredient.unit)}</p>
+          <p className="font-semibold">
+            {formatQuantity(ingredient.totalQuantity, ingredient.unit)}
+          </p>
         </div>
         <div>
           <p className="text-muted-foreground text-sm">Preço de compra</p>
-          <p className="font-semibold">{formatCurrency(ingredient.buyPrice ?? 0)}</p>
+          <p className="font-semibold">{formatCurrency(ingredient.averageUnitPrice ?? 0)}</p>
         </div>
 
         {/* Barra de progresso */}
