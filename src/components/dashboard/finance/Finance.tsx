@@ -16,8 +16,6 @@ export default function Finance() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-title text-bold">Financeiro</h1>
-
       {/* Financial summary cards */}
       <FinancialSummaryCards financialSummary={financialSummary} />
 

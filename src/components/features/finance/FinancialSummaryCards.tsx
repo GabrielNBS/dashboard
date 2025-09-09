@@ -21,7 +21,7 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
   } = financialSummary;
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <CardWrapper title="Receita Total" value={totalRevenue} type="currency" />
       <CardWrapper title="Custo Variável Total" value={totalVariableCost} type="currency" />
       <CardWrapper title="Custo Fixo Total" value={totalFixedCost} type="currency" />

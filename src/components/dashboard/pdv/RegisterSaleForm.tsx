@@ -23,8 +23,8 @@ export default function RegisterSaleForm() {
   } = useSaleProcess();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-7xl p-4">
+    <div className="v min-h-screen p-6">
+      <div className="x mx-auto">
         <div className="mb-6">
           <h1 className="text-primary text-xl font-bold">Sistema de Vendas</h1>
           <p className="text-muted-foreground">Selecione os produtos e configure o pagamento</p>
