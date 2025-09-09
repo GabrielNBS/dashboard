@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { Button } from '../base';
 
 export type ToastVariant = 'default' | 'accept' | 'edit' | 'destructive';
 
@@ -76,31 +77,31 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
 
       {/* Container de toasts - posicionado no canto superior direito */}
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+      <div className="fixed top-4 left-4 z-50 flex flex-col gap-2">
         {toasts.map(({ id, title, description, variant = 'default' }) => (
           <div
             key={id}
             className={`relative flex max-w-xs min-w-[260px] flex-col gap-1 rounded-lg border px-4 py-3 shadow-lg ${
               variant === 'accept'
-                ? 'border-green-600 bg-green-400'
+                ? 'border-on-great bg-great'
                 : variant === 'edit'
-                  ? 'border-yellow-600 bg-yellow-400'
+                  ? 'border-on-warning-600 bg-warning'
                   : variant === 'destructive'
-                    ? 'border-red-600 bg-red-400'
+                    ? 'border-critical bg-on-critical'
                     : 'border-accent'
             } `}
           >
             <strong className="text-base font-semibold">{title}</strong>
-            {description && <span className="text-sm text-white">{description}</span>}
+            {description && <span className="text-primary text-sm">{description}</span>}
 
             {/* Botão para fechar o toast */}
-            <button
-              className="absolute top-2 right-2 text-white hover:text-gray-700"
+            <Button
+              className="text-surface hover:bg-muted-foreground absolute top-2 right-2"
               onClick={() => removeToast(id)}
               aria-label="Fechar"
             >
               ×
-            </button>
+            </Button>
           </div>
         ))}
       </div>
