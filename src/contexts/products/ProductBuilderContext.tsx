@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 /**
  * Ações possíveis para o reducer de construção de produtos
  */
-type ProductBuilderAction =
+export type ProductBuilderAction =
   | { type: 'SET_NAME'; payload: string }
   | { type: 'SET_CATEGORY'; payload: string }
   | { type: 'ADD_INGREDIENT'; payload: Ingredient }
