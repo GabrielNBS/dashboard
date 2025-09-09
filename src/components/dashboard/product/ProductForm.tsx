@@ -16,11 +16,7 @@ import {
   calculateUnitCost,
 } from '@/utils/calcSale';
 
-interface ProductFormProps {
-  onClose: () => void;
-}
-
-export default function ProductForm({ onClose }: ProductFormProps) {
+export default function ProductForm() {
   const { state, dispatch } = useProductContext();
   const { productToEdit, products, isEditMode } = state;
   const { state: settingsState } = useSettings();
@@ -51,6 +47,10 @@ export default function ProductForm({ onClose }: ProductFormProps) {
     finalProduct.production.mode,
     finalProduct.production.yieldQuantity
   );
+
+  const onClose = () => {
+    dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
+  };
 
   useEffect(() => {
     if (productToEdit) {
