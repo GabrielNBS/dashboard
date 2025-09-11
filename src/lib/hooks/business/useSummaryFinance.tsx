@@ -93,7 +93,7 @@ export function useFinanceSummary(
       margin,
       valueToSave,
       breakEven,
-      totalUnitsSold, // ✅ agora incluso
+      totalUnitsSold,
     };
-  }, [sales, fixedCosts, variableCosts, savingRate, settings]); // ✅ incluiu variableCosts
+  }, [sales, fixedCosts, variableCosts, savingRate, settings]);
 }

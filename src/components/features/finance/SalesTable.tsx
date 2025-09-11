@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import Button from '@/components/ui/base/Button';
-import { Sale } from '@/types/sale';
+import { Sale } from '@/types/sale'; // Certifique-se que o caminho para seus tipos está correto
+import Button from '@/components/ui/base/Button'; // Certifique-se que o caminho para seu botão está correto
 
 interface SalesTableProps {
   sales: Sale[];
@@ -11,56 +11,67 @@ interface SalesTableProps {
 
 export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
   return (
-    <table className="w-full text-left">
-      <thead className="bg-gray-100">
-        <tr>
-          <th className="p-2">Data</th>
-          <th className="p-2">Produto</th>
-          <th className="p-2">Qtd</th>
-          <th className="p-2">Preço Unit.</th>
-          <th className="p-2">Subtotal</th>
-          <th className="p-2">Total Venda</th>
-          <th className="p-2">Ações</th>
-        </tr>
-      </thead>
-      <tbody className="bg-white">
-        {sales.length === 0 ? (
+    <div className="overflow-x-auto rounded-lg border border-gray-200">
+      <table className="w-full text-left text-sm">
+        <thead className="bg-gray-100 text-gray-600 uppercase">
           <tr>
-            <td colSpan={7} className="p-4 text-center text-gray-400">
-              Nenhuma venda registrada.
-            </td>
+            <th className="p-3">Data</th>
+            <th className="p-3">Produto Vendido</th>
+            <th className="p-3 text-center">Qtd</th>
+            <th className="p-3">Preço Unit.</th>
+            <th className="p-3">Subtotal</th>
+            <th className="p-3">Total da Venda</th>
+            <th className="p-3 text-center">Ações</th>
           </tr>
-        ) : (
-          sales.map(sale =>
-            sale.items.map((item, idx) => (
-              <tr key={`${sale.id}-${idx}`} className="border-b border-gray-200">
-                <td className="p-2">{new Date(sale.date).toLocaleDateString()}</td>
-                <td className="p-2">{item.product.name}</td>
-                <td className="p-2">{item.quantity}</td>
-                <td className="p-2">R$ {item.product.production.sellingPrice.toFixed(2)}</td>
-                <td className="p-2">R$ {item.subtotal.toFixed(2)}</td>
-                {/* total geral da venda aparece apenas na última linha do grupo */}
-                {idx === 0 ? (
-                  <td className="p-2 font-bold" rowSpan={sale.items.length}>
-                    R$ {sale.sellingResume.totalValue.toFixed(2)}
+        </thead>
+        <tbody className="divide-y divide-gray-200 bg-white">
+          {/* Caso 1: A lista de vendas está vazia */}
+          {sales.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="text-muted-foreground p-4 text-center">
+                Nenhuma venda encontrada com os filtros aplicados.
+              </td>
+            </tr>
+          ) : (
+            /* Caso 2: Mapeia cada venda e seus itens para as linhas da tabela */
+            sales.map(sale =>
+              sale.items.map((item, idx) => (
+                <tr key={`${sale.id}-${item.product.uid}`} className="hover:bg-gray-50">
+                  {/* Colunas que aparecem em todas as linhas */}
+                  <td className="p-3">{new Date(sale.date).toLocaleDateString('pt-BR')}</td>
+                  <td className="text-primary p-3 font-medium">{item.product.name}</td>
+                  <td className="p-3 text-center">{item.quantity}</td>
+                  <td className="p-3">
+                    R$ {item.product.production.sellingPrice.toFixed(2).replace('.', ',')}
                   </td>
-                ) : null}
-                {idx === 0 ? (
-                  <td className="p-2" rowSpan={sale.items.length}>
-                    <Button
-                      variant="ghost"
-                      onClick={() => onRemoveSale(sale.id)}
-                      className="text-red-500 hover:text-red-700"
+                  <td className="p-3">R$ {item.subtotal.toFixed(2).replace('.', ',')}</td>
+
+                  {idx === 0 && (
+                    <td
+                      className="text-primary p-3 align-middle font-bold"
+                      rowSpan={sale.items.length}
                     >
-                      Remover
-                    </Button>
-                  </td>
-                ) : null}
-              </tr>
-            ))
-          )
-        )}
-      </tbody>
-    </table>
+                      R$ {sale.sellingResume.totalValue.toFixed(2).replace('.', ',')}
+                    </td>
+                  )}
+                  {idx === 0 && (
+                    <td className="p-3 text-center align-middle" rowSpan={sale.items.length}>
+                      <Button
+                        variant="ghost"
+                        onClick={() => onRemoveSale(sale.id)}
+                        className="p-1 text-red-600 hover:bg-red-50 hover:text-red-800"
+                        aria-label={`Remover venda de ${new Date(sale.date).toLocaleDateString('pt-BR')}`}
+                      >
+                        Remover
+                      </Button>
+                    </td>
+                  )}
+                </tr>
+              ))
+            )
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }

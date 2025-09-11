@@ -324,10 +324,10 @@ export function DateFilterControls({
             <button
               key={filter.value}
               onClick={() => onQuickFilterChange(filter.value)}
-              className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
+              className={`cursor-pointer rounded-md px-3 py-1 text-sm font-medium transition-colors ${
                 quickDateFilter === filter.value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-accent text-surface'
+                  : 'bg-gray-muted text-muted-foreground hover:bg-muted/90'
               }`}
             >
               {filter.label}

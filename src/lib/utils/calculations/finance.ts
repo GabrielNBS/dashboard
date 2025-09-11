@@ -10,10 +10,10 @@ import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
  * const revenue = getTotalRevenue(sales);
  * console.log(revenue); // 1500.00
  */
+// Sugestão para getTotalRevenue
 export function getTotalRevenue(sales: Sale[]): number {
   return sales.reduce((total, sale) => {
-    const revenue = sale.sellingResume.totalValue * (sale.yieldQuantity ?? 0);
-    // Validação para evitar NaN no resultado
+    const revenue = sale.sellingResume.totalValue;
     return total + (isNaN(revenue) ? 0 : revenue);
   }, 0);
 }
@@ -236,15 +236,15 @@ export function getBreakEven(
  * console.log(total); // 42
  */
 
+// Sugestão para getTotalUnitsSold
 export function getTotalUnitsSold(sales: Sale[]): number {
   return sales.reduce((total, sale) => {
-    const quantidade =
-      typeof sale.yieldQuantity === 'number' && !isNaN(sale.yieldQuantity) ? sale.yieldQuantity : 0;
-
-    return total + quantidade;
+    const saleTotalQuantity = sale.items.reduce((itemTotal, item) => {
+      return itemTotal + item.quantity;
+    }, 0);
+    return total + saleTotalQuantity;
   }, 0);
 }
-
 // utils/pricing.ts
 
 export interface StockValidation {
