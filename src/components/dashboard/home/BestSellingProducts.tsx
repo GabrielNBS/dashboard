@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/utils/formatCurrency';
+import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import React from 'react';
 
 const TopSellingItems = () => {
@@ -51,14 +51,14 @@ const TopSellingItems = () => {
     },
   ];
 
-  const getPercentageColor = percentage => {
+  const getPercentageColor = (percentage: number) => {
     if (percentage >= 15) return 'text-green-600 bg-green-100';
     if (percentage >= 10) return 'text-blue-600 bg-blue-100';
     if (percentage >= 5) return 'text-orange-600 bg-orange-100';
     return 'text-gray-600 bg-gray-100';
   };
 
-  const getRankBadge = index => {
+  const getRankBadge = (index: number) => {
     const colors = ['bg-yellow-500', 'bg-gray-400', 'bg-orange-600'];
     const medals = ['🥇', '🥈', '🥉'];
 

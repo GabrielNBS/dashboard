@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { Ingredient } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import { getBaseUnit, normalizeQuantity } from '@/utils/normalizeQuantity';
+
 import AddIngredientList from './addIngredientList';
 import SearchableInput from '@/components/ui/SearcheableInput';
+import { getBaseUnit, normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();

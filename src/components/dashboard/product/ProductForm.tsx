@@ -14,10 +14,10 @@ import ProductionSelector from '@/components/dashboard/product/ProductionSelecto
 import PriceAndMarginInputs from '@/components/dashboard/product/PriceAndMarginInputs';
 import CostPreviews from '@/components/dashboard/product/CostPreviews';
 import {
-  calculateSuggestedPrice,
   calculateRealProfitMargin,
+  calculateSuggestedPrice,
   calculateUnitCost,
-} from '@/utils/calcSale';
+} from '@/utils/calculations';
 
 // Constantes para evitar re-criação
 const VALIDATION_MESSAGES = {

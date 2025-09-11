@@ -7,7 +7,7 @@ import { Package, Plus, SearchIcon } from 'lucide-react';
 import SearchInput from '@/components/ui/forms/SearchInput';
 
 // Importações dos componentes reutilizáveis
-import { useItemFilter, SearchResultsContainer, FilterStats } from '@/lib/hooks/ui/useFilter';
+import { useItemFilter, SearchResultsContainer, FilterStats } from '@/hooks/ui/useFilter';
 
 // Componente principal ProductsList
 const ProductsList: React.FC = () => {

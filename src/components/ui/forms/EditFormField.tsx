@@ -1,12 +1,13 @@
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { UnitType } from '@/types/ingredients';
-import { getQuantityInputConfig } from '@/utils/quantityInputConfig';
+
 import { useFormContext } from 'react-hook-form';
 import NumericInput from './NumericInput';
 import FormError from './FormError';
 import Input from '../base/Input';
 import clsx from 'clsx';
 import UnitSelect from '../UnitSelect';
+import { getQuantityInputConfig } from '@/utils/helpers/quantityInputConfig';
 
 const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
   const {

@@ -3,10 +3,9 @@ import Button from '@/components/ui/base/Button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/base/Card';
 import { Progress } from '@/components/ui/Progress';
 import { ProductState } from '@/types/products';
-import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
+import { calculateRealProfitMarginFromProduction } from '@/utils/calculations';
+import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { Edit2, List, PieChart, Scale, Tag, Trash2, AlertTriangle, InfoIcon } from 'lucide-react';
-import { calculateRealProfitMarginFromProduction } from '@/utils/calcSale';
-
 interface ProductCardProps {
   product: ProductState;
   onEdit: (product: ProductState) => void;

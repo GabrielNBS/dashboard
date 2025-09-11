@@ -2,7 +2,7 @@
 
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
 import { Ingredient, PurchaseBatch } from '@/types/ingredients';
-import { useLocalStorage } from '@/lib/hooks/ui/useLocalStorage';
+import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 
 /**
  * Estado do contexto de ingredientes

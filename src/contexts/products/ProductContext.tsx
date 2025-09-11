@@ -2,7 +2,7 @@
 
 import React, { createContext, useReducer, ReactNode, useEffect, useContext } from 'react';
 import { ProductState } from '@/types/products';
-import { useLocalStorage } from '@/lib/hooks/ui/useLocalStorage';
+import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 
 interface ProductListState {
   products: ProductState[];

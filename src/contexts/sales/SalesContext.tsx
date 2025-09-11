@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
-import { useLocalStorage } from '@/lib/hooks/ui/useLocalStorage';
+import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 import { Sale } from '@/types/sale';
 
 /**

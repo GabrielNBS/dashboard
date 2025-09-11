@@ -2,7 +2,7 @@
 
 import React from 'react';
 import CardWrapper from '@/components/dashboard/finance/cards/CardWrapper';
-import { FinanceSummary } from '@/lib/hooks/business/useSummaryFinance';
+import { FinanceSummary } from '@/hooks/business/useSummaryFinance';
 
 interface FinancialSummaryCardsProps {
   financialSummary: FinanceSummary;

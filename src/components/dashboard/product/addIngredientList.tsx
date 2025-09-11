@@ -1,6 +1,6 @@
 import Button from '@/components/ui/base/Button';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
-import { getBaseUnit } from '@/utils/normalizeQuantity';
+import { getBaseUnit } from '@/utils/helpers/normalizeQuantity';
 import { Trash2 } from 'lucide-react';
 import React from 'react';
 

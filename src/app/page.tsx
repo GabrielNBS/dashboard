@@ -1,9 +1,9 @@
 'use client';
 
-import { useHydrated } from '@/lib/hooks/ui/useHydrated';
+import { useHydrated } from '@/hooks/ui/useHydrated';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { useFinanceSummary } from '@/lib/hooks/business/useSummaryFinance';
+import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
 
 import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
 import ProfitMarginCard from '@/components/dashboard/finance/cards/ProfitMarginCard';

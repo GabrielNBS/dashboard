@@ -10,7 +10,6 @@ import Button from '@/components/ui/base/Button';
 import { useToast } from '@/components/ui/feedback/use-toast';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import { denormalizeQuantity, normalizeQuantity } from '@/utils/normalizeQuantity';
 
 import { ingredientSchema, type IngredientFormData } from '@/schemas/validationSchemas';
 import {
@@ -25,6 +24,7 @@ import {
 import React from 'react';
 
 import EditFormFields from '@/components/ui/forms/EditFormField';
+import { denormalizeQuantity, normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 
 export default function IngredientEditPanel() {
   const { state, dispatch } = useIngredientContext();

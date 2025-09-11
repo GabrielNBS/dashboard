@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
+import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { ReactNode } from 'react';
 import { TrendingUp } from 'lucide-react';
 

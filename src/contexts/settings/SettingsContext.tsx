@@ -9,7 +9,7 @@ import {
   FinancialSettings,
   SystemSettings,
 } from '@/types/settings';
-import { useLocalStorage } from '@/lib/hooks/ui/useLocalStorage';
+import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 
 // Tipos de ações do reducer
 type SettingsAction =

@@ -3,9 +3,9 @@ import Button from '@/components/ui/base/Button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/base/Card';
 import { Progress } from '@/components/ui/Progress';
 import { IngredientCardProps } from '@/types/components';
-import { formatCurrency } from '@/lib/utils/formatting/formatCurrency';
-import { getStockStatus } from '@/lib/utils/calculations/calcSale';
-import { formatQuantity } from '@/lib/utils/helpers/normalizeQuantity';
+import { formatCurrency } from '@/utils/formatting/formatCurrency';
+import { getStockStatus } from '@/utils/calculations/calcSale';
+import { formatQuantity } from '@/utils/helpers/normalizeQuantity';
 import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 
 const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) => {

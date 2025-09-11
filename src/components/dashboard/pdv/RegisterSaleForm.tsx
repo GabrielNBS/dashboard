@@ -6,7 +6,7 @@ import ProductCatalog from '@/components/features/pdv/ProductCatalog';
 import ShoppingCart from '@/components/features/pdv/ShoppingCart';
 import PaymentConfiguration from '@/components/features/pdv/PaymentConfiguration';
 import OrderSummary from '@/components/features/pdv/OrderSummary';
-import { useSaleProcess } from '@/lib/hooks/business/useSaleProcess';
+import { useSaleProcess } from '@/hooks/business/useSaleProcess';
 
 export default function RegisterSaleForm() {
   const {

@@ -4,14 +4,14 @@ import React, { useMemo } from 'react'; // Adicionado useMemo
 
 // Hooks existentes e tipos
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
-import { useFinanceSummary } from '@/lib/hooks/business/useSummaryFinance';
-import { useFinanceActions } from '@/lib/hooks/business/useFinanceActions';
+import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
+import { useFinanceActions } from '@/hooks/business/useFinanceActions';
 import { Sale } from '@/types/sale'; // Supondo que o tipo Sale venha daqui
 import {
   useProductFilterWithDate,
   DateFilterConfig,
   DateFilterControls,
-} from '@/lib/hooks/ui/useDataFilter';
+} from '@/hooks/ui/useDataFilter';
 
 // Componentes de UI existentes
 import FinancialSummaryCards from '@/components/features/finance/FinancialSummaryCards';

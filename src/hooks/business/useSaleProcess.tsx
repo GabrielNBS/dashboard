@@ -9,7 +9,7 @@ import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { useProductContext } from '@/contexts/products/ProductContext';
 
-import { calculateSellingResume } from '@/lib/utils/calculations/calcSale';
+import { calculateSellingResume } from '@/utils/calculations/calcSale';
 
 import {
   CartItem,

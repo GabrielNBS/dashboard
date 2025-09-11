@@ -6,7 +6,7 @@ import Button from '@/components/ui/base/Button';
 import Input from '@/components/ui/base/Input';
 import { Ingredient, UnitType, PurchaseBatch } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
-import { normalizeQuantity } from '@/utils/normalizeQuantity';
+
 import { useToast } from '@/components/ui/feedback/use-toast';
 import {
   ingredientSchema,
@@ -15,7 +15,7 @@ import {
 } from '@/schemas/validationSchemas';
 
 import { v4 as uuidv4 } from 'uuid';
-import { getQuantityInputConfig } from '@/utils/quantityInputConfig';
+
 import { useState } from 'react';
 import { CheckCheck, Plus, Package } from 'lucide-react';
 
@@ -36,6 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/forms/select';
+import { normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
+import { getQuantityInputConfig } from '@/utils/helpers/quantityInputConfig';
 
 export default function IngredientForm() {
   const { dispatch, state, addBatch, getIngredientById } = useIngredientContext();

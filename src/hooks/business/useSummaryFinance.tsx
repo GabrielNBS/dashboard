@@ -15,7 +15,7 @@ import {
   getValueToSave,
   getBreakEven,
   getTotalUnitsSold,
-} from '@/lib/utils/calculations/finance';
+} from '@/utils/calculations/finance';
 
 export interface FinanceSummary {
   totalRevenue: number;
