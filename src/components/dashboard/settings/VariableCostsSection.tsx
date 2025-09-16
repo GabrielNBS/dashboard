@@ -128,7 +128,12 @@ export default function VariableCostsSection() {
               <label className="mb-1 block text-sm font-medium text-gray-700">Tipo de Custo</label>
               <select
                 value={editingCost.type}
-                onChange={e => setEditingCost({ ...editingCost, type: e.target.value as any })}
+                onChange={e =>
+                  setEditingCost({
+                    ...editingCost,
+                    type: e.target.value as VariableCostSettings['type'],
+                  })
+                }
                 className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
                 aria-label="Selecionar tipo de custo variável"
               >
@@ -144,7 +149,12 @@ export default function VariableCostsSection() {
               <label className="mb-1 block text-sm font-medium text-gray-700">Categoria</label>
               <select
                 value={editingCost.category}
-                onChange={e => setEditingCost({ ...editingCost, category: e.target.value as any })}
+                onChange={e =>
+                  setEditingCost({
+                    ...editingCost,
+                    category: e.target.value as VariableCostSettings['category'],
+                  })
+                }
                 className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
                 aria-label="Selecionar categoria do custo variável"
               >
@@ -220,7 +230,7 @@ export default function VariableCostsSection() {
           <div className="py-8 text-center text-gray-500">
             <Calculator className="mx-auto mb-4 h-12 w-12 text-gray-300" />
             <p>Nenhum custo variável configurado.</p>
-            <p className="text-sm">Clique em "Adicionar Custo" para começar.</p>
+            <p className="text-sm">Clique em &apos;Adicionar Custo&apos; para começar.</p>
           </div>
         ) : (
           <div className="space-y-3">

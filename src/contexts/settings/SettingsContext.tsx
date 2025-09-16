@@ -142,6 +142,7 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
 interface SettingsContextType {
   state: AppSettings;
   dispatch: React.Dispatch<SettingsAction>;
+  saveSettings: () => void;
   resetSettings: () => void;
 }
 
@@ -161,12 +162,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setPersistedSettings(state);
   }, [state, setPersistedSettings]);
 
+  const saveSettings = () => {
+    setPersistedSettings(state);
+  };
+
   const resetSettings = () => {
     dispatch({ type: 'RESET_SETTINGS' });
   };
 
   return (
-    <SettingsContext.Provider value={{ state, dispatch, resetSettings }}>
+    <SettingsContext.Provider value={{ state, dispatch, saveSettings, resetSettings }}>
       {children}
     </SettingsContext.Provider>
   );

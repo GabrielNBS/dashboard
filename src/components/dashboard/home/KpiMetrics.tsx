@@ -15,6 +15,7 @@ import {
   Cell,
   RadialBarChart,
   RadialBar,
+  TooltipProps,
 } from 'recharts';
 // Removido date-fns para usar funções nativas
 import { Calendar } from 'lucide-react';
@@ -94,17 +95,17 @@ const formatFullDate = (dateString: string): string => {
 };
 
 // Tooltip customizado
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (!active || !payload?.length) return null;
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
       <div className="mb-3 flex items-center gap-2">
         <Calendar className="text-muted-foreground h-4 w-4" />
-        <p className="text-primary/90 font-semibold">{formatFullDate(label)}</p>
+        <p className="text-primary/90 font-semibold">{formatFullDate(label || '')}</p>
       </div>
       <div className="space-y-2">
-        {payload.map((entry: any) => (
+        {payload.map(entry => (
           <div key={entry.dataKey} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
@@ -119,7 +120,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function FinancialChart() {
-  const [data, setData] = useState(initialData);
+  const [data] = useState(initialData);
   const [chartType, setChartType] = useState<'bars' | 'pie' | 'radial'>('bars');
 
   // Cálculos de estatísticas
@@ -135,14 +136,14 @@ export default function FinancialChart() {
   ];
 
   // Dados para gráfico radial (formato específico)
-  const radialData = aggregatedData.map((item, index) => ({
+  const radialData = aggregatedData.map(item => ({
     ...item,
     fill: item.color,
     angle: (item.value / Math.max(totalRevenue, totalExpenses, totalProfit)) * 180,
   }));
 
   // Tooltip customizado para gráficos circulares
-  const CustomPieTooltip = ({ active, payload }: any) => {
+  const CustomPieTooltip = ({ active, payload }: TooltipProps) => {
     if (!active || !payload?.length) return null;
 
     const data = payload[0].payload;
@@ -251,11 +252,14 @@ export default function FinancialChart() {
               verticalAlign="bottom"
               height={36}
               iconType="circle"
-              formatter={(value, entry: any) => (
-                <span style={{ color: entry.color, fontWeight: '600' }}>
-                  {value}: {formatCurrency(entry.payload.value)}
-                </span>
-              )}
+              formatter={(value, entry) => {
+                const { color, payload } = entry as { color: string; payload: { value: number } };
+                return (
+                  <span style={{ color, fontWeight: '600' }}>
+                    {value}: {formatCurrency(payload.value)}
+                  </span>
+                );
+              }}
             />
           </PieChart>
         );
@@ -271,24 +275,27 @@ export default function FinancialChart() {
             startAngle={180}
             endAngle={0}
           >
-            <RadialBar minAngle={15} clockWise dataKey="value" cornerRadius={8} fill="#8884d8" />
+            <RadialBar dataKey="value" cornerRadius={8} fill="#8884d8" />
             <Legend
               iconSize={18}
               layout="vertical"
               verticalAlign="middle"
               align="right"
-              formatter={(value, entry: any) => (
-                <span style={{ color: entry.color, fontWeight: '600' }}>
-                  {value}: {formatCurrency(entry.payload.value)}
-                </span>
-              )}
+              formatter={(value, entry) => {
+                const { color, payload } = entry as { color: string; payload: { value: number } };
+                return (
+                  <span style={{ color, fontWeight: '600' }}>
+                    {value}: {formatCurrency(payload.value)}
+                  </span>
+                );
+              }}
             />
             <Tooltip content={<CustomPieTooltip />} />
           </RadialBarChart>
         );
 
       default:
-        return null;
+        return <></>;
     }
   };
 
@@ -306,7 +313,7 @@ export default function FinancialChart() {
             ].map(({ key, label, icon }) => (
               <button
                 key={key}
-                onClick={() => setChartType(key as any)}
+                onClick={() => setChartType(key as 'bars' | 'pie' | 'radial')}
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   chartType === key
                     ? 'scale-105 transform bg-blue-500 text-white shadow-lg'

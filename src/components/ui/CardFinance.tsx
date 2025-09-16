@@ -1,4 +1,4 @@
-import { FinanceSummary } from '@/hooks/useSummaryFinance';
+import { FinanceSummary } from '@/hooks/business/useSummaryFinance';
 
 import RevenueCard from '../dashboard/finance/cards/RevenueCard';
 import VariableCostCard from '../dashboard/finance/cards/VariableCostCard';

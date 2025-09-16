@@ -10,7 +10,10 @@ import { Cog, Globe, Bell, Cloud, Moon, Sun, Monitor } from 'lucide-react';
 export default function SystemSettingsSection() {
   const { state, dispatch } = useSettings();
 
-  const handleSystemChange = (field: keyof typeof state.system, value: any) => {
+  const handleSystemChange = (
+    field: keyof typeof state.system,
+    value: string | boolean | { [key: string]: boolean | string },
+  ) => {
     dispatch({
       type: 'UPDATE_SYSTEM',
       payload: { [field]: value },
@@ -19,7 +22,7 @@ export default function SystemSettingsSection() {
 
   const handleNotificationChange = (
     key: keyof typeof state.system.notifications,
-    value: boolean
+    value: boolean,
   ) => {
     dispatch({
       type: 'UPDATE_SYSTEM',
@@ -32,7 +35,7 @@ export default function SystemSettingsSection() {
     });
   };
 
-  const handleBackupChange = (key: keyof typeof state.system.backup, value: any) => {
+  const handleBackupChange = (key: keyof typeof state.system.backup, value: string | boolean) => {
     dispatch({
       type: 'UPDATE_SYSTEM',
       payload: {

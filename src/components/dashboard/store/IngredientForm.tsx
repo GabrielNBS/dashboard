@@ -40,13 +40,9 @@ import { normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 import { getQuantityInputConfig } from '@/utils/helpers/quantityInputConfig';
 
 export default function IngredientForm() {
-  const { dispatch, state, addBatch, getIngredientById } = useIngredientContext();
+  const { dispatch, state, addBatch } = useIngredientContext();
   const { toast } = useToast();
   const [toggle, setToggle] = useState(false);
-  const [isRestock, setIsRestock] = useState(false);
-  const [selectedExistingIngredient, setSelectedExistingIngredient] = useState<Ingredient | null>(
-    null
-  );
 
   const {
     register,

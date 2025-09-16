@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useMemo } from 'react'; // Adicionado useMemo
+import React, { useMemo, useRef } from 'react';
 
 // Hooks existentes e tipos
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
 import { useFinanceActions } from '@/hooks/business/useFinanceActions';
-import { Sale } from '@/types/sale'; // Supondo que o tipo Sale venha daqui
+import { Sale } from '@/types/sale';
 import {
   useProductFilterWithDate,
   DateFilterConfig,
@@ -16,33 +16,30 @@ import {
 // Componentes de UI existentes
 import FinancialSummaryCards from '@/components/features/finance/FinancialSummaryCards';
 import SalesTable from '@/components/features/finance/SalesTable';
+import { Button } from '@/components/ui/base';
+import { GoalCard } from './cards/RevenueGoalCard';
+import { ExportButtons } from './ExportButtons';
 
-// Estendemos o tipo Sale localmente para incluir nossa propriedade de busca
 type SearchableSale = Sale & { searchableContent: string };
 
 export default function Finance() {
   const { state: salesState } = useSalesContext();
   const { handleRemoveSale } = useFinanceActions();
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  // 2. PREPARA OS DADOS PARA O HOOK GENÉRICO
-  // Usamos useMemo para performance, evitando recalcular a cada renderização
   const searchableSales = useMemo((): SearchableSale[] => {
     return salesState.sales.map(sale => ({
       ...sale,
-      // Criamos um campo único com todos os nomes de produtos para a busca
       searchableContent: sale.items.map(item => item.product.name).join(' '),
     }));
   }, [salesState.sales]);
 
-  // 3. DEFINE A CONFIGURAÇÃO PARA O HOOK
-  // Dizemos ao hook como ele deve filtrar e ordenar os dados de 'Sale'
   const salesFilterConfig: DateFilterConfig<SearchableSale> = {
-    dateField: 'date', // O campo de data é 'date'
-    searchFields: ['searchableContent'], // A busca deve ser feita no nosso novo campo
-    dateFormat: 'iso', // O formato da data é ISO string
+    dateField: 'date',
+    searchFields: ['searchableContent'],
+    dateFormat: 'iso',
   };
 
-  // 4. CHAMA O HOOK GENÉRICO
   const {
     filteredItems,
     search,
@@ -53,15 +50,11 @@ export default function Finance() {
     setQuickDateFilter,
     resetFilters,
     hasActiveFilters,
-  } = useProductFilterWithDate(
-    searchableSales, // Passa os dados preparados
-    salesFilterConfig // Passa o objeto de configuração
-  );
+  } = useProductFilterWithDate(searchableSales, salesFilterConfig);
 
-  // O resumo financeiro continua usando a lista filtrada
   const financialSummary = useFinanceSummary(filteredItems);
+  const { breakEven, grossProfit } = financialSummary;
 
-  // O restante do componente permanece exatamente igual
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-lg border bg-gray-50 p-4">
@@ -79,28 +72,44 @@ export default function Finance() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Ex: Bolo de chocolate"
-              className="focus:border-accent focus:ring-accent w-full rounded-md border-gray-300 p-2 shadow-sm"
+              className="focus:border-accent focus:ring-accent rounded-md border-gray-300 p-2 shadow-sm lg:w-2/4"
             />
           </div>
-          <DateFilterControls
-            dateRange={dateRange}
-            quickDateFilter={quickDateFilter}
-            onDateRangeChange={setDateRange}
-            onQuickFilterChange={setQuickDateFilter}
-            className="flex flex-wrap items-center gap-2"
-          />
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <DateFilterControls
+              dateRange={dateRange}
+              quickDateFilter={quickDateFilter}
+              onDateRangeChange={setDateRange}
+              onQuickFilterChange={setQuickDateFilter}
+            />
+            <ExportButtons financialSummary={financialSummary} sales={filteredItems} />
+          </div>
         </div>
         {hasActiveFilters && (
           <div className="mt-4">
-            <button onClick={resetFilters} className="text-sm text-blue-600 hover:underline">
+            <Button
+              onClick={resetFilters}
+              variant="link"
+              className="text-accent text-sm hover:underline"
+            >
               Limpar Filtros
-            </button>
+            </Button>
           </div>
         )}
       </div>
-      <FinancialSummaryCards financialSummary={financialSummary} />
 
-      <SalesTable sales={filteredItems} onRemoveSale={handleRemoveSale} />
+      <div ref={contentRef} className="flex flex-col gap-6">
+        <GoalCard
+          title="Ponto de equilíbrio"
+          tooltipText="Indica o valor mínimo de receita para cobrir todos os custos."
+          goalValue={breakEven || 0}
+          currentValue={grossProfit || 0}
+        />
+
+        <FinancialSummaryCards financialSummary={financialSummary} />
+
+        <SalesTable sales={filteredItems} onRemoveSale={handleRemoveSale} />
+      </div>
     </div>
   );
 }

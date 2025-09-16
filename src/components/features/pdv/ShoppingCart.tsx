@@ -39,7 +39,7 @@ export default function ShoppingCart({
       ) : (
         <div className="space-y-3">
           {cart.map(item => {
-            const product = products.find(p => p.uid === item.uid);
+            const product = products.find(product => product.uid === item.uid);
             if (!product) return null;
             const sellingPrice = product.production.sellingPrice;
 

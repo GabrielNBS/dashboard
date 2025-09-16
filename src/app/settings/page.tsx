@@ -16,7 +16,7 @@ import FinancialSettingsSection from '@/components/dashboard/settings/FinancialS
 import SystemSettingsSection from '@/components/dashboard/settings/SystemSettingsSection';
 
 export default function SettingsPage() {
-  const { state, saveSettings, resetSettings } = useSettings();
+  const { saveSettings, resetSettings } = useSettings();
   const [activeSection, setActiveSection] = useState('store');
   const [isSaving, setIsSaving] = useState(false);
 

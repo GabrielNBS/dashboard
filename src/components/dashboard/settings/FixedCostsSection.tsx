@@ -6,7 +6,7 @@ import { FixedCostSettings } from '@/types/settings';
 import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
 import { DollarSign, Plus, Edit, Trash2 } from 'lucide-react';
-import { getTotalFixedCost } from '@/utils/finance';
+import { getTotalFixedCost } from '@/utils/calculations/finance';
 
 export default function FixedCostsSection() {
   const { state, dispatch } = useSettings();

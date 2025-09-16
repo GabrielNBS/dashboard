@@ -3,6 +3,7 @@
 import React from 'react';
 import { Sale } from '@/types/sale'; // Certifique-se que o caminho para seus tipos está correto
 import Button from '@/components/ui/base/Button'; // Certifique-se que o caminho para seu botão está correto
+import { useHydrated } from '@/hooks/ui/useHydrated';
 
 interface SalesTableProps {
   sales: Sale[];
@@ -10,6 +11,11 @@ interface SalesTableProps {
 }
 
 export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
+  const hydrated = useHydrated();
+  if (!hydrated) {
+    return <p>Carregando...</p>;
+  }
+
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200">
       <table className="w-full text-left text-sm">

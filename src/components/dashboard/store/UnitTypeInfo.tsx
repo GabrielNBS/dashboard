@@ -1,7 +1,7 @@
 'use client';
 
 import { UnitType } from '@/types/ingredients';
-import { getBaseUnit } from '@/utils/normalizeQuantity';
+import { getBaseUnit } from '@/utils/helpers/normalizeQuantity';
 
 interface UnitTypeInfoProps {
   unit: UnitType;
