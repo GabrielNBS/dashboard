@@ -5,10 +5,10 @@ import { CreditCard, Banknote, Smartphone, Tag } from 'lucide-react';
 import { PaymentConfig, PaymentOption, DiscountType, PAYMENT_METHODS } from '@/types/sale';
 
 const PAYMENT_OPTIONS: PaymentOption[] = [
-  { id: PAYMENT_METHODS.CASH, label: 'Dinheiro', icon: Banknote, fee: 0 },
-  { id: PAYMENT_METHODS.DEBIT, label: 'Débito', icon: CreditCard, fee: 2.5 },
-  { id: PAYMENT_METHODS.CREDIT, label: 'Crédito', icon: CreditCard, fee: 3.5 },
-  { id: PAYMENT_METHODS.IFOOD, label: 'iFood', icon: Smartphone, fee: 15 },
+  { id: 'cash', label: PAYMENT_METHODS.CASH, icon: Banknote, fee: 0 },
+  { id: 'debit', label: PAYMENT_METHODS.DEBIT, icon: CreditCard, fee: 2.5 },
+  { id: 'credit', label: PAYMENT_METHODS.CREDIT, icon: CreditCard, fee: 3.5 },
+  { id: 'ifood', label: PAYMENT_METHODS.IFOOD, icon: Smartphone, fee: 15 },
 ];
 
 interface PaymentConfigurationProps {

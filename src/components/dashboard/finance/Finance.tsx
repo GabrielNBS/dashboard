@@ -19,6 +19,7 @@ import SalesTable from '@/components/features/finance/SalesTable';
 import { Button } from '@/components/ui/base';
 import { GoalCard } from './cards/RevenueGoalCard';
 import { ExportButtons } from './ExportButtons';
+import { useHydrated } from '@/hooks/ui/useHydrated';
 
 type SearchableSale = Sale & { searchableContent: string };
 
@@ -26,6 +27,7 @@ export default function Finance() {
   const { state: salesState } = useSalesContext();
   const { handleRemoveSale } = useFinanceActions();
   const contentRef = useRef<HTMLDivElement>(null);
+  const hydrated = useHydrated();
 
   const searchableSales = useMemo((): SearchableSale[] => {
     return salesState.sales.map(sale => ({
@@ -54,6 +56,10 @@ export default function Finance() {
 
   const financialSummary = useFinanceSummary(filteredItems);
   const { breakEven, grossProfit } = financialSummary;
+
+  if (!hydrated) {
+    return <p>Carregando...</p>;
+  }
 
   return (
     <div className="flex flex-col gap-6">

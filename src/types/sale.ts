@@ -11,6 +11,7 @@ export interface PaymentDiscount {
 }
 
 export interface PaymentFees {
+  cash: number;
   debit: number;
   credit: number;
   ifood: number;
@@ -60,13 +61,14 @@ export interface PaymentOption {
 }
 
 export const PAYMENT_METHODS = {
-  CASH: 'cash' as const,
-  DEBIT: 'debit' as const,
-  CREDIT: 'credit' as const,
-  IFOOD: 'ifood' as const,
+  CASH: 'dinheiro' as const,
+  DEBIT: 'débito' as const,
+  CREDIT: 'crédito' as const,
+  IFOOD: 'Ifood' as const,
 } as const;
 
 export const DEFAULT_PAYMENT_FEES: PaymentFees = {
+  cash: 0,
   debit: 2.5,
   credit: 3.5,
   ifood: 15,

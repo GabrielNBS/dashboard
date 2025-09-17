@@ -93,7 +93,7 @@ export default function IngredientForm() {
     const rawQuantity = parseFloat(data.quantity);
     const rawPrice = parseFloat(data.buyPrice);
     const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
-    const unitPrice = rawPrice / normalizedQuantity;
+    const unitPrice = data.unit === 'un' ? rawPrice : rawPrice / normalizedQuantity;
 
     const batch: PurchaseBatch = {
       id: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -378,4 +378,7 @@ export default function IngredientForm() {
       </Sheet>
     </>
   );
+}
+function setSelectedExistingIngredient(arg: null) {
+  throw new Error('Function not implemented.');
 }
