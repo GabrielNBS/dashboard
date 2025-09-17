@@ -162,7 +162,16 @@ export function getNetProfit(
  */
 export function getProfitMargin(netProfit: number, totalRevenue: number): number {
   if (totalRevenue <= 0) return 0;
-  return Number(((netProfit / totalRevenue) * 100).toFixed(2));
+
+  const margin = (netProfit / totalRevenue) * 100;
+
+  // Validação para garantir que a margem está dentro de limites razoáveis
+  if (margin < -100 || margin > 1000) {
+    console.warn('Margem de lucro fora dos limites esperados:', margin);
+    return 0;
+  }
+
+  return Number(margin.toFixed(2));
 }
 
 /**

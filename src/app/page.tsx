@@ -1,9 +1,8 @@
 'use client';
 
 import { useHydrated } from '@/hooks/ui/useHydrated';
-import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
+import { useDashboardMetrics } from '@/hooks/business/useDashboardMetrics';
 
 import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
 import ProfitMarginCard from '@/components/dashboard/finance/cards/ProfitMarginCard';
@@ -11,18 +10,14 @@ import RevenueCard from '@/components/dashboard/finance/cards/RevenueCard';
 import VariableCostCard from '@/components/dashboard/finance/cards/VariableCostCard';
 import TopSellingItems from '@/components/dashboard/home/BestSellingProducts';
 import FinancialChart from '@/components/dashboard/home/KpiMetrics';
+import MetricsIntegrationDemo from '@/components/dashboard/home/MetricsIntegrationDemo';
 
 import { ChartBarIcon, PercentIcon, DollarSign, CoinsIcon } from 'lucide-react';
 
 // pages/dashboard.tsx
 export default function DashboardContent() {
   const { state: settings } = useSettings();
-  const { state: salesState } = useSalesContext();
-
-  const revenue = useFinanceSummary(salesState.sales);
-  const netProfit = useFinanceSummary(salesState.sales);
-  const variableCost = useFinanceSummary(salesState.sales);
-  const margin = useFinanceSummary(salesState.sales);
+  const { summary, chartData, aggregatedData } = useDashboardMetrics();
   const hydrated = useHydrated();
 
   const { storeName } = settings.store;
@@ -40,20 +35,21 @@ export default function DashboardContent() {
           <h1 className="text-primary text-hero font-bold">
             Bom dia, <strong className="text-primary">{storeName}</strong>
           </h1>
-          <p className="text-foreground text-lg">Resumo das métricas e atividades recentes.</p>
+          <p className="text-foreground text-lg">O resumo diário do seu negocio</p>
         </header>
 
         {/* Grade de Cards */}
         <section className="bg-surface grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <NetProfitCard summary={netProfit} bgColor="bg-great" icon={<DollarSign />} />
-          <RevenueCard summary={revenue} icon={<ChartBarIcon />} />
-          <VariableCostCard summary={variableCost} icon={<CoinsIcon />} />
-          <ProfitMarginCard summary={margin} icon={<PercentIcon />} />
+          <NetProfitCard summary={summary} bgColor="bg-great" icon={<DollarSign />} />
+          <RevenueCard summary={summary} icon={<ChartBarIcon />} />
+          <VariableCostCard summary={summary} icon={<CoinsIcon />} />
+          <ProfitMarginCard summary={summary} icon={<PercentIcon />} />
         </section>
 
         {/* Gráficos */}
         <section className="grid grid-cols-1 gap-6">
-          <FinancialChart />
+          <FinancialChart chartData={chartData} aggregatedData={aggregatedData} />
+          <MetricsIntegrationDemo />
         </section>
       </section>
 

@@ -19,14 +19,14 @@ import {
 
 export interface FinanceSummary {
   totalRevenue: number;
-  totalVariableCost?: number;
-  totalFixedCost?: number;
+  totalVariableCost: number;
+  totalFixedCost: number;
   grossProfit: number;
   netProfit: number;
   margin: number;
-  valueToSave?: number;
-  breakEven?: number;
-  totalUnitsSold?: number; // ✅ incluído no retorno
+  valueToSave: number;
+  breakEven: number;
+  totalUnitsSold: number;
 }
 
 /**
@@ -34,6 +34,16 @@ export interface FinanceSummary {
  *
  * Calcula automaticamente receita, custos, lucros e margens baseado nas vendas,
  * custos fixos/variáveis e taxa de poupança configurada.
+ *
+ * @param sales - Array de vendas para calcular métricas
+ * @param fixedCosts - Custos fixos opcionais (usa configurações se não fornecido)
+ * @param variableCosts - Custos variáveis opcionais (usa configurações se não fornecido)
+ * @param savingRate - Taxa de poupança opcional (usa configurações se não fornecido)
+ * @returns Resumo financeiro completo com todas as métricas calculadas
+ *
+ * @example
+ * const summary = useFinanceSummary(salesData);
+ * console.log(summary.netProfit); // Lucro líquido calculado
  */
 export function useFinanceSummary(
   sales: Sale[],
@@ -44,56 +54,107 @@ export function useFinanceSummary(
   const { state: settings } = useSettings();
 
   return useMemo(() => {
-    // Usa custos fixos das configurações se não fornecidos
-    const effectiveFixedCosts = fixedCosts || settings.fixedCosts;
+    // Validação de entrada
+    if (!Array.isArray(sales)) {
+      console.warn('useFinanceSummary: Sales deve ser um array válido');
+      return {
+        totalRevenue: 0,
+        totalVariableCost: 0,
+        totalFixedCost: 0,
+        grossProfit: 0,
+        netProfit: 0,
+        margin: 0,
+        valueToSave: 0,
+        breakEven: 0,
+        totalUnitsSold: 0,
+      };
+    }
 
-    // Usa custos variáveis das configurações se não fornecidos
-    const effectiveVariableCosts = variableCosts || settings.variableCosts;
+    try {
+      // Usa custos fixos das configurações se não fornecidos
+      const effectiveFixedCosts = fixedCosts || settings.fixedCosts;
 
-    // Usa taxa de poupança das configurações se não fornecida
-    const effectiveSavingRate = savingRate ?? settings.financial.emergencyReservePercentage / 100;
+      // Usa custos variáveis das configurações se não fornecidos
+      const effectiveVariableCosts = variableCosts || settings.variableCosts;
 
-    // Receita total
-    const totalRevenue = getTotalRevenue(sales);
+      // Usa taxa de poupança das configurações se não fornecida
+      const effectiveSavingRate = savingRate ?? settings.financial.emergencyReservePercentage / 100;
 
-    // Quantidade total de unidades vendidas
-    const totalUnitsSold = getTotalUnitsSold(sales);
+      // Receita total
+      const totalRevenue = getTotalRevenue(sales);
 
-    // Custos variáveis totais (ingredientes, embalagens, etc.)
-    const totalVariableCost = getTotalVariableCost(
-      effectiveVariableCosts,
-      totalRevenue,
-      totalUnitsSold
-    );
+      // Quantidade total de unidades vendidas
+      const totalUnitsSold = getTotalUnitsSold(sales);
 
-    // Custos fixos totais mensais
-    const totalFixedCost = getTotalFixedCost(effectiveFixedCosts);
+      // Custos variáveis totais (ingredientes, embalagens, etc.)
+      const totalVariableCost = getTotalVariableCost(
+        effectiveVariableCosts,
+        totalRevenue,
+        totalUnitsSold
+      );
 
-    // Lucro bruto
-    const grossProfit = getGrossProfit(totalRevenue, totalVariableCost);
+      // Custos fixos totais mensais
+      const totalFixedCost = getTotalFixedCost(effectiveFixedCosts);
 
-    // Lucro líquido
-    const netProfit = getNetProfit(totalRevenue, totalVariableCost, totalFixedCost);
+      // Lucro bruto
+      const grossProfit = getGrossProfit(totalRevenue, totalVariableCost);
 
-    // Margem de lucro (%)
-    const margin = getProfitMargin(netProfit, totalRevenue);
+      // Lucro líquido
+      const netProfit = getNetProfit(totalRevenue, totalVariableCost, totalFixedCost);
 
-    // Valor a ser reservado (poupança)
-    const valueToSave = getValueToSave(netProfit, effectiveSavingRate);
+      // Margem de lucro (%)
+      const margin = getProfitMargin(netProfit, totalRevenue);
 
-    // Ponto de equilíbrio
-    const breakEven = getBreakEven(totalFixedCost, totalVariableCost, totalRevenue);
+      // Valor a ser reservado (poupança)
+      const valueToSave = getValueToSave(netProfit, effectiveSavingRate);
 
-    return {
-      totalRevenue,
-      totalVariableCost,
-      totalFixedCost,
-      grossProfit,
-      netProfit,
-      margin,
-      valueToSave,
-      breakEven,
-      totalUnitsSold,
-    };
-  }, [sales, fixedCosts, variableCosts, savingRate, settings]);
+      // Ponto de equilíbrio
+      const breakEven = getBreakEven(totalFixedCost, totalVariableCost, totalRevenue);
+
+      // Log para debugging em desenvolvimento
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('FinanceSummary calculated:', {
+          salesCount: sales.length,
+          totalRevenue,
+          netProfit,
+          margin: `${margin}%`,
+        });
+      }
+
+      return {
+        totalRevenue,
+        totalVariableCost,
+        totalFixedCost,
+        grossProfit,
+        netProfit,
+        margin,
+        valueToSave,
+        breakEven,
+        totalUnitsSold,
+      };
+    } catch (error) {
+      console.error('Erro ao calcular resumo financeiro:', error);
+
+      // Retorna valores padrão em caso de erro
+      return {
+        totalRevenue: 0,
+        totalVariableCost: 0,
+        totalFixedCost: 0,
+        grossProfit: 0,
+        netProfit: 0,
+        margin: 0,
+        valueToSave: 0,
+        breakEven: 0,
+        totalUnitsSold: 0,
+      };
+    }
+  }, [
+    sales,
+    fixedCosts,
+    variableCosts,
+    savingRate,
+    settings.fixedCosts,
+    settings.variableCosts,
+    settings.financial.emergencyReservePercentage,
+  ]);
 }

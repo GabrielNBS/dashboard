@@ -15,9 +15,20 @@ import {
   Cell,
   RadialBarChart,
   RadialBar,
-  TooltipProps,
 } from 'recharts';
-// Removido date-fns para usar funções nativas
+
+// Import the correct type for tooltip content
+interface TooltipContentProps {
+  active?: boolean;
+  payload?: Array<{
+    dataKey?: string;
+    name?: string;
+    value?: number;
+    color?: string;
+    payload?: unknown;
+  }>;
+  label?: string | number;
+}
 import { Calendar } from 'lucide-react';
 
 export type FinancialRecord = {
@@ -27,21 +38,16 @@ export type FinancialRecord = {
   profit: number;
 };
 
-const initialData: FinancialRecord[] = [
-  { date: '2025-08-01', revenue: 1200, expenses: 800, profit: 400 },
-  { date: '2025-08-02', revenue: 950, expenses: 600, profit: 350 },
-  { date: '2025-08-03', revenue: 1500, expenses: 900, profit: 600 },
-  { date: '2025-08-04', revenue: 1800, expenses: 1000, profit: 800 },
-  { date: '2025-08-05', revenue: 700, expenses: 500, profit: 200 },
-  { date: '2025-08-06', revenue: 1100, expenses: 700, profit: 400 },
-  { date: '2025-08-07', revenue: 1300, expenses: 850, profit: 450 },
-  { date: '2025-08-08', revenue: 2000, expenses: 1200, profit: 800 },
-  { date: '2025-08-09', revenue: 1750, expenses: 950, profit: 800 },
-  { date: '2025-08-10', revenue: 900, expenses: 600, profit: 300 },
-  { date: '2025-08-11', revenue: 2100, expenses: 1400, profit: 700 },
-  { date: '2025-08-12', revenue: 1950, expenses: 1100, profit: 850 },
-  { date: '2025-08-13', revenue: 1600, expenses: 950, profit: 650 },
-];
+export type AggregatedData = {
+  name: string;
+  value: number;
+  color: string;
+};
+
+interface FinancialChartProps {
+  chartData?: FinancialRecord[];
+  aggregatedData?: AggregatedData[];
+}
 
 // Configurações do gráfico facilmente editáveis
 const chartConfig = {
@@ -95,23 +101,23 @@ const formatFullDate = (dateString: string): string => {
 };
 
 // Tooltip customizado
-const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
   if (!active || !payload?.length) return null;
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
       <div className="mb-3 flex items-center gap-2">
         <Calendar className="text-muted-foreground h-4 w-4" />
-        <p className="text-primary/90 font-semibold">{formatFullDate(label || '')}</p>
+        <p className="text-primary/90 font-semibold">{formatFullDate(String(label || ''))}</p>
       </div>
       <div className="space-y-2">
-        {payload.map(entry => (
-          <div key={entry.dataKey} className="flex items-center justify-between gap-4">
+        {payload.map((entry, index) => (
+          <div key={entry.dataKey || index} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
               <span className="text-muted-foreground text-sm">{entry.name}</span>
             </div>
-            <span className="text-primary font-bold">{formatCurrency(entry.value)}</span>
+            <span className="text-primary font-bold">{formatCurrency(entry.value || 0)}</span>
           </div>
         ))}
       </div>
@@ -119,34 +125,44 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   );
 };
 
-export default function FinancialChart() {
-  const [data] = useState(initialData);
+export default function FinancialChart({
+  chartData = [],
+  aggregatedData = [],
+}: FinancialChartProps) {
   const [chartType, setChartType] = useState<'bars' | 'pie' | 'radial'>('bars');
+
+  // Use provided data or fallback to empty arrays
+  const data = chartData.length > 0 ? chartData : [];
 
   // Cálculos de estatísticas
   const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
   const totalExpenses = data.reduce((sum, item) => sum + item.expenses, 0);
   const totalProfit = data.reduce((sum, item) => sum + item.profit, 0);
 
-  // Dados para gráfico de pizza e radial
-  const aggregatedData = [
-    { name: 'Receita', value: totalRevenue, color: chartConfig.colors.revenue },
-    { name: 'Gastos', value: totalExpenses, color: chartConfig.colors.expenses },
-    { name: 'Lucro', value: totalProfit, color: chartConfig.colors.profit },
-  ];
+  // Use provided aggregated data or calculate from chart data
+  const pieData =
+    aggregatedData.length > 0
+      ? aggregatedData
+      : [
+          { name: 'Receita', value: totalRevenue, color: chartConfig.colors.revenue },
+          { name: 'Gastos', value: totalExpenses, color: chartConfig.colors.expenses },
+          { name: 'Lucro', value: totalProfit, color: chartConfig.colors.profit },
+        ];
 
   // Dados para gráfico radial (formato específico)
-  const radialData = aggregatedData.map(item => ({
+  const radialData = pieData.map(item => ({
     ...item,
     fill: item.color,
     angle: (item.value / Math.max(totalRevenue, totalExpenses, totalProfit)) * 180,
   }));
 
   // Tooltip customizado para gráficos circulares
-  const CustomPieTooltip = ({ active, payload }: TooltipProps) => {
+  const CustomPieTooltip = ({ active, payload }: TooltipContentProps) => {
     if (!active || !payload?.length) return null;
 
-    const data = payload[0].payload;
+    const data = payload[0]?.payload as { name: string; value: number; color: string };
+    if (!data) return null;
+
     const percentage = ((data.value / (totalRevenue + totalExpenses + totalProfit)) * 100).toFixed(
       1
     );
@@ -235,7 +251,7 @@ export default function FinancialChart() {
         return (
           <PieChart>
             <Pie
-              data={aggregatedData}
+              data={pieData}
               cx="50%"
               cy="50%"
               outerRadius={120}
@@ -243,7 +259,7 @@ export default function FinancialChart() {
               paddingAngle={0}
               dataKey="value"
             >
-              {aggregatedData.map((entry, index) => (
+              {pieData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
@@ -313,6 +329,7 @@ export default function FinancialChart() {
             ].map(({ key, label, icon }) => (
               <button
                 key={key}
+                type="button"
                 onClick={() => setChartType(key as 'bars' | 'pie' | 'radial')}
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   chartType === key
@@ -329,20 +346,27 @@ export default function FinancialChart() {
 
         {/* Gráfico */}
         <div className="h-96 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            {renderChartElements()}
-          </ResponsiveContainer>
+          {data.length === 0 ? (
+            <div className="flex h-full items-center justify-center text-slate-500">
+              <div className="text-center">
+                <Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
+                <p className="text-lg font-medium">Nenhum dado disponível</p>
+                <p className="text-sm">Adicione algumas vendas para ver os gráficos</p>
+              </div>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              {renderChartElements()}
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 
-      {/* Seção para adicionar dados facilmente */}
+      {/* Seção de informações */}
       <div className="rounded-lg border border-slate-100 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-slate-800">Configurações</h3>
+        <h3 className="mb-4 text-lg font-semibold text-slate-800">Informações</h3>
         <div className="text-sm text-slate-600">
-          <p>
-            • Para adicionar novos dados, modifique o array{' '}
-            <code className="rounded bg-slate-100 px-2 py-1">initialData</code>
-          </p>
+          <p>• Os dados são carregados automaticamente das vendas registradas no sistema</p>
           <p>
             • Cores podem ser alteradas em{' '}
             <code className="rounded bg-slate-100 px-2 py-1">chartConfig.colors</code>

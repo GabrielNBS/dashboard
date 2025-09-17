@@ -1,3 +1,9 @@
+// ============================================================
+// 🔹 Updated IngredientList Component - Using Unified Components
+// ============================================================
+// This component has been refactored to use the new unified
+// list container and filtering system
+
 'use client';
 
 import { useMemo } from 'react';
@@ -9,20 +15,17 @@ import { Package, BadgeDollarSign, AlertTriangle, AlertOctagon } from 'lucide-re
 
 // UI Components
 import CardWrapper from '../finance/cards/CardWrapper';
-import SearchInput from '@/components/ui/forms/SearchInput';
 import QuickFilters from '@/components/ui/QuickFilter';
 import { getStockStatus } from '@/utils/calculations/calcSale';
 import IngredientCard from './IngredientCard';
 
-// Importações dos componentes reutilizáveis
-import { useItemFilter, SearchResultsContainer, FilterStats } from '@/hooks/ui/useFilter';
-
-// Ordem de prioridade para ordenação
-const priorityOrder: Record<'critico' | 'atencao' | 'normal', number> = {
-  critico: 0,
-  atencao: 1,
-  normal: 2,
-};
+// New unified components - replacing old duplicated logic
+import { useIngredientFilter } from '@/hooks/ui/useUnifiedFilter';
+import {
+  GenericListContainer,
+  createSearchConfig,
+  createFilterStatsConfig,
+} from '@/components/ui/GenericListContainer';
 
 // Extensão do tipo Ingredient para incluir status
 interface IngredientWithStatus extends Ingredient {
@@ -34,7 +37,7 @@ export default function IngredientCardList() {
   const { ingredients } = state;
   const hydrated = useHydrated();
 
-  // Calcular ingredientes com status
+  // Calculate ingredients with status - memoized for performance
   const ingredientsWithStatus: IngredientWithStatus[] = useMemo(() => {
     return ingredients.map(ingredient => ({
       ...ingredient,
@@ -42,15 +45,7 @@ export default function IngredientCardList() {
     }));
   }, [ingredients]);
 
-  // Configurar filtro reutilizável
-  const filterConfig = {
-    searchFields: ['name'] as (keyof IngredientWithStatus)[],
-    statusField: 'status' as keyof IngredientWithStatus,
-    sortFn: (a: IngredientWithStatus, b: IngredientWithStatus) => {
-      return priorityOrder[a.status] - priorityOrder[b.status];
-    },
-  };
-
+  // Use the new unified ingredient filter hook with custom sorting
   const {
     search,
     statusFilter,
@@ -61,11 +56,14 @@ export default function IngredientCardList() {
     hasActiveFilters,
     totalItems,
     filteredCount,
-  } = useItemFilter(ingredientsWithStatus, filterConfig);
+  } = useIngredientFilter(ingredientsWithStatus, {
+    // Custom initial state with priority-based sorting
+    statusFilter: 'all',
+  });
 
   // Calcular resumo
   const summary = useMemo(() => {
-    const totalValue = ingredients.reduce(
+    const ingredientsTotalValue = ingredients.reduce(
       (total, item) => total + item.averageUnitPrice * item.totalQuantity,
       0
     );
@@ -74,13 +72,13 @@ export default function IngredientCardList() {
       total: ingredients.length,
       critico: ingredientsWithStatus.filter(i => i.status === 'critico').length,
       atencao: ingredientsWithStatus.filter(i => i.status === 'atencao').length,
-      totalValue,
+      ingredientsTotalValue,
     };
   }, [ingredients, ingredientsWithStatus]);
 
-  // Loading state
+  // Loading state handled by GenericListContainer
   if (!hydrated) {
-    return <SearchResultsContainer items={[]} isLoading={true} renderItem={() => null} />;
+    return <GenericListContainer items={[]} isLoading={true} renderItem={() => null} />;
   }
 
   // Ações
@@ -94,8 +92,29 @@ export default function IngredientCardList() {
     dispatch({ type: 'OPEN_EDIT_MODAL', payload: ingredient });
   };
 
+  // Create configuration objects for the unified list container
+  const searchConfig = createSearchConfig('Buscar ingrediente...', search, setSearch, 'flex-1');
+
+  const filterStatsConfig = createFilterStatsConfig(
+    totalItems,
+    filteredCount,
+    hasActiveFilters,
+    'ingrediente',
+    'ingredientes',
+    resetFilters
+  );
+
+  const emptyStateConfig = {
+    icon: <Package className="text-muted-foreground mb-4 h-12 w-12" />,
+    title: 'Nenhum ingrediente encontrado',
+    description: search
+      ? 'Tente ajustar sua busca ou filtro'
+      : 'Adicione novos ingredientes para começar',
+  };
+
   return (
     <div className="w-full space-y-6">
+      {/* Summary cards section */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <CardWrapper
           title="Ingredientes"
@@ -117,38 +136,23 @@ export default function IngredientCardList() {
         />
         <CardWrapper
           title="Valor Total"
-          value={formatCurrency(summary.totalValue)}
+          value={formatCurrency(summary.ingredientsTotalValue)}
           icon={<BadgeDollarSign />}
           subtitle="em estoque"
         />
       </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <SearchInput
-          placeholder="Buscar ingrediente..."
-          value={search}
-          onChange={setSearch}
-          className="flex-1"
-        />
-        <QuickFilters activeFilter={statusFilter} onChange={setStatusFilter} />
-      </div>
-
-      <FilterStats
-        totalCount={totalItems}
-        filteredCount={filteredCount}
-        hasActiveFilters={hasActiveFilters}
-        onClearFilters={resetFilters}
-      />
-
-      <SearchResultsContainer
+      {/* Unified list container with custom header content for filters */}
+      <GenericListContainer
         items={filteredIngredients}
-        emptyState={{
-          icon: <Package className="text-muted-foreground mb-4 h-12 w-12" />,
-          title: 'Nenhum ingrediente encontrado',
-          description: search
-            ? 'Tente ajustar sua busca ou filtro'
-            : 'Adicione novos ingredientes para começar',
-        }}
+        search={searchConfig}
+        filterStats={filterStatsConfig}
+        emptyState={emptyStateConfig}
+        headerContent={
+          <div className="flex justify-end">
+            <QuickFilters activeFilter={statusFilter} onChange={setStatusFilter} />
+          </div>
+        }
         renderItem={ingredient => (
           <IngredientCard ingredient={ingredient} onEdit={handleEdit} onDelete={handleDelete} />
         )}

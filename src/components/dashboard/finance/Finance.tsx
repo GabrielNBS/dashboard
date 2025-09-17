@@ -2,16 +2,21 @@
 
 import React, { useMemo, useRef } from 'react';
 
+// ============================================================
+// 🔹 Updated Finance Component - Using Unified Components
+// ============================================================
+// This component has been refactored to use the new unified
+// filtering system and reusable UI components
+
 // Hooks existentes e tipos
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
 import { useFinanceActions } from '@/hooks/business/useFinanceActions';
 import { Sale } from '@/types/sale';
-import {
-  useProductFilterWithDate,
-  DateFilterConfig,
-  DateFilterControls,
-} from '@/hooks/ui/useDataFilter';
+
+// New unified components - replacing old duplicated logic
+import { useSalesFilter } from '@/hooks/ui/useUnifiedFilter';
+import { UnifiedDateFilterControls } from '@/components/ui/UnifiedDateFilterControls';
 
 // Componentes de UI existentes
 import FinancialSummaryCards from '@/components/features/finance/FinancialSummaryCards';
@@ -21,6 +26,7 @@ import { GoalCard } from './cards/RevenueGoalCard';
 import { ExportButtons } from './ExportButtons';
 import { useHydrated } from '@/hooks/ui/useHydrated';
 
+// Enhanced sale type with searchable content for filtering
 type SearchableSale = Sale & { searchableContent: string };
 
 export default function Finance() {
@@ -29,6 +35,7 @@ export default function Finance() {
   const contentRef = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
 
+  // Create searchable sales data - memoized for performance
   const searchableSales = useMemo((): SearchableSale[] => {
     return salesState.sales.map(sale => ({
       ...sale,
@@ -36,12 +43,7 @@ export default function Finance() {
     }));
   }, [salesState.sales]);
 
-  const salesFilterConfig: DateFilterConfig<SearchableSale> = {
-    dateField: 'date',
-    searchFields: ['searchableContent'],
-    dateFormat: 'iso',
-  };
-
+  // Use the new unified sales filter hook - replaces old filtering logic
   const {
     filteredItems,
     search,
@@ -52,7 +54,7 @@ export default function Finance() {
     setQuickDateFilter,
     resetFilters,
     hasActiveFilters,
-  } = useProductFilterWithDate(searchableSales, salesFilterConfig);
+  } = useSalesFilter(searchableSales);
 
   const financialSummary = useFinanceSummary(filteredItems);
   const { breakEven, grossProfit } = financialSummary;
@@ -82,7 +84,8 @@ export default function Finance() {
             />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <DateFilterControls
+            {/* Using the new unified date filter controls component */}
+            <UnifiedDateFilterControls
               dateRange={dateRange}
               quickDateFilter={quickDateFilter}
               onDateRangeChange={setDateRange}

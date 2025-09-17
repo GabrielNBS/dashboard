@@ -1,3 +1,9 @@
+// ============================================================
+// 🔹 Refactored ProductForm - Using Unified Form Components
+// ============================================================
+// This component has been refactored to use the new GenericForm
+// utilities and standardized validation patterns
+
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import {
@@ -5,9 +11,16 @@ import {
   useProductBuilderContext,
 } from '@/contexts/products/ProductBuilderContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { toast } from '@/components/ui/feedback/use-toast';
-import Button from '@/components/ui/base/Button';
-import { CheckCheck, X } from 'lucide-react';
+
+// New unified form components - replacing old form patterns
+import {
+  GenericForm,
+  COMMON_VALIDATION_MESSAGES,
+  showValidationToast,
+  showSuccessToast,
+} from '@/components/ui/GenericFormUtils';
+
+// Existing product-specific components
 import CategoryList from '@/components/ui/CategoryList';
 import IngredientSelector from '@/components/dashboard/product/IngredientSelector';
 import ProductionSelector from '@/components/dashboard/product/ProductionSelector';
@@ -19,19 +32,12 @@ import {
   calculateUnitCost,
 } from '@/utils/calculations';
 
-// Constantes para evitar re-criação
-const VALIDATION_MESSAGES = {
-  REQUIRED_FIELDS: {
-    title: 'Campos obrigatórios',
-    description: 'Preencha o nome e a categoria do produto.',
-  },
+// Product-specific validation messages extending common ones
+const PRODUCT_VALIDATION_MESSAGES = {
+  ...COMMON_VALIDATION_MESSAGES,
   NO_INGREDIENTS: {
     title: 'Ingredientes necessários',
     description: 'Adicione pelo menos um ingrediente.',
-  },
-  INVALID_PRICE: {
-    title: 'Preço inválido',
-    description: 'Informe um preço de venda válido.',
   },
   DUPLICATE_PRODUCT: {
     title: 'Produto duplicado',
@@ -90,20 +96,23 @@ export default function ProductForm() {
     manualSellingPrice,
   ]);
 
-  // Função de validação extraída
+  // Enhanced validation function using unified validation patterns
   const validateForm = useCallback(() => {
+    // Required fields validation
     if (!builderState.name.trim() || !builderState.category.trim()) {
-      toast({ ...VALIDATION_MESSAGES.REQUIRED_FIELDS, variant: 'destructive' });
+      showValidationToast(PRODUCT_VALIDATION_MESSAGES.REQUIRED_FIELDS);
       return false;
     }
 
+    // Ingredients validation
     if (builderState.ingredients.length === 0) {
-      toast({ ...VALIDATION_MESSAGES.NO_INGREDIENTS, variant: 'destructive' });
+      showValidationToast(PRODUCT_VALIDATION_MESSAGES.NO_INGREDIENTS);
       return false;
     }
 
+    // Price validation
     if (manualSellingPrice <= 0) {
-      toast({ ...VALIDATION_MESSAGES.INVALID_PRICE, variant: 'destructive' });
+      showValidationToast(PRODUCT_VALIDATION_MESSAGES.INVALID_PRICE);
       return false;
     }
 
@@ -183,9 +192,9 @@ export default function ProductForm() {
 
       if (!validateForm()) return;
 
-      // Verificação de duplicata apenas para novos produtos
+      // Duplicate validation for new products only
       if (!isEditMode && checkForDuplicate()) {
-        toast({ ...VALIDATION_MESSAGES.DUPLICATE_PRODUCT, variant: 'destructive' });
+        showValidationToast(PRODUCT_VALIDATION_MESSAGES.DUPLICATE_PRODUCT);
         return;
       }
 
@@ -197,10 +206,10 @@ export default function ProductForm() {
 
       dispatch({ type: action, payload: productPayload });
 
-      toast({
+      // Show success toast using unified toast function
+      showSuccessToast({
         title: isEditMode ? 'Produto atualizado!' : 'Produto adicionado com sucesso!',
         description: successMessage,
-        variant: 'accept',
       });
 
       handleCloseForm();
@@ -216,15 +225,15 @@ export default function ProductForm() {
     ]
   );
 
+  // Render using GenericForm wrapper with unified form patterns
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {isEditMode && productToEdit && (
-        <div className="bg-warning text-on-warning mb-4 rounded p-2 text-sm">
-          Editando: <strong>{productToEdit.name}</strong> — qualquer alteração será aplicada ao
-          produto existente.
-        </div>
-      )}
-
+    <GenericForm
+      onSubmit={handleSubmit}
+      onCancel={handleCloseForm}
+      isEditMode={isEditMode}
+      editItemName={productToEdit?.name}
+    >
+      {/* Product name input */}
       <div>
         <label className="mb-1 block font-medium">Nome do produto:</label>
         <input
@@ -237,6 +246,7 @@ export default function ProductForm() {
         />
       </div>
 
+      {/* Product-specific form sections */}
       <CategoryList />
       <IngredientSelector />
       <ProductionSelector />
@@ -255,17 +265,6 @@ export default function ProductForm() {
         realProfitMargin={calculations.realProfitMargin}
         mode={builderState.production.mode}
       />
-
-      <div className="mt-6 flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={handleCloseForm}>
-          <X className="h-5 w-5" />
-          Cancelar
-        </Button>
-        <Button type="submit" variant="accept">
-          <CheckCheck className="h-5 w-5" />
-          {isEditMode ? 'Atualizar' : 'Adicionar'}
-        </Button>
-      </div>
-    </form>
+    </GenericForm>
   );
 }

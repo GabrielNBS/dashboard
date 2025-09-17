@@ -1,19 +1,26 @@
-import { Badge } from '@/components/ui/base/Badge';
-import Button from '@/components/ui/base/Button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/base/Card';
-import { Progress } from '@/components/ui/Progress';
+// ============================================================
+// 🔹 Refactored IngredientCard - Using GenericCard Component
+// ============================================================
+// This component has been refactored to use the new GenericCard
+// component, eliminating duplicate card layout code
+
+import React from 'react';
 import { IngredientCardProps } from '@/types/components';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { getStockStatus } from '@/utils/calculations/calcSale';
 import { formatQuantity } from '@/utils/helpers/normalizeQuantity';
 import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 
+// New unified components - replacing old card implementation
+import { GenericCard, type BadgeConfig } from '@/components/ui/GenericCard';
+
 const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) => {
+  // Calculate stock metrics
   const maxQuantity = ingredient.maxQuantity;
   const status = getStockStatus(ingredient.totalQuantity, maxQuantity);
   const stockPercentage = maxQuantity > 0 ? (ingredient.totalQuantity / maxQuantity) * 100 : 0;
 
-  // Configuração de status para exibição
+  // Status configuration for display - centralized status logic
   const statusConfig = {
     critico: {
       text: 'Crítico',
@@ -34,65 +41,67 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
 
   const { text, icon, variant } = statusConfig[status];
 
+  // Configure badges for unit and status
+  const badges: BadgeConfig[] = [
+    {
+      text: ingredient.unit,
+      variant: 'outline',
+    },
+    {
+      text,
+      variant,
+      icon,
+    },
+  ];
+
+  // Configure main metrics to display
+  const mainMetrics = [
+    {
+      label: 'Quantidade',
+      value: formatQuantity(ingredient.totalQuantity, ingredient.unit),
+    },
+    {
+      label: 'Preço de compra',
+      value: formatCurrency(ingredient.averageUnitPrice),
+    },
+  ];
+
+  // Configure progress bar for stock level
+  const progressConfig = {
+    value: stockPercentage,
+    label: 'Nível do Estoque',
+    status,
+    showPercentage: true,
+  };
+
+  // Configure action buttons with custom icons
+  const actions = [
+    {
+      icon: <Edit3 className="h-4 w-4" />,
+      label: 'Editar',
+      onClick: () => onEdit(ingredient),
+      variant: 'ghost' as const,
+      tooltip: 'Editar ingrediente',
+    },
+    {
+      icon: <Trash2 className="h-4 w-4" />,
+      label: 'Excluir',
+      onClick: () => onDelete(ingredient.id),
+      variant: 'ghost' as const,
+      tooltip: 'Excluir ingrediente',
+    },
+  ];
+
+  // Render using GenericCard with all configurations
   return (
-    <Card className="transition-shadow hover:shadow-md">
-      {/* Cabeçalho */}
-      <CardHeader className="flex flex-row items-center gap-3">
-        <CardTitle className="flex-1 truncate">{ingredient.name}</CardTitle>
-        <Badge className="capitalize">{ingredient.unit}</Badge>
-        <Badge variant={variant}>
-          <span className="flex items-center gap-1">
-            {icon}
-            {text}
-          </span>
-        </Badge>
-      </CardHeader>
-
-      {/* Conteúdo */}
-      <CardContent className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-muted-foreground text-sm">Quantidade</p>
-          <p className="font-semibold">
-            {formatQuantity(ingredient.totalQuantity, ingredient.unit)}
-          </p>
-        </div>
-        <div>
-          <p className="text-muted-foreground text-sm">Preço de compra</p>
-          <p className="font-semibold">{formatCurrency(ingredient.averageUnitPrice)}</p>
-        </div>
-
-        {/* Barra de progresso */}
-        <div className="col-span-2 mt-3">
-          <div className="text-foreground mb-1 flex justify-between text-sm">
-            <span>Nível do Estoque</span>
-            <span>{Math.round(stockPercentage)}%</span>
-          </div>
-          <Progress value={stockPercentage} stats={status} />
-        </div>
-      </CardContent>
-
-      {/* Rodapé com ações */}
-      <CardFooter className="flex justify-end gap-2 pt-4">
-        <Button
-          size="sm"
-          variant="edit"
-          onClick={() => onEdit(ingredient)}
-          aria-label={`Editar ${ingredient.name}`}
-          tooltip={{ tooltipContent: 'Editar ingrediente' }}
-        >
-          <Edit3 className="h-4 w-4" />
-        </Button>
-        <Button
-          size="sm"
-          variant="destructive"
-          onClick={() => onDelete(ingredient.id)}
-          aria-label={`Excluir ${ingredient.name}`}
-          tooltip={{ tooltipContent: 'Excluir ingrediente' }}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </CardFooter>
-    </Card>
+    <GenericCard
+      item={ingredient}
+      badges={badges}
+      mainMetrics={mainMetrics}
+      progress={progressConfig}
+      actions={actions}
+      variant="compact"
+    />
   );
 };
 
