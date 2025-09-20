@@ -1,6 +1,7 @@
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { ReactNode } from 'react';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingData } from '@/hooks/business/useTrendingMetrics';
 
 export type CardWrapperProps = {
   title: string | ReactNode;
@@ -10,7 +11,7 @@ export type CardWrapperProps = {
   textColor?: string;
   icon?: ReactNode;
   layout?: 'vertical' | 'horizontal';
-  trending?: boolean;
+  trending?: boolean | TrendingData;
   subtitle?: string | ReactNode;
 };
 
@@ -53,13 +54,26 @@ export default function CardWrapper({
         {subtitle && <p className="text-muted-foreground text-sm">{subtitle}</p>}
         {trending && (
           <div className="flex items-center gap-1 text-sm">
-            <div className="items-center gap-2 text-green-500">
-              <strong className="flex items-center gap-1">
-                <TrendingUp />
-                15%
-              </strong>
-            </div>
-            <p>{subtitle}</p>
+            {typeof trending === 'boolean' ? (
+              // Fallback para compatibilidade com o formato antigo
+              <div className="text-on-great items-center gap-2">
+                <strong className="flex items-center gap-1">
+                  <TrendingUp />
+                  15%
+                </strong>
+              </div>
+            ) : (
+              // Novo formato com dados dinâmicos
+              <div
+                className={`items-center gap-2 ${trending.isPositive ? 'text-on-great' : 'text-on-bad'}`}
+              >
+                <strong className="flex items-center gap-1">
+                  {trending.isPositive ? <TrendingUp /> : <TrendingDown />}
+                  {trending.percentage.toFixed(1)}%
+                </strong>
+                <span className="text-muted-foreground ml-1 text-xs">{trending.period}</span>
+              </div>
+            )}
           </div>
         )}
       </div>

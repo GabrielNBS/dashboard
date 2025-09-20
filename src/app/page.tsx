@@ -12,12 +12,13 @@ import TopSellingItems from '@/components/dashboard/home/BestSellingProducts';
 import FinancialChart from '@/components/dashboard/home/KpiMetrics';
 import MetricsIntegrationDemo from '@/components/dashboard/home/MetricsIntegrationDemo';
 
-import { ChartBarIcon, PercentIcon, DollarSign, CoinsIcon } from 'lucide-react';
+import { ChartBarIcon, PercentIcon, DollarSign, ShoppingBagIcon } from 'lucide-react';
+import IngredientCostBreakdownCard from '@/components/dashboard/finance/cards/IngredientCostBreakdownCard';
 
 // pages/dashboard.tsx
 export default function DashboardContent() {
   const { state: settings } = useSettings();
-  const { summary, chartData, aggregatedData } = useDashboardMetrics();
+  const { summary, trending, chartData, aggregatedData } = useDashboardMetrics();
   const hydrated = useHydrated();
 
   const { storeName } = settings.store;
@@ -40,10 +41,20 @@ export default function DashboardContent() {
 
         {/* Grade de Cards */}
         <section className="bg-surface grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <NetProfitCard summary={summary} bgColor="bg-great" icon={<DollarSign />} />
-          <RevenueCard summary={summary} icon={<ChartBarIcon />} />
-          <VariableCostCard summary={summary} icon={<CoinsIcon />} />
-          <ProfitMarginCard summary={summary} icon={<PercentIcon />} />
+          <NetProfitCard
+            summary={summary}
+            bgColor="bg-great"
+            icon={<DollarSign />}
+            trending={trending.netProfit}
+          />
+          <RevenueCard summary={summary} icon={<ChartBarIcon />} trending={trending.revenue} />
+          <VariableCostCard
+            summary={summary}
+            icon={<ShoppingBagIcon />}
+            trending={trending.variableCost}
+          />
+          <ProfitMarginCard summary={summary} icon={<PercentIcon />} trending={trending.margin} />
+          <IngredientCostBreakdownCard />
         </section>
 
         {/* Gráficos */}

@@ -8,6 +8,7 @@ import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
 import {
   getTotalRevenue,
   getTotalVariableCost,
+  getIntegratedVariableCost,
   getTotalFixedCost,
   getGrossProfit,
   getNetProfit,
@@ -86,9 +87,10 @@ export function useFinanceSummary(
       // Quantidade total de unidades vendidas
       const totalUnitsSold = getTotalUnitsSold(sales);
 
-      // Custos variáveis totais (ingredientes, embalagens, etc.)
-      const totalVariableCost = getTotalVariableCost(
+      // Custos variáveis totais integrados (ingredientes reais + outros custos configurados)
+      const totalVariableCost = getIntegratedVariableCost(
         effectiveVariableCosts,
+        sales,
         totalRevenue,
         totalUnitsSold
       );

@@ -69,6 +69,70 @@ export function getTotalVariableCost(
 }
 
 /**
+ * Calcula o custo real dos ingredientes baseado nas vendas realizadas.
+ *
+ * Esta função analisa cada venda e calcula o custo real dos ingredientes
+ * utilizados nos produtos vendidos, considerando os preços médios atuais.
+ *
+ * @param sales - Array de vendas realizadas
+ * @returns Custo total real dos ingredientes utilizados nas vendas
+ */
+export function getRealIngredientsCost(sales: Sale[]): number {
+  return sales.reduce((totalCost, sale) => {
+    const saleCost = sale.items.reduce((itemsCost, item) => {
+      // Calcula o custo dos ingredientes para este item específico
+      const ingredientsCost =
+        item.product.ingredients.reduce((ingCost, ingredient) => {
+          // Custo por unidade do ingrediente = preço médio * quantidade utilizada
+          const unitIngredientCost =
+            (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
+
+          // Se for produção em lote, divide pelo rendimento para obter custo unitário
+          const unitCost =
+            item.product.production.mode === 'lote' && item.product.production.yieldQuantity > 0
+              ? unitIngredientCost / item.product.production.yieldQuantity
+              : unitIngredientCost;
+
+          return ingCost + unitCost;
+        }, 0) || 0;
+
+      // Multiplica pelo número de unidades vendidas
+      return itemsCost + ingredientsCost * item.quantity;
+    }, 0);
+
+    return totalCost + saleCost;
+  }, 0);
+}
+
+/**
+ * Calcula o custo variável total integrado, incluindo custos reais de ingredientes
+ * e outros custos variáveis configurados.
+ *
+ * @param variableCosts - Lista de custos variáveis configurados (exceto ingredientes)
+ * @param sales - Array de vendas para calcular custo real dos ingredientes
+ * @param totalRevenue - Receita bruta total
+ * @param totalUnitsSold - Quantidade total de unidades vendidas
+ * @returns Custo variável total integrado
+ */
+export function getIntegratedVariableCost(
+  variableCosts: VariableCostSettings[],
+  sales: Sale[],
+  totalRevenue: number,
+  totalUnitsSold: number
+): number {
+  // Filtra custos variáveis que não são ingredientes (para evitar duplicação)
+  const nonIngredientCosts = variableCosts.filter(cost => cost.type !== 'ingredientes');
+
+  // Calcula custos variáveis configurados (embalagens, comissões, etc.)
+  const configuredCosts = getTotalVariableCost(nonIngredientCosts, totalRevenue, totalUnitsSold);
+
+  // Calcula custo real dos ingredientes baseado nas vendas
+  const realIngredientsCost = getRealIngredientsCost(sales);
+
+  return configuredCosts + realIngredientsCost;
+}
+
+/**
  * Calcula o total de custos fixos mensais.
  *
  * Converte automaticamente diferentes recorrências para o valor mensal equivalente:

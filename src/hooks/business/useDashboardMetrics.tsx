@@ -2,10 +2,11 @@ import { useMemo } from 'react';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useFinanceSummary } from './useSummaryFinance';
+import { useTrendingMetrics, TrendingMetrics } from './useTrendingMetrics';
 import { Sale } from '@/types/sale';
 import {
   getTotalRevenue,
-  getTotalVariableCost,
+  getIntegratedVariableCost,
   getTotalFixedCost,
   getTotalUnitsSold,
 } from '@/utils/calculations/finance';
@@ -23,6 +24,9 @@ export interface DashboardMetrics {
     breakEven: number;
     totalUnitsSold: number;
   };
+
+  // Trending metrics for month-over-month comparison
+  trending: TrendingMetrics;
 
   // Chart data for home screen
   chartData: Array<{
@@ -50,6 +54,9 @@ export function useDashboardMetrics(): DashboardMetrics {
 
   // Get financial summary using existing business logic
   const summary = useFinanceSummary(salesState.sales);
+
+  // Get trending metrics for month-over-month comparison
+  const trending = useTrendingMetrics(salesState.sales, summary);
 
   // Process sales data for chart visualization
   const chartData = useMemo(() => {
@@ -79,8 +86,9 @@ export function useDashboardMetrics(): DashboardMetrics {
         const dailyRevenue = getTotalRevenue(data.sales);
         const dailyUnitsSold = getTotalUnitsSold(data.sales);
 
-        const variableCost = getTotalVariableCost(
+        const variableCost = getIntegratedVariableCost(
           settings.variableCosts,
+          data.sales,
           dailyRevenue,
           dailyUnitsSold
         );
@@ -128,6 +136,7 @@ export function useDashboardMetrics(): DashboardMetrics {
 
   return {
     summary,
+    trending,
     chartData,
     aggregatedData,
   };

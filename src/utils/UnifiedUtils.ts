@@ -16,6 +16,8 @@ export {
 export {
   getTotalRevenue,
   getTotalVariableCost,
+  getIntegratedVariableCost,
+  getRealIngredientsCost,
   getTotalFixedCost,
   getGrossProfit,
   getNetProfit,
