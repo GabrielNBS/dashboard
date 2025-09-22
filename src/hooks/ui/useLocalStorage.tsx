@@ -50,21 +50,22 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {
       try {
-        // Permite passar uma função para atualizar baseado no valor anterior
-        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        // Use functional update to avoid dependency on storedValue
+        setStoredValue(prevValue => {
+          const valueToStore = value instanceof Function ? value(prevValue) : value;
 
-        // Atualiza o estado
-        setStoredValue(valueToStore);
+          // Atualiza o localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(key, JSON.stringify(valueToStore));
+          }
 
-        // Atualiza o localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(key, JSON.stringify(valueToStore));
-        }
+          return valueToStore;
+        });
       } catch (error) {
         console.error(`Erro ao salvar valor no localStorage para chave "${key}":`, error);
       }
     },
-    [key, storedValue]
+    [key]
   );
 
   /**

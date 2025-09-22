@@ -5,7 +5,16 @@
 
 import React, { useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { Settings, Store, DollarSign, Calculator, Cog, Save, RotateCcw } from 'lucide-react';
+import {
+  Settings,
+  Store,
+  DollarSign,
+  Calculator,
+  CreditCard,
+  Cog,
+  Save,
+  RotateCcw,
+} from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 
 // Componentes das seções
@@ -13,7 +22,9 @@ import StoreSettingsSection from '@/components/dashboard/settings/StoreSettingsS
 import FixedCostsSection from '@/components/dashboard/settings/FixedCostsSection';
 import VariableCostsSection from '@/components/dashboard/settings/VariableCostsSection';
 import FinancialSettingsSection from '@/components/dashboard/settings/FinancialSettingsSection';
+import PaymentFeesSection from '@/components/dashboard/settings/PaymentFeesSection';
 import SystemSettingsSection from '@/components/dashboard/settings/SystemSettingsSection';
+import { useHydrated } from '@/hooks/ui/useHydrated';
 
 export default function SettingsPage() {
   const { saveSettings, resetSettings } = useSettings();
@@ -25,6 +36,7 @@ export default function SettingsPage() {
     { id: 'fixed-costs', label: 'Custos Fixos', icon: DollarSign },
     { id: 'variable-costs', label: 'Custos Variáveis', icon: Calculator },
     { id: 'financial', label: 'Configurações Financeiras', icon: DollarSign },
+    { id: 'payment-fees', label: 'Taxas de Pagamento', icon: CreditCard },
     { id: 'system', label: 'Sistema', icon: Cog },
   ];
 
@@ -62,12 +74,20 @@ export default function SettingsPage() {
         return <VariableCostsSection />;
       case 'financial':
         return <FinancialSettingsSection />;
+      case 'payment-fees':
+        return <PaymentFeesSection />;
       case 'system':
         return <SystemSettingsSection />;
       default:
         return <StoreSettingsSection />;
     }
   };
+
+  const hydrated = useHydrated();
+
+  if (!hydrated) {
+    return <p>Carregando ...</p>;
+  }
 
   return (
     <div className="flex flex-col gap-6">

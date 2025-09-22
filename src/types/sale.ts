@@ -2,7 +2,7 @@
 import { ElementType } from 'react';
 import { ProductState } from './products';
 
-export type PaymentMethod = 'cash' | 'debit' | 'credit' | 'ifood';
+export type PaymentMethod = 'dinheiro' | 'débito' | 'crédito' | 'Ifood';
 export type DiscountType = 'percentage' | 'fixed';
 
 export interface PaymentDiscount {

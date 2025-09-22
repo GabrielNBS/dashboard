@@ -52,6 +52,20 @@ export interface VariableCostSettings {
 }
 
 /**
+ * Configurações de taxas de pagamento
+ */
+export interface PaymentFeesSettings {
+  /** Taxa para pagamento em dinheiro (%) */
+  cash: number;
+  /** Taxa para pagamento no débito (%) */
+  debit: number;
+  /** Taxa para pagamento no crédito (%) */
+  credit: number;
+  /** Taxa para pagamento via iFood (%) */
+  ifood: number;
+}
+
+/**
  * Configurações financeiras
  */
 export interface FinancialSettings {
@@ -98,5 +112,6 @@ export interface AppSettings {
   fixedCosts: FixedCostSettings[];
   variableCosts: VariableCostSettings[];
   financial: FinancialSettings;
+  paymentFees: PaymentFeesSettings;
   system: SystemSettings;
 }

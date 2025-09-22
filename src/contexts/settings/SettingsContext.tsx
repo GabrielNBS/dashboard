@@ -1,15 +1,15 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import {
   AppSettings,
   StoreSettings,
   FixedCostSettings,
   VariableCostSettings,
   FinancialSettings,
+  PaymentFeesSettings,
   SystemSettings,
 } from '@/types/settings';
-import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 
 // Tipos de ações do reducer
 type SettingsAction =
@@ -21,6 +21,7 @@ type SettingsAction =
   | { type: 'UPDATE_VARIABLE_COST'; payload: VariableCostSettings }
   | { type: 'REMOVE_VARIABLE_COST'; payload: string }
   | { type: 'UPDATE_FINANCIAL'; payload: Partial<FinancialSettings> }
+  | { type: 'UPDATE_PAYMENT_FEES'; payload: Partial<PaymentFeesSettings> }
   | { type: 'UPDATE_SYSTEM'; payload: Partial<SystemSettings> }
   | { type: 'LOAD_SETTINGS'; payload: AppSettings }
   | { type: 'RESET_SETTINGS' };
@@ -63,6 +64,12 @@ const defaultSettings: AppSettings = {
     monthlySalesGoal: 50000,
     currency: 'BRL',
     currencyFormat: 'symbol',
+  },
+  paymentFees: {
+    cash: 0,
+    debit: 2.5,
+    credit: 3.5,
+    ifood: 15,
   },
   system: {
     language: 'pt-BR',
@@ -124,6 +131,9 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
     case 'UPDATE_FINANCIAL':
       return { ...state, financial: { ...state.financial, ...action.payload } };
 
+    case 'UPDATE_PAYMENT_FEES':
+      return { ...state, paymentFees: { ...state.paymentFees, ...action.payload } };
+
     case 'UPDATE_SYSTEM':
       return { ...state, system: { ...state.system, ...action.payload } };
 
@@ -150,31 +160,97 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 // Provider
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [persistedSettings, setPersistedSettings] = useLocalStorage<AppSettings>(
-    'dashboard-settings',
-    defaultSettings
-  );
+  // Initialize state from localStorage on mount - ONLY ONCE
+  const [initialState] = React.useState<AppSettings>(() => {
+    if (typeof window === 'undefined') return defaultSettings;
 
-  const [state, dispatch] = useReducer(settingsReducer, persistedSettings);
+    try {
+      const stored = localStorage.getItem('dashboard-settings');
+      if (!stored) return defaultSettings;
 
-  // Sincroniza reducer com o localStorage
+      const parsed = JSON.parse(stored);
+      return {
+        ...defaultSettings,
+        ...parsed,
+        paymentFees: {
+          ...defaultSettings.paymentFees,
+          ...parsed?.paymentFees,
+        },
+      };
+    } catch {
+      return defaultSettings;
+    }
+  });
+
+  const [state, dispatch] = useReducer(settingsReducer, initialState);
+  const isInitialMount = useRef(true);
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const lastSavedState = useRef<string>('');
+
+  // Save to localStorage with proper debouncing and change detection
   useEffect(() => {
-    setPersistedSettings(state);
-  }, [state, setPersistedSettings]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      lastSavedState.current = JSON.stringify(state);
+      return;
+    }
 
-  const saveSettings = () => {
-    setPersistedSettings(state);
-  };
+    const currentStateString = JSON.stringify(state);
 
-  const resetSettings = () => {
+    // Only proceed if state actually changed
+    if (currentStateString === lastSavedState.current) {
+      return;
+    }
+
+    // Clear previous timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Set new timeout for saving
+    saveTimeoutRef.current = setTimeout(() => {
+      try {
+        localStorage.setItem('dashboard-settings', currentStateString);
+        lastSavedState.current = currentStateString;
+      } catch (error) {
+        console.error('Failed to save settings to localStorage:', error);
+      }
+    }, 1000); // 1 second debounce
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [state]);
+
+  // Stable functions that don't change on every render
+  const saveSettings = React.useCallback(() => {
+    try {
+      const stateString = JSON.stringify(state);
+      localStorage.setItem('dashboard-settings', stateString);
+      lastSavedState.current = stateString;
+    } catch (error) {
+      console.error('Failed to save settings to localStorage:', error);
+    }
+  }, [state]);
+
+  const resetSettings = React.useCallback(() => {
     dispatch({ type: 'RESET_SETTINGS' });
-  };
+  }, []);
 
-  return (
-    <SettingsContext.Provider value={{ state, dispatch, saveSettings, resetSettings }}>
-      {children}
-    </SettingsContext.Provider>
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = React.useMemo(
+    () => ({
+      state,
+      dispatch,
+      saveSettings,
+      resetSettings,
+    }),
+    [state, saveSettings, resetSettings]
   );
+
+  return <SettingsContext.Provider value={contextValue}>{children}</SettingsContext.Provider>;
 }
 
 // Hook de acesso
@@ -184,4 +260,53 @@ export function useSettings() {
     throw new Error('useSettings deve ser usado dentro de um SettingsProvider');
   }
   return context;
+}
+
+// Hook específico para paymentFees - OTIMIZADO
+export function usePaymentFees() {
+  const context = useContext(SettingsContext);
+  if (context === undefined) {
+    throw new Error('usePaymentFees deve ser usado dentro de um SettingsProvider');
+  }
+
+  const { state, dispatch } = context;
+
+  const updatePaymentFees = React.useCallback(
+    (payload: Partial<PaymentFeesSettings>) => {
+      dispatch({ type: 'UPDATE_PAYMENT_FEES', payload });
+    },
+    [dispatch]
+  );
+
+  return React.useMemo(
+    () => ({
+      paymentFees: state.paymentFees,
+      updatePaymentFees,
+    }),
+    [state.paymentFees, updatePaymentFees]
+  );
+}
+
+// Hook específico para PDV que só lê as taxas - COMPLETAMENTE ISOLADO
+export function usePaymentFeesReadOnly() {
+  const context = useContext(SettingsContext);
+  if (context === undefined) {
+    throw new Error('usePaymentFeesReadOnly deve ser usado dentro de um SettingsProvider');
+  }
+
+  // Return a stable object that only changes when the actual values change
+  return React.useMemo(
+    () => ({
+      cash: context.state.paymentFees.cash,
+      debit: context.state.paymentFees.debit,
+      credit: context.state.paymentFees.credit,
+      ifood: context.state.paymentFees.ifood,
+    }),
+    [
+      context.state.paymentFees.cash,
+      context.state.paymentFees.debit,
+      context.state.paymentFees.credit,
+      context.state.paymentFees.ifood,
+    ]
+  );
 }

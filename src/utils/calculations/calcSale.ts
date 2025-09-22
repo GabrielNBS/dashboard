@@ -5,6 +5,17 @@ import { ProductionModel } from '@/types/products';
 import { SaleItem, SellingResume, PaymentMethod, PaymentDiscount, PaymentFees } from '@/types/sale';
 import { DEFAULT_PAYMENT_FEES } from '@/types/sale';
 
+/** Mapeia método de pagamento para chave de configuração de fees */
+function getFeesKey(paymentMethod: PaymentMethod): keyof PaymentFees {
+  const methodMap: Record<PaymentMethod, keyof PaymentFees> = {
+    dinheiro: 'cash',
+    débito: 'debit',
+    crédito: 'credit',
+    Ifood: 'ifood',
+  };
+  return methodMap[paymentMethod];
+}
+
 /** Calcula o total proporcional do ingrediente */
 export function calculateIngredientTotalByUnitPrice(
   quantityUsed: number,
@@ -127,7 +138,7 @@ export function calculateSellingResume(
       : discount.value
     : 0;
 
-  const feePercentage = paymentMethod === 'cash' ? 0 : feesConfig[paymentMethod];
+  const feePercentage = paymentMethod === 'dinheiro' ? 0 : feesConfig[getFeesKey(paymentMethod)];
   const fees = ((subtotal - discountValue) * feePercentage) / 100;
   const totalValue = subtotal - discountValue - fees;
 

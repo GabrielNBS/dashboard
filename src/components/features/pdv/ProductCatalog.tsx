@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { CartItem } from '@/types/sale';
 import { ProductState } from '@/types/products';
+import { useHydrated } from '@/hooks/ui/useHydrated';
 
 interface ProductCatalogProps {
   products: ProductState[];
@@ -19,6 +20,11 @@ export default function ProductCatalog({
   onAddToCart,
   canMakeProduct,
 }: ProductCatalogProps) {
+  const hydrated = useHydrated();
+
+  if (!hydrated) {
+    return <p>carregando ...</p>;
+  }
   return (
     <div className="lg:col-span-2">
       <div className="bg-surface rounded-lg p-6 shadow-sm">

@@ -20,10 +20,10 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
 
   // Mapa de ícones por método de pagamento
   const PAYMENT_ICONS: Record<PaymentMethod, JSX.Element> = {
-    cash: <DollarSign className="h-5 w-5 text-yellow-500" />,
-    debit: <CreditCard className="h-5 w-5 text-blue-500" />,
-    credit: <CreditCard className="h-5 w-5 text-purple-500" />,
-    ifood: <SiIfood className="h-5 w-5 text-red-500" />,
+    dinheiro: <DollarSign className="h-5 w-5 text-yellow-500" />,
+    débito: <CreditCard className="h-5 w-5 text-blue-500" />,
+    crédito: <CreditCard className="h-5 w-5 text-purple-500" />,
+    Ifood: <SiIfood className="h-5 w-5 text-red-500" />,
   };
 
   function getPaymentIcon(method: PaymentMethod) {

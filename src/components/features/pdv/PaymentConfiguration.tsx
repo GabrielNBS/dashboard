@@ -2,25 +2,34 @@
 
 import React from 'react';
 import { CreditCard, Banknote, Smartphone, Tag } from 'lucide-react';
-import { PaymentConfig, PaymentOption, DiscountType, PAYMENT_METHODS } from '@/types/sale';
-
-const PAYMENT_OPTIONS: PaymentOption[] = [
-  { id: 'cash', label: PAYMENT_METHODS.CASH, icon: Banknote, fee: 0 },
-  { id: 'debit', label: PAYMENT_METHODS.DEBIT, icon: CreditCard, fee: 2.5 },
-  { id: 'credit', label: PAYMENT_METHODS.CREDIT, icon: CreditCard, fee: 3.5 },
-  { id: 'ifood', label: PAYMENT_METHODS.IFOOD, icon: Smartphone, fee: 15 },
-];
+import {
+  PaymentConfig,
+  PaymentOption,
+  PaymentMethod,
+  DiscountType,
+  PAYMENT_METHODS,
+} from '@/types/sale';
+import { usePaymentFeesReadOnly } from '@/contexts/settings/SettingsContext';
 
 interface PaymentConfigurationProps {
   payment: PaymentConfig;
   onPaymentChange: (payment: PaymentConfig) => void;
 }
 
-export default function PaymentConfiguration({
+export default React.memo(function PaymentConfiguration({
   payment,
   onPaymentChange,
 }: PaymentConfigurationProps) {
-  const handleMethodChange = (method: typeof payment.method) => {
+  const paymentFees = usePaymentFeesReadOnly();
+
+  const paymentOptions: PaymentOption[] = [
+    { id: 'dinheiro', label: PAYMENT_METHODS.CASH, icon: Banknote, fee: paymentFees.cash },
+    { id: 'débito', label: PAYMENT_METHODS.DEBIT, icon: CreditCard, fee: paymentFees.debit },
+    { id: 'crédito', label: PAYMENT_METHODS.CREDIT, icon: CreditCard, fee: paymentFees.credit },
+    { id: 'Ifood', label: PAYMENT_METHODS.IFOOD, icon: Smartphone, fee: paymentFees.ifood },
+  ];
+
+  const handleMethodChange = (method: PaymentMethod) => {
     onPaymentChange({ ...payment, method });
   };
 
@@ -38,11 +47,12 @@ export default function PaymentConfiguration({
           Método de Pagamento
         </label>
         <div className="grid grid-cols-2 gap-2">
-          {PAYMENT_OPTIONS.map(option => {
+          {paymentOptions.map(option => {
             const Icon = option.icon;
             return (
               <button
                 key={option.id}
+                type="button"
                 onClick={() => handleMethodChange(option.id)}
                 className={`flex items-center gap-2 rounded-lg border-2 p-3 text-sm transition-all ${
                   payment.method === option.id
@@ -101,4 +111,4 @@ export default function PaymentConfiguration({
       </div>
     </div>
   );
-}
+});

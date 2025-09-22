@@ -8,28 +8,28 @@ import { toast } from '@/components/ui/feedback/use-toast';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { useProductContext } from '@/contexts/products/ProductContext';
+import { useStablePaymentFees } from '@/hooks/business/useStablePaymentFees';
 
 import { calculateSellingResume } from '@/utils/calculations/calcSale';
 
-import {
-  CartItem,
-  DEFAULT_PAYMENT_FEES,
-  PAYMENT_METHODS,
-  PaymentConfig,
-  Sale,
-  SaleItem,
-} from '@/types/sale';
+import { CartItem, PAYMENT_METHODS, PaymentConfig, Sale, SaleItem } from '@/types/sale';
 
 export function useSaleProcess() {
   const { state: finalProducts } = useProductContext();
   const { dispatch: salesDispatch } = useSalesContext();
   const { state: store, dispatch: storeDispatch } = useIngredientContext();
+  const { paymentFeesConfig } = useStablePaymentFees();
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [payment, setPayment] = useState<PaymentConfig>({
     method: PAYMENT_METHODS.CASH,
     discount: { type: 'percentage', value: 0 },
-    fees: DEFAULT_PAYMENT_FEES,
+    fees: {
+      cash: 0,
+      debit: 2.5,
+      credit: 3.5,
+      ifood: 15,
+    },
   });
 
   // Cart management functions
@@ -118,25 +118,25 @@ export function useSaleProcess() {
           type: 'EDIT_INGREDIENT',
           payload: {
             ...storeItem,
-
             totalQuantity: newQuantity,
           },
         });
       });
 
       return {
-        product,
+        product: product,
         quantity: item.quantity,
         subtotal: product.production.sellingPrice * item.quantity,
       };
     });
 
-    // Calculate sale summary
+    // Use current payment fees for calculation
+    const currentFees = paymentFeesConfig;
     const sellingResume = calculateSellingResume(
       saleItems,
       payment.method,
       payment.discount,
-      payment.fees
+      currentFees
     );
 
     const sale: Sale = {
@@ -157,7 +157,9 @@ export function useSaleProcess() {
     setCart([]);
   }, [
     cart,
-    payment,
+    payment.method,
+    payment.discount,
+    paymentFeesConfig,
     finalProducts.products,
     store.ingredients,
     storeDispatch,
@@ -165,7 +167,7 @@ export function useSaleProcess() {
     validateStock,
   ]);
 
-  // Calculate real-time summary
+  // Calculate real-time summary using current fees
   const sellingResume = calculateSellingResume(
     cart
       .map(item => {
@@ -180,7 +182,7 @@ export function useSaleProcess() {
       .filter(Boolean) as SaleItem[],
     payment.method,
     payment.discount,
-    payment.fees
+    paymentFeesConfig // Use current fees from context
   );
 
   return {
