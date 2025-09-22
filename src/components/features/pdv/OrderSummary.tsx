@@ -54,7 +54,7 @@ export default function OrderSummary({
         {fees > 0 && (
           <div className="text-accent flex justify-between text-sm">
             <span>Taxa ({payment.method}):</span>
-            <span>+{formatCurrency(fees)}</span>
+            <span>-{formatCurrency(fees)}</span>
           </div>
         )}
 

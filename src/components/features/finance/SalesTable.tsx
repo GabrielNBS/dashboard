@@ -42,7 +42,7 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
             <th className="p-3">Data</th>
             <th className="p-3">Produto Vendido</th>
             <th className="p-3 text-center">Qtd</th>
-            <th className="p-3">Preço Unit.</th>
+            <th className="p-3">Taxa de venda</th>
             <th className="p-3">Canal de venda</th>
             <th className="p-3">Subtotal</th>
             <th className="p-3">Total da Venda</th>
@@ -71,8 +71,10 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
                   {/* Quantidade */}
                   <td className="p-3 text-center">{item.quantity}</td>
 
-                  {/* Preço Unitário */}
-                  <td className="p-3">{formatCurrency(item.product.production?.sellingPrice)}</td>
+                  {/* Desconto / fees */}
+                  <td className="text-on-critical p-3">
+                    - {formatCurrency(sale.sellingResume.fees ?? 0)}
+                  </td>
 
                   {/* Canal de venda (ícone + label) */}
                   <td className="flex items-center gap-2 p-3">

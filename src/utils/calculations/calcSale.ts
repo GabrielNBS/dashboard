@@ -129,7 +129,7 @@ export function calculateSellingResume(
 
   const feePercentage = paymentMethod === 'cash' ? 0 : feesConfig[paymentMethod];
   const fees = ((subtotal - discountValue) * feePercentage) / 100;
-  const totalValue = subtotal - discountValue + fees;
+  const totalValue = subtotal - discountValue - fees;
 
   return { paymentMethod, discount, fees, subtotal, totalValue };
 }
