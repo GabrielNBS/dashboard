@@ -190,7 +190,7 @@ export function GenericFormField({
       case 'number':
         return (
           <input
-            type="number"
+            type="text"
             id={name}
             value={value}
             onChange={e => onChange(e.target.value)}
@@ -198,9 +198,6 @@ export function GenericFormField({
             className={baseInputClasses}
             required={required}
             disabled={disabled}
-            step={step}
-            min={min}
-            max={max}
           />
         );
 
@@ -246,7 +243,7 @@ export function GenericFormField({
  * @returns Object with validation errors (empty if valid)
  */
 export function validateFormData(
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   fields: FormFieldConfig[]
 ): Record<string, string> {
   const errors: Record<string, string> = {};

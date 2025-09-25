@@ -7,6 +7,7 @@ import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
 import { DollarSign, Plus, Edit, Trash2 } from 'lucide-react';
 import { getTotalFixedCost } from '@/utils/calculations/finance';
+import { CurrencyInput } from '@/components/ui/forms';
 
 export default function FixedCostsSection() {
   const { state, dispatch } = useSettings();
@@ -124,15 +125,13 @@ export default function FixedCostsSection() {
 
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">Valor *</label>
-              <Input
-                type="number"
-                value={editingCost.amount}
-                onChange={e =>
-                  setEditingCost({ ...editingCost, amount: parseFloat(e.target.value) || 0 })
+              <CurrencyInput
+                value={editingCost.amount?.toString() || ''}
+                onChange={value =>
+                  setEditingCost({ ...editingCost, amount: parseFloat(value) || 0 })
                 }
-                placeholder="0,00"
-                step="0.01"
-                min="0"
+                placeholder="R$ 0,00"
+                maxValue={999999.99} // Limite: R$ 999.999,99 para custos fixos
                 required
               />
             </div>

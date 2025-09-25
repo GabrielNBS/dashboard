@@ -6,6 +6,7 @@ import Button from '@/components/ui/base/Button';
 import { CartItem } from '@/types/sale';
 import { ProductState } from '@/types/products';
 import { useHydrated } from '@/hooks/ui/useHydrated';
+import { formatCurrency } from '@/utils/UnifiedUtils';
 
 interface ProductCatalogProps {
   products: ProductState[];
@@ -32,6 +33,7 @@ export default function ProductCatalog({
           {products.map(product => {
             const inCart = cart.find(item => item.uid === product.uid);
             const canMake = canMakeProduct(product.uid, inCart?.quantity ?? 0 + 1);
+            const sellingPrice = product.production.sellingPrice;
 
             return (
               <div
@@ -53,7 +55,7 @@ export default function ProductCatalog({
                   <p
                     className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-on-great'}`}
                   >
-                    R$ {product.production.sellingPrice.toFixed(2)}
+                    {formatCurrency(sellingPrice)}
                   </p>
                 </div>
 

@@ -4,7 +4,7 @@
 import React from 'react';
 import { usePaymentFees } from '@/contexts/settings/SettingsContext';
 import { CreditCard, Banknote, Smartphone, DollarSign } from 'lucide-react';
-import Input from '@/components/ui/base/Input';
+import { PercentageInput } from '@/components/ui/forms';
 
 export default function PaymentFeesSection() {
   const { paymentFees, updatePaymentFees } = usePaymentFees();
@@ -74,15 +74,13 @@ export default function PaymentFeesSection() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Taxa (%)</label>
-              <Input
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                value={paymentFees[key] ?? 0}
-                onChange={e => handleFeeChange(key, e.target.value)}
-                placeholder="0.0"
+              <PercentageInput
+                value={paymentFees[key]?.toString() ?? ''}
+                onChange={value => handleFeeChange(key, value)}
+                placeholder="0%"
                 className="w-full"
+                maxValue={25} // Limite: 25% taxa máxima (realista para PME)
+                minValue={0}
               />
               <p className="text-muted-foreground text-xs">Taxa atual: {paymentFees[key] ?? 0}%</p>
             </div>

@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import Input from '@/components/ui/base/Input';
 import { DollarSign, Target, Shield, TrendingUp } from 'lucide-react';
+import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
 
 export default function FinancialSettingsSection() {
   const { state, dispatch } = useSettings();
@@ -50,16 +50,14 @@ export default function FinancialSettingsSection() {
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Margem de Lucro Padrão (%)
               </label>
-              <Input
-                type="number"
-                value={state.financial.defaultProfitMargin}
-                onChange={e =>
-                  handleFinancialChange('defaultProfitMargin', parseFloat(e.target.value) || 0)
+              <PercentageInput
+                value={state.financial.defaultProfitMargin?.toString() || ''}
+                onChange={value =>
+                  handleFinancialChange('defaultProfitMargin', parseFloat(value) || 0)
                 }
-                placeholder="30"
-                step="0.01"
-                min="0"
-                max="100"
+                placeholder="30%"
+                maxValue={500} // Limite: 500% margem máxima
+                minValue={0}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Percentual padrão de lucro para novos produtos
@@ -80,19 +78,14 @@ export default function FinancialSettingsSection() {
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Percentual de Reserva (%)
               </label>
-              <Input
-                type="number"
-                value={state.financial.emergencyReservePercentage}
-                onChange={e =>
-                  handleFinancialChange(
-                    'emergencyReservePercentage',
-                    parseFloat(e.target.value) || 0
-                  )
+              <PercentageInput
+                value={state.financial.emergencyReservePercentage?.toString() || ''}
+                onChange={value =>
+                  handleFinancialChange('emergencyReservePercentage', parseFloat(value) || 0)
                 }
-                placeholder="10"
-                step="0.01"
-                min="0"
-                max="100"
+                placeholder="10%"
+                maxValue={50} // Limite: 50% reserva máxima
+                minValue={0}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Percentual do lucro reservado para emergências
@@ -113,15 +106,13 @@ export default function FinancialSettingsSection() {
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Meta Mensal (R$)
               </label>
-              <Input
-                type="number"
-                value={state.financial.monthlySalesGoal}
-                onChange={e =>
-                  handleFinancialChange('monthlySalesGoal', parseFloat(e.target.value) || 0)
+              <CurrencyInput
+                value={state.financial.monthlySalesGoal?.toString() || ''}
+                onChange={value =>
+                  handleFinancialChange('monthlySalesGoal', parseFloat(value) || 0)
                 }
-                placeholder="50000"
-                step="0.01"
-                min="0"
+                placeholder="R$ 50.000,00"
+                maxValue={9999999.99} // Limite: R$ 9.999.999,99 meta mensal
               />
               <p className="mt-1 text-xs text-gray-500">
                 Meta de vendas mensal para acompanhamento

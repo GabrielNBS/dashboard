@@ -9,6 +9,7 @@ import { VariableCostSettings } from '@/types/settings';
 import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
 import { Calculator, Plus, Edit, Trash2 } from 'lucide-react';
+import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
 
 export default function VariableCostsSection() {
   const { state, dispatch } = useSettings();
@@ -170,16 +171,14 @@ export default function VariableCostsSection() {
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Percentual sobre Vendas (%)
               </label>
-              <Input
-                type="number"
-                value={editingCost.percentage || 0}
-                onChange={e =>
-                  setEditingCost({ ...editingCost, percentage: parseFloat(e.target.value) || 0 })
+              <PercentageInput
+                value={editingCost.percentage?.toString() || ''}
+                onChange={value =>
+                  setEditingCost({ ...editingCost, percentage: parseFloat(value) || 0 })
                 }
-                placeholder="0"
-                step="0.01"
-                min="0"
-                max="100"
+                placeholder="0%"
+                maxValue={50} // Limite: 50% para custos variáveis
+                minValue={0}
               />
             </div>
 
@@ -187,15 +186,13 @@ export default function VariableCostsSection() {
               <label className="mb-1 block text-sm font-medium text-gray-700">
                 Valor Fixo por Unidade (R$)
               </label>
-              <Input
-                type="number"
-                value={editingCost.fixedValue || 0}
-                onChange={e =>
-                  setEditingCost({ ...editingCost, fixedValue: parseFloat(e.target.value) || 0 })
+              <CurrencyInput
+                value={editingCost.fixedValue?.toString() || ''}
+                onChange={value =>
+                  setEditingCost({ ...editingCost, fixedValue: parseFloat(value) || 0 })
                 }
-                placeholder="0,00"
-                step="0.01"
-                min="0"
+                placeholder="R$ 0,00"
+                maxValue={9999.99} // Limite: R$ 9.999,99 para valores fixos
               />
             </div>
 

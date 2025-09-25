@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/base/Button';
-import { Plus } from 'lucide-react';
+import { PackagePlus, Plus } from 'lucide-react';
 import ProductsList from '@/components/dashboard/product/ProductsList';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import {
@@ -24,15 +24,20 @@ export default function Product() {
     <div className="w-full rounded-lg p-6">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold">Produtos Cadastrados</h2>
-        <Button size="md" onClick={handleToggleForm}>
-          <Plus className="mr-1" />
-          Novo Produto
-        </Button>
+        {products.length > 0 && (
+          <Button size="md" onClick={handleToggleForm}>
+            <Plus className="mr-1" />
+            Novo Produto
+          </Button>
+        )}
       </div>
 
       {products.length === 0 ? (
         <div className="bg-muted rounded-lg py-12 text-center">
-          <p className="text-muted-foreground">Nenhum produto cadastrado.</p>
+          <div className="mb-4 flex flex-col items-center justify-center gap-2">
+            <PackagePlus className="text-muted-foreground" width={60} height={60} />
+            <p className="text-muted-foreground">Nenhum produto cadastrado</p>
+          </div>
           <Button size="md" onClick={handleToggleForm}>
             Criar Primeiro Produto
           </Button>

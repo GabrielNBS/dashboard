@@ -10,6 +10,7 @@ import {
   PAYMENT_METHODS,
 } from '@/types/sale';
 import { usePaymentFeesReadOnly } from '@/contexts/settings/SettingsContext';
+import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
 
 interface PaymentConfigurationProps {
   payment: PaymentConfig;
@@ -93,20 +94,36 @@ export default React.memo(function PaymentConfiguration({
             <option value="fixed">R$</option>
           </select>
 
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={payment.discount.value}
-            onChange={e =>
-              handleDiscountChange({
-                ...payment.discount,
-                value: Number(e.target.value),
-              })
-            }
-            className="flex-1 rounded border px-3 py-2 text-sm"
-            placeholder="0"
-          />
+          {payment.discount.type === 'percentage' ? (
+            <PercentageInput
+              value={payment.discount.value?.toString() || ''}
+              onChange={value => {
+                const numValue = parseFloat(value) || 0;
+                handleDiscountChange({
+                  ...payment.discount,
+                  value: numValue,
+                });
+              }}
+              className="flex-1 text-sm"
+              placeholder="0%"
+              maxValue={50} // Limite: 50% desconto máximo
+              minValue={0}
+            />
+          ) : (
+            <CurrencyInput
+              value={payment.discount.value?.toString() || ''}
+              onChange={value => {
+                const numValue = parseFloat(value) || 0;
+                handleDiscountChange({
+                  ...payment.discount,
+                  value: numValue,
+                });
+              }}
+              className="flex-1 text-sm"
+              placeholder="R$ 0,00"
+              maxValue={999.99} // Limite: R$ 999,99 desconto máximo
+            />
+          )}
         </div>
       </div>
     </div>

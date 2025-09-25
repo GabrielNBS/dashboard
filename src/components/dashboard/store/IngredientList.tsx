@@ -37,7 +37,6 @@ export default function IngredientCardList() {
   const { ingredients } = state;
   const hydrated = useHydrated();
 
-  // Calculate ingredients with status - memoized for performance
   const ingredientsWithStatus: IngredientWithStatus[] = useMemo(() => {
     return ingredients.map(ingredient => ({
       ...ingredient,
@@ -45,7 +44,6 @@ export default function IngredientCardList() {
     }));
   }, [ingredients]);
 
-  // Use the new unified ingredient filter hook with custom sorting
   const {
     search,
     statusFilter,
@@ -57,7 +55,6 @@ export default function IngredientCardList() {
     totalItems,
     filteredCount,
   } = useIngredientFilter(ingredientsWithStatus, {
-    // Custom initial state with priority-based sorting
     statusFilter: 'all',
   });
 
@@ -76,12 +73,10 @@ export default function IngredientCardList() {
     };
   }, [ingredients, ingredientsWithStatus]);
 
-  // Loading state handled by GenericListContainer
   if (!hydrated) {
     return <GenericListContainer items={[]} isLoading={true} renderItem={() => null} />;
   }
 
-  // Ações
   const handleDelete = (id: string) => {
     if (confirm('Tem certeza que deseja excluir este ingrediente?')) {
       dispatch({ type: 'DELETE_INGREDIENT', payload: id });
@@ -92,7 +87,6 @@ export default function IngredientCardList() {
     dispatch({ type: 'OPEN_EDIT_MODAL', payload: ingredient });
   };
 
-  // Create configuration objects for the unified list container
   const searchConfig = createSearchConfig('Buscar ingrediente...', search, setSearch, 'flex-1');
 
   const filterStatsConfig = createFilterStatsConfig(
@@ -114,7 +108,6 @@ export default function IngredientCardList() {
 
   return (
     <div className="w-full space-y-6">
-      {/* Summary cards section */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <CardWrapper
           title="Ingredientes"
@@ -142,7 +135,6 @@ export default function IngredientCardList() {
         />
       </div>
 
-      {/* Unified list container with custom header content for filters */}
       <GenericListContainer
         items={filteredIngredients}
         search={searchConfig}

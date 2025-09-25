@@ -6,6 +6,8 @@ import Button from '@/components/ui/base/Button';
 import Input from '@/components/ui/base/Input';
 import { Ingredient, UnitType, PurchaseBatch } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
+import CurrencyInputField from '@/components/ui/forms/CurrencyInputField';
+import QuantityInputField from '@/components/ui/forms/QuantityInputField';
 
 import { useToast } from '@/components/ui/feedback/use-toast';
 import {
@@ -38,6 +40,7 @@ import {
 } from '@/components/ui/forms/select';
 import { normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 import { getQuantityInputConfig } from '@/utils/helpers/quantityInputConfig';
+import { formatCurrency } from '@/utils/UnifiedUtils';
 
 export default function IngredientForm() {
   const { dispatch, state, addBatch } = useIngredientContext();
@@ -223,7 +226,7 @@ export default function IngredientForm() {
                 Estoque atual: {existingIngredient.totalQuantity} {existingIngredient.unit}
               </p>
               <p className="text-sm text-blue-600">
-                Preço médio atual: R$ {existingIngredient.averageUnitPrice.toFixed(3)}
+                Preço médio atual: {formatCurrency(existingIngredient.averageUnitPrice)}
               </p>
               <p className="text-sm text-blue-600">
                 Batches ativos: {existingIngredient.batches.length}
@@ -280,22 +283,17 @@ export default function IngredientForm() {
                 <Label htmlFor="quantity" className="mb-2 block">
                   Quantidade {existingIngredient ? 'do novo lote' : ''}
                 </Label>
-                {(() => {
-                  const { step, min, placeholder } = getQuantityInputConfig(watchedUnit);
-                  return (
-                    <Input
-                      type="number"
-                      step={step}
-                      min={min}
-                      placeholder={placeholder}
-                      {...register('quantity', {
-                        onChange: e => validateQuantity(e.target.value),
-                      })}
-                      id="quantity"
-                      className={errors.quantity ? 'border-destructive' : ''}
-                    />
-                  );
-                })()}
+                <QuantityInputField
+                  placeholder={`Ex: 1 ${watchedUnit}`}
+                  {...register('quantity', {
+                    onChange: e => validateQuantity(e.target.value),
+                  })}
+                  id="quantity"
+                  className={errors.quantity ? 'border-destructive' : ''}
+                  unit={watchedUnit}
+                  allowDecimals={watchedUnit !== 'un'}
+                  maxValue={watchedUnit === 'un' ? 10000 : 1000} // 10k unidades ou 1000kg/l
+                />
                 {errors.quantity && (
                   <span className="text-destructive mt-1 block text-sm">
                     {errors.quantity.message}
@@ -307,15 +305,13 @@ export default function IngredientForm() {
                 <Label htmlFor="buyPrice" className="mb-2 block">
                   Preço de compra {existingIngredient ? 'do novo lote' : ''} (R$)
                 </Label>
-                <Input
-                  type="number"
-                  step="0.001"
-                  placeholder="Ex: R$5,99"
+                <CurrencyInputField
+                  placeholder="R$ 0,00"
                   {...register('buyPrice')}
                   id="buyPrice"
-                  min="0"
                   aria-invalid={!!errors.buyPrice}
                   className={errors.buyPrice ? 'border-destructive' : ''}
+                  maxValue={99999.99} // Limite: R$ 99.999,99 para compra de ingredientes
                 />
                 {errors.buyPrice && (
                   <span className="text-destructive mt-1 block text-sm">
@@ -359,7 +355,15 @@ export default function IngredientForm() {
             )}
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" type="button" onClick={() => setToggle(false)}>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => {
+                  reset();
+                  setToggle(false);
+                  setSelectedExistingIngredient(null);
+                }}
+              >
                 Cancelar
               </Button>
               <Button className="p-4" variant="accept" type="submit" disabled={isSubmitting}>
@@ -379,6 +383,6 @@ export default function IngredientForm() {
     </>
   );
 }
-function setSelectedExistingIngredient(arg: null) {
+function setSelectedExistingIngredient(arg: unknown) {
   throw new Error('Function not implemented.');
 }

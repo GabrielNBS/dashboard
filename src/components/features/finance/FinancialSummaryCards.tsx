@@ -23,17 +23,12 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <CardWrapper title="Receita Total" value={totalRevenue} type="currency" bgColor="bg-great" />
       <CardWrapper
-        title="Custo Variável Total"
+        title="Custo Variável"
         value={totalVariableCost}
         type="currency"
         bgColor="bg-warning"
       />
-      <CardWrapper
-        title="Custo Fixo Total"
-        value={totalFixedCost}
-        type="currency"
-        bgColor="bg-muted"
-      />
+      <CardWrapper title="Custo Fixo" value={totalFixedCost} type="currency" bgColor="bg-muted" />
       <CardWrapper title="Lucro Bruto" value={grossProfit} type="currency" bgColor="bg-blue-100" />
       <CardWrapper title="Lucro Líquido" value={netProfit} type="currency" bgColor="bg-blue-200" />
       <CardWrapper

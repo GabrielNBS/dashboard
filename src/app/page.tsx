@@ -13,7 +13,6 @@ import FinancialChart from '@/components/dashboard/home/KpiMetrics';
 import MetricsIntegrationDemo from '@/components/dashboard/home/MetricsIntegrationDemo';
 
 import { ChartBarIcon, PercentIcon, DollarSign, ShoppingBagIcon } from 'lucide-react';
-import IngredientCostBreakdownCard from '@/components/dashboard/finance/cards/IngredientCostBreakdownCard';
 
 // pages/dashboard.tsx
 export default function DashboardContent() {
@@ -54,7 +53,6 @@ export default function DashboardContent() {
             trending={trending.variableCost}
           />
           <ProfitMarginCard summary={summary} icon={<PercentIcon />} trending={trending.margin} />
-          <IngredientCostBreakdownCard />
         </section>
 
         {/* Gráficos */}

@@ -8,6 +8,8 @@ import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContex
 import AddIngredientList from './addIngredientList';
 import SearchableInput from '@/components/ui/SearcheableInput';
 import { getBaseUnit, normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
+import { formatCurrency } from '@/utils/UnifiedUtils';
+import { QuantityInput } from '@/components/ui/forms';
 
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();
@@ -29,7 +31,7 @@ export default function IngredientSelector() {
     // Usa o preço médio ponderado atual
     const total = normalized * ingredient.averageUnitPrice;
 
-    return total.toFixed(2);
+    return formatCurrency(total);
   };
 
   // Verifica se há quantidade suficiente em estoque
@@ -135,15 +137,13 @@ export default function IngredientSelector() {
               Estoque: {selectedIngredient.totalQuantity} {getBaseUnit(selectedIngredient.unit)}
             </span>
 
-            <input
-              type="number"
-              placeholder="Quantidade"
+            <QuantityInput
               value={quantityUtilized}
-              onChange={e => setQuantity(e.target.value)}
-              min={0}
-              max={selectedIngredient.totalQuantity}
-              step="any"
-              className="w-24 rounded border p-2"
+              onChange={setQuantity}
+              placeholder="Quantidade"
+              className="w-24"
+              unit={getBaseUnit(selectedIngredient.unit)}
+              maxValue={selectedIngredient.unit === 'un' ? 1000 : 100} // 1000 unidades ou 100kg/l
             />
 
             <span>Total: R$ {getTotalPrice(quantityUtilized, selectedIngredient)}</span>

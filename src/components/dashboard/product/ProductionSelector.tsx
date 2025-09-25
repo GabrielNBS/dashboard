@@ -1,5 +1,5 @@
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
-import Input from '@/components/ui/base/Input';
+import { QuantityInput } from '@/components/ui/forms';
 
 export default function ProductionSelector() {
   const { state, dispatch } = useProductBuilderContext();
@@ -29,18 +29,21 @@ export default function ProductionSelector() {
       {production.mode === 'lote' && (
         <div>
           <label className="mb-1 block font-medium">Rendimento do lote:</label>
-          <Input
-            type="number"
-            min={1}
-            value={production.yieldQuantity || 1}
-            onChange={e =>
+          <QuantityInput
+            value={production.yieldQuantity?.toString() || '1'}
+            onChange={value => {
+              const numValue = parseFloat(value) || 1;
               dispatch({
                 type: 'SET_YIELD_QUANTITY',
-                payload: Number(e.target.value),
-              })
-            }
+                payload: numValue,
+              });
+            }}
             placeholder="Quantidade total produzida"
-            className="w-full rounded border p-2"
+            className="w-full"
+            unit="un"
+            allowDecimals={false}
+            maxValue={10000} // Limite: 10.000 unidades por lote
+            minValue={1}
           />
         </div>
       )}

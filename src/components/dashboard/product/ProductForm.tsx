@@ -51,9 +51,9 @@ export default function ProductForm() {
   const { state: settingsState } = useSettings();
   const { state: builderState, dispatch: builderDispatch } = useProductBuilderContext();
 
-  const [manualSellingPrice, setManualSellingPrice] = useState(0);
+  const [manualSellingPrice, setManualSellingPrice] = useState('');
   const defaultMargin = settingsState.financial.defaultProfitMargin;
-  const [customMargin, setCustomMargin] = useState(defaultMargin);
+  const [customMargin, setCustomMargin] = useState(defaultMargin.toString());
 
   // Memoização dos cálculos pesados
   const calculations = useMemo(() => {
@@ -64,14 +64,14 @@ export default function ProductForm() {
 
     const suggestedPrice = calculateSuggestedPrice(
       totalCost,
-      customMargin,
+      parseFloat(customMargin) || 0,
       builderState.production.mode,
       builderState.production.yieldQuantity
     );
 
     const realProfitMargin = calculateRealProfitMargin(
       totalCost,
-      manualSellingPrice,
+      parseFloat(manualSellingPrice) || 0,
       builderState.production.mode,
       builderState.production.yieldQuantity
     );
@@ -111,7 +111,8 @@ export default function ProductForm() {
     }
 
     // Price validation
-    if (manualSellingPrice <= 0) {
+    const priceValue = parseFloat(manualSellingPrice);
+    if (!manualSellingPrice || isNaN(priceValue) || priceValue <= 0) {
       showValidationToast(PRODUCT_VALIDATION_MESSAGES.INVALID_PRICE);
       return false;
     }
@@ -129,8 +130,8 @@ export default function ProductForm() {
 
   const resetForm = useCallback(() => {
     builderDispatch({ type: 'RESET_PRODUCT' });
-    setManualSellingPrice(0);
-    setCustomMargin(defaultMargin);
+    setManualSellingPrice('');
+    setCustomMargin(defaultMargin.toString());
   }, [builderDispatch, defaultMargin]);
 
   const setupFormForEdit = useCallback(() => {
@@ -145,21 +146,24 @@ export default function ProductForm() {
     ];
 
     actions.forEach(action => builderDispatch(action));
-    setManualSellingPrice(productToEdit.production.sellingPrice);
-    setCustomMargin(productToEdit.production.unitMargin);
+    setManualSellingPrice(productToEdit.production.sellingPrice.toString());
+    setCustomMargin(productToEdit.production.unitMargin.toString());
   }, [productToEdit, builderDispatch]);
 
   // Criação do payload do produto
   const createProductPayload = useCallback(() => {
+    const sellingPriceValue = parseFloat(manualSellingPrice) || 0;
+    const customMarginValue = parseFloat(customMargin) || 0;
+
     const production = {
       ...builderState.production,
       totalCost: calculations.totalCost,
-      sellingPrice: manualSellingPrice,
+      sellingPrice: sellingPriceValue,
       unitSellingPrice:
         builderState.production.mode === 'lote'
-          ? manualSellingPrice / builderState.production.yieldQuantity
-          : manualSellingPrice,
-      unitMargin: customMargin,
+          ? sellingPriceValue / builderState.production.yieldQuantity
+          : sellingPriceValue,
+      unitMargin: customMarginValue,
       profitMargin: calculations.realProfitMargin,
     };
 
