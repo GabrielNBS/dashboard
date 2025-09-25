@@ -1,3 +1,5 @@
+import { formatCurrency } from '@/utils/formatting/formatCurrency';
+
 interface CostPreviewsProps {
   unitCost: number;
   suggestedPrice: number;
@@ -17,7 +19,7 @@ export default function CostPreviews({
         <span className="mb-1 block text-sm font-semibold">
           {mode === 'individual' ? 'Custo total:' : 'Custo por unidade:'}
         </span>
-        <span className="text-on-red text-xl font-bold">R$ {unitCost.toFixed(2)}</span>
+        <span className="text-on-red text-xl font-bold">{formatCurrency(unitCost)}</span>
       </div>
 
       <div className="bg-muted flex flex-col rounded-lg p-3">
@@ -25,7 +27,7 @@ export default function CostPreviews({
           {mode === 'individual' ? 'Preço Sugerido:' : 'Preço Sugerido por unidade:'}
         </span>
         <span className="text-muted-foreground text-xl font-bold">
-          R$ {suggestedPrice.toFixed(2)}
+          {formatCurrency(suggestedPrice)}
         </span>
       </div>
 
