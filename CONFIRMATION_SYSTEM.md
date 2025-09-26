@@ -171,3 +171,84 @@ Por padrão, o usuário deve digitar "excluir permanentemente" para confirmar a�
 - **destructive**: Vermelho, para ações que excluem dados
 - **warning**: Amarelo, para ações que podem ter consequências
 - **default**: Cinza, para confirmações gerais
+
+## 🎨 Formatação Avançada de Descrições
+
+### Suporte a JSX nas Descrições
+
+O componente agora suporta tanto strings simples quanto JSX para descrições, permitindo controle total sobre a formatação.
+
+### Exemplos de Formatação:
+
+**1. Descrição Simples (String):**
+
+```tsx
+showConfirmation(
+  {
+    title: 'Excluir Produto',
+    description: 'Esta ação não pode ser desfeita.',
+    variant: 'destructive',
+  },
+  () => {
+    deleteProduct();
+  }
+);
+```
+
+**2. Descrição com Texto em Negrito:**
+
+```tsx
+showConfirmation(
+  {
+    title: 'Excluir Ingrediente',
+    description: (
+      <>
+        Tem certeza que deseja excluir <strong>"{ingredientName}"</strong>? Esta ação não pode ser
+        desfeita.
+      </>
+    ),
+    variant: 'destructive',
+  },
+  () => {
+    deleteIngredient();
+  }
+);
+```
+
+**3. Descrição com Layout Complexo:**
+
+```tsx
+showConfirmation(
+  {
+    title: 'Excluir Venda',
+    description: (
+      <div className="space-y-2">
+        <p>Deseja realmente excluir esta venda?</p>
+        <p className="rounded bg-amber-50 p-2 text-sm text-amber-700">
+          <strong>⚠️ Os ingredientes serão restaurados</strong> para o estoque automaticamente.
+        </p>
+        <p className="text-sm text-red-600">Esta ação não pode ser desfeita.</p>
+      </div>
+    ),
+    variant: 'destructive',
+  },
+  () => {
+    deleteSale();
+  }
+);
+```
+
+### Benefícios da Formatação JSX:
+
+- **Destaque Visual**: Use `<strong>` para destacar informações importantes
+- **Cores Contextuais**: Aplique classes Tailwind para diferentes tipos de informação
+- **Layout Estruturado**: Organize informações em parágrafos e seções
+- **Ícones e Emojis**: Adicione elementos visuais para melhor comunicação
+- **Alertas Visuais**: Crie caixas de aviso com cores de fundo
+
+### Casos de Uso Recomendados:
+
+- **Ações Destrutivas**: Destaque consequências importantes em negrito
+- **Restauração de Dados**: Informe sobre efeitos colaterais positivos
+- **Avisos Críticos**: Use cores e ícones para chamar atenção
+- **Informações Técnicas**: Estruture dados complexos de forma clara

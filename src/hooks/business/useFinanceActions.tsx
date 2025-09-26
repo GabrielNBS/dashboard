@@ -1,7 +1,7 @@
 // src/lib/hooks/business/useFinanceActions.tsx
 'use client';
 
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
@@ -9,7 +9,8 @@ import { useConfirmation } from '@/hooks/ui/useConfirmation';
 export function useFinanceActions() {
   const { state: salesState, dispatch: salesDispatch } = useSalesContext();
   const { state: storeState, dispatch: storeDispatch } = useIngredientContext();
-  const { showConfirmation } = useConfirmation();
+  const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
+    useConfirmation();
 
   const handleRemoveSale = useCallback(
     (saleId: string, onConfirm?: () => void) => {
@@ -19,8 +20,11 @@ export function useFinanceActions() {
       showConfirmation(
         {
           title: 'Excluir Venda',
-          description:
-            'Deseja realmente excluir esta venda? Os ingredientes serão restaurados para o estoque. Esta ação não pode ser desfeita.',
+          description: (
+            <p className="rounded bg-amber-50 p-2 text-sm text-amber-700">
+              <strong>⚠️ Os ingredientes serão restaurados</strong> para o estoque automaticamente.
+            </p>
+          ),
           variant: 'destructive',
         },
         () => {
@@ -50,6 +54,8 @@ export function useFinanceActions() {
 
   return {
     handleRemoveSale,
-    showConfirmation,
+    confirmationState,
+    hideConfirmation,
+    handleConfirm,
   };
 }

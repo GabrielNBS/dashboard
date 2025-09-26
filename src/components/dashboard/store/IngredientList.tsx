@@ -1,12 +1,6 @@
-// ============================================================
-// 🔹 Updated IngredientList Component - Using Unified Components
-// ============================================================
-// This component has been refactored to use the new unified
-// list container and filtering system
-
 'use client';
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { Ingredient } from '@/types/ingredients';
 import { useHydrated } from '@/hooks/ui/useHydrated';
@@ -82,13 +76,18 @@ export default function IngredientCardList() {
   }
 
   const handleDelete = (id: string) => {
-    const ingredient = ingredients.find(i => i.uid === id);
+    const ingredient = ingredients.find(i => i.id === id);
     const ingredientName = ingredient?.name || 'este ingrediente';
 
     showConfirmation(
       {
         title: 'Excluir Ingrediente',
-        description: `Tem certeza que deseja excluir "${ingredientName}"? Esta ação não pode ser desfeita.`,
+        description: (
+          <p>
+            Tem certeza que deseja excluir <strong>&quot;{ingredientName}&quot;</strong>? Esta ação
+            não pode ser desfeita.
+          </p>
+        ),
         variant: 'destructive',
       },
       () => {

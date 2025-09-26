@@ -7,7 +7,6 @@ import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
 import { useFinanceActions } from '@/hooks/business/useFinanceActions';
 import { Sale } from '@/types/sale';
 import { ConfirmationDialog } from '@/components/ui/feedback';
-import { useConfirmation } from '@/hooks/ui/useConfirmation';
 
 import { useSalesFilter } from '@/hooks/ui/useUnifiedFilter';
 import { UnifiedDateFilterControls } from '@/components/ui/UnifiedDateFilterControls';
@@ -24,8 +23,8 @@ type SearchableSale = Sale & { searchableContent: string };
 
 export default function Finance() {
   const { state: salesState } = useSalesContext();
-  const { handleRemoveSale } = useFinanceActions();
-  const { confirmationState, hideConfirmation, handleConfirm } = useConfirmation();
+  const { handleRemoveSale, confirmationState, hideConfirmation, handleConfirm } =
+    useFinanceActions();
   const contentRef = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
 
