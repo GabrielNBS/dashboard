@@ -6,6 +6,8 @@ import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
 import { useFinanceActions } from '@/hooks/business/useFinanceActions';
 import { Sale } from '@/types/sale';
+import { ConfirmationDialog } from '@/components/ui/feedback';
+import { useConfirmation } from '@/hooks/ui/useConfirmation';
 
 import { useSalesFilter } from '@/hooks/ui/useUnifiedFilter';
 import { UnifiedDateFilterControls } from '@/components/ui/UnifiedDateFilterControls';
@@ -23,6 +25,7 @@ type SearchableSale = Sale & { searchableContent: string };
 export default function Finance() {
   const { state: salesState } = useSalesContext();
   const { handleRemoveSale } = useFinanceActions();
+  const { confirmationState, hideConfirmation, handleConfirm } = useConfirmation();
   const contentRef = useRef<HTMLDivElement>(null);
   const hydrated = useHydrated();
 
@@ -110,6 +113,21 @@ export default function Finance() {
 
         <SalesTable sales={filteredItems} onRemoveSale={handleRemoveSale} />
       </div>
+
+      {/* Dialog de confirmação */}
+      {confirmationState && (
+        <ConfirmationDialog
+          isOpen={confirmationState.isOpen}
+          onClose={hideConfirmation}
+          onConfirm={handleConfirm}
+          title={confirmationState.title}
+          description={confirmationState.description}
+          variant={confirmationState.variant}
+          confirmText={confirmationState.confirmText}
+          confirmButtonText={confirmationState.confirmButtonText}
+          cancelButtonText={confirmationState.cancelButtonText}
+        />
+      )}
     </div>
   );
 }

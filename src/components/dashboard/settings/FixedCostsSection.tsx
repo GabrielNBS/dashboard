@@ -8,11 +8,15 @@ import Button from '@/components/ui/base/Button';
 import { DollarSign, Plus, Edit, Trash2 } from 'lucide-react';
 import { getTotalFixedCost } from '@/utils/calculations/finance';
 import { CurrencyInput } from '@/components/ui/forms';
+import { useConfirmation } from '@/hooks/ui/useConfirmation';
+import { ConfirmationDialog } from '@/components/ui/feedback';
 
 export default function FixedCostsSection() {
   const { state, dispatch } = useSettings();
   const [editingCost, setEditingCost] = useState<FixedCostSettings | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
+    useConfirmation();
 
   const categories = [
     { value: 'aluguel', label: 'Aluguel' },
@@ -62,10 +66,19 @@ export default function FixedCostsSection() {
   };
 
   const handleDeleteCost = (id: string) => {
-    const confirm = window.confirm('Tem certeza que deseja excluir este custo fixo?');
-    if (confirm) {
-      dispatch({ type: 'REMOVE_FIXED_COST', payload: id });
-    }
+    const cost = state.fixedCosts.find(c => c.id === id);
+    const costName = cost?.name || 'este custo fixo';
+
+    showConfirmation(
+      {
+        title: 'Excluir Custo Fixo',
+        description: `Tem certeza que deseja excluir "${costName}"? Esta ação não pode ser desfeita.`,
+        variant: 'destructive',
+      },
+      () => {
+        dispatch({ type: 'REMOVE_FIXED_COST', payload: id });
+      }
+    );
   };
 
   const handleCancel = () => {
@@ -287,6 +300,21 @@ export default function FixedCostsSection() {
           </div>
         )}
       </div>
+
+      {/* Dialog de confirmação */}
+      {confirmationState && (
+        <ConfirmationDialog
+          isOpen={confirmationState.isOpen}
+          onClose={hideConfirmation}
+          onConfirm={handleConfirm}
+          title={confirmationState.title}
+          description={confirmationState.description}
+          variant={confirmationState.variant}
+          confirmText={confirmationState.confirmText}
+          confirmButtonText={confirmationState.confirmButtonText}
+          cancelButtonText={confirmationState.cancelButtonText}
+        />
+      )}
     </div>
   );
 }

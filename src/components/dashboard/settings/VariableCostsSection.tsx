@@ -10,11 +10,15 @@ import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
 import { Calculator, Plus, Edit, Trash2 } from 'lucide-react';
 import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
+import { useConfirmation } from '@/hooks/ui/useConfirmation';
+import { ConfirmationDialog } from '@/components/ui/feedback';
 
 export default function VariableCostsSection() {
   const { state, dispatch } = useSettings();
   const [editingCost, setEditingCost] = useState<VariableCostSettings | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
+    useConfirmation();
 
   const types = [
     { value: 'ingredientes', label: 'Ingredientes' },
@@ -62,10 +66,19 @@ export default function VariableCostsSection() {
   };
 
   const handleDeleteCost = (id: string) => {
-    const confirm = window.confirm('Tem certeza que deseja excluir este custo variável?');
-    if (confirm) {
-      dispatch({ type: 'REMOVE_VARIABLE_COST', payload: id });
-    }
+    const cost = state.variableCosts.find(c => c.id === id);
+    const costName = cost?.name || 'este custo variável';
+
+    showConfirmation(
+      {
+        title: 'Excluir Custo Variável',
+        description: `Tem certeza que deseja excluir "${costName}"? Esta ação não pode ser desfeita.`,
+        variant: 'destructive',
+      },
+      () => {
+        dispatch({ type: 'REMOVE_VARIABLE_COST', payload: id });
+      }
+    );
   };
 
   const handleCancel = () => {
@@ -293,6 +306,21 @@ export default function VariableCostsSection() {
           </div>
         )}
       </div>
+
+      {/* Dialog de confirmação */}
+      {confirmationState && (
+        <ConfirmationDialog
+          isOpen={confirmationState.isOpen}
+          onClose={hideConfirmation}
+          onConfirm={handleConfirm}
+          title={confirmationState.title}
+          description={confirmationState.description}
+          variant={confirmationState.variant}
+          confirmText={confirmationState.confirmText}
+          confirmButtonText={confirmationState.confirmButtonText}
+          cancelButtonText={confirmationState.cancelButtonText}
+        />
+      )}
     </div>
   );
 }

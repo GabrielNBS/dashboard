@@ -1,15 +1,9 @@
-// ============================================================
-// 🔹 Updated ProductsList Component - Using Unified Components
-// ============================================================
-// This component has been refactored to use the new unified
-// list container and filtering system
-
 import React, { useMemo } from 'react';
-import Button from '@/components/ui/base/Button';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { ProductState } from '@/types/products';
 import { ProductCard } from './ProductCard';
-import { Package, Plus } from 'lucide-react';
+import { useConfirmation } from '@/hooks/ui/useConfirmation';
+import { ConfirmationDialog } from '@/components/ui/feedback';
 
 // New unified components - replacing old duplicated logic
 import { useProductFilter } from '@/hooks/ui/useUnifiedFilter';
@@ -20,11 +14,11 @@ import {
   createAddItemEmptyState,
 } from '@/components/ui/GenericListContainer';
 
-// Main ProductsList component - now using unified filtering and list container
 const ProductsList: React.FC = () => {
   const { state, dispatch } = useProductContext();
+  const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
+    useConfirmation();
 
-  // Use the new unified product filter hook
   const {
     search,
     filteredItems: filteredProducts,
@@ -35,21 +29,23 @@ const ProductsList: React.FC = () => {
     filteredCount,
   } = useProductFilter(state?.products || []);
 
-  // Loading state handled by GenericListContainer
   if (!state) {
     return <GenericListContainer items={[]} isLoading={true} renderItem={() => null} />;
   }
 
-  // Ações dos produtos
   const handleRemoveProduct = (productId: string): void => {
     const product = state.products.find(p => p.uid === productId);
     if (product) {
-      const confirmDelete = window.confirm(
-        `Tem certeza que deseja remover o produto ${product.name}?`
+      showConfirmation(
+        {
+          title: 'Excluir Produto',
+          description: `Tem certeza que deseja remover o produto "${product.name}"? Esta ação não pode ser desfeita.`,
+          variant: 'destructive',
+        },
+        () => {
+          dispatch({ type: 'REMOVE_PRODUCT', payload: productId });
+        }
       );
-      if (confirmDelete) {
-        dispatch({ type: 'REMOVE_PRODUCT', payload: productId });
-      }
     }
   };
 
@@ -79,23 +75,40 @@ const ProductsList: React.FC = () => {
   const emptyStateConfig = createAddItemEmptyState('produto', handleAddProduct, !!search, search);
 
   return (
-    <GenericListContainer
-      items={filteredProducts}
-      search={searchConfig}
-      filterStats={filterStatsConfig}
-      emptyState={emptyStateConfig}
-      renderItem={product => (
-        <ProductCard
-          product={product}
-          onEdit={handleSetProductToEdit}
-          onRemove={handleRemoveProduct}
+    <>
+      <GenericListContainer
+        items={filteredProducts}
+        search={searchConfig}
+        filterStats={filterStatsConfig}
+        emptyState={emptyStateConfig}
+        renderItem={product => (
+          <ProductCard
+            product={product}
+            onEdit={handleSetProductToEdit}
+            onRemove={handleRemoveProduct}
+          />
+        )}
+        gridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-3"
+        summaryContent={
+          filteredProducts.length > 0 ? <CategorySummary products={filteredProducts} /> : undefined
+        }
+      />
+
+      {/* Dialog de confirmação */}
+      {confirmationState && (
+        <ConfirmationDialog
+          isOpen={confirmationState.isOpen}
+          onClose={hideConfirmation}
+          onConfirm={handleConfirm}
+          title={confirmationState.title}
+          description={confirmationState.description}
+          variant={confirmationState.variant}
+          confirmText={confirmationState.confirmText}
+          confirmButtonText={confirmationState.confirmButtonText}
+          cancelButtonText={confirmationState.cancelButtonText}
         />
       )}
-      gridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-3"
-      summaryContent={
-        filteredProducts.length > 0 ? <CategorySummary products={filteredProducts} /> : undefined
-      }
-    />
+    </>
   );
 };
 

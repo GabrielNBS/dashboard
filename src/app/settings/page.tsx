@@ -16,6 +16,8 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
+import { useConfirmation } from '@/hooks/ui/useConfirmation';
+import { ConfirmationDialog } from '@/components/ui/feedback';
 
 // Componentes das seções
 import StoreSettingsSection from '@/components/dashboard/settings/StoreSettingsSection';
@@ -30,6 +32,8 @@ export default function SettingsPage() {
   const { saveSettings, resetSettings } = useSettings();
   const [activeSection, setActiveSection] = useState('store');
   const [isSaving, setIsSaving] = useState(false);
+  const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
+    useConfirmation();
 
   const sections = [
     { id: 'store', label: 'Dados da Loja', icon: Store },
@@ -56,12 +60,19 @@ export default function SettingsPage() {
   };
 
   const handleReset = () => {
-    const confirm = window.confirm(
-      'Tem certeza que deseja resetar todas as configurações? Esta ação não pode ser desfeita.'
+    showConfirmation(
+      {
+        title: 'Resetar Configurações',
+        description:
+          'Tem certeza que deseja resetar todas as configurações? Esta ação não pode ser desfeita e todas as suas configurações personalizadas serão perdidas.',
+        variant: 'destructive',
+        confirmText: 'resetar configurações',
+        confirmButtonText: 'Resetar Tudo',
+      },
+      () => {
+        resetSettings();
+      }
     );
-    if (confirm) {
-      resetSettings();
-    }
   };
 
   const renderSection = () => {
@@ -130,6 +141,21 @@ export default function SettingsPage() {
 
       {/* Conteúdo da seção ativa */}
       <div className="min-h-[600px]">{renderSection()}</div>
+
+      {/* Dialog de confirmação */}
+      {confirmationState && (
+        <ConfirmationDialog
+          isOpen={confirmationState.isOpen}
+          onClose={hideConfirmation}
+          onConfirm={handleConfirm}
+          title={confirmationState.title}
+          description={confirmationState.description}
+          variant={confirmationState.variant}
+          confirmText={confirmationState.confirmText}
+          confirmButtonText={confirmationState.confirmButtonText}
+          cancelButtonText={confirmationState.cancelButtonText}
+        />
+      )}
     </div>
   );
 }

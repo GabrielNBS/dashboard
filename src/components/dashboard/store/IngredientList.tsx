@@ -12,6 +12,8 @@ import { Ingredient } from '@/types/ingredients';
 import { useHydrated } from '@/hooks/ui/useHydrated';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { Package, BadgeDollarSign, AlertTriangle, AlertOctagon } from 'lucide-react';
+import { useConfirmation } from '@/hooks/ui/useConfirmation';
+import { ConfirmationDialog } from '@/components/ui/feedback';
 
 // UI Components
 import CardWrapper from '../finance/cards/CardWrapper';
@@ -36,6 +38,8 @@ export default function IngredientCardList() {
   const { state, dispatch } = useIngredientContext();
   const { ingredients } = state;
   const hydrated = useHydrated();
+  const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
+    useConfirmation();
 
   const ingredientsWithStatus: IngredientWithStatus[] = useMemo(() => {
     return ingredients.map(ingredient => ({
@@ -78,9 +82,19 @@ export default function IngredientCardList() {
   }
 
   const handleDelete = (id: string) => {
-    if (confirm('Tem certeza que deseja excluir este ingrediente?')) {
-      dispatch({ type: 'DELETE_INGREDIENT', payload: id });
-    }
+    const ingredient = ingredients.find(i => i.uid === id);
+    const ingredientName = ingredient?.name || 'este ingrediente';
+
+    showConfirmation(
+      {
+        title: 'Excluir Ingrediente',
+        description: `Tem certeza que deseja excluir "${ingredientName}"? Esta ação não pode ser desfeita.`,
+        variant: 'destructive',
+      },
+      () => {
+        dispatch({ type: 'DELETE_INGREDIENT', payload: id });
+      }
+    );
   };
 
   const handleEdit = (ingredient: Ingredient) => {
@@ -150,6 +164,21 @@ export default function IngredientCardList() {
         )}
         gridCols="sm:grid-cols-2"
       />
+
+      {/* Dialog de confirmação */}
+      {confirmationState && (
+        <ConfirmationDialog
+          isOpen={confirmationState.isOpen}
+          onClose={hideConfirmation}
+          onConfirm={handleConfirm}
+          title={confirmationState.title}
+          description={confirmationState.description}
+          variant={confirmationState.variant}
+          confirmText={confirmationState.confirmText}
+          confirmButtonText={confirmationState.confirmButtonText}
+          cancelButtonText={confirmationState.cancelButtonText}
+        />
+      )}
     </div>
   );
 }
