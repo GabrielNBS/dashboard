@@ -2,8 +2,8 @@
 
 .btn {
   @apply rounded-[var(--radius-md)] px-4 py-2 font-semibold transition-all duration-300;
-  background-color: var(--color-primary);
-  color: white;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .btn:hover {
@@ -11,5 +11,6 @@
 }
 
 .btn--secondary {
-  background-color: var(--color-secondary);
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
 }

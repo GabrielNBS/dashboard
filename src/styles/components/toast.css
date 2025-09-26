@@ -1,7 +1,8 @@
-@layer component {
+@layer components {
   .toast {
     @apply rounded-[var(--radius-md)] p-4 transition-transform duration-300 ease-in-out;
-    @apply bg-[var(--color-surface)] text-[var(--color-primary)];
+    background-color: var(--card);
+    color: var(--card-foreground);
     box-shadow:
       8px 8px 20px var(--shadow-dark),
       -8px -8px 20px var(--shadow-light);

@@ -1,39 +1,60 @@
 @import 'tailwindcss';
 
-@theme {
-  /* Cores base */
-  --color-background: hsl(207, 45%, 94%);
-  --color-surface: hsl(0, 0%, 96%);
-  --color-primary: hsl(204, 60%, 5%);
-  --color-secondary-overlay: hsla(302, 74%, 45%, 0.26);
-  --color-accent: hsl(33, 100%, 49%);
-  --color-accent-light: hsl(33, 100%, 90%);
+@custom-variant dark (&:is(.dark *));
 
-  /* Cores financeiras */
-  --color-inflow: hsl(120, 100%, 66%);
-  --color-expense: hsl(0, 70%, 75%);
-  --color-text-primary: hsl(0, 0%, 13%);
+@theme inline {
+  /* Configurações de raio */
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
-  /* Sombras */
+  /* Mapeamento de cores para Tailwind */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Cores de superfície personalizadas */
+  --color-surface: var(--card);
+  --color-text-primary: var(--foreground);
+
+  /* Sombras para efeito neumórfico */
   --shadow-light: 10px 10px 10px hsla(0, 0%, 100%, 0.7);
   --shadow-dark: 10px 10px 0 hsla(0, 0%, 0%, 1);
 
+  /* Cores de status utilizadas nos componentes */
   --color-great: hsl(140, 80%, 90%);
   --color-great-hover: hsl(140, 80%, 70%);
   --color-warning: hsl(35, 100%, 90%);
   --color-warning-hover: hsl(35, 100%, 70%);
   --color-bad: hsl(0, 80%, 90%);
   --color-bad-hover: hsl(0, 80%, 70%);
-  --color-critical: hsl(0, 60%, 70%);
-  --color-critical-hover: hsl(0, 60%, 50%);
+  --color-info: oklch(97% 0.014 254.604);
+  --color-info-hover: hsl(204, 60%, 70%);
 
-  /* Tipografia contrastante */
+  /* Tipografia contrastante para status */
   --color-on-great: hsl(140, 80%, 20%);
   --color-on-warning: hsl(35, 100%, 25%);
   --color-on-bad: hsl(0, 80%, 25%);
-  --color-on-critical: hsl(0, 60%, 15%);
+  --color-on-info: oklch(62.3% 0.214 259.815);
 
-  /* Tipografia */
+  /* Tipografia responsiva */
   --text-xs: clamp(0.7rem, 0.68rem + 0.2vw, 0.75rem);
   --text-sm: clamp(0.8rem, 0.75rem + 0.3vw, 0.875rem);
   --text-md: clamp(0.95rem, 0.9rem + 0.35vw, 1rem);
@@ -41,12 +62,62 @@
   --text-xl: clamp(1.7rem, 1.6rem + 0.7vw, 2.1rem);
   --text-hero: clamp(2.5rem, 2.5rem + 1.5vw, 3rem);
 
-  /* Espaçamento e borda */
+  /* Espaçamento */
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 2rem;
+}
 
-  --radius-sm: 0.5rem;
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
+:root {
+  /* Cores base - tema claro */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: hsl(33, 100%, 49%);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(96.7% 0.003 264.542);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+}
+
+.dark {
+  /* Cores base - tema escuro */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 }

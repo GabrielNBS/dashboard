@@ -1,7 +1,8 @@
 @layer components {
   .card--neu {
     @apply rounded-md p-6 transition-transform duration-300 ease-in-out;
-    @apply bg-surface text-primary;
+    background-color: var(--card);
+    color: var(--card-foreground);
     box-shadow:
       8px 8px 20px var(--shadow-dark),
       -8px -8px 20px var(--shadow-light);
@@ -12,9 +13,10 @@
   }
 
   .dark .card--neu {
-    @apply bg-surface text-primary;
+    background-color: var(--card);
+    color: var(--card-foreground);
     box-shadow:
       8px 8px 20px var(--shadow-dark),
-      -8px -8px 20px var(--shadow-light); /* substitua se for diferente */
+      -8px -8px 20px var(--shadow-light);
   }
 }

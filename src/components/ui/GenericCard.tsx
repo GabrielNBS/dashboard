@@ -1,17 +1,10 @@
-// ============================================================
-// 🔹 Generic Card Component Template
-// ============================================================
-// Reusable card component that eliminates duplication between
-// ProductCard, IngredientCard, and other similar components
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/base/Badge';
 import Button from '@/components/ui/base/Button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/base/Card';
 import { Progress } from '@/components/ui/Progress';
 import { Edit2, Trash2 } from 'lucide-react';
 
-// Base interface for items that can be displayed in cards
 export interface CardableItem {
   id?: string;
   uid?: string;
@@ -43,6 +36,14 @@ export interface ProgressConfig {
   showPercentage?: boolean;
 }
 
+// Tab configuration interface
+export interface TabConfig {
+  key: string;
+  label: string;
+  count?: number;
+  content: React.ReactNode;
+}
+
 // Main card configuration interface
 export interface GenericCardProps<T extends CardableItem> {
   item: T;
@@ -52,7 +53,8 @@ export interface GenericCardProps<T extends CardableItem> {
   subtitle?: string;
   badges?: BadgeConfig[];
 
-  // Content configuration
+  // Content configuration - can be tabs or simple content
+  tabs?: TabConfig[];
   mainMetrics?: Array<{
     label: string;
     value: string | number | React.ReactNode; // Support for complex content like JSX elements
@@ -62,7 +64,7 @@ export interface GenericCardProps<T extends CardableItem> {
 
   progress?: ProgressConfig;
 
-  // Expandable details section
+  // Expandable details section (legacy support)
   details?: {
     title: string;
     icon?: React.ReactNode;
@@ -80,7 +82,7 @@ export interface GenericCardProps<T extends CardableItem> {
 
   // Styling
   className?: string;
-  variant?: 'default' | 'compact' | 'detailed';
+  variant?: 'default' | 'compact' | 'detailed' | 'modern';
 }
 
 /**
@@ -91,6 +93,7 @@ export interface GenericCardProps<T extends CardableItem> {
  * @param title - Card title (defaults to item.name)
  * @param subtitle - Optional subtitle
  * @param badges - Status badges to display
+ * @param tabs - Tab configuration for modern variant
  * @param mainMetrics - Key metrics to highlight
  * @param progress - Progress bar configuration
  * @param details - Expandable details section
@@ -104,6 +107,7 @@ export function GenericCard<T extends CardableItem>({
   title,
   subtitle,
   badges = [],
+  tabs = [],
   mainMetrics = [],
   progress,
   details,
@@ -112,8 +116,101 @@ export function GenericCard<T extends CardableItem>({
   className = '',
   variant = 'default',
 }: GenericCardProps<T>) {
+  const [activeTab, setActiveTab] = useState(tabs.length > 0 ? tabs[0].key : '');
   const cardTitle = title || item.name;
 
+  // Modern variant with tabs
+  if (variant === 'modern' && tabs.length > 0) {
+    return (
+      <div className={`rounded-xl border border-gray-200 bg-white shadow-sm ${className}`}>
+        {/* Header minimalista */}
+        <div className="border-b border-gray-100 px-6 py-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">{cardTitle}</h3>
+              {subtitle && <p className="mb-2 text-sm text-gray-600">{subtitle}</p>}
+
+              {/* Badges */}
+              {badges.length > 0 && (
+                <div className="flex items-center gap-2">
+                  {badges.map((badge, index) => (
+                    <span
+                      key={index}
+                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                        badge.variant === 'danger'
+                          ? 'bg-red-50 text-red-700'
+                          : badge.variant === 'warning'
+                            ? 'bg-yellow-50 text-yellow-700'
+                            : 'bg-blue-50 text-blue-700'
+                      }`}
+                    >
+                      {badge.icon && <span className="mr-1">{badge.icon}</span>}
+                      {badge.text}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Action buttons */}
+            {actions.length > 0 && (
+              <div className="flex gap-2">
+                {actions.map((action, index) => (
+                  <button
+                    key={index}
+                    onClick={() => action.onClick(item)}
+                    className={`rounded-lg p-2 transition-colors hover:bg-gray-50 ${
+                      action.variant === 'destructive'
+                        ? 'text-gray-400 hover:text-red-600'
+                        : 'text-gray-400 hover:text-blue-600'
+                    }`}
+                    aria-label={action.label}
+                  >
+                    {action.icon}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Tabs minimalistas */}
+        <div className="border-b border-gray-100 px-6 py-3">
+          <div className="flex gap-1">
+            {tabs.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+                  activeTab === tab.key
+                    ? 'border border-blue-200 bg-blue-50 text-blue-700'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                {tab.label}
+                {tab.count && (
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-xs ${
+                      activeTab === tab.key
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-gray-200 text-gray-600'
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Conteúdo das tabs */}
+        <div className="p-6">{tabs.find(tab => tab.key === activeTab)?.content}</div>
+      </div>
+    );
+  }
+
+  // Legacy/default variant
   return (
     <Card
       className={`flex overflow-hidden rounded-xl border-0 shadow-lg transition-all hover:shadow-md ${className}`}

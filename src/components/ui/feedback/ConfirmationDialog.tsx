@@ -159,7 +159,7 @@ export default function ConfirmationDialog({
             {cancelButtonText}
           </Button>
           <Button
-            variant={isConfirmEnabled ? 'destructive' : 'outline'}
+            variant={isConfirmEnabled ? 'accept' : 'outline'}
             onClick={handleConfirm}
             disabled={!isConfirmEnabled}
           >

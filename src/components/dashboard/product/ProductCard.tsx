@@ -1,22 +1,21 @@
-// ============================================================
-// 🔹 Refactored ProductCard - Using GenericCard Component
-// ============================================================
-// This component has been refactored to use the new GenericCard
-// component, eliminating duplicate card layout code
-
-import React from 'react';
+import React, { useState } from 'react';
 import { ProductState } from '@/types/products';
-import { calculateRealProfitMarginFromProduction } from '@/utils/calculations';
+import { calculateRealProfitMarginFromProduction, calculateUnitCost } from '@/utils/calculations';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
-import { List, PieChart, Scale, Tag, AlertTriangle, InfoIcon } from 'lucide-react';
-
-// New unified components - replacing old card implementation
 import {
-  GenericCard,
-  createEditAction,
-  createDeleteAction,
-  type BadgeConfig,
-} from '@/components/ui/GenericCard';
+  PieChart,
+  Scale,
+  Tag,
+  AlertTriangle,
+  Edit,
+  Trash2,
+  TrendingUp,
+  TrendingDown,
+  Package,
+  Calculator,
+  DollarSign,
+} from 'lucide-react';
+
 interface ProductCardProps {
   product: ProductState;
   onEdit: (product: ProductState) => void;
@@ -24,130 +23,359 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRemove }) => {
+  const [activeTab, setActiveTab] = useState('overview');
   const { production, ingredients } = product;
-  const { totalCost, sellingPrice, mode, yieldQuantity } = production;
+  const { totalCost, sellingPrice, mode, yieldQuantity, unitSellingPrice } = production;
+
+  const unitCost = calculateUnitCost(totalCost, production.mode, production.yieldQuantity);
 
   // Calculate profit metrics - memoized calculations
   const realProfitValue = sellingPrice - totalCost;
   const displayProfitMargin = calculateRealProfitMarginFromProduction(production, sellingPrice);
+  const isProfit = displayProfitMargin >= 0;
 
-  // Configure badges for the product status
-  const badges: BadgeConfig[] = [
-    {
-      text: product.category,
-      variant: 'outline',
-      icon: <Tag className="h-3 w-3" />,
-    },
-    {
-      text: mode === 'lote' ? 'Produção em Lote' : 'Unitário',
-      variant: 'outline',
-      icon: <Scale className="h-3 w-3" />,
-    },
-  ];
-
-  // Add profit warning badge if needed
-  if (displayProfitMargin < 0) {
-    badges.push({
-      text: 'Prejuízo',
-      variant: 'danger',
-      icon: <AlertTriangle className="h-3 w-3" />,
-    });
-  }
-
-  // Configure main metrics to display
-  const mainMetrics = [
-    {
-      label: 'Margem',
-      value: (
-        <div className={`${displayProfitMargin >= 0 ? 'text-primary' : 'text-on-critical'}`}>
-          <div className="mb-1 flex items-center justify-between">
-            <span className="text-xl font-bold">{displayProfitMargin.toFixed(1)}%</span>
-            <InfoIcon className="h-4 w-4 cursor-pointer" />
+  return (
+    <div className="bg-card border-border rounded-xl border shadow-md">
+      {/* Header minimalista */}
+      <div className="border-border bg-foreground rounded-xl border-b px-6 py-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <h3 className="text-background mb-2 text-lg font-semibold">{product.name}</h3>
+            <div className="flex items-center gap-2">
+              <span className="bg-info text-on-info inline-flex items-center rounded-full px-2 py-1 text-xs font-medium">
+                <Tag className="mr-1 h-3 w-3" />
+                {product.category}
+              </span>
+              <span className="bg-muted text-muted-foreground inline-flex items-center rounded-full px-2 py-1 text-xs font-medium">
+                <Scale className="mr-1 h-3 w-3" />
+                {mode === 'lote' ? 'Produção em Lote' : 'Unitário'}
+              </span>
+              {!isProfit && (
+                <span className="bg-bad text-on-bad inline-flex items-center rounded-full px-2 py-1 text-xs font-medium">
+                  <AlertTriangle className="mr-1 h-3 w-3" />
+                  Prejuízo
+                </span>
+              )}
+            </div>
           </div>
-          <span className="block text-sm">
-            {displayProfitMargin >= 0 ? 'Lucro: ' : 'Prejuízo: '}
-            {formatCurrency(Math.abs(realProfitValue))}
-          </span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => onEdit(product)}
+              className="text-muted-foreground hover:bg-muted hover:text-accent cursor-pointer rounded-lg p-2 transition-colors"
+            >
+              <Edit className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onRemove(product.uid || '')}
+              className="text-muted-foreground hover:bg-muted hover:text-destructive cursor-pointer rounded-lg p-2 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-      ),
-      className: `${displayProfitMargin >= 0 ? 'bg-muted' : 'bg-bad'}`,
-    },
-    {
-      label: 'Custo',
-      value: formatCurrency(totalCost),
-    },
-    {
-      label: 'Venda',
-      value: formatCurrency(sellingPrice),
-      className: 'text-on-great',
-    },
-  ];
+      </div>
 
-  // Configure progress bar for cost vs selling price
-  const progressConfig = {
-    value: sellingPrice > 0 ? (totalCost / sellingPrice) * 100 : 0,
-    label: `Custo: ${formatCurrency(totalCost)}`,
-    status: displayProfitMargin >= 0 ? 'bg-on-great' : 'bg-on-bad',
-    showPercentage: false,
-  };
+      {/* Tabs minimalistas */}
+      <div className="border-border border-b px-6 py-3">
+        <div className="flex gap-1">
+          {[
+            { key: 'overview', label: 'Visão Geral', count: null },
+            { key: 'ingredients', label: 'Ingredientes', count: ingredients.length },
+            { key: 'details', label: 'Detalhes', count: null },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+                activeTab === tab.key
+                  ? 'bg-primary text-background border-primary border'
+                  : 'text-muted-foreground hover:text-card-foreground hover:bg-muted'
+              }`}
+            >
+              {tab.label}
+              {tab.count && (
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-xs ${
+                    activeTab === tab.key
+                      ? 'bg-accent text-accent-foreground'
+                      : 'bg-border text-muted-foreground'
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
 
-  // Configure expandable details section for ingredients
-  const detailsConfig = {
-    title: `Ingredientes (${ingredients.length})`,
-    icon: <List className="h-4 w-4" />,
-    content: (
-      <div className="space-y-2">
-        {/* Yield information for batch mode */}
-        {mode === 'lote' && yieldQuantity > 0 && (
-          <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
-            <PieChart className="h-4 w-4" />
-            <span>Rendimento: {yieldQuantity} unidades</span>
+      {/* Conteúdo das tabs */}
+      <div className="p-6">
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* Destaque da margem - estilo minimalista */}
+            <div
+              className={`rounded-lg border-l-4 p-4 ${
+                isProfit ? 'border-on-great bg-great' : 'border-on-bad bg-bad'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="mb-1 flex items-center gap-2">
+                    {isProfit ? (
+                      <TrendingUp className="text-on-great h-5 w-5" />
+                    ) : (
+                      <TrendingDown className="text-on-bad h-5 w-5" />
+                    )}
+                    <span
+                      className={`text-sm font-medium ${isProfit ? 'text-on-great' : 'text-on-bad'}`}
+                    >
+                      Margem de Lucro
+                    </span>
+                  </div>
+                  <div
+                    className={`text-3xl font-bold ${isProfit ? 'text-on-great' : 'text-on-bad'}`}
+                  >
+                    {displayProfitMargin.toFixed(1)}%
+                  </div>
+                  <div
+                    className={`mt-1 text-sm ${isProfit ? 'text-on-great/80' : 'text-on-bad/80'}`}
+                  >
+                    {isProfit ? 'Lucro' : 'Prejuízo'}: {formatCurrency(Math.abs(realProfitValue))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Grid de métricas - layout minimalista */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted rounded-lg p-4">
+                <div className="mb-2 flex items-center gap-2">
+                  <Calculator className="text-muted-foreground h-4 w-4" />
+                  <span className="text-muted-foreground text-sm font-medium">Custo Total</span>
+                </div>
+                <div className="text-card-foreground text-2xl font-bold">
+                  {formatCurrency(totalCost)}
+                </div>
+                <div className="text-muted-foreground mt-1 text-sm">
+                  {formatCurrency(unitCost)} por unidade
+                </div>
+              </div>
+
+              <div className="bg-muted rounded-lg p-4">
+                <div className="mb-2 flex items-center gap-2">
+                  <DollarSign className="text-muted-foreground h-4 w-4" />
+                  <span className="text-muted-foreground text-sm font-medium">Preço de Venda</span>
+                </div>
+                <div className="text-primary text-2xl font-bold">
+                  {formatCurrency(sellingPrice)}
+                </div>
+                <div className="text-muted-foreground mt-1 text-sm">
+                  {formatCurrency(unitSellingPrice)} por unidade
+                </div>
+              </div>
+            </div>
+
+            {/* Progress bar minimalista */}
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-muted-foreground text-sm font-medium">
+                  Relação Custo vs Venda
+                </span>
+                <span className="text-muted-foreground text-sm">
+                  {((unitCost / unitSellingPrice) * 100).toFixed(1)}%
+                </span>
+              </div>
+              <div className="bg-border h-2 w-full rounded-full">
+                <div
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    isProfit ? 'bg-on-great' : 'bg-on-bad'
+                  }`}
+                  style={{ width: `${Math.min(100, (unitCost / unitSellingPrice) * 100)}%` }}
+                ></div>
+              </div>
+            </div>
+
+            {/* Informações adicionais */}
+            <div className="bg-info rounded-lg p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <Package className="text-on-info h-4 w-4" />
+                <span className="text-on-info text-sm font-medium">Informações de Produção</span>
+              </div>
+              {mode === 'lote' ? (
+                <div className="text-on-info text-sm">
+                  <strong>Produção em Lote:</strong> {yieldQuantity} unidades por lote
+                </div>
+              ) : (
+                <div className="text-on-info text-sm">
+                  <strong>Produção Individual:</strong> 1 unidade por lote
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Ingredients list */}
-        <ul className="space-y-2">
-          {ingredients.map(ingredient => (
-            <li
-              key={ingredient.id}
-              className="bg-muted/30 flex justify-between rounded p-3 text-sm"
-            >
-              <span className="font-medium">- {ingredient.name}</span>
-              <span>
-                {ingredient.totalQuantity} {ingredient.unit} ×{' '}
-                {formatCurrency(ingredient.averageUnitPrice)} ={' '}
-                {formatCurrency(ingredient.totalQuantity * ingredient.averageUnitPrice)}
+        {activeTab === 'ingredients' && (
+          <div className="space-y-4">
+            {/* Header da seção */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <PieChart className="text-primary h-5 w-5" />
+                <span className="text-card-foreground font-medium">Composição do Produto</span>
+              </div>
+              <span className="text-muted-foreground text-sm">
+                {ingredients.length} ingredientes
               </span>
-            </li>
-          ))}
-        </ul>
+            </div>
+
+            {/* Resumo do rendimento */}
+            <div className="bg-info rounded-lg p-3">
+              <div className="text-on-info text-sm">
+                <strong>Rendimento:</strong> {yieldQuantity} unidades por lote
+              </div>
+            </div>
+
+            {/* Lista de ingredientes */}
+            <div className="space-y-2">
+              {ingredients.map((ing, index) => (
+                <div
+                  key={ing.id}
+                  className="bg-muted hover:bg-muted/80 flex items-center justify-between rounded-lg p-3 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary text-background border-border flex h-8 w-8 items-center justify-center rounded-full border text-xs font-medium">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="text-card-foreground font-medium">{ing.name}</div>
+                      <div className="text-muted-foreground text-sm">
+                        {ing.totalQuantity} {ing.unit}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-card-foreground font-semibold">
+                      {formatCurrency(ing.totalQuantity * ing.averageUnitPrice)}
+                    </div>
+                    <div className="text-muted-foreground text-sm">
+                      {formatCurrency(ing.averageUnitPrice)}/{ing.unit}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Total dos ingredientes */}
+            <div className="border-border border-t pt-4">
+              <div className="bg-primary text-primary-foreground flex items-center justify-between rounded-lg p-3">
+                <span className="font-medium">Total dos Ingredientes</span>
+                <span className="text-lg font-bold">
+                  {formatCurrency(
+                    ingredients.reduce(
+                      (acc, ing) => acc + ing.totalQuantity * ing.averageUnitPrice,
+                      0
+                    )
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'details' && (
+          <div className="space-y-6">
+            {/* Informações do produto */}
+            <div>
+              <h4 className="text-card-foreground mb-3 font-medium">Informações do Produto</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-muted-foreground text-sm">ID do Produto</label>
+                  <div className="bg-muted border-border rounded border p-2 font-mono text-sm">
+                    {product.uid}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-muted-foreground text-sm">Categoria</label>
+                  <div className="flex items-center gap-2 p-2">
+                    <Tag className="text-muted-foreground h-4 w-4" />
+                    <span className="text-sm">{product.category}</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-muted-foreground text-sm">Modo de Produção</label>
+                  <div className="flex items-center gap-2 p-2">
+                    <Scale className="text-muted-foreground h-4 w-4" />
+                    <span className="text-sm capitalize">{mode}</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-muted-foreground text-sm">Última Atualização</label>
+                  <div className="p-2 text-sm">{new Date().toLocaleDateString('pt-BR')}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Análise financeira detalhada */}
+            <div>
+              <h4 className="text-card-foreground mb-3 font-medium">
+                Análise Financeira Detalhada
+              </h4>
+              <div className="space-y-3">
+                <div className="border-border flex items-center justify-between border-b py-2">
+                  <span className="text-muted-foreground">Custo por Ingrediente</span>
+                  <span className="font-medium">
+                    {formatCurrency(
+                      ingredients.reduce(
+                        (acc, ing) => acc + ing.totalQuantity * ing.averageUnitPrice,
+                        0
+                      )
+                    )}
+                  </span>
+                </div>
+                <div className="border-border flex items-center justify-between border-b py-2">
+                  <span className="text-muted-foreground">Custo Total</span>
+                  <span className="font-medium">{formatCurrency(totalCost)}</span>
+                </div>
+                <div className="border-border flex items-center justify-between border-b py-2">
+                  <span className="text-muted-foreground">Preço de Venda</span>
+                  <span className="text-on-great font-medium">{formatCurrency(sellingPrice)}</span>
+                </div>
+                <div className="bg-muted flex items-center justify-between rounded-lg px-3 py-2">
+                  <span className="font-medium">Resultado Final</span>
+                  <span
+                    className={`text-lg font-bold ${isProfit ? 'text-on-great' : 'text-on-bad'}`}
+                  >
+                    {isProfit ? '+' : ''}
+                    {formatCurrency(realProfitValue)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Métricas unitárias */}
+            <div>
+              <h4 className="text-card-foreground mb-3 font-medium">Métricas Unitárias</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-muted rounded-lg p-3">
+                  <div className="text-muted-foreground mb-1 text-sm">Custo por Unidade</div>
+                  <div className="text-card-foreground text-lg font-bold">
+                    {formatCurrency(unitCost)}
+                  </div>
+                </div>
+                <div className="bg-muted rounded-lg p-3">
+                  <div className="text-muted-foreground mb-1 text-sm">Preço por Unidade</div>
+                  <div className="text-on-great text-lg font-bold">
+                    {formatCurrency(unitSellingPrice)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    ),
-  };
-
-  // Configure footer information
-  const footerInfo = [
-    { label: 'ID', value: product.uid },
-    { label: 'Atualizado em', value: new Date().toLocaleDateString() },
-  ];
-
-  // Configure action buttons
-  const actions = [
-    createDeleteAction(item => onRemove(item.uid || ''), 'Remover produto'),
-    createEditAction(onEdit, 'Editar produto'),
-  ];
-
-  // Render using GenericCard with all configurations
-  return (
-    <GenericCard
-      item={product}
-      badges={badges}
-      mainMetrics={mainMetrics}
-      progress={progressConfig}
-      details={detailsConfig}
-      footerInfo={footerInfo}
-      actions={actions}
-      variant="detailed"
-    />
+    </div>
   );
 };
