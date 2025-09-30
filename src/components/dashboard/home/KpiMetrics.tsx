@@ -105,7 +105,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
+    <div className="bg-secondary/95 rounded-xl border border-slate-200 p-4 shadow-xl backdrop-blur-sm">
       <div className="mb-3 flex items-center gap-2">
         <Calendar className="text-muted-foreground h-4 w-4" />
         <p className="text-primary/90 font-semibold">{formatFullDate(String(label || ''))}</p>
@@ -168,12 +168,12 @@ export default function FinancialChart({
     );
 
     return (
-      <div className="rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
+      <div className="bg-secondary/95 rounded-xl border border-slate-200 p-4 shadow-xl backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div className="h-4 w-4 rounded-full" style={{ backgroundColor: data.color }} />
           <div>
             <p className="font-semibold text-slate-700">{data.name}</p>
-            <p className="text-sm text-slate-500">
+            <p className="text-muted-foreground text-sm">
               {formatCurrency(data.value)} ({percentage}%)
             </p>
           </div>
@@ -316,9 +316,9 @@ export default function FinancialChart({
   };
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-7xl bg-gradient-to-br from-slate-50 to-white p-6">
+    <div className="min-full to-secondary mx-auto w-full max-w-7xl bg-gradient-to-br from-slate-50">
       {/* Controles do gráfico */}
-      <div className="mb-6 rounded-lg border border-slate-100 bg-white p-6 shadow-sm">
+      <div className="bg-secondary mb-6 rounded-lg p-6 shadow-sm">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-xl font-semibold text-slate-800">Evolução Temporal</h2>
           <div className="flex gap-2">
@@ -333,7 +333,7 @@ export default function FinancialChart({
                 onClick={() => setChartType(key as 'bars' | 'pie' | 'radial')}
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   chartType === key
-                    ? 'scale-105 transform bg-blue-500 text-white shadow-lg'
+                    ? 'bg-primary text-secondary scale-105 transform shadow-lg'
                     : 'bg-slate-100 text-slate-600 hover:scale-102 hover:bg-slate-200'
                 }`}
               >
@@ -347,7 +347,7 @@ export default function FinancialChart({
         {/* Gráfico */}
         <div className="h-96 w-full">
           {data.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-slate-500">
+            <div className="text-muted-foreground flex h-full items-center justify-center">
               <div className="text-center">
                 <Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
                 <p className="text-lg font-medium">Nenhum dado disponível</p>
@@ -363,7 +363,7 @@ export default function FinancialChart({
       </div>
 
       {/* Seção de informações */}
-      <div className="rounded-lg border border-slate-100 bg-white p-6 shadow-sm">
+      <div className="bg-secondary rounded-lg border-slate-100 p-6 shadow-sm">
         <h3 className="mb-4 text-lg font-semibold text-slate-800">Informações</h3>
         <div className="text-sm text-slate-600">
           <p>• Os dados são carregados automaticamente das vendas registradas no sistema</p>

@@ -1,6 +1,7 @@
 'use client';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
+import { ThumbsDown } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 
@@ -76,13 +77,20 @@ const TopSellingItems = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="bg-card overflow-hidden rounded-lg border shadow-sm">
-        <div className="from-primary to-muted bg-gradient-to-r px-4 py-3">
+    <aside className="w-full">
+      <div className="bg-card overflow-hidden rounded-lg shadow-sm">
+        <div className="from-primary to-secondary-foreground bg-gradient-to-r px-4 py-3">
           <h3 className="text-primary-foreground text-sm font-semibold">Top Produtos</h3>
         </div>
 
-        <div className="space-y-2 p-3">
+        <div className="min-h-64 space-y-2 p-3">
+          {topItems.length === 0 && (
+            <div className="text-muted-foreground flex justify-center gap-4 py-6 text-center text-sm">
+              <ThumbsDown />
+              <p>nenhum item foi vendido ainda</p>
+            </div>
+          )}
+
           {topItems.map((item, index) => (
             <div
               key={item.id}
@@ -134,7 +142,7 @@ const TopSellingItems = () => {
           </div>
         </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

@@ -36,7 +36,6 @@ export default function Finance() {
     }));
   }, [salesState.sales]);
 
-  // Use the new unified sales filter hook - replaces old filtering logic
   const {
     filteredItems,
     search,

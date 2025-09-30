@@ -65,7 +65,7 @@ export default function CardWrapper({
             ) : (
               // Novo formato com dados dinâmicos
               <div
-                className={`items-center gap-2 ${trending.isPositive ? 'text-on-great' : 'text-on-bad'}`}
+                className={`items-center gap-2 ${trending.isPositive ? 'text-on-great' : 'text-bad'}`}
               >
                 <strong className="flex items-center gap-1">
                   {trending.isPositive ? <TrendingUp /> : <TrendingDown />}

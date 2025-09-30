@@ -83,10 +83,10 @@ export default function IngredientCardList() {
       {
         title: 'Excluir Ingrediente',
         description: (
-          <p>
+          <span>
             Tem certeza que deseja excluir <strong>&quot;{ingredientName}&quot;</strong>? Esta ação
             não pode ser desfeita.
-          </p>
+          </span>
         ),
         variant: 'destructive',
       },
