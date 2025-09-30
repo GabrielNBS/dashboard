@@ -1,55 +1,42 @@
+'use client';
+import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import React from 'react';
 
 const TopSellingItems = () => {
-  // Dados de exemplo dos top itens vendidos
-  const topItems = [
-    {
-      id: 1,
-      nome: 'Smartphone Pro Max',
-      imagem:
-        'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&h=100&fit=crop&crop=center',
-      quantidade: 245,
-      lucrobruto: 125500.0,
-      percentualVendas: 18.5,
-    },
-    {
-      id: 2,
-      nome: 'Notebook Gaming',
-      imagem:
-        'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=100&h=100&fit=crop&crop=center',
-      quantidade: 156,
-      lucrobruto: 234000.0,
-      percentualVendas: 15.2,
-    },
-    {
-      id: 3,
-      nome: 'Fones Bluetooth',
-      imagem:
-        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop&crop=center',
-      quantidade: 489,
-      lucrobruto: 87300.0,
-      percentualVendas: 12.8,
-    },
-    {
-      id: 4,
-      nome: 'Smartwatch Sport',
-      imagem:
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100&h=100&fit=crop&crop=center',
-      quantidade: 198,
-      lucrobruto: 59400.0,
-      percentualVendas: 9.7,
-    },
-    {
-      id: 5,
-      nome: 'Tablet Pro',
-      imagem:
-        'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=100&h=100&fit=crop&crop=center',
-      quantidade: 123,
-      lucrobruto: 98400.0,
-      percentualVendas: 8.3,
-    },
-  ];
+  const {
+    state: { sales },
+  } = useSalesContext();
+
+  const topItems = sales
+    .reduce((acc, sale) => {
+      sale.items.forEach(item => {
+        const existingItem = acc.find(i => i.nome === item.product.name);
+        if (existingItem) {
+          existingItem.quantidade += item.quantity;
+          existingItem.lucrobruto += item.subtotal;
+        } else {
+          acc.push({
+            id: item.product.uid,
+            nome: item.product.name,
+            imagem:
+              'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&h=100&fit=crop&crop=center',
+            quantidade: item.quantity,
+            lucrobruto: item.subtotal,
+            percentualVendas: 0,
+          });
+        }
+      });
+      return acc;
+    }, [])
+    .sort((a, b) => b.lucrobruto - a.lucrobruto)
+    .slice(0, 5);
+
+  const totalRevenue = topItems.reduce((acc, item) => acc + item.lucrobruto, 0);
+
+  topItems.forEach(item => {
+    item.percentualVendas = totalRevenue > 0 ? (item.lucrobruto / totalRevenue) * 100 : 0;
+  });
 
   const getPercentageColor = (percentage: number) => {
     if (percentage >= 15) return 'text-green-600 bg-green-100';
@@ -115,9 +102,11 @@ const TopSellingItems = () => {
 
               <div className="text-right">
                 <span
-                  className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${getPercentageColor(item.percentualVendas)}`}
+                  className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${getPercentageColor(
+                    item.percentualVendas,
+                  )}`}
                 >
-                  {item.percentualVendas}%
+                  {item.percentualVendas.toFixed(1)}%
                 </span>
               </div>
             </div>

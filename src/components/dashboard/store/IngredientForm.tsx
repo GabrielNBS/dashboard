@@ -39,7 +39,6 @@ import {
   SelectValue,
 } from '@/components/ui/forms/select';
 import { normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
-import { getQuantityInputConfig } from '@/utils/helpers/quantityInputConfig';
 import { formatCurrency } from '@/utils/UnifiedUtils';
 
 export default function IngredientForm() {
@@ -179,7 +178,6 @@ export default function IngredientForm() {
 
     reset();
     setToggle(false);
-    setSelectedExistingIngredient(null);
   };
 
   const handleUnitChange = (newUnit: string) => {
@@ -221,14 +219,14 @@ export default function IngredientForm() {
           {/* Aviso de reabastecimento */}
           {existingIngredient && (
             <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
-              <h4 className="mb-1 font-medium text-blue-800">Reabastecimento detectado</h4>
-              <p className="text-sm text-blue-600">
+              <h4 className="text-on-info mb-1 font-medium">Reabastecimento detectado</h4>
+              <p className="text-on-info/80 text-sm">
                 Estoque atual: {existingIngredient.totalQuantity} {existingIngredient.unit}
               </p>
-              <p className="text-sm text-blue-600">
+              <p className="text-on-info/80 text-sm">
                 Preço médio atual: {formatCurrency(existingIngredient.averageUnitPrice)}
               </p>
-              <p className="text-sm text-blue-600">
+              <p className="text-on-info/80 text-sm">
                 Batches ativos: {existingIngredient.batches.length}
               </p>
             </div>
@@ -285,14 +283,19 @@ export default function IngredientForm() {
                 </Label>
                 <QuantityInputField
                   placeholder={`Ex: 1 ${watchedUnit}`}
-                  {...register('quantity', {
-                    onChange: e => validateQuantity(e.target.value),
-                  })}
                   id="quantity"
                   className={errors.quantity ? 'border-destructive' : ''}
                   unit={watchedUnit}
                   allowDecimals={watchedUnit !== 'un'}
                   maxValue={watchedUnit === 'un' ? 10000 : 1000} // 10k unidades ou 1000kg/l
+                  value={watchedQuantity}
+                  onChange={(value: string) => {
+                    setValue('quantity', value);
+                    validateQuantity(value);
+                  }}
+                  onBlur={() => {
+                    // Optionally handle blur if needed
+                  }}
                 />
                 {errors.quantity && (
                   <span className="text-destructive mt-1 block text-sm">
@@ -307,11 +310,12 @@ export default function IngredientForm() {
                 </Label>
                 <CurrencyInputField
                   placeholder="R$ 0,00"
-                  {...register('buyPrice')}
                   id="buyPrice"
                   aria-invalid={!!errors.buyPrice}
                   className={errors.buyPrice ? 'border-destructive' : ''}
                   maxValue={99999.99} // Limite: R$ 99.999,99 para compra de ingredientes
+                  value={watch('buyPrice')}
+                  onChange={(value: string) => setValue('buyPrice', value)}
                 />
                 {errors.buyPrice && (
                   <span className="text-destructive mt-1 block text-sm">
@@ -361,7 +365,6 @@ export default function IngredientForm() {
                 onClick={() => {
                   reset();
                   setToggle(false);
-                  setSelectedExistingIngredient(null);
                 }}
               >
                 Cancelar
@@ -382,7 +385,4 @@ export default function IngredientForm() {
       </Sheet>
     </>
   );
-}
-function setSelectedExistingIngredient(arg: unknown) {
-  throw new Error('Function not implemented.');
 }

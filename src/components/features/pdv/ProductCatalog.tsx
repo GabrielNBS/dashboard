@@ -1,12 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Plus } from 'lucide-react';
+import { PackagePlus, Plus } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { CartItem } from '@/types/sale';
 import { ProductState } from '@/types/products';
 import { useHydrated } from '@/hooks/ui/useHydrated';
 import { formatCurrency } from '@/utils/UnifiedUtils';
+
+import EmptyList from '@/components/ui/feedback/EmptyList';
 
 interface ProductCatalogProps {
   products: ProductState[];
@@ -26,6 +28,20 @@ export default function ProductCatalog({
   if (!hydrated) {
     return <p>carregando ...</p>;
   }
+
+  if (products.length === 0) {
+    const boxIcon = <PackagePlus width={80} height={80} />;
+    return (
+      <EmptyList
+        title="Nenhum produto cadastrado"
+        message="adicione um produto na pagina de produtos"
+        icon={boxIcon}
+      />
+    );
+  }
+
+  products.sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="lg:col-span-2">
       <div className="bg-surface rounded-lg p-6 shadow-sm">

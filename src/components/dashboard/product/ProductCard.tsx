@@ -151,7 +151,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             </div>
 
             {/* Grid de métricas - layout minimalista */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="bg-muted rounded-lg p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <Calculator className="text-muted-foreground h-4 w-4" />
