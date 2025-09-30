@@ -149,7 +149,7 @@ export default function ConfirmationDialog({
           )}
           {isConfirmEnabled && (
             <p className="text-on-great flex items-center gap-1 text-sm">
-              <span>✓</span> Botão habilitado! Pressione Enter ou clique para confirmar
+              ✓ Botão habilitado! Pressione Enter ou clique para confirmar
             </p>
           )}
         </div>

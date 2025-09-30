@@ -181,7 +181,7 @@ export function GenericListContainer<T extends FilterableItem>({
       {/* Content Section */}
       {items.length === 0 ? (
         // Empty state
-        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border py-12">
+        <div className="bg-muted flex flex-col items-center justify-center gap-4 rounded-lg py-12">
           {finalEmptyState.icon}
           <h3 className="text-lg font-medium">{finalEmptyState.title}</h3>
           <p className="text-muted-foreground w-full text-center">{finalEmptyState.description}</p>

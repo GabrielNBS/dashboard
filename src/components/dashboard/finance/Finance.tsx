@@ -58,13 +58,10 @@ export default function Finance() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-lg border bg-gray-50 p-4">
+      <div className="bg-primary rounded-lg p-4">
         <div className="flex flex-col gap-4">
           <div>
-            <label
-              htmlFor="search"
-              className="text-muted-foreground mb-1 block text-sm font-medium"
-            >
+            <label htmlFor="search" className="text-secondary/60 mb-1 block text-sm font-medium">
               Buscar Produto na Venda
             </label>
             <input
@@ -73,7 +70,7 @@ export default function Finance() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Ex: Bolo de chocolate"
-              className="focus:border-accent focus:ring-accent rounded-md border-gray-300 p-2 shadow-sm lg:w-2/4"
+              className="focus:border-accent focus:ring-accent bg-muted rounded-md border-gray-300 p-2 shadow-sm lg:w-2/4"
             />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2">

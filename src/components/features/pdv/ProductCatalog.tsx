@@ -29,23 +29,19 @@ export default function ProductCatalog({
     return <p>carregando ...</p>;
   }
 
-  if (products.length === 0) {
-    const boxIcon = <PackagePlus width={80} height={80} />;
-    return (
-      <EmptyList
-        title="Nenhum produto cadastrado"
-        message="adicione um produto na pagina de produtos"
-        icon={boxIcon}
-      />
-    );
-  }
-
   products.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="lg:col-span-2">
-      <div className="bg-surface rounded-lg p-6 shadow-sm">
+      <div className="bg-muted rounded-lg p-6 shadow-sm">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {products.length === 0 && (
+            <EmptyList
+              title="Nenhum produto cadastrado"
+              message="crie seu primeiro produto"
+              icon={<PackagePlus className="text-muted-foreground mb-4 h-12 w-12" />}
+            />
+          )}
           {products.map(product => {
             const inCart = cart.find(item => item.uid === product.uid);
             const canMake = canMakeProduct(product.uid, inCart?.quantity ?? 0 + 1);

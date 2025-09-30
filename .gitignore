@@ -20,6 +20,7 @@
 # production
 /build
 /.mcp
+/.gemini
 
 # misc
 .DS_Store
