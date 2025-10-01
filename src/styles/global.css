@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './theme.css';
+@import './sheet-animations.css';
 @import './components/button.css';
 @import './components/card.css';
 @import './components/toast.css';

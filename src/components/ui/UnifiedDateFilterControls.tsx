@@ -64,7 +64,7 @@ export function UnifiedDateFilterControls({
     <div className={`space-y-4 ${className}`}>
       {/* Quick date filter buttons */}
       <div>
-        <label className="text-secondary mb-2 block text-sm font-medium">Período</label>
+        <label className="text-primary mb-2 block text-sm font-medium">Período</label>
         <div className="flex flex-wrap gap-2">
           {quickFilters.map(filter => (
             <button
@@ -73,7 +73,7 @@ export function UnifiedDateFilterControls({
               className={`cursor-pointer rounded-md px-3 py-1 text-sm font-medium transition-colors ${
                 quickDateFilter === filter.value
                   ? 'bg-accent text-surface'
-                  : 'bg-gray-muted hover:bg-muted/90 text-secondary'
+                  : 'bg-gray-muted hover:bg-muted/90 text-primary'
               }`}
               type="button"
             >
@@ -86,23 +86,21 @@ export function UnifiedDateFilterControls({
       {/* Custom date range inputs */}
       {showCustomRange && (
         <div>
-          <label className="text-secondary mb-2 block text-sm font-medium">
-            Período Customizado
-          </label>
+          <label className="text-primary mb-2 block text-sm font-medium">Período Customizado</label>
           <div className="flex items-center gap-2">
             <input
               type="date"
               value={formatDateForInput(dateRange.startDate)}
               onChange={e => handleDateInputChange('start', e.target.value)}
-              className="text-secondary rounded-md border border-gray-300 px-3 py-2"
+              className="text-primary rounded-md border border-gray-300 px-3 py-2"
               placeholder="Data inicial"
             />
-            <span className="text-secondary/60">até</span>
+            <span className="text-primary/60">até</span>
             <input
               type="date"
               value={formatDateForInput(dateRange.endDate)}
               onChange={e => handleDateInputChange('end', e.target.value)}
-              className="text-secondary rounded-md border border-gray-300 px-3 py-2"
+              className="text-primary rounded-md border border-gray-300 px-3 py-2"
               placeholder="Data final"
             />
           </div>

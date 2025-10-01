@@ -9,13 +9,10 @@ import { Sale } from '@/types/sale';
 import { ConfirmationDialog } from '@/components/ui/feedback';
 
 import { useSalesFilter } from '@/hooks/ui/useUnifiedFilter';
-import { UnifiedDateFilterControls } from '@/components/ui/UnifiedDateFilterControls';
 
-import FinancialSummaryCards from '@/components/features/finance/FinancialSummaryCards';
+import MetroTilesKPIs from '@/components/features/finance/MetroTilesKPIs';
 import SalesTable from '@/components/features/finance/SalesTable';
-import { Button } from '@/components/ui/base';
-import { GoalCard } from './cards/RevenueGoalCard';
-import { ExportButtons } from './ExportButtons';
+import CollapsibleFilters from '@/components/features/finance/CollapsibleFilters';
 import { useHydrated } from '@/hooks/ui/useHydrated';
 
 // Enhanced sale type with searchable content for filtering
@@ -49,103 +46,60 @@ export default function Finance() {
   } = useSalesFilter(searchableSales);
 
   const financialSummary = useFinanceSummary(filteredItems);
-  const { breakEven, grossProfit } = financialSummary;
 
   if (!hydrated) {
     return <p>Carregando...</p>;
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:gap-6">
-      {/* Filtros e Busca */}
-      <div className="bg-primary rounded-lg p-3 sm:p-4">
-        <div className="flex flex-col gap-3 sm:gap-4">
-          <div>
-            <label htmlFor="search" className="text-secondary/60 mb-1 block text-sm font-medium">
-              Buscar Produto na Venda
-            </label>
-            <input
-              id="search"
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Ex: Bolo de chocolate"
-              className="bg-muted focus:border-accent focus:ring-accent w-full rounded-md border-gray-300 p-2 shadow-sm sm:p-3 lg:w-2/4"
-            />
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-            {/* Controles de Data */}
-            <div className="flex-1">
-              <UnifiedDateFilterControls
-                dateRange={dateRange}
-                quickDateFilter={quickDateFilter}
-                onDateRangeChange={setDateRange}
-                onQuickFilterChange={setQuickDateFilter}
-              />
-            </div>
-
-            {/* Botões de Export */}
-            <div className="flex-shrink-0">
-              <ExportButtons financialSummary={financialSummary} sales={filteredItems} />
-            </div>
-          </div>
-        </div>
-
-        {hasActiveFilters && (
-          <div className="mt-3 sm:mt-4">
-            <Button
-              onClick={resetFilters}
-              variant="link"
-              className="text-accent text-sm hover:underline"
-            >
-              Limpar Filtros
-            </Button>
-          </div>
-        )}
-      </div>
-
+    <>
       {/* Conteúdo Principal */}
       <div ref={contentRef} className="flex flex-col gap-4 sm:gap-6">
-        {/* Card de Meta - Destaque especial */}
-        <div className="rounded-xl bg-white p-1 shadow-sm">
-          <GoalCard
-            title="Ponto de equilíbrio"
-            tooltipText="Indica o valor mínimo de receita para cobrir todos os custos."
-            goalValue={breakEven || 0}
-            currentValue={grossProfit || 0}
-          />
-        </div>
-
-        {/* Cards de Resumo Financeiro */}
+        {/* KPIs em Metro Tiles */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-gray-700 sm:text-base">Resumo Financeiro</h3>
-          <FinancialSummaryCards financialSummary={financialSummary} />
+          <MetroTilesKPIs financialSummary={financialSummary} />
         </div>
 
-        {/* Tabela de Vendas */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-gray-700 sm:text-base">Histórico de Vendas</h3>
-          <div className="overflow-hidden rounded-lg bg-white shadow-sm">
-            <SalesTable sales={filteredItems} onRemoveSale={handleRemoveSale} />
+        {/* Filtros Colapsáveis */}
+        <CollapsibleFilters
+          search={search}
+          setSearch={setSearch}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+          quickDateFilter={quickDateFilter}
+          setQuickDateFilter={setQuickDateFilter}
+          resetFilters={resetFilters}
+          hasActiveFilters={hasActiveFilters}
+          financialSummary={financialSummary}
+          sales={filteredItems}
+        />
+
+        <div className="flex flex-col gap-4 sm:gap-6">
+          {/* Tabela de Vendas */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-gray-700 sm:text-base">Histórico de Vendas</h3>
+            <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+              <SalesTable sales={filteredItems} onRemoveSale={handleRemoveSale} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Dialog de confirmação */}
-      {confirmationState && (
-        <ConfirmationDialog
-          isOpen={confirmationState.isOpen}
-          onClose={hideConfirmation}
-          onConfirm={handleConfirm}
-          title={confirmationState.title}
-          description={confirmationState.description}
-          variant={confirmationState.variant}
-          confirmText={confirmationState.confirmText}
-          confirmButtonText={confirmationState.confirmButtonText}
-          cancelButtonText={confirmationState.cancelButtonText}
-        />
-      )}
-    </div>
+        {/* Dialog de confirmação */}
+        {confirmationState && (
+          <ConfirmationDialog
+            isOpen={confirmationState.isOpen}
+            onClose={hideConfirmation}
+            onConfirm={handleConfirm}
+            title={confirmationState.title}
+            description={confirmationState.description}
+            variant={confirmationState.variant}
+            confirmText={confirmationState.confirmText}
+            confirmButtonText={confirmationState.confirmButtonText}
+            cancelButtonText={confirmationState.cancelButtonText}
+          />
+        )}
+      </div>
+    </>
   );
 }

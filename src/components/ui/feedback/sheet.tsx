@@ -29,10 +29,7 @@ function SheetOverlay({
   return (
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
-      className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/30 backdrop-blur-xs transition-opacity',
-        className
-      )}
+      className={cn('fixed inset-0 z-50 bg-black/30 backdrop-blur-xs', className)}
       {...props}
     />
   );
@@ -46,33 +43,44 @@ function SheetContent({
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: 'top' | 'right' | 'bottom' | 'left';
 }) {
+  const sideVariants = {
+    right: {
+      base: 'inset-y-0 right-0 h-full w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-2/5',
+      animation: 'slide-in-from-right slide-out-to-right',
+    },
+    left: {
+      base: 'inset-y-0 left-0 h-full w-full max-w-[90vw] border-r md:max-w-md lg:max-w-lg xl:max-w-xl',
+      animation: 'slide-in-from-left slide-out-to-left',
+    },
+    top: {
+      base: 'inset-x-0 top-0 h-auto max-h-[85vh] w-full border-b',
+      animation: 'slide-in-from-top slide-out-to-top',
+    },
+    bottom: {
+      base: 'inset-x-0 bottom-0 h-auto max-h-[85vh] w-full border-t',
+      animation: 'slide-in-from-bottom slide-out-to-bottom',
+    },
+  };
+
+  const variant = sideVariants[side];
+
   return (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          'bg-surface data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
-          // Estilos responsivos para desktop/mobile
-          side === 'right' &&
-            'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-2/5',
-          side === 'left' &&
-            'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-full max-w-[90vw] border-r md:max-w-md lg:max-w-lg xl:max-w-xl',
-          side === 'top' &&
-            'data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto max-h-[85vh] w-full border-b',
-          side === 'bottom' &&
-            'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto max-h-[85vh] w-full border-t',
-          // Container flexível com overflow
-          'flex flex-col overflow-hidden',
+          // Base styles
+          'bg-surface fixed z-50 flex flex-col gap-4 overflow-hidden shadow-lg',
+          // Position and size
+          variant.base,
+          // Animation classes
+          variant.animation,
           className
         )}
         {...props}
       >
-        <div className="flex-1 overflow-y-auto p-6">
-          {' '}
-          {/* Área rolável */}
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto p-6">{children}</div>
 
         <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
           <XIcon className="size-4" />
@@ -82,6 +90,7 @@ function SheetContent({
     </SheetPortal>
   );
 }
+
 function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div

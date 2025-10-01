@@ -13,6 +13,7 @@ export type CardWrapperProps = {
   layout?: 'vertical' | 'horizontal';
   trending?: boolean | TrendingData;
   subtitle?: string | ReactNode;
+  className?: string;
 };
 
 export default function CardWrapper({
@@ -25,6 +26,7 @@ export default function CardWrapper({
   layout = 'vertical',
   trending = false,
   subtitle,
+  className,
 }: CardWrapperProps) {
   const formatValue = () => {
     if (typeof value !== 'number') return value;
@@ -41,7 +43,7 @@ export default function CardWrapper({
 
   return (
     <div
-      className={`w-full cursor-pointer rounded-lg p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${bgColor} ${textColor} hover:border-primary hover:${bgColor} flex border-t-4 ${
+      className={`w-full cursor-pointer rounded-lg p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className} ${bgColor} ${textColor} hover:border-primary hover:${bgColor} flex border-t-4 ${
         layout === 'horizontal' ? 'flex-row items-center gap-3 sm:gap-4' : 'flex-col'
       }`}
     >

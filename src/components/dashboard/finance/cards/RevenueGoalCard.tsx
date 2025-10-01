@@ -57,7 +57,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
 
   return (
     <motion.div
-      className="from-primary/5 to-primary/10 w-full rounded-xl bg-gradient-to-br p-4 shadow-lg sm:p-6"
+      className="bg-primary w-full rounded-xl p-4 shadow-md sm:p-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -65,10 +65,10 @@ export const GoalCard: React.FC<GoalCardProps> = ({
       {/* Header */}
       <div className="mb-3 flex items-start justify-between sm:mb-4">
         <div className="flex items-center gap-2">
-          <div className="bg-primary/10 rounded-lg p-2">
+          <div className="bg-secondary rounded-lg p-2">
             <Flag className="text-primary h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <h2 className="text-primary text-sm font-semibold sm:text-base">{title}</h2>
+          <h2 className="text-secondary text-sm font-semibold sm:text-base">{title}</h2>
         </div>
         {tooltipText && <Tooltip content={tooltipText} />}
       </div>
@@ -76,14 +76,14 @@ export const GoalCard: React.FC<GoalCardProps> = ({
       {/* Valores Mobile */}
       <div className="mb-3 sm:hidden">
         <div className="flex items-baseline gap-2">
-          <span className="text-primary text-lg font-bold">{formatCurrency(currentValue)}</span>
+          <span className="text-secondary text-lg font-bold">{formatCurrency(currentValue)}</span>
           <span className="text-muted-foreground text-xs">de {formatCurrency(goalValue)}</span>
         </div>
       </div>
 
       {/* Valores Desktop */}
       <div className="mb-4 hidden sm:block">
-        <p className="text-primary text-2xl font-bold sm:text-3xl lg:text-4xl">
+        <p className="text-secondary text-2xl font-bold sm:text-3xl lg:text-4xl">
           {formatCurrency(currentValue)} /{' '}
           <span className="text-muted-foreground/60">{formatCurrency(goalValue)}</span>
         </p>
@@ -96,7 +96,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
 
       {/* Status */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <span className="flex items-center gap-1.5 text-xs text-neutral-600 sm:text-sm dark:text-neutral-400">
+        <span className="text-muted-foreground flex items-center gap-1.5 text-xs sm:text-sm">
           <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
           {remaining > 0 ? `Faltam ${formatCurrency(remaining)}` : successMessage}
         </span>
