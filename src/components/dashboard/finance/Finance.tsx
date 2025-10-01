@@ -56,9 +56,10 @@ export default function Finance() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="bg-primary rounded-lg p-4">
-        <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      {/* Filtros e Busca */}
+      <div className="bg-primary rounded-lg p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
           <div>
             <label htmlFor="search" className="text-secondary/60 mb-1 block text-sm font-medium">
               Buscar Produto na Venda
@@ -69,22 +70,30 @@ export default function Finance() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Ex: Bolo de chocolate"
-              className="focus:border-accent focus:ring-accent bg-muted rounded-md border-gray-300 p-2 shadow-sm lg:w-2/4"
+              className="bg-muted focus:border-accent focus:ring-accent w-full rounded-md border-gray-300 p-2 shadow-sm sm:p-3 lg:w-2/4"
             />
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            {/* Using the new unified date filter controls component */}
-            <UnifiedDateFilterControls
-              dateRange={dateRange}
-              quickDateFilter={quickDateFilter}
-              onDateRangeChange={setDateRange}
-              onQuickFilterChange={setQuickDateFilter}
-            />
-            <ExportButtons financialSummary={financialSummary} sales={filteredItems} />
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            {/* Controles de Data */}
+            <div className="flex-1">
+              <UnifiedDateFilterControls
+                dateRange={dateRange}
+                quickDateFilter={quickDateFilter}
+                onDateRangeChange={setDateRange}
+                onQuickFilterChange={setQuickDateFilter}
+              />
+            </div>
+
+            {/* Botões de Export */}
+            <div className="flex-shrink-0">
+              <ExportButtons financialSummary={financialSummary} sales={filteredItems} />
+            </div>
           </div>
         </div>
+
         {hasActiveFilters && (
-          <div className="mt-4">
+          <div className="mt-3 sm:mt-4">
             <Button
               onClick={resetFilters}
               variant="link"
@@ -96,17 +105,31 @@ export default function Finance() {
         )}
       </div>
 
-      <div ref={contentRef} className="flex flex-col gap-6">
-        <GoalCard
-          title="Ponto de equilíbrio"
-          tooltipText="Indica o valor mínimo de receita para cobrir todos os custos."
-          goalValue={breakEven || 0}
-          currentValue={grossProfit || 0}
-        />
+      {/* Conteúdo Principal */}
+      <div ref={contentRef} className="flex flex-col gap-4 sm:gap-6">
+        {/* Card de Meta - Destaque especial */}
+        <div className="rounded-xl bg-white p-1 shadow-sm">
+          <GoalCard
+            title="Ponto de equilíbrio"
+            tooltipText="Indica o valor mínimo de receita para cobrir todos os custos."
+            goalValue={breakEven || 0}
+            currentValue={grossProfit || 0}
+          />
+        </div>
 
-        <FinancialSummaryCards financialSummary={financialSummary} />
+        {/* Cards de Resumo Financeiro */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-gray-700 sm:text-base">Resumo Financeiro</h3>
+          <FinancialSummaryCards financialSummary={financialSummary} />
+        </div>
 
-        <SalesTable sales={filteredItems} onRemoveSale={handleRemoveSale} />
+        {/* Tabela de Vendas */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-medium text-gray-700 sm:text-base">Histórico de Vendas</h3>
+          <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+            <SalesTable sales={filteredItems} onRemoveSale={handleRemoveSale} />
+          </div>
+        </div>
       </div>
 
       {/* Dialog de confirmação */}

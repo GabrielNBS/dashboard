@@ -121,7 +121,64 @@ export default function IngredientCardList() {
 
   return (
     <div className="w-full space-y-6">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Mobile Layout - Hierárquico */}
+      <div className="space-y-4 lg:hidden">
+        {/* KPIs Principais - Destaque */}
+        <div className="grid grid-cols-1 gap-3">
+          <div className="rounded-lg bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total de Ingredientes</p>
+                <p className="text-xl font-bold text-gray-900">{summary.total}</p>
+                <p className="text-xs text-gray-500">cadastrados</p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500">
+                <Package className="h-6 w-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg bg-white p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Valor em Estoque</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {formatCurrency(summary.ingredientsTotalValue)}
+                </p>
+                <p className="text-xs text-gray-500">valor total</p>
+              </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500">
+                <BadgeDollarSign className="h-6 w-6 text-white" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Alertas de Estoque - Grid Compacto */}
+        <div className="rounded-lg bg-gray-50 p-3">
+          <h4 className="mb-3 text-sm font-medium text-gray-700">Status do Estoque</h4>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-md bg-white p-3">
+              <div className="flex items-center gap-2">
+                <AlertOctagon className="h-4 w-4 text-red-500" />
+                <p className="truncate text-xs font-medium text-gray-500">Crítico</p>
+              </div>
+              <p className="text-sm font-bold text-red-600">{summary.critico}</p>
+            </div>
+
+            <div className="rounded-md bg-white p-3">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                <p className="truncate text-xs font-medium text-gray-500">Atenção</p>
+              </div>
+              <p className="text-sm font-bold text-yellow-600">{summary.atencao}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Layout - Original */}
+      <div className="hidden grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid lg:grid-cols-4">
         <CardWrapper
           title="Ingredientes"
           value={summary.total}
@@ -153,15 +210,11 @@ export default function IngredientCardList() {
         search={searchConfig}
         filterStats={filterStatsConfig}
         emptyState={emptyStateConfig}
-        headerContent={
-          <div className="flex justify-end">
-            <QuickFilters activeFilter={statusFilter} onChange={setStatusFilter} />
-          </div>
-        }
+        headerContent={<QuickFilters activeFilter={statusFilter} onChange={setStatusFilter} />}
         renderItem={ingredient => (
           <IngredientCard ingredient={ingredient} onEdit={handleEdit} onDelete={handleDelete} />
         )}
-        gridCols="sm:grid-cols-2"
+        gridCols="grid-cols-1 sm:grid-cols-2"
       />
 
       {/* Dialog de confirmação */}

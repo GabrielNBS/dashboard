@@ -124,15 +124,17 @@ export function GenericCard<T extends CardableItem>({
     return (
       <div className={`rounded-xl border border-gray-200 bg-white shadow-sm ${className}`}>
         {/* Header minimalista */}
-        <div className="border-b border-gray-100 px-6 py-4">
+        <div className="border-b border-gray-100 px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-start justify-between">
-            <div>
-              <h3 className="mb-2 text-lg font-semibold text-gray-900">{cardTitle}</h3>
-              {subtitle && <p className="mb-2 text-sm text-gray-600">{subtitle}</p>}
+            <div className="min-w-0 flex-1">
+              <h3 className="mb-1 text-base font-semibold text-gray-900 sm:mb-2 sm:text-lg">
+                {cardTitle}
+              </h3>
+              {subtitle && <p className="mb-2 text-xs text-gray-600 sm:text-sm">{subtitle}</p>}
 
               {/* Badges */}
               {badges.length > 0 && (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                   {badges.map((badge, index) => (
                     <span
                       key={index}
@@ -154,12 +156,12 @@ export function GenericCard<T extends CardableItem>({
 
             {/* Action buttons */}
             {actions.length > 0 && (
-              <div className="flex gap-2">
+              <div className="ml-2 flex gap-1 sm:gap-2">
                 {actions.map((action, index) => (
                   <button
                     key={index}
                     onClick={() => action.onClick(item)}
-                    className={`rounded-lg p-2 transition-colors hover:bg-gray-50 ${
+                    className={`rounded-lg p-1.5 transition-colors hover:bg-gray-50 sm:p-2 ${
                       action.variant === 'destructive'
                         ? 'text-gray-400 hover:text-red-600'
                         : 'text-gray-400 hover:text-blue-600'
@@ -175,22 +177,22 @@ export function GenericCard<T extends CardableItem>({
         </div>
 
         {/* Tabs minimalistas */}
-        <div className="border-b border-gray-100 px-6 py-3">
-          <div className="flex gap-1">
+        <div className="border-b border-gray-100 px-4 py-2 sm:px-6 sm:py-3">
+          <div className="flex gap-1 overflow-x-auto">
             {tabs.map(tab => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+                className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-all sm:px-3 sm:py-1.5 sm:text-sm ${
                   activeTab === tab.key
                     ? 'border border-blue-200 bg-blue-50 text-blue-700'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                {tab.label}
+                <span className="whitespace-nowrap">{tab.label}</span>
                 {tab.count && (
                   <span
-                    className={`rounded-full px-1.5 py-0.5 text-xs ${
+                    className={`rounded-full px-1 py-0.5 text-xs sm:px-1.5 ${
                       activeTab === tab.key
                         ? 'bg-blue-100 text-blue-700'
                         : 'bg-gray-200 text-gray-600'
@@ -205,7 +207,7 @@ export function GenericCard<T extends CardableItem>({
         </div>
 
         {/* Conteúdo das tabs */}
-        <div className="p-6">{tabs.find(tab => tab.key === activeTab)?.content}</div>
+        <div className="p-4 sm:p-6">{tabs.find(tab => tab.key === activeTab)?.content}</div>
       </div>
     );
   }
@@ -217,18 +219,20 @@ export function GenericCard<T extends CardableItem>({
     >
       <div className="flex w-full flex-col">
         {/* Header Section */}
-        <CardHeader className="text-surface p-4">
+        <CardHeader className="text-surface p-3 sm:p-4">
           <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="text-muted-foreground mb-1 flex items-center gap-2 text-xl font-bold">
+            <div className="min-w-0 flex-1">
+              <CardTitle className="text-muted-foreground mb-1 flex items-center gap-2 text-lg font-bold sm:text-xl">
                 {cardTitle}
               </CardTitle>
 
-              {subtitle && <p className="text-muted-foreground mb-2 text-sm">{subtitle}</p>}
+              {subtitle && (
+                <p className="text-muted-foreground mb-2 text-xs sm:text-sm">{subtitle}</p>
+              )}
 
               {/* Badges */}
               {badges.length > 0 && (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
+                <div className="mt-2 flex flex-wrap items-center gap-1 sm:gap-2">
                   {badges.map((badge, index) => (
                     <Badge key={index} variant={badge.variant || 'outline'}>
                       {badge.icon && <span className="mr-1">{badge.icon}</span>}
@@ -241,14 +245,14 @@ export function GenericCard<T extends CardableItem>({
 
             {/* Action buttons */}
             {actions.length > 0 && (
-              <div className="flex gap-1">
+              <div className="ml-2 flex gap-1">
                 {actions.map((action, index) => (
                   <Button
                     key={index}
                     type="button"
                     onClick={() => action.onClick(item)}
                     variant={action.variant || 'ghost'}
-                    className="text-primary hover:bg-primary/20 h-8 w-8 p-0"
+                    className="text-primary hover:bg-primary/20 h-7 w-7 p-0 sm:h-8 sm:w-8"
                     aria-label={action.label}
                     tooltip={action.tooltip ? { tooltipContent: action.tooltip } : undefined}
                   >
@@ -261,29 +265,34 @@ export function GenericCard<T extends CardableItem>({
         </CardHeader>
 
         {/* Content Section */}
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           {/* Main metrics grid */}
           {mainMetrics.length > 0 && (
             <div
-              className={`mb-4 grid gap-3 ${
+              className={`mb-3 grid gap-2 sm:mb-4 sm:gap-3 ${
                 mainMetrics.length === 1
                   ? 'grid-cols-1'
                   : mainMetrics.length === 2
-                    ? 'grid-cols-2'
-                    : 'grid-cols-2 md:grid-cols-3'
+                    ? 'grid-cols-1 sm:grid-cols-2'
+                    : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
               }`}
             >
               {mainMetrics.map((metric, index) => (
-                <div key={index} className={`bg-muted/50 rounded-lg p-3 ${metric.className || ''}`}>
-                  <div className="mb-1 flex items-center gap-2">
+                <div
+                  key={index}
+                  className={`bg-muted/50 rounded-lg p-2 sm:p-3 ${metric.className || ''}`}
+                >
+                  <div className="mb-1 flex items-center gap-1 sm:gap-2">
                     {metric.icon}
                     <p className="text-muted-foreground text-xs font-medium">{metric.label}</p>
                   </div>
                   {/* Handle both string/number values and React elements */}
                   {typeof metric.value === 'string' || typeof metric.value === 'number' ? (
-                    <p className="text-primary text-lg font-bold">{metric.value}</p>
+                    <p className="text-primary text-base font-bold sm:text-lg">{metric.value}</p>
                   ) : (
-                    <div className="text-primary text-lg font-bold">{metric.value}</div>
+                    <div className="text-primary text-base font-bold sm:text-lg">
+                      {metric.value}
+                    </div>
                   )}
                 </div>
               ))}

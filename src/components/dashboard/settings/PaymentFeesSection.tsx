@@ -61,7 +61,7 @@ export default function PaymentFeesSection() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {paymentMethods.map(({ key, label, icon: Icon, description }) => (
-          <div key={key} className="bg-surface rounded-lg border p-4">
+          <div key={key} className="bg-surface rounded-lg p-4 shadow-md">
             <div className="mb-4 flex items-center gap-3">
               <div className="bg-primary/10 text-primary rounded-lg p-2">
                 <Icon className="h-5 w-5" />
@@ -88,9 +88,9 @@ export default function PaymentFeesSection() {
         ))}
       </div>
 
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-        <h4 className="mb-2 font-medium text-blue-900">💡 Dica</h4>
-        <p className="text-sm text-blue-800">
+      <div className="bg-info rounded-lg p-4 shadow-md">
+        <h4 className="text-primary mb-2 font-medium">💡 Dica</h4>
+        <p className="text-primary text-sm">
           As taxas são aplicadas sobre o subtotal da venda. Por exemplo, uma taxa de 2,5% em uma
           venda de R$ 100,00 resultará em R$ 2,50 de desconto no valor final.
         </p>

@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Info, Flag, TrendingUp } from 'lucide-react';
+import { Flag, TrendingUp } from 'lucide-react';
 import { cn } from '@/utils/helpers/cn';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
+import { Tooltip } from '@/components/ui';
 
 /**
  * Utils
@@ -43,10 +44,10 @@ interface GoalCardProps {
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({
-  title = 'Monthly Revenue Goal',
+  title = 'Objetivo de faturamento mensal',
   goalValue,
   currentValue,
-  tooltipText = 'This shows your revenue progress.',
+  tooltipText = 'Este mostra o progresso do faturamento.',
   successMessage = 'Meta alcançada 🎉',
 }) => {
   const percentage = goalValue > 0 ? (currentValue / goalValue) * 100 : 0;
@@ -56,43 +57,53 @@ export const GoalCard: React.FC<GoalCardProps> = ({
 
   return (
     <motion.div
-      className="w-full max-w-md rounded-md p-4 shadow-md sm:max-w-lg sm:p-6 lg:max-w-full"
+      className="from-primary/5 to-primary/10 w-full rounded-xl bg-gradient-to-br p-4 shadow-lg sm:p-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       {/* Header */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-[var(--color-primary)] sm:text-lg dark:text-[var(--color-primary-dark)]">
-          {title}
-        </h2>
-        {tooltipText && (
-          <div className="group relative cursor-pointer">
-            <Info className="h-4 w-4 text-neutral-500 transition-colors duration-200 group-hover:text-[var(--color-accent)] sm:h-5 sm:w-5 dark:text-neutral-400" />
-            <div className="absolute -top-12 right-0 z-10 hidden w-48 rounded-lg bg-black/90 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
-              {tooltipText}
-            </div>
+      <div className="mb-3 flex items-start justify-between sm:mb-4">
+        <div className="flex items-center gap-2">
+          <div className="bg-primary/10 rounded-lg p-2">
+            <Flag className="text-primary h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-        )}
+          <h2 className="text-primary text-sm font-semibold sm:text-base">{title}</h2>
+        </div>
+        {tooltipText && <Tooltip content={tooltipText} />}
       </div>
 
-      {/* Valores */}
-      <p className="mb-4 text-2xl font-bold break-words text-[var(--color-accent)] sm:text-3xl lg:text-4xl">
-        {formatCurrency(currentValue)} /{' '}
-        <span className="text-muted-foreground/60">{formatCurrency(goalValue)}</span>
-      </p>
+      {/* Valores Mobile */}
+      <div className="mb-3 sm:hidden">
+        <div className="flex items-baseline gap-2">
+          <span className="text-primary text-lg font-bold">{formatCurrency(currentValue)}</span>
+          <span className="text-muted-foreground text-xs">de {formatCurrency(goalValue)}</span>
+        </div>
+      </div>
+
+      {/* Valores Desktop */}
+      <div className="mb-4 hidden sm:block">
+        <p className="text-primary text-2xl font-bold sm:text-3xl lg:text-4xl">
+          {formatCurrency(currentValue)} /{' '}
+          <span className="text-muted-foreground/60">{formatCurrency(goalValue)}</span>
+        </p>
+      </div>
 
       {/* Progress */}
-      <ProgressBar value={barPercentage} />
+      <div className="mb-3">
+        <ProgressBar value={barPercentage} />
+      </div>
 
       {/* Status */}
-      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <span className="flex items-center gap-1.5 text-sm text-neutral-600 dark:text-neutral-400">
-          <Flag className="h-4 w-4" />
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <span className="flex items-center gap-1.5 text-xs text-neutral-600 sm:text-sm dark:text-neutral-400">
+          <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
           {remaining > 0 ? `Faltam ${formatCurrency(remaining)}` : successMessage}
         </span>
-        <span className={cn('flex items-center gap-1.5 text-sm font-semibold', textColor)}>
-          <TrendingUp className="h-4 w-4" />
+        <span
+          className={cn('flex items-center gap-1.5 text-xs font-semibold sm:text-sm', textColor)}
+        >
+          <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
           {percentage.toFixed(0)}%
         </span>
       </div>

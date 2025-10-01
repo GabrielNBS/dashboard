@@ -37,7 +37,7 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
   return (
     <div className="border-muted-foreground overflow-x-auto rounded-lg border">
       <table className="w-full text-left text-sm">
-        <thead className="bg-muted-foreground text-muted uppercase">
+        <thead className="bg-primary text-muted uppercase">
           <tr>
             <th className="p-3">Data</th>
             <th className="p-3">Produto Vendido</th>

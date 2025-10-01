@@ -5,6 +5,8 @@ import { FileText, Table, FileSpreadsheet, CheckCircle2, Loader2 } from 'lucide-
 import { FinanceSummary } from '@/hooks/business';
 import { Sale } from '@/types/sale';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
+import { Button } from '@/components/ui/base';
+import { cn } from '@/utils/utils';
 
 interface ExportButtonsProps {
   financialSummary: FinanceSummary;
@@ -343,37 +345,40 @@ export const ExportButtons: React.FC<ExportButtonsProps> = ({
     );
   };
 
+  const buttonClassName =
+    'group border-1 border-secondary hover:border-transparent relative overflow-hidden rounded-lg px-4 py-2 transition-all duration-300 hover:-translate-y-0.5  hover:from-green-100 hover:to-emerald-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50';
+
   return (
     <div className="flex gap-2">
-      <button
+      <Button
         onClick={exportToCSV}
         disabled={exportStatus.csv === 'loading'}
-        className="group relative overflow-hidden rounded-lg border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-green-300 hover:from-green-100 hover:to-emerald-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn(buttonClassName, 'hover:bg-great-hover hover:text-primary')}
       >
         <div className="relative flex items-center gap-2">
           <ButtonContent type="csv" icon={Table} label="Exportar CSV" />
         </div>
-      </button>
+      </Button>
 
-      <button
+      <Button
         onClick={exportToXLSX}
         disabled={exportStatus.xlsx === 'loading'}
-        className="group relative overflow-hidden rounded-lg border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300 hover:from-blue-100 hover:to-cyan-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn(buttonClassName, 'hover:bg-warning-hover hover:text-primary')}
       >
         <div className="relative flex items-center gap-2">
           <ButtonContent type="xlsx" icon={FileSpreadsheet} label="Exportar XLSX" />
         </div>
-      </button>
+      </Button>
 
-      <button
+      <Button
         onClick={exportToHTML}
         disabled={exportStatus.html === 'loading'}
-        className="group relative overflow-hidden rounded-lg border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 px-4 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-purple-300 hover:from-purple-100 hover:to-pink-100 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn(buttonClassName, 'hover:bg-info-hover hover:text-primary')}
       >
         <div className="relative flex items-center gap-2">
           <ButtonContent type="html" icon={FileText} label="Exportar HTML" />
         </div>
-      </button>
+      </Button>
     </div>
   );
 };

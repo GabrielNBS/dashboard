@@ -122,45 +122,45 @@ export function GenericListContainer<T extends FilterableItem>({
     <div className={`space-y-6 ${className}`}>
       {/* Header Section */}
       <div className="flex flex-col gap-4">
-        {/* Statistics and Search Row */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Item count and filter statistics */}
-          {filterStats && (
-            <div className="flex items-center gap-4">
-              <span className="text-muted-foreground text-sm">
-                {filterStats.totalCount}{' '}
-                {filterStats.totalCount === 1 ? filterStats.itemName : filterStats.itemNamePlural}{' '}
-                cadastrado
-                {filterStats.totalCount !== 1 ? 's' : ''}
+        {/* Statistics Row */}
+        {filterStats && (
+          <div className="flex items-center gap-4">
+            <span className="text-muted-foreground text-sm">
+              {filterStats.totalCount}{' '}
+              {filterStats.totalCount === 1 ? filterStats.itemName : filterStats.itemNamePlural}{' '}
+              cadastrado
+              {filterStats.totalCount !== 1 ? 's' : ''}
+            </span>
+            {filterStats.hasActiveFilters && (
+              <span className="text-accent text-sm">
+                • {filterStats.filteredCount} encontrado
+                {filterStats.filteredCount !== 1 ? 's' : ''}
               </span>
-              {filterStats.hasActiveFilters && (
-                <span className="text-accent text-sm">
-                  • {filterStats.filteredCount} encontrado
-                  {filterStats.filteredCount !== 1 ? 's' : ''}
-                </span>
-              )}
-            </div>
-          )}
+            )}
+          </div>
+        )}
+
+        {/* Filters and Search Row */}
+        <div className="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-center lg:justify-between">
+          {/* Additional header content (filters) */}
+          {headerContent}
 
           {/* Search input */}
           {search && (
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="w-full lg:w-auto lg:flex-shrink-0">
               <SearchInput
                 placeholder={search.placeholder}
                 value={search.value}
                 onChange={search.onChange}
-                className={search.className || 'sm:w-64'}
+                className={search.className || 'w-full sm:w-80'}
               />
             </div>
           )}
         </div>
 
-        {/* Additional header content */}
-        {headerContent}
-
         {/* Filter statistics with clear button */}
         {filterStats?.hasActiveFilters && (
-          <div className="bg-accent/50 flex items-center justify-between rounded-lg p-3 text-sm">
+          <div className="bg-accent/50 flex flex-col gap-2 rounded-lg p-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-0">
             <span className="text-primary">
               Mostrando <strong>{filterStats.filteredCount}</strong> de{' '}
               <strong>{filterStats.totalCount}</strong> {filterStats.itemNamePlural}
@@ -168,7 +168,7 @@ export function GenericListContainer<T extends FilterableItem>({
             {filterStats.onClearFilters && (
               <button
                 onClick={filterStats.onClearFilters}
-                className="text-primary hover:text-primary/80 cursor-pointer font-medium"
+                className="text-primary hover:text-primary/80 cursor-pointer text-left font-medium sm:text-right"
                 type="button"
               >
                 Limpar filtros
@@ -181,12 +181,14 @@ export function GenericListContainer<T extends FilterableItem>({
       {/* Content Section */}
       {items.length === 0 ? (
         // Empty state
-        <div className="bg-muted flex flex-col items-center justify-center gap-4 rounded-lg py-12">
+        <div className="bg-muted flex flex-col items-center justify-center gap-4 rounded-lg px-4 py-8 sm:py-12">
           {finalEmptyState.icon}
-          <h3 className="text-lg font-medium">{finalEmptyState.title}</h3>
-          <p className="text-muted-foreground w-full text-center">{finalEmptyState.description}</p>
+          <h3 className="text-center text-lg font-medium">{finalEmptyState.title}</h3>
+          <p className="text-muted-foreground text-center text-sm sm:text-base">
+            {finalEmptyState.description}
+          </p>
           {finalEmptyState.action && (
-            <div className="mt-4">
+            <div className="mt-2 sm:mt-4">
               <Button onClick={finalEmptyState.action.onClick} className="flex items-center gap-2">
                 {finalEmptyState.action.icon || <Plus className="h-4 w-4" />}
                 {finalEmptyState.action.label}

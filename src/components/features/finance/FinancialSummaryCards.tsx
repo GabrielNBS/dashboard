@@ -19,25 +19,125 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
     valueToSave,
   } = financialSummary;
 
+  const cards = [
+    { title: 'Receita Total', value: totalRevenue, type: 'currency' as const, bgColor: 'bg-great' },
+    {
+      title: 'Custo Variável',
+      value: totalVariableCost,
+      type: 'currency' as const,
+      bgColor: 'bg-warning',
+    },
+    { title: 'Custo Fixo', value: totalFixedCost, type: 'currency' as const, bgColor: 'bg-muted' },
+    { title: 'Lucro Bruto', value: grossProfit, type: 'currency' as const, bgColor: 'bg-blue-100' },
+    { title: 'Lucro Líquido', value: netProfit, type: 'currency' as const, bgColor: 'bg-blue-200' },
+    {
+      title: 'Margem de Lucro',
+      value: margin,
+      type: 'percentage' as const,
+      bgColor: 'bg-purple-100',
+    },
+    {
+      title: 'Valor a Pagar',
+      value: valueToSave,
+      type: 'currency' as const,
+      bgColor: 'bg-red-100',
+    },
+  ];
+
+  // Separar KPIs principais dos secundários
+  const primaryKPIs = [
+    { title: 'Receita Total', value: totalRevenue, type: 'currency' as const, bgColor: 'bg-great' },
+    { title: 'Lucro Líquido', value: netProfit, type: 'currency' as const, bgColor: 'bg-blue-200' },
+    {
+      title: 'Margem de Lucro',
+      value: margin,
+      type: 'percentage' as const,
+      bgColor: 'bg-purple-100',
+    },
+  ];
+
+  const secondaryKPIs = [
+    {
+      title: 'Custo Variável',
+      value: totalVariableCost,
+      type: 'currency' as const,
+      bgColor: 'bg-warning',
+    },
+    { title: 'Custo Fixo', value: totalFixedCost, type: 'currency' as const, bgColor: 'bg-muted' },
+    { title: 'Lucro Bruto', value: grossProfit, type: 'currency' as const, bgColor: 'bg-blue-100' },
+    {
+      title: 'Valor a Pagar',
+      value: valueToSave,
+      type: 'currency' as const,
+      bgColor: 'bg-red-100',
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <CardWrapper title="Receita Total" value={totalRevenue} type="currency" bgColor="bg-great" />
-      <CardWrapper
-        title="Custo Variável"
-        value={totalVariableCost}
-        type="currency"
-        bgColor="bg-warning"
-      />
-      <CardWrapper title="Custo Fixo" value={totalFixedCost} type="currency" bgColor="bg-muted" />
-      <CardWrapper title="Lucro Bruto" value={grossProfit} type="currency" bgColor="bg-blue-100" />
-      <CardWrapper title="Lucro Líquido" value={netProfit} type="currency" bgColor="bg-blue-200" />
-      <CardWrapper
-        title="Margem de Lucro"
-        value={margin}
-        type="percentage"
-        bgColor="bg-purple-100"
-      />
-      <CardWrapper title="Valor a Pagar" value={valueToSave} type="currency" bgColor="bg-red-100" />
-    </div>
+    <>
+      {/* Mobile Layout - Compacto e Legível */}
+      <div className="space-y-4 sm:hidden">
+        {/* KPIs Principais - Destaque */}
+        <div className="grid grid-cols-1 gap-3">
+          {primaryKPIs.map((kpi, index) => (
+            <div key={index} className="rounded-lg bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">{kpi.title}</p>
+                  <p className="text-xl font-bold text-gray-900">
+                    {kpi.type === 'currency'
+                      ? new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        }).format(kpi.value)
+                      : `${kpi.value.toFixed(1)}%`}
+                  </p>
+                </div>
+                <div
+                  className={`h-12 w-12 rounded-full ${kpi.bgColor} flex items-center justify-center`}
+                >
+                  <div className="h-6 w-6 rounded-full bg-white/30" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* KPIs Secundários - Grid Compacto */}
+        <div className="rounded-lg bg-gray-50 p-3">
+          <h4 className="mb-3 text-sm font-medium text-gray-700">Detalhamento</h4>
+          <div className="grid grid-cols-2 gap-3">
+            {secondaryKPIs.map((kpi, index) => (
+              <div key={index} className="rounded-md bg-white p-3">
+                <p className="truncate text-xs font-medium text-gray-500">{kpi.title}</p>
+                <p className="text-sm font-bold text-gray-900">
+                  {kpi.type === 'currency'
+                    ? new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }).format(kpi.value)
+                    : `${kpi.value.toFixed(1)}%`}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Grid - Layout Original */}
+      <div className="hidden grid-cols-2 gap-4 sm:grid lg:grid-cols-4">
+        {cards.map((card, index) => (
+          <CardWrapper
+            key={index}
+            title={card.title}
+            value={card.value}
+            type={card.type}
+            bgColor={card.bgColor}
+          />
+        ))}
+      </div>
+    </>
   );
 }

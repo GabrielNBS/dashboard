@@ -36,6 +36,8 @@ export {
   type ProgressConfig,
 } from './GenericCard';
 
+export { Tooltip } from './Tooltip';
+
 export {
   GenericListContainer,
   createSearchConfig,

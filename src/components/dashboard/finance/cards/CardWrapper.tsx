@@ -41,24 +41,24 @@ export default function CardWrapper({
 
   return (
     <div
-      className={`w-full cursor-pointer rounded-lg p-4 shadow-md transition-all duration-300 ease-in-out ${bgColor} ${textColor} hover:border-primary hover:${bgColor} flex border-t-4 ${
-        layout === 'horizontal' ? 'flex-row items-center gap-4' : 'flex-col'
+      className={`w-full cursor-pointer rounded-lg p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${bgColor} ${textColor} hover:border-primary hover:${bgColor} flex border-t-4 ${
+        layout === 'horizontal' ? 'flex-row items-center gap-3 sm:gap-4' : 'flex-col'
       }`}
     >
-      <div>
-        <h3 className="flex justify-between gap-2 text-sm font-light">
+      <div className="w-full">
+        <h3 className="flex justify-between gap-2 text-xs font-light sm:text-sm">
           {title}
-          {icon && <span className="text-3xl">{icon}</span>}
+          {icon && <span className="text-2xl sm:text-3xl">{icon}</span>}
         </h3>
-        <p className="text-xl font-bold">{formatValue()}</p>
-        {subtitle && <p className="text-muted-foreground text-sm">{subtitle}</p>}
+        <p className="text-lg font-bold sm:text-xl">{formatValue()}</p>
+        {subtitle && <p className="text-muted-foreground text-xs sm:text-sm">{subtitle}</p>}
         {trending && (
-          <div className="flex items-center gap-1 text-sm">
+          <div className="flex items-center gap-1 text-xs sm:text-sm">
             {typeof trending === 'boolean' ? (
               // Fallback para compatibilidade com o formato antigo
               <div className="text-on-great items-center gap-2">
                 <strong className="flex items-center gap-1">
-                  <TrendingUp />
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
                   15%
                 </strong>
               </div>
@@ -68,7 +68,11 @@ export default function CardWrapper({
                 className={`items-center gap-2 ${trending.isPositive ? 'text-on-great' : 'text-bad'}`}
               >
                 <strong className="flex items-center gap-1">
-                  {trending.isPositive ? <TrendingUp /> : <TrendingDown />}
+                  {trending.isPositive ? (
+                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                  )}
                   {trending.percentage.toFixed(1)}%
                 </strong>
                 <span className="text-muted-foreground ml-1 text-xs">{trending.period}</span>

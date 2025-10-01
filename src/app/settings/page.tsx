@@ -101,42 +101,52 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Settings className="text-primary h-8 w-8" />
-          <h1 className="text-2xl font-bold">Configurações</h1>
+          <h1 className="text-xl font-bold">Configurações</h1>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleReset} className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button
+            variant="outline"
+            onClick={handleReset}
+            className="flex items-center justify-center gap-2"
+          >
             <RotateCcw className="h-4 w-4" />
-            Resetar
+            <span className="hidden sm:inline">Resetar</span>
           </Button>
-          <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2">
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex items-center justify-center gap-2"
+          >
             <Save className="h-4 w-4" />
-            {isSaving ? 'Salvando...' : 'Salvar'}
+            <span>{isSaving ? 'Salvando...' : 'Salvar'}</span>
           </Button>
         </div>
       </div>
 
       {/* Navegação das seções */}
-      <div className="flex flex-wrap gap-2 border-b border-gray-200 pb-4">
-        {sections.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            onClick={() => setActiveSection(id)}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors ${
-              activeSection === id
-                ? 'bg-primary text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            <Icon className="h-4 w-4" />
-            {label}
-          </button>
-        ))}
+      <div className="border-b border-gray-200">
+        <nav className="flex space-x-1 overflow-x-auto pb-0" aria-label="Tabs">
+          {sections.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveSection(id)}
+              className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all ${
+                activeSection === id
+                  ? 'border-primary text-primary bg-primary/5'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              <span className="hidden sm:inline">{label}</span>
+            </button>
+          ))}
+        </nav>
       </div>
 
       {/* Conteúdo da seção ativa */}

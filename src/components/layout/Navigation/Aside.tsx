@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
+import { useSidebar } from '../MainLayout';
 
 import {
   Home,
@@ -15,53 +16,113 @@ import {
   Settings,
 } from 'lucide-react';
 
+const menuItems = [
+  { label: 'Dashboard', href: '/', icon: Home },
+  { label: 'Estoque', href: '/store', icon: Package },
+  { label: 'Produto', href: '/product', icon: ScanBarcode },
+  { label: 'PDV', href: '/pdv', icon: ShoppingCart },
+  { label: 'Financeiro', href: '/finance', icon: BadgeDollarSign },
+  { label: 'Configurações', href: '/settings', icon: Settings },
+  { label: 'Logout', href: '/logout', icon: LogOut },
+];
+
 export default function Aside() {
   const pathname = usePathname();
-
-  const menuItems = [
-    { label: 'Dashboard', href: '/', icon: Home },
-    { label: 'Estoque', href: '/store', icon: Package },
-    { label: 'Produto', href: '/product', icon: ScanBarcode },
-    { label: 'PDV', href: '/pdv', icon: ShoppingCart },
-    { label: 'Financeiro', href: '/finance', icon: BadgeDollarSign },
-    { label: 'Configurações', href: '/settings', icon: Settings },
-    { label: 'Logout', href: '/logout', icon: LogOut },
-  ];
+  const { isExpanded, setIsExpanded } = useSidebar();
 
   return (
     <motion.aside
-      initial={{ x: -100, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      className="hidden sm:top-0 sm:flex sm:h-dvh sm:flex-col sm:bg-white sm:p-6 sm:shadow-md"
+      initial={false}
+      animate={{ width: isExpanded ? 256 : 64 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+      className="fixed top-0 left-0 z-50 hidden h-dvh flex-col bg-white shadow-lg sm:flex"
     >
-      <div className="mb-6 flex items-center justify-center">
-        <div className="bg-accent h-16 w-16 overflow-hidden rounded-full">
-          <img
-            className=""
-            src={'https://placehold.co/150'}
-            alt="random image"
-            width={64}
-            height={64}
+      {/* Header com Avatar */}
+      <div className="flex h-20 items-center justify-center">
+        <motion.div
+          animate={{
+            width: isExpanded ? 48 : 40,
+            height: isExpanded ? 48 : 40,
+          }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="bg-accent overflow-hidden rounded-full"
+        >
+          <Image
+            src="https://placehold.co/150"
+            alt="Avatar do usuário"
+            width={48}
+            height={48}
+            className="h-full w-full object-cover"
           />
-        </div>
+        </motion.div>
       </div>
-      <ul className="space-y-3">
-        {menuItems.map(({ label, href, icon: Icon }) => (
-          <li key={href}>
-            <Link
-              href={href}
-              className={clsx(
-                'flex items-center gap-3 rounded-md px-2 py-2 font-medium transition-colors',
-                pathname === href ? 'bg-primary text-white' : 'text-paragraph hover:bg-gray-100'
-              )}
-            >
-              <Icon className="text-hero-gray-500 group-hover:text-paragraph h-5 w-5" />
-              {label}
-            </Link>
-          </li>
-        ))}
-      </ul>
+
+      {/* Separador */}
+      <div className="mx-4 border-t border-gray-200" />
+
+      {/* Menu de Navegação */}
+      <nav className="flex-1 overflow-hidden px-2 py-4">
+        <ul className="space-y-2">
+          {menuItems.map(({ label, href, icon: Icon }) => {
+            const isActive = pathname === href;
+
+            return (
+              <li key={href} className="relative">
+                <Link
+                  href={href}
+                  className={`group/item relative flex items-center rounded-lg px-3 py-3 font-medium transition-colors duration-200 ${
+                    isActive
+                      ? 'bg-primary text-white shadow-sm'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
+                >
+                  <Icon
+                    className={`h-5 w-5 flex-shrink-0 transition-colors ${
+                      isActive ? 'text-white' : 'text-gray-500 group-hover/item:text-gray-700'
+                    }`}
+                  />
+
+                  <motion.span
+                    initial={false}
+                    animate={{
+                      opacity: isExpanded ? 1 : 0,
+                      x: isExpanded ? 0 : -10,
+                      width: isExpanded ? 'auto' : 0,
+                    }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    className="ml-3 overflow-hidden whitespace-nowrap"
+                  >
+                    {label}
+                  </motion.span>
+                </Link>
+
+                {/* Tooltip para quando colapsado */}
+                <div
+                  className={`pointer-events-none absolute top-1/2 left-full z-50 ml-3 -translate-y-1/2 transition-opacity duration-200 ${
+                    isExpanded ? 'opacity-0' : 'opacity-0 group-hover/item:opacity-100'
+                  }`}
+                >
+                  <div className="rounded-md bg-gray-900 px-3 py-2 text-sm whitespace-nowrap text-white shadow-lg">
+                    {label}
+                    <div className="absolute top-1/2 left-0 -ml-1 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Indicador visual de expansão */}
+      <div className="flex h-12 items-center justify-center">
+        <motion.div
+          animate={{ width: isExpanded ? 48 : 16 }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="h-1 rounded-full bg-gray-300"
+        />
+      </div>
     </motion.aside>
   );
 }
