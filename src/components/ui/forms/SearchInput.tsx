@@ -1,6 +1,5 @@
-'use client';
-
-import { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, useState, useRef, useCallback } from 'react';
+import LordIcon, { LordIconRef } from '../LordIcon';
 
 type SearchInputProps = {
   value: string;
@@ -22,14 +21,54 @@ export default function SearchInput({
   className = '',
   ...props
 }: SearchInputProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const iconRef = useRef<LordIconRef>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+  }, []);
+
+  const handleFocus = useCallback(() => {
+    setIsFocused(true);
+  }, []);
+
+  const handleBlur = useCallback(() => {
+    setIsFocused(false);
+  }, []);
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(e.target.value);
+    },
+    [onChange]
+  );
+
   return (
-    <input
-      type="text"
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      placeholder={placeholder}
-      className={`focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:ring ${className}`}
-      {...props}
-    />
+    <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <LordIcon
+        ref={iconRef}
+        src="https://cdn.lordicon.com/vayiyuqd.json"
+        width={20}
+        height={20}
+        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+        isHovered={isHovered || isFocused}
+      />
+
+      <input
+        type="text"
+        value={value}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        placeholder={placeholder}
+        className={`focus:border-primary focus:ring-primary/20 w-full rounded-lg border py-2 pr-4 pl-10 text-sm shadow-sm transition-colors focus:ring ${className}`}
+        {...props}
+      />
+    </div>
   );
 }

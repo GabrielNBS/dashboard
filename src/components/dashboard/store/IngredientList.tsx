@@ -7,7 +7,7 @@ import { useHydrated } from '@/hooks/ui/useHydrated';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { Package, BadgeDollarSign, AlertTriangle, AlertOctagon } from 'lucide-react';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
-import { ConfirmationDialog } from '@/components/ui/feedback';
+import { ConfirmationDialog, useToast } from '@/components/ui/feedback';
 
 // UI Components
 import CardWrapper from '../finance/cards/CardWrapper';
@@ -56,6 +56,8 @@ export default function IngredientCardList() {
     statusFilter: 'all',
   });
 
+  const { toast } = useToast();
+
   // Calcular resumo
   const summary = useMemo(() => {
     const ingredientsTotalValue = ingredients.reduce(
@@ -92,6 +94,12 @@ export default function IngredientCardList() {
       },
       () => {
         dispatch({ type: 'DELETE_INGREDIENT', payload: id });
+        toast({
+          title: 'Ingrediente excluído',
+          description: `O ingrediente ${ingredientName} foi excluído com sucesso.`,
+          duration: 5000,
+          variant: 'destructive',
+        });
       }
     );
   };
@@ -184,24 +192,28 @@ export default function IngredientCardList() {
           value={summary.total}
           icon={<Package />}
           subtitle="cadastrados"
+          className="hover:border-primary border-t-4"
         />
         <CardWrapper
           title="Estoque Crítico"
           value={summary.critico}
           icon={<AlertOctagon />}
           subtitle="atenção imediata"
+          className="hover:border-primary border-t-4"
         />
         <CardWrapper
           title="Estoque em Alerta"
           value={summary.atencao}
           icon={<AlertTriangle />}
           subtitle="precisam de reposição"
+          className="hover:border-primary border-t-4"
         />
         <CardWrapper
           title="Valor Total"
           value={formatCurrency(summary.ingredientsTotalValue)}
           icon={<BadgeDollarSign />}
           subtitle="em estoque"
+          className="hover:border-primary border-t-4"
         />
       </div>
 

@@ -21,9 +21,9 @@ export function useFinanceActions() {
         {
           title: 'Excluir Venda',
           description: (
-            <p className="rounded bg-amber-50 p-2 text-sm text-amber-700">
+            <div className="rounded bg-amber-50 p-2 text-sm text-amber-700">
               <strong>⚠️ Os ingredientes serão restaurados</strong> para o estoque automaticamente.
-            </p>
+            </div>
           ),
           variant: 'destructive',
         },

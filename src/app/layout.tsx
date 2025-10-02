@@ -8,6 +8,7 @@ import { SettingsProvider } from '@/contexts/settings/SettingsContext';
 import { ToastProvider, ToastGlobalRegister } from '@/components/ui/feedback/use-toast';
 import { Inter } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/feedback/tooltip';
+import Script from 'next/script';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} `}>
+        <Script src="https://cdn.lordicon.com/lordicon.js" strategy="beforeInteractive" />
         {/* Provider do sistema de toast */}
         <ToastProvider>
           <TooltipProvider>

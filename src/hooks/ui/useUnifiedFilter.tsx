@@ -4,7 +4,7 @@
 // This hook replaces both useFilter.tsx and useDataFilter.tsx
 // Provides comprehensive filtering with search, status, date ranges, and sorting
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 
 // Base interface that all filterable items must implement
 export interface FilterableItem {
@@ -147,9 +147,45 @@ export function useUnifiedFilter<T extends FilterableItem>(
   const [dateRange, setDateRange] = useState<DateRange>(defaultState.dateRange);
   const [quickDateFilter, setQuickDateFilter] = useState(defaultState.quickDateFilter);
 
+  // Debounce search para evitar re-renders excessivos
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 150); // 150ms de debounce
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [search]);
+
+  // Stable setters para evitar re-renders desnecessários
+  const stableSetSearch = useCallback((value: string) => {
+    setSearch(value);
+  }, []);
+
+  const stableSetStatusFilter = useCallback((value: string) => {
+    setStatusFilter(value);
+  }, []);
+
+  const stableResetFilters = useCallback(() => {
+    setSearch('');
+    setStatusFilter('all');
+    setDateRange({ startDate: null, endDate: null });
+    setQuickDateFilter('all');
+  }, []);
+
   // Main filtering logic - memoized for performance
   const filteredItems = useMemo(() => {
-    const searchLower = search.toLowerCase();
+    const searchLower = debouncedSearch.toLowerCase();
 
     // Determine effective date range (quick filter takes precedence)
     const effectiveDateRange =
@@ -207,36 +243,34 @@ export function useUnifiedFilter<T extends FilterableItem>(
             return aKey.localeCompare(bKey);
           })
       );
-  }, [items, search, statusFilter, dateRange, quickDateFilter, config]);
+  }, [items, debouncedSearch, statusFilter, dateRange, quickDateFilter, config]);
 
   // Enhanced date filter handlers
-  const setQuickDateFilterWithRange = (filter: UnifiedFilterState['quickDateFilter']) => {
-    setQuickDateFilter(filter);
-    if (filter !== 'all') {
-      setDateRange({ startDate: null, endDate: null }); // Clear custom range
-    }
-  };
+  const setQuickDateFilterWithRange = useCallback(
+    (filter: UnifiedFilterState['quickDateFilter']) => {
+      setQuickDateFilter(filter);
+      if (filter !== 'all') {
+        setDateRange({ startDate: null, endDate: null }); // Clear custom range
+      }
+    },
+    []
+  );
 
-  const setCustomDateRange = (range: DateRange) => {
+  const setCustomDateRange = useCallback((range: DateRange) => {
     setDateRange(range);
     setQuickDateFilter('all'); // Clear quick filter
-  };
-
-  // Reset all filters to default state
-  const resetFilters = () => {
-    setSearch('');
-    setStatusFilter('all');
-    setDateRange({ startDate: null, endDate: null });
-    setQuickDateFilter('all');
-  };
+  }, []);
 
   // Check if any filters are currently active
-  const hasActiveFilters =
-    search !== '' ||
-    statusFilter !== 'all' ||
-    quickDateFilter !== 'all' ||
-    dateRange.startDate !== null ||
-    dateRange.endDate !== null;
+  const hasActiveFilters = useMemo(
+    () =>
+      search !== '' ||
+      statusFilter !== 'all' ||
+      quickDateFilter !== 'all' ||
+      dateRange.startDate !== null ||
+      dateRange.endDate !== null,
+    [search, statusFilter, quickDateFilter, dateRange]
+  );
 
   return {
     // Current filter state
@@ -246,14 +280,14 @@ export function useUnifiedFilter<T extends FilterableItem>(
     quickDateFilter,
     filteredItems,
 
-    // State setters
-    setSearch,
-    setStatusFilter,
+    // State setters (stable references)
+    setSearch: stableSetSearch,
+    setStatusFilter: stableSetStatusFilter,
     setDateRange: setCustomDateRange,
     setQuickDateFilter: setQuickDateFilterWithRange,
 
     // Utility functions
-    resetFilters,
+    resetFilters: stableResetFilters,
     hasActiveFilters,
 
     // Statistics
@@ -261,8 +295,10 @@ export function useUnifiedFilter<T extends FilterableItem>(
     filteredCount: filteredItems.length,
 
     // Advanced utilities
-    getEffectiveDateRange: () =>
-      quickDateFilter !== 'all' ? dateUtils.getQuickDateRange(quickDateFilter) : dateRange,
+    getEffectiveDateRange: useCallback(
+      () => (quickDateFilter !== 'all' ? dateUtils.getQuickDateRange(quickDateFilter) : dateRange),
+      [quickDateFilter, dateRange]
+    ),
     dateUtils, // Export for external use
   };
 }

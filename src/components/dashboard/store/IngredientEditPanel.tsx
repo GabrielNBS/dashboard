@@ -115,7 +115,7 @@ export default function IngredientEditPanel() {
             </FormProvider>
           </div>
 
-          <DrawerFooter className="flex flex-row justify-center gap-3 border-t bg-gray-50 px-6 pt-4 pb-6">
+          <DrawerFooter className="flex flex-row justify-center gap-3 bg-gray-50 px-6 pt-4 pb-6">
             <Button
               type="button"
               variant="destructive"

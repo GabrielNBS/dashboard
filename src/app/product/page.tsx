@@ -12,14 +12,35 @@ import {
   SheetTitle,
 } from '@/components/ui/feedback/sheet';
 import ProductForm from '@/components/dashboard/product/ProductForm';
+import { useHydrated } from '@/hooks/ui/useHydrated';
 
 export default function Product() {
+  const hydrated = useHydrated();
   const { state, dispatch } = useProductContext();
   const { products } = state;
 
   const handleToggleForm = () => {
     dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
   };
+
+  // Renderizar um skeleton enquanto não hidratou
+  if (!hydrated) {
+    return (
+      <div className="w-full rounded-lg p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="h-7 w-48 animate-pulse rounded bg-gray-200" />
+          <div className="h-10 w-32 animate-pulse rounded bg-gray-200" />
+        </div>
+        <div className="bg-muted rounded-lg py-12 text-center">
+          <div className="mb-4 flex flex-col items-center justify-center gap-2">
+            <div className="h-16 w-16 animate-pulse rounded bg-gray-300" />
+            <div className="h-5 w-48 animate-pulse rounded bg-gray-300" />
+          </div>
+          <div className="mx-auto h-10 w-40 animate-pulse rounded bg-gray-300" />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-full rounded-lg p-6">
       <div className="mb-6 flex items-center justify-between">

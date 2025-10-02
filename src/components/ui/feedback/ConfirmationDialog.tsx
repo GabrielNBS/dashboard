@@ -8,7 +8,6 @@ import Input from '@/components/ui/base/Input';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -40,7 +39,18 @@ export default function ConfirmationDialog({
   const [inputValue, setInputValue] = React.useState('');
   const [error, setError] = React.useState('');
 
-  const isConfirmEnabled = inputValue.toLowerCase() === confirmText.toLowerCase();
+  // Limpa o estado quando o dialog é fechado
+  React.useEffect(() => {
+    if (!isOpen) {
+      setInputValue('');
+      setError('');
+    }
+  }, [isOpen]);
+
+  const isConfirmEnabled = React.useMemo(
+    () => inputValue.toLowerCase() === confirmText.toLowerCase(),
+    [inputValue, confirmText]
+  );
 
   const handleConfirm = () => {
     if (!inputValue.trim()) {
@@ -53,8 +63,12 @@ export default function ConfirmationDialog({
       return;
     }
 
+    // Limpa o estado local primeiro
+    setInputValue('');
+    setError('');
+
+    // Executa a confirmação - o hook já vai fechar o dialog
     onConfirm();
-    handleClose();
   };
 
   const handleClose = () => {
@@ -115,7 +129,7 @@ export default function ConfirmationDialog({
             </div>
             <div className="min-w-0 flex-1">
               <DialogTitle className={cn('text-left', styles.title)}>{title}</DialogTitle>
-              <DialogDescription className="mt-2 text-left">{description}</DialogDescription>
+              <div className="text-muted-foreground mt-2 text-left text-sm">{description}</div>
             </div>
           </div>
         </DialogHeader>
@@ -132,26 +146,40 @@ export default function ConfirmationDialog({
             autoComplete="off"
             autoFocus
           />
-          {!inputValue && (
-            <p className="text-muted-foreground text-sm">
-              O botão será habilitado após digitar a frase correta
-            </p>
-          )}
-          {inputValue && !isConfirmEnabled && inputValue.length < confirmText.length && (
-            <p className="text-accent text-sm">
-              Continue digitando... Faltam {confirmText.length - inputValue.length} caracteres
-            </p>
-          )}
-          {inputValue && !isConfirmEnabled && inputValue.length >= confirmText.length && (
-            <p className="text-on-critical text-sm">
-              Frase incorreta. Digite exatamente &quot;{confirmText}&quot;
-            </p>
-          )}
-          {isConfirmEnabled && (
-            <p className="text-on-great flex items-center gap-1 text-sm">
-              ✓ Botão habilitado! Pressione Enter ou clique para confirmar
-            </p>
-          )}
+          {/* Mensagem de status única e estável */}
+          <div className="min-h-[20px]">
+            {React.useMemo(() => {
+              if (!inputValue) {
+                return (
+                  <p key="empty" className="text-muted-foreground text-sm">
+                    O botão será habilitado após digitar a frase correta
+                  </p>
+                );
+              }
+
+              if (isConfirmEnabled) {
+                return (
+                  <p key="enabled" className="text-on-great flex items-center gap-1 text-sm">
+                    ✓ Botão habilitado! Pressione Enter ou clique para confirmar
+                  </p>
+                );
+              }
+
+              if (inputValue.length < confirmText.length) {
+                return (
+                  <p key="typing" className="text-accent text-sm">
+                    Continue digitando... Faltam {confirmText.length - inputValue.length} caracteres
+                  </p>
+                );
+              }
+
+              return (
+                <p key="incorrect" className="text-on-critical text-sm">
+                  Frase incorreta. Digite exatamente &quot;{confirmText}&quot;
+                </p>
+              );
+            }, [inputValue, isConfirmEnabled, confirmText])}
+          </div>
         </div>
 
         <DialogFooter className="gap-2 pt-4">

@@ -74,15 +74,26 @@ export const ProductListContext = createContext<
 
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
   const [storedProducts, setStoredProducts] = useLocalStorage<ProductState[]>('finalProducts', []);
+  const [isHydrated, setIsHydrated] = React.useState(false);
 
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    products: storedProducts,
+    products: isHydrated ? storedProducts : [],
   });
 
+  // Garantir hidratação adequada
   useEffect(() => {
-    setStoredProducts(state.products);
-  }, [state.products, setStoredProducts]);
+    setIsHydrated(true);
+    if (storedProducts.length > 0) {
+      dispatch({ type: 'SET_PRODUCTS', payload: storedProducts });
+    }
+  }, [storedProducts]);
+
+  useEffect(() => {
+    if (isHydrated) {
+      setStoredProducts(state.products);
+    }
+  }, [state.products, setStoredProducts, isHydrated]);
 
   return (
     <ProductListContext.Provider value={{ state, dispatch }}>

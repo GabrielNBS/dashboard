@@ -108,17 +108,7 @@ export {
 // ============================================================
 // 🔹 Context Factory
 // ============================================================
-export {
-  createGenericContext,
-  createProductContext,
-  createIngredientContext,
-  createSalesContext,
-  type BaseEntity,
-  type GenericState,
-  type GenericAction,
-  type ContextConfig,
-  type GenericContextType,
-} from '@/contexts/GenericContextFactory';
+// Context Factory - Removed (was causing issues with localStorage sync)
 
 // ============================================================
 // 🔹 Re-exports for Backward Compatibility

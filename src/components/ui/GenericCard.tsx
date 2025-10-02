@@ -140,10 +140,10 @@ export function GenericCard<T extends CardableItem>({
                       key={index}
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                         badge.variant === 'danger'
-                          ? 'bg-red-50 text-red-700'
+                          ? 'text-on-bad bg-red-50'
                           : badge.variant === 'warning'
-                            ? 'bg-yellow-50 text-yellow-700'
-                            : 'bg-blue-50 text-blue-700'
+                            ? 'text-on-warning bg-yellow-50'
+                            : 'text-on-info bg-blue-50'
                       }`}
                     >
                       {badge.icon && <span className="mr-1">{badge.icon}</span>}

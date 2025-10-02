@@ -30,21 +30,21 @@ export default function GoalCardWrapper({
   };
 
   const getTextColor = (percentage: number) => {
-    if (percentage >= 100) return 'text-teal-600';
-    if (percentage >= 75) return 'text-green-600';
-    if (percentage >= 40) return 'text-yellow-600';
-    return 'text-red-600';
+    if (percentage >= 100) return 'text-teal-400';
+    if (percentage >= 75) return 'text-green-400';
+    if (percentage >= 40) return 'text-yellow-400';
+    return 'text-red-400';
   };
 
   return (
     <div
-      className={`bg-surface text-primary hover:border-primary hover:bg-surface flex w-full cursor-pointer flex-col rounded-lg border-t-4 p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className}`}
+      className={`hover:border-primary bg-primary text-secondary hover:bg-primary/95 border-primary flex w-full cursor-pointer flex-col rounded-lg border-t-4 p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className}`}
     >
       <div className="w-full">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="flex items-center gap-2 text-xs font-light sm:text-sm">
-            <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
+          <h3 className="flex items-center gap-2 text-xs font-light text-gray-300 sm:text-sm">
+            <Flag className="h-3 w-3 text-gray-400 sm:h-4 sm:w-4" />
             {title}
           </h3>
           <span
@@ -57,14 +57,14 @@ export default function GoalCardWrapper({
 
         {/* Valores */}
         <div className="mb-3">
-          <p className="text-lg font-bold sm:text-xl">
+          <p className="text-lg font-bold text-white sm:text-xl">
             {formatCurrency(currentValue)} / {formatCurrency(goalValue)}
           </p>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-2">
-          <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-gray-700">
             <div
               className={`h-full rounded-full transition-all duration-500 ease-out ${getProgressColor(percentage)}`}
               style={{ width: `${barPercentage}%` }}
@@ -73,7 +73,7 @@ export default function GoalCardWrapper({
         </div>
 
         {/* Status */}
-        <p className="text-xs text-gray-600 sm:text-sm">
+        <p className="text-xs text-gray-400 sm:text-sm">
           {remaining > 0 ? `Faltam ${formatCurrency(remaining)}` : 'Meta alcançada 🎉'}
         </p>
       </div>

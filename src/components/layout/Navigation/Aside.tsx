@@ -13,7 +13,7 @@ import LordIcon, { LordIconRef } from '@/components/ui/LordIcon';
 interface MenuItemProps {
   label: string;
   href: string;
-  icon: string | React.ComponentType<any>;
+  icon: string | React.ComponentType<{ className?: string }>;
   lordIconSrc?: string;
   isActive: boolean;
   isExpanded: boolean;
@@ -25,16 +25,10 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    if (iconRef.current) {
-      iconRef.current.play();
-    }
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    if (iconRef.current) {
-      iconRef.current.pause();
-    }
   };
 
   return (
@@ -61,11 +55,16 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
           />
         ) : (
           typeof icon !== 'string' &&
-          React.createElement(icon as React.ComponentType<unknown>, {
-            className: `h-5 w-5 flex-shrink-0 transition-colors ${
-              isActive ? 'text-white' : 'text-gray-500 group-hover/item:text-gray-700'
-            }`,
-          })
+          (() => {
+            const IconComponent = icon as React.ComponentType<{ className?: string }>;
+            return (
+              <IconComponent
+                className={`h-5 w-5 flex-shrink-0 transition-colors ${
+                  isActive ? 'text-white' : 'text-gray-500 group-hover/item:text-gray-700'
+                }`}
+              />
+            );
+          })()
         )}
 
         <motion.span
@@ -108,13 +107,13 @@ const menuItems = [
     label: 'Estoque',
     href: '/store',
     icon: 'lordicon',
-    lordIconSrc: 'https://cdn.lordicon.com/qjbqtpdz.json',
+    lordIconSrc: 'https://cdn.lordicon.com/ysoasulr.json',
   },
   {
     label: 'Produto',
     href: '/product',
     icon: 'lordicon',
-    lordIconSrc: 'https://cdn.lordicon.com/qhviklyi.json',
+    lordIconSrc: 'https://cdn.lordicon.com/uomkwtjh.json',
   },
   {
     label: 'PDV',
@@ -126,13 +125,13 @@ const menuItems = [
     label: 'Financeiro',
     href: '/finance',
     icon: 'lordicon',
-    lordIconSrc: 'https://cdn.lordicon.com/qhgmphtg.json',
+    lordIconSrc: 'https://cdn.lordicon.com/kwnsnjyg.json',
   },
   {
     label: 'Configurações',
     href: '/settings',
     icon: 'lordicon',
-    lordIconSrc: 'https://cdn.lordicon.com/hwjcdycb.json',
+    lordIconSrc: 'https://cdn.lordicon.com/umuwriak.json',
   },
   {
     label: 'Logout',

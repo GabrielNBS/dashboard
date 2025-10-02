@@ -75,7 +75,7 @@ export default function CollapsibleFilters({
   return (
     <div
       ref={containerRef}
-      className="rounded-lg border bg-white shadow-sm transition-all duration-300 hover:shadow-md"
+      className="bg-secondary rounded-lg shadow-sm transition-all duration-300 hover:shadow-md"
     >
       {/* Header compacto - sempre visível */}
       <div

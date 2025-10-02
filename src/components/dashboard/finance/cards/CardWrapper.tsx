@@ -6,7 +6,7 @@ import { TrendingData } from '@/hooks/business/useTrendingMetrics';
 export type CardWrapperProps = {
   title: string | ReactNode;
   value: string | number | ReactNode;
-  type?: 'currency' | 'number' | 'percentage';
+  type?: 'currency' | 'number' | 'percentage' | 'custom';
   bgColor?: string;
   textColor?: string;
   icon?: ReactNode;
@@ -29,7 +29,7 @@ export default function CardWrapper({
   className,
 }: CardWrapperProps) {
   const formatValue = () => {
-    if (typeof value !== 'number') return value;
+    if (type === 'custom' || typeof value !== 'number') return value;
 
     switch (type) {
       case 'currency':
@@ -43,7 +43,7 @@ export default function CardWrapper({
 
   return (
     <div
-      className={`w-full cursor-pointer rounded-lg p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className} ${bgColor} ${textColor} hover:border-primary hover:${bgColor} flex border-t-4 ${
+      className={`w-full cursor-pointer rounded-lg p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className} ${bgColor} ${textColor} hover:${bgColor} flex ${
         layout === 'horizontal' ? 'flex-row items-center gap-3 sm:gap-4' : 'flex-col'
       }`}
     >
@@ -52,7 +52,11 @@ export default function CardWrapper({
           {title}
           {icon && <span className="text-2xl sm:text-3xl">{icon}</span>}
         </h3>
-        <p className="text-lg font-bold sm:text-xl">{formatValue()}</p>
+        {type === 'custom' ? (
+          <div className="mt-1">{formatValue()}</div>
+        ) : (
+          <p className="mt-1 text-lg font-bold sm:text-xl">{formatValue()}</p>
+        )}
         {subtitle && <p className="text-muted-foreground text-xs sm:text-sm">{subtitle}</p>}
         {trending && (
           <div className="flex items-center gap-1 text-xs sm:text-sm">

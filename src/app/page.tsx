@@ -13,6 +13,7 @@ import FinancialChart from '@/components/dashboard/home/KpiMetrics';
 import MetricsIntegrationDemo from '@/components/dashboard/home/MetricsIntegrationDemo';
 
 import { ChartBarIcon, PercentIcon, DollarSign, ShoppingBagIcon } from 'lucide-react';
+import { getHowHours } from '@/utils/utils';
 
 // pages/dashboard.tsx
 export default function DashboardContent() {
@@ -31,7 +32,7 @@ export default function DashboardContent() {
       {/* Cabeçalho da página */}
       <header>
         <h1 className="text-primary text-hero font-bold">
-          Bom dia, <strong className="text-primary">{storeName}</strong>
+          {getHowHours()}, <strong className="text-primary">{storeName}</strong>
         </h1>
         <p className="text-foreground text-lg">O resumo diário do seu negocio</p>
       </header>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef, useEffect, useState } from 'react';
 
 interface LordIconProps {
   src: string;
@@ -19,19 +19,53 @@ export interface LordIconRef {
 const LordIcon = forwardRef<LordIconRef, LordIconProps>(
   ({ src, width = 24, height = 24, className = '', isActive = false, isHovered = false }, ref) => {
     const iconRef = useRef<HTMLElement>(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+
+    // Garantir que o componente só renderiza no cliente
+    useEffect(() => {
+      setIsMounted(true);
+    }, []);
+
+    useEffect(() => {
+      if (!isMounted) return;
+
+      // Verificar se o LordIcon foi carregado
+      const checkLordIcon = () => {
+        if (
+          typeof window !== 'undefined' &&
+          window.customElements &&
+          window.customElements.get('lord-icon')
+        ) {
+          setIsLoaded(true);
+        } else {
+          // Tentar novamente após um pequeno delay
+          setTimeout(checkLordIcon, 100);
+        }
+      };
+
+      checkLordIcon();
+    }, [isMounted]);
 
     useImperativeHandle(ref, () => ({
       play: () => {
-        if (iconRef.current && (iconRef.current as any).play) {
-          (iconRef.current as any).play();
+        if (iconRef.current && 'play' in iconRef.current) {
+          (iconRef.current as { play: () => void }).play();
         }
       },
       pause: () => {
-        if (iconRef.current && (iconRef.current as any).pause) {
-          (iconRef.current as unknown).pause();
+        if (iconRef.current && 'pause' in iconRef.current) {
+          (iconRef.current as { pause: () => void }).pause();
         }
       },
     }));
+
+    // Trigger animation when hover state changes
+    useEffect(() => {
+      if (isHovered && iconRef.current && 'play' in iconRef.current) {
+        (iconRef.current as { play: () => void }).play();
+      }
+    }, [isHovered]);
 
     // Determine colors based on state
     const getColors = () => {
@@ -55,12 +89,47 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
 
     const colors = getColors();
 
+    // Não renderizar nada no servidor para evitar hidration mismatch
+    if (!isMounted) {
+      return (
+        <div
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+            backgroundColor: 'transparent',
+            borderRadius: '2px',
+          }}
+          className={className}
+        />
+      );
+    }
+
+    // Fallback enquanto o LordIcon não carrega
+    if (!isLoaded) {
+      return (
+        <div
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+            backgroundColor: colors.primary,
+            borderRadius: '2px',
+            opacity: 0.3,
+          }}
+          className={className}
+        />
+      );
+    }
+
     return React.createElement('lord-icon', {
       ref: iconRef,
       src: src,
-      trigger: 'hover',
+      trigger: isHovered ? 'morph' : 'none',
       colors: `primary:${colors.primary},secondary:${colors.secondary}`,
-      style: { width: `${width}px`, height: `${height}px` },
+      style: {
+        width: `${width}px`,
+        height: `${height}px`,
+        display: 'block',
+      },
       className: className,
     });
   }

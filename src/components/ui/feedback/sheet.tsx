@@ -29,7 +29,10 @@ function SheetOverlay({
   return (
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
-      className={cn('fixed inset-0 z-50 bg-black/30 backdrop-blur-xs', className)}
+      className={cn(
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+        className
+      )}
       {...props}
     />
   );
@@ -45,20 +48,24 @@ function SheetContent({
 }) {
   const sideVariants = {
     right: {
-      base: 'inset-y-0 right-0 h-full w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-2/5',
-      animation: 'slide-in-from-right slide-out-to-right',
+      base: 'inset-y-0 right-0 h-full w-full max-w-[90vw] md:max-w-md lg:max-w-lg xl:max-w-2/5',
+      animation:
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
     },
     left: {
-      base: 'inset-y-0 left-0 h-full w-full max-w-[90vw] border-r md:max-w-md lg:max-w-lg xl:max-w-xl',
-      animation: 'slide-in-from-left slide-out-to-left',
+      base: 'inset-y-0 left-0 h-full w-full max-w-[90vw] md:max-w-md lg:max-w-lg xl:max-w-xl',
+      animation:
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left',
     },
     top: {
-      base: 'inset-x-0 top-0 h-auto max-h-[85vh] w-full border-b',
-      animation: 'slide-in-from-top slide-out-to-top',
+      base: 'inset-x-0 top-0 h-auto max-h-[85vh] w-full',
+      animation:
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
     },
     bottom: {
-      base: 'inset-x-0 bottom-0 h-auto max-h-[85vh] w-full border-t',
-      animation: 'slide-in-from-bottom slide-out-to-bottom',
+      base: 'inset-x-0 bottom-0 h-auto max-h-[85vh] w-full',
+      animation:
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
     },
   };
 
@@ -71,7 +78,7 @@ function SheetContent({
         data-slot="sheet-content"
         className={cn(
           // Base styles
-          'bg-surface fixed z-50 flex flex-col gap-4 overflow-hidden shadow-lg',
+          'bg-surface border-border/20 fixed z-[60] flex flex-col gap-4 overflow-hidden border shadow-lg',
           // Position and size
           variant.base,
           // Animation classes

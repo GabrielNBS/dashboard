@@ -81,14 +81,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toasts.map(({ id, title, description, variant = 'default' }) => (
           <div
             key={id}
-            className={`relative flex max-w-xs min-w-[260px] flex-col gap-1 rounded-lg border px-4 py-3 shadow-lg ${
+            className={`relative flex max-w-xs min-w-[260px] flex-col gap-1 rounded-lg border px-4 py-3 shadow-md ${
               variant === 'accept'
-                ? 'border-on-great bg-great'
+                ? 'bg-great'
                 : variant === 'edit'
-                  ? 'border-on-warning-600 bg-warning'
+                  ? 'bg-warning'
                   : variant === 'destructive'
-                    ? 'border-critical bg-on-critical'
-                    : 'border-accent'
+                    ? 'bg-on-bad'
+                    : 'bg-muted'
             } `}
           >
             <strong className="text-base font-semibold">{title}</strong>
