@@ -4,6 +4,7 @@ import Button from '@/components/ui/base/Button';
 import { PackagePlus, Plus } from 'lucide-react';
 import ProductsList from '@/components/dashboard/product/ProductsList';
 import { useProductContext } from '@/contexts/products/ProductContext';
+import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import {
   Sheet,
   SheetContent,
@@ -17,9 +18,14 @@ import { useHydrated } from '@/hooks/ui/useHydrated';
 export default function Product() {
   const hydrated = useHydrated();
   const { state, dispatch } = useProductContext();
+  const { dispatch: builderDispatch } = useProductBuilderContext();
   const { products } = state;
 
   const handleToggleForm = () => {
+    // Sempre limpar dados do produto em edição e resetar builder context
+    // para garantir que não há dados residuais do modo de edição
+    dispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
+    builderDispatch({ type: 'RESET_PRODUCT' });
     dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
   };
 
@@ -71,13 +77,28 @@ export default function Product() {
         open={state.isFormVisible}
         onOpenChange={() => dispatch({ type: 'TOGGLE_FORM_VISIBILITY' })}
       >
-        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-2xl">
-          <SheetHeader className="text-center">
-            <SheetTitle>Adicionar ou Editar Produto</SheetTitle>
-            <SheetDescription>Preencha as informações do produto.</SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <ProductForm />
+        <SheetContent side="right" className="w-full overflow-hidden p-0 sm:max-w-3xl">
+          <div className="flex h-full flex-col">
+            <SheetHeader className="flex-shrink-0 border-b border-gray-100 p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+                  <PackagePlus className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="text-left">
+                  <SheetTitle className="text-lg font-semibold text-gray-900">
+                    {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
+                  </SheetTitle>
+                  <SheetDescription className="text-sm text-gray-500">
+                    {state.isEditMode
+                      ? 'Atualize as informações do produto existente'
+                      : 'Preencha as informações para criar um novo produto'}
+                  </SheetDescription>
+                </div>
+              </div>
+            </SheetHeader>
+            <div className="flex-1 overflow-hidden p-6">
+              <ProductForm />
+            </div>
           </div>
         </SheetContent>
       </Sheet>

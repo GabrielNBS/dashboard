@@ -172,7 +172,7 @@ const CategorySummary: React.FC<CategorySummaryProps> = ({ products }) => {
   if (Object.keys(categorySummary).length <= 1) return null;
 
   return (
-    <div className="rounded-lg border bg-gray-50 p-4">
+    <div className="rounded-lg bg-gray-50 p-4 shadow-md">
       <h4 className="mb-3 text-sm font-medium text-gray-700">Resumo por Categoria</h4>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {Object.entries(categorySummary).map(([category, data]) => (

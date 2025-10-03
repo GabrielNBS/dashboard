@@ -99,30 +99,65 @@ export function GenericForm({
   className = '',
 }: GenericFormProps) {
   return (
-    <form onSubmit={onSubmit} className={`flex flex-col gap-4 ${className}`}>
+    <div className={`space-y-6 ${className}`}>
       {/* Edit mode banner */}
       {isEditMode && editItemName && (
-        <div className="bg-warning text-on-warning mb-4 rounded p-2 text-sm">
-          Editando: <strong>{editItemName}</strong> — qualquer alteração será aplicada ao item
-          existente.
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100">
+              <CheckCheck className="h-4 w-4 text-amber-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-amber-800">
+                Editando: <span className="font-semibold">{editItemName}</span>
+              </p>
+              <p className="text-xs text-amber-600">
+                Qualquer alteração será aplicada ao item existente
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Form content */}
-      {children}
+      <form onSubmit={onSubmit} className="space-y-6">
+        {/* Form content */}
+        <div className="space-y-6">{children}</div>
 
-      {/* Action buttons */}
-      <div className="mt-6 flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-          <X className="h-5 w-5" />
-          Cancelar
-        </Button>
-        <Button type="submit" variant="accept" disabled={isSubmitting}>
-          <CheckCheck className="h-5 w-5" />
-          {isSubmitting ? 'Salvando...' : isEditMode ? 'Atualizar' : 'Adicionar'}
-        </Button>
-      </div>
-    </form>
+        {/* Action buttons */}
+        <div className="sticky bottom-0 mt-8 border-t border-gray-100 bg-white pt-6">
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="min-w-[100px]"
+            >
+              <X className="mr-2 h-4 w-4" />
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              variant="accept"
+              disabled={isSubmitting}
+              className="min-w-[120px]"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <CheckCheck className="mr-2 h-4 w-4" />
+                  {isEditMode ? 'Atualizar' : 'Adicionar'}
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 }
 
@@ -136,8 +171,8 @@ export function GenericForm({
  */
 export interface GenericFormFieldProps {
   config: FormFieldConfig;
-  value: any;
-  onChange: (value: any) => void;
+  value: string | number;
+  onChange: (value: string | number) => void;
   error?: string;
   disabled?: boolean;
 }
@@ -149,7 +184,7 @@ export function GenericFormField({
   error,
   disabled = false,
 }: GenericFormFieldProps) {
-  const { name, label, type, placeholder, required, options, step, min, max } = config;
+  const { name, label, type, placeholder, required, options } = config;
 
   const baseInputClasses = `w-full rounded border p-2 ${error ? 'border-destructive' : 'border-gray-300'}`;
 
@@ -159,7 +194,7 @@ export function GenericFormField({
         return (
           <select
             id={name}
-            value={value}
+            value={String(value)}
             onChange={e => onChange(e.target.value)}
             className={baseInputClasses}
             required={required}
@@ -178,7 +213,7 @@ export function GenericFormField({
         return (
           <textarea
             id={name}
-            value={value}
+            value={String(value)}
             onChange={e => onChange(e.target.value)}
             placeholder={placeholder}
             className={`${baseInputClasses} resize-vertical min-h-[100px]`}
@@ -192,7 +227,7 @@ export function GenericFormField({
           <input
             type="text"
             id={name}
-            value={value}
+            value={String(value)}
             onChange={e => onChange(e.target.value)}
             placeholder={placeholder}
             className={baseInputClasses}
@@ -207,7 +242,7 @@ export function GenericFormField({
           <input
             type="text"
             id={name}
-            value={value}
+            value={String(value)}
             onChange={e => onChange(e.target.value)}
             placeholder={placeholder}
             className={baseInputClasses}

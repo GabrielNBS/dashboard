@@ -114,82 +114,106 @@ export default function IngredientSelector() {
   );
 
   return (
-    <div className="relative w-full">
-      <label className="font-medium">Selecione os ingredientes</label>
-      <SearchableInput<Ingredient>
-        items={ingredientsWithStock}
-        onSelectItem={handleSelectIngredient}
-        displayAttribute="name"
-        placeholder="Digite o nome do ingrediente"
-        inputValue={inputValue}
-        onInputChange={setInputValue}
-      />
+    <div className="space-y-4">
+      <div>
+        <label className="mb-2 block text-sm font-medium text-gray-700">Buscar ingrediente</label>
+        <SearchableInput<Ingredient>
+          items={ingredientsWithStock}
+          onSelectItem={handleSelectIngredient}
+          displayAttribute="name"
+          placeholder="Digite o nome do ingrediente..."
+          inputValue={inputValue}
+          onInputChange={setInputValue}
+        />
+      </div>
 
       {selectedIngredient && (
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="font-medium">
-              Preço médio por {getBaseUnit(selectedIngredient.unit)}: R${' '}
-              {selectedIngredient.averageUnitPrice.toFixed(3)}
+        <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium text-gray-900">{selectedIngredient.name}</h4>
+            <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600">
+              {selectedIngredient.unit}
             </span>
+          </div>
 
-            <span className="text-sm text-gray-600">
-              Estoque: {selectedIngredient.totalQuantity} {getBaseUnit(selectedIngredient.unit)}
-            </span>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="rounded-lg bg-blue-50 p-3">
+              <p className="font-medium text-blue-600">Preço médio</p>
+              <p className="font-semibold text-blue-900">
+                R$ {selectedIngredient.averageUnitPrice.toFixed(3)}/
+                {getBaseUnit(selectedIngredient.unit)}
+              </p>
+            </div>
+            <div className="rounded-lg bg-green-50 p-3">
+              <p className="font-medium text-green-600">Estoque disponível</p>
+              <p className="font-semibold text-green-900">
+                {selectedIngredient.totalQuantity} {getBaseUnit(selectedIngredient.unit)}
+              </p>
+            </div>
+          </div>
 
-            <QuantityInput
-              value={quantityUtilized}
-              onChange={setQuantity}
-              placeholder="Quantidade"
-              className="w-24"
-              unit={getBaseUnit(selectedIngredient.unit)}
-              maxValue={selectedIngredient.unit === 'un' ? 1000 : 100} // 1000 unidades ou 100kg/l
-            />
-
-            <span>Total: R$ {getTotalPrice(quantityUtilized, selectedIngredient)}</span>
-
+          <div className="flex items-end gap-4">
+            <div className="flex-1">
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Quantidade necessária
+              </label>
+              <QuantityInput
+                value={quantityUtilized}
+                onChange={setQuantity}
+                placeholder="0"
+                className="w-full"
+                unit={getBaseUnit(selectedIngredient.unit)}
+                maxValue={selectedIngredient.unit === 'un' ? 1000 : 100}
+              />
+            </div>
+            <div className="flex-1">
+              <label className="mb-1 block text-sm font-medium text-gray-700">Custo total</label>
+              <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium">
+                R$ {getTotalPrice(quantityUtilized, selectedIngredient)}
+              </div>
+            </div>
             <button
               type="button"
               onClick={handleAddIngredient}
-              className="bg-accent text-background rounded px-4 py-2"
+              className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
               disabled={!hasEnoughStock(selectedIngredient, parseFloat(quantityUtilized) || 0)}
             >
               Adicionar
             </button>
           </div>
 
-          <span className="text-muted-foreground ml-[2px] text-xs">
-            Quantidade normalizada:{' '}
-            {(() => {
-              const parsed = parseFloat(quantityUtilized);
-              if (!quantityUtilized || isNaN(parsed)) return 0;
-              return normalizeQuantity(parsed, selectedIngredient.unit);
-            })()}{' '}
-            {getBaseUnit(selectedIngredient.unit)}
-          </span>
+          <div className="rounded bg-gray-50 p-2 text-xs text-gray-500">
+            <p>
+              <strong>Quantidade normalizada:</strong>{' '}
+              {(() => {
+                const parsed = parseFloat(quantityUtilized);
+                if (!quantityUtilized || isNaN(parsed)) return 0;
+                return normalizeQuantity(parsed, selectedIngredient.unit);
+              })()}{' '}
+              {getBaseUnit(selectedIngredient.unit)}
+            </p>
+          </div>
 
           {/* Mostrar informações dos batches disponíveis */}
           {selectedIngredient.batches.length > 0 && (
-            <div className="mt-2 text-xs text-gray-500">
-              <details>
-                <summary className="cursor-pointer">
-                  Ver batches em estoque ({selectedIngredient.batches.length})
-                </summary>
-                <div className="mt-1 space-y-1">
-                  {selectedIngredient.batches.map(batch => (
-                    <div key={batch.id} className="flex justify-between">
-                      <span>{new Date(batch.purchaseDate).toLocaleDateString()}</span>
-                      <span>
-                        {batch.currentQuantity} {getBaseUnit(selectedIngredient.unit)}
-                      </span>
-                      <span>
-                        R$ {batch.unitPrice.toFixed(3)}/{getBaseUnit(selectedIngredient.unit)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </details>
-            </div>
+            <details className="text-xs">
+              <summary className="cursor-pointer font-medium text-gray-600 hover:text-gray-800">
+                Ver lotes em estoque ({selectedIngredient.batches.length})
+              </summary>
+              <div className="mt-2 space-y-2 rounded bg-gray-50 p-3">
+                {selectedIngredient.batches.map(batch => (
+                  <div key={batch.id} className="flex items-center justify-between text-gray-600">
+                    <span>{new Date(batch.purchaseDate).toLocaleDateString()}</span>
+                    <span className="font-medium">
+                      {batch.currentQuantity} {getBaseUnit(selectedIngredient.unit)}
+                    </span>
+                    <span className="text-green-600">
+                      R$ {batch.unitPrice.toFixed(3)}/{getBaseUnit(selectedIngredient.unit)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </details>
           )}
         </div>
       )}

@@ -37,7 +37,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
   return (
     <div className="bg-card border-border rounded-xl border shadow-md">
       {/* Header minimalista */}
-      <div className="border-border bg-foreground rounded-xl border-b px-6 py-4">
+      <div className="bg-foreground rounded-t-xl px-6 py-4">
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-background mb-2 text-lg font-semibold">{product.name}</h3>
@@ -78,7 +78,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
       </div>
 
       {/* Tabs minimalistas */}
-      <div className="border-border border-b px-6 py-3">
+      <div className="bg-foreground px-6 py-3">
         <div className="flex gap-1">
           {[
             { key: 'overview', label: 'Visão Geral', count: null },
@@ -160,9 +160,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                 <div className="text-card-foreground text-2xl font-bold">
                   {formatCurrency(totalCost)}
                 </div>
-                <div className="text-muted-foreground mt-1 text-sm">
-                  {formatCurrency(unitCost)} por unidade
-                </div>
+                <span className="text-muted-foreground mt-1 text-sm">por unidade</span>
               </div>
 
               <div className="bg-muted rounded-lg p-4">
@@ -173,9 +171,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                 <div className="text-primary text-2xl font-bold">
                   {formatCurrency(sellingPrice)}
                 </div>
-                <div className="text-muted-foreground mt-1 text-sm">
-                  {formatCurrency(unitSellingPrice)} por unidade
-                </div>
+                <span className="text-muted-foreground mt-1 text-sm">por unidade</span>
               </div>
             </div>
 

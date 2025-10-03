@@ -4,3 +4,22 @@
 @import './components/button.css';
 @import './components/card.css';
 @import './components/toast.css';
+
+/* Pulse animation for step indicators */
+.loader {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background-color: #69ffa8;
+    animation: 1.5s pulse infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 #69ffa8;
+    }
+
+    100% {
+        box-shadow: 0 0 0 14px #69ffa800;
+    }
+}

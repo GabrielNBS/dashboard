@@ -77,7 +77,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
 
       {/* Container de toasts - posicionado no canto superior direito */}
-      <div className="fixed top-4 left-4 z-50 flex flex-col gap-2">
+      <div className="fixed top-4 left-4 z-100 flex flex-col gap-2">
         {toasts.map(({ id, title, description, variant = 'default' }) => (
           <div
             key={id}
@@ -87,7 +87,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 : variant === 'edit'
                   ? 'bg-warning'
                   : variant === 'destructive'
-                    ? 'bg-on-bad'
+                    ? 'bg-bad'
                     : 'bg-muted'
             } `}
           >

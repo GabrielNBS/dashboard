@@ -30,7 +30,7 @@ function SheetOverlay({
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
       className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/60 backdrop-blur-sm duration-300',
         className
       )}
       {...props}
@@ -50,22 +50,22 @@ function SheetContent({
     right: {
       base: 'inset-y-0 right-0 h-full w-full max-w-[90vw] md:max-w-md lg:max-w-lg xl:max-w-2/5',
       animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right duration-300',
     },
     left: {
       base: 'inset-y-0 left-0 h-full w-full max-w-[90vw] md:max-w-md lg:max-w-lg xl:max-w-xl',
       animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left duration-300',
     },
     top: {
       base: 'inset-x-0 top-0 h-auto max-h-[85vh] w-full',
       animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top duration-300',
     },
     bottom: {
       base: 'inset-x-0 bottom-0 h-auto max-h-[85vh] w-full',
       animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300',
     },
   };
 
@@ -78,7 +78,7 @@ function SheetContent({
         data-slot="sheet-content"
         className={cn(
           // Base styles
-          'bg-surface border-border/20 fixed z-[60] flex flex-col gap-4 overflow-hidden border shadow-lg',
+          'fixed z-[60] flex flex-col overflow-hidden border-l border-gray-200 bg-white shadow-2xl',
           // Position and size
           variant.base,
           // Animation classes
@@ -87,11 +87,13 @@ function SheetContent({
         )}
         {...props}
       >
-        <div className="flex-1 overflow-y-auto p-6">{children}</div>
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6">{children}</div>
+        </div>
 
-        <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
-          <XIcon className="size-4" />
-          <span className="sr-only">Close</span>
+        <SheetPrimitive.Close className="absolute top-4 right-4 rounded-full p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none">
+          <XIcon className="h-5 w-5" />
+          <span className="sr-only">Fechar</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPortal>

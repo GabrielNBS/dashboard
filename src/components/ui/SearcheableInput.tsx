@@ -3,6 +3,7 @@
 
 import { SearchableInputProps } from '@/types/components';
 import { useState, useEffect } from 'react';
+import { Input } from './base';
 
 export default function SearchableInput<T>({
   items,
@@ -39,7 +40,7 @@ export default function SearchableInput<T>({
 
   return (
     <div className={`relative ${className}`}>
-      <input
+      <Input
         type="text"
         placeholder={placeholder}
         value={localValue}
