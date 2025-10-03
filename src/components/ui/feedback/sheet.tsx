@@ -48,7 +48,7 @@ function SheetContent({
 }) {
   const sideVariants = {
     right: {
-      base: 'inset-y-0 right-0 h-full w-full max-w-[90vw] md:max-w-md lg:max-w-lg xl:max-w-2/5',
+      base: 'inset-y-0 right-0 h-full w-full max-w-[90vw]',
       animation:
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right duration-300',
     },
@@ -88,7 +88,7 @@ function SheetContent({
         {...props}
       >
         <div className="flex-1 overflow-y-auto">
-          <div className="p-6">{children}</div>
+          <div className="md:p-6 lg:p-6 xl:p-6">{children}</div>
         </div>
 
         <SheetPrimitive.Close className="absolute top-4 right-4 rounded-full p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none">

@@ -203,7 +203,7 @@ export default function IngredientForm() {
             Adicionar ingrediente
           </Button>
         </SheetTrigger>
-        <SheetContent className="overflow-y-auto">
+        <SheetContent className="max-w-3xl overflow-y-auto">
           <SheetHeader className="mb-6 flex flex-col items-center">
             <SheetTitle className="flex items-center gap-2 text-lg">
               {existingIngredient ? <Package className="h-5 w-5" /> : <Plus className="h-5 w-5" />}

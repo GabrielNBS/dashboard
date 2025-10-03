@@ -77,7 +77,7 @@ export default function Product() {
         open={state.isFormVisible}
         onOpenChange={() => dispatch({ type: 'TOGGLE_FORM_VISIBILITY' })}
       >
-        <SheetContent side="right" className="w-full overflow-hidden p-0 sm:max-w-3xl">
+        <SheetContent side="right" className="max-w-3xl overflow-hidden p-0">
           <div className="flex h-full flex-col">
             <SheetHeader className="flex-shrink-0 border-b border-gray-100 p-6">
               <div className="flex items-center gap-3">

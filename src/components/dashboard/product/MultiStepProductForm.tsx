@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
@@ -8,6 +8,7 @@ import {
   calculateSuggestedPrice,
   calculateUnitCost,
 } from '@/utils/calculations';
+import { ProductionMode } from '@/types/products';
 
 // Importar os steps
 import BasicInfoStep from './steps/BasicInfoStep';
@@ -54,58 +55,95 @@ interface MultiStepProductFormProps {
   onClose: () => void;
 }
 
+/**
+ * DECISÃO: Extrair validações para funções puras
+ * RAZÃO: Separar lógica de negócio da UI, facilitar testes e reutilização
+ */
+const validateBasicInfo = (name: string, category: string): boolean => {
+  if (!name?.trim()) {
+    showValidationToast({
+      title: 'Nome obrigatório',
+      description: 'Informe o nome do produto.',
+    });
+    return false;
+  }
+  if (!category?.trim()) {
+    showValidationToast({
+      title: 'Categoria obrigatória',
+      description: 'Selecione uma categoria.',
+    });
+    return false;
+  }
+  return true;
+};
+
+const validateIngredients = (ingredientsCount: number): boolean => {
+  if (ingredientsCount === 0) {
+    showValidationToast({
+      title: 'Ingredientes necessários',
+      description: 'Adicione pelo menos um ingrediente.',
+    });
+    return false;
+  }
+  return true;
+};
+
+const validateProduction = (mode: string | null): boolean => {
+  if (!mode) {
+    showValidationToast({
+      title: 'Modo de produção obrigatório',
+      description: 'Selecione o modo de produção.',
+    });
+    return false;
+  }
+  return true;
+};
+
+const validatePricing = (sellingPrice: number): boolean => {
+  if (!sellingPrice || isNaN(sellingPrice) || sellingPrice <= 0) {
+    showValidationToast({
+      title: 'Preço inválido',
+      description: 'Informe um preço válido.',
+    });
+    return false;
+  }
+  return true;
+};
+
 export default function MultiStepProductForm({ onClose }: MultiStepProductFormProps) {
   const { state: productState, dispatch: productDispatch } = useProductContext();
   const { state: builderState, dispatch: builderDispatch } = useProductBuilderContext();
   const { state: settingsState } = useSettings();
   const { productToEdit, products, isEditMode } = productState;
 
-  // Estado do multi-step
+  // DECISÃO: Usar useRef para controlar inicialização única
+  // RAZÃO: Evita re-inicializações em re-renders e é mais confiável que useState
+  const isInitializedRef = useRef(false);
+
+  // DECISÃO: Manter apenas estado de UI no componente
+  // RAZÃO: builderState já gerencia os dados do produto. formData duplicava informação
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Estado centralizado do formulário
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    ingredientsCount: 0,
-    productionMode: '' as 'individual' | 'lote' | '',
-    yieldQuantity: 1,
-    sellingPrice: '',
-    margin: settingsState.financial.defaultProfitMargin.toString(),
-  });
+  /**
+   * DECISÃO: Estado local mínimo para preços (UI temporária)
+   * RAZÃO: Preço e margem são editados antes de serem commitados ao builderState
+   * Mantemos aqui apenas para controle de input, não como fonte de verdade
+   */
+  const [tempSellingPrice, setTempSellingPrice] = useState<string>('');
+  const [tempMargin, setTempMargin] = useState<string>(
+    settingsState.financial.defaultProfitMargin.toString()
+  );
 
-  // Função para atualizar dados
-  const updateData = useCallback((newData: Partial<typeof formData>) => {
-    setFormData(prev => ({ ...prev, ...newData }));
-  }, []);
-
-  // Reset quando o componente é desmontado ou quando sai do modo de edição
+  /**
+   * DECISÃO: Inicialização em useEffect com array vazio
+   * RAZÃO: Garante que rode apenas uma vez na montagem
+   * useRef previne re-execuções em re-renders
+   */
   useEffect(() => {
-    return () => {
-      setIsInitialized(false);
-      // Reset completo do builder context ao desmontar
-      builderDispatch({ type: 'RESET_PRODUCT' });
-    };
-  }, [builderDispatch]);
-
-  // Inicialização do formulário - executa apenas uma vez quando o componente monta
-  useEffect(() => {
-    if (!isInitialized) {
+    if (!isInitializedRef.current) {
       if (productToEdit) {
-        // Modo de edição - carregar dados existentes
-        setFormData({
-          name: productToEdit.name,
-          category: productToEdit.category,
-          ingredientsCount: productToEdit.ingredients.length,
-          productionMode: productToEdit.production.mode,
-          yieldQuantity: productToEdit.production.yieldQuantity,
-          sellingPrice: productToEdit.production.sellingPrice.toString(),
-          margin: productToEdit.production.unitMargin.toString(),
-        });
-
-        // Configurar builder context com dados existentes
+        // Modo edição: Popular builderState com dados existentes
         builderDispatch({ type: 'SET_NAME', payload: productToEdit.name });
         builderDispatch({ type: 'SET_CATEGORY', payload: productToEdit.category });
         builderDispatch({ type: 'SET_PRODUCTION_MODE', payload: productToEdit.production.mode });
@@ -114,114 +152,105 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
           payload: productToEdit.production.yieldQuantity,
         });
         builderDispatch({ type: 'SET_INGREDIENTS', payload: productToEdit.ingredients });
-      } else {
-        // Modo de criação - garantir reset completo
-        setCurrentStep(0);
-        builderDispatch({ type: 'RESET_PRODUCT' });
-        setFormData({
-          name: '',
-          category: '',
-          ingredientsCount: 0,
-          productionMode: '',
-          yieldQuantity: 1,
-          sellingPrice: '',
-          margin: settingsState.financial.defaultProfitMargin.toString(),
-        });
-      }
-      setIsInitialized(true);
-    }
-  }, [productToEdit, isInitialized, builderDispatch, settingsState.financial.defaultProfitMargin]);
 
-  // Cálculos
-  const calculations = useMemo(() => {
-    const totalCost = builderState.ingredients.reduce(
+        // Popular valores temporários de preço
+        setTempSellingPrice(productToEdit.production.sellingPrice.toString());
+        setTempMargin(productToEdit.production.unitMargin.toString());
+      } else {
+        // Modo criação: Reset completo
+        builderDispatch({ type: 'RESET_PRODUCT' });
+        setTempSellingPrice('');
+        setTempMargin(settingsState.financial.defaultProfitMargin.toString());
+      }
+      isInitializedRef.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Array vazio intencional - roda apenas na montagem
+
+  /**
+   * DECISÃO: Cleanup simplificado sem dependências
+   * RAZÃO: Executar apenas na desmontagem, sem causar cleanups intermediários
+   */
+  useEffect(() => {
+    return () => {
+      builderDispatch({ type: 'RESET_PRODUCT' });
+      isInitializedRef.current = false;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /**
+   * DECISÃO: Memoizar apenas cálculo de custo total
+   * RAZÃO: Outros cálculos dependem de inputs temporários, melhor calcular sob demanda
+   */
+  const totalCost = useMemo(() => {
+    return builderState.ingredients.reduce(
       (acc, ing) => acc + (ing.averageUnitPrice * ing.totalQuantity || 0),
       0
     );
+  }, [builderState.ingredients]);
 
-    const suggestedPrice = calculateSuggestedPrice(
+  /**
+   * DECISÃO: Calcular valores derivados sob demanda
+   * RAZÃO: Evita re-cálculos desnecessários e simplifica dependências
+   */
+  const getCalculations = useCallback(() => {
+    const margin = parseFloat(tempMargin) || 0;
+    const sellingPrice = parseFloat(tempSellingPrice) || 0;
+
+    return {
       totalCost,
-      parseFloat(formData.margin) || 0,
-      builderState.production.mode,
-      builderState.production.yieldQuantity
-    );
+      suggestedPrice: calculateSuggestedPrice(
+        totalCost,
+        margin,
+        builderState.production.mode,
+        builderState.production.yieldQuantity
+      ),
+      realProfitMargin: calculateRealProfitMargin(
+        totalCost,
+        sellingPrice,
+        builderState.production.mode,
+        builderState.production.yieldQuantity
+      ),
+      unitCost: calculateUnitCost(
+        totalCost,
+        builderState.production.mode,
+        builderState.production.yieldQuantity
+      ),
+    };
+  }, [totalCost, tempMargin, tempSellingPrice, builderState.production]);
 
-    const realProfitMargin = calculateRealProfitMargin(
-      totalCost,
-      parseFloat(formData.sellingPrice) || 0,
-      builderState.production.mode,
-      builderState.production.yieldQuantity
-    );
-
-    const unitCost = calculateUnitCost(
-      totalCost,
-      builderState.production.mode,
-      builderState.production.yieldQuantity
-    );
-
-    return { totalCost, suggestedPrice, realProfitMargin, unitCost };
-  }, [builderState.ingredients, builderState.production, formData.margin, formData.sellingPrice]);
-
-  // Validação por step
+  /**
+   * DECISÃO: Validação via switch case com funções especializadas
+   * RAZÃO: Cada step tem suas próprias regras, funções puras são testáveis
+   */
   const validateStep = useCallback(
-    (step: number) => {
+    (step: number): boolean => {
       switch (step) {
-        case 0: // Básico
-          if (!formData.name.trim()) {
-            showValidationToast({
-              title: 'Nome obrigatório',
-              description: 'Informe o nome do produto.',
-            });
-            return false;
-          }
-          if (!formData.category.trim()) {
-            showValidationToast({
-              title: 'Categoria obrigatória',
-              description: 'Selecione uma categoria.',
-            });
-            return false;
-          }
-          return true;
-
-        case 1: // Ingredientes
-          if (builderState.ingredients.length === 0) {
-            showValidationToast({
-              title: 'Ingredientes necessários',
-              description: 'Adicione pelo menos um ingrediente.',
-            });
-            return false;
-          }
-          return true;
-
-        case 2: // Produção
-          if (!builderState.production.mode) {
-            showValidationToast({
-              title: 'Modo de produção obrigatório',
-              description: 'Selecione o modo de produção.',
-            });
-            return false;
-          }
-          return true;
-
-        case 3: // Preços
-          const priceValue = parseFloat(formData.sellingPrice);
-          if (!formData.sellingPrice || isNaN(priceValue) || priceValue <= 0) {
-            showValidationToast({
-              title: 'Preço inválido',
-              description: 'Informe um preço válido.',
-            });
-            return false;
-          }
-          return true;
-
+        case 0:
+          return validateBasicInfo(builderState.name, builderState.category);
+        case 1:
+          return validateIngredients(builderState.ingredients.length);
+        case 2:
+          return validateProduction(builderState.production.mode);
+        case 3:
+          return validatePricing(parseFloat(tempSellingPrice));
         default:
           return true;
       }
     },
-    [formData, builderState]
+    [
+      builderState.name,
+      builderState.category,
+      builderState.ingredients.length,
+      builderState.production.mode,
+      tempSellingPrice,
+    ]
   );
 
-  // Navegação
+  /**
+   * DECISÃO: Navegação com validação inline
+   * RAZÃO: Simplifica fluxo e garante que só avança com dados válidos
+   */
   const nextStep = useCallback(() => {
     if (validateStep(currentStep)) {
       if (currentStep < STEPS.length - 1) {
@@ -236,20 +265,28 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
     }
   }, [currentStep]);
 
-  // Verificar duplicatas
-  const checkForDuplicate = useCallback(() => {
+  /**
+   * DECISÃO: Verificação de duplicatas como função separada
+   * RAZÃO: Lógica de negócio isolada, reutilizável e testável
+   */
+  const checkForDuplicate = useCallback((): boolean => {
     return products.some(
       p =>
-        p.name.toLowerCase() === formData.name.toLowerCase() &&
-        p.category.toLowerCase() === formData.category.toLowerCase() &&
+        p.name.toLowerCase() === builderState.name.toLowerCase() &&
+        p.category.toLowerCase() === builderState.category.toLowerCase() &&
         (!isEditMode || p.uid !== productToEdit?.uid)
     );
-  }, [products, formData.name, formData.category, isEditMode, productToEdit]);
+  }, [products, builderState.name, builderState.category, isEditMode, productToEdit?.uid]);
 
-  // Submit final
+  /**
+   * DECISÃO: Submit com tratamento de erro detalhado
+   * RAZÃO: Capturar e logar erros reais ajuda no debugging
+   */
   const handleSubmit = useCallback(async () => {
+    // Validação final
     if (!validateStep(currentStep)) return;
 
+    // Verificar duplicatas apenas em modo criação
     if (!isEditMode && checkForDuplicate()) {
       showValidationToast({
         title: 'Produto duplicado',
@@ -261,9 +298,12 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
     setIsSubmitting(true);
 
     try {
-      const sellingPriceValue = parseFloat(formData.sellingPrice) || 0;
-      const customMarginValue = parseFloat(formData.margin) || 0;
+      const calculations = getCalculations();
+      const sellingPriceValue = parseFloat(tempSellingPrice) || 0;
+      const customMarginValue = parseFloat(tempMargin) || 0;
 
+      // DECISÃO: Construir objeto de produção completo aqui
+      // RAZÃO: Centraliza lógica de negócio e garante consistência
       const production = {
         ...builderState.production,
         totalCost: calculations.totalCost,
@@ -282,27 +322,33 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
         uid: isEditMode && productToEdit ? productToEdit.uid : Date.now().toString(),
       };
 
+      // Dispatch da ação apropriada
       const action = isEditMode ? 'EDIT_PRODUCT' : 'ADD_PRODUCT';
-      const successMessage = isEditMode
-        ? `"${formData.name}" foi editado com sucesso.`
-        : `"${formData.name}" foi adicionado à lista de produtos.`;
-
       productDispatch({ type: action, payload: productPayload });
 
+      // Feedback de sucesso
       showSuccessToast({
         title: isEditMode ? 'Produto atualizado!' : 'Produto adicionado com sucesso!',
-        description: successMessage,
+        description: isEditMode
+          ? `"${builderState.name}" foi editado com sucesso.`
+          : `"${builderState.name}" foi adicionado à lista de produtos.`,
       });
 
-      // Reset completo após sucesso
-      setCurrentStep(0);
-      setIsInitialized(false);
+      // DECISÃO: Reset completo e fechamento
+      // RAZÃO: Limpar estado evita dados residuais em próximas aberturas
       builderDispatch({ type: 'RESET_PRODUCT' });
+      isInitializedRef.current = false;
       onClose();
-    } catch {
+    } catch (error) {
+      // DECISÃO: Capturar e logar erro real
+      // RAZÃO: Facilita debugging em produção
+      console.error('Erro ao salvar produto:', error);
       showValidationToast({
         title: 'Erro ao salvar',
-        description: 'Ocorreu um erro ao salvar o produto. Tente novamente.',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Ocorreu um erro ao salvar o produto. Tente novamente.',
       });
     } finally {
       setIsSubmitting(false);
@@ -312,24 +358,90 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
     validateStep,
     isEditMode,
     checkForDuplicate,
-    formData,
     builderState,
-    calculations,
+    tempSellingPrice,
+    tempMargin,
+    getCalculations,
     productToEdit,
     productDispatch,
     builderDispatch,
     onClose,
   ]);
 
-  // Calcular progresso baseado apenas no step atual
-  // A barra vai até o início do step atual, não até o final
+  /**
+   * DECISÃO: Progresso baseado em (currentStep + 1) / total
+   * RAZÃO: No step 0, mostra 20% (1/5). No último step, mostra 100% (5/5)
+   * Anterior mostrava 0% no primeiro e 80% no último
+   */
   const progress = useMemo(() => {
-    return (currentStep / STEPS.length) * 100;
+    return ((currentStep + 1) / STEPS.length) * 100;
   }, [currentStep]);
 
-  // Renderização
-  const CurrentStepComponent = STEPS[currentStep].component;
+  /**
+   * DECISÃO: Memoizar componente do step atual
+   * RAZÃO: Evita re-criação desnecessária do componente
+   */
+  const CurrentStepComponent = useMemo(() => {
+    return STEPS[currentStep].component;
+  }, [currentStep]);
+
   const isLastStep = currentStep === STEPS.length - 1;
+
+  /**
+   * DECISÃO: Props wrapper para steps
+   * RAZÃO: Encapsula lógica de atualização e fornece interface consistente
+   */
+  const stepProps = useMemo(() => {
+    const updateData = (data: Record<string, unknown>) => {
+      // Atualizar dados baseado no step atual
+      if (data.name !== undefined) {
+        builderDispatch({ type: 'SET_NAME', payload: data.name as string });
+      }
+      if (data.category !== undefined) {
+        builderDispatch({ type: 'SET_CATEGORY', payload: data.category as string });
+      }
+      if (data.sellingPrice !== undefined) {
+        setTempSellingPrice(data.sellingPrice as string);
+      }
+      if (data.margin !== undefined) {
+        setTempMargin(data.margin as string);
+      }
+      if (data.productionMode !== undefined) {
+        builderDispatch({
+          type: 'SET_PRODUCTION_MODE',
+          payload: data.productionMode as ProductionMode,
+        });
+      }
+      if (data.yieldQuantity !== undefined) {
+        builderDispatch({ type: 'SET_YIELD_QUANTITY', payload: data.yieldQuantity as number });
+      }
+    };
+
+    return {
+      data: {
+        name: builderState.name,
+        category: builderState.category,
+        ingredientsCount: builderState.ingredients.length,
+        productionMode: builderState.production.mode,
+        yieldQuantity: builderState.production.yieldQuantity,
+        sellingPrice: tempSellingPrice,
+        margin: tempMargin,
+        ingredients: builderState.ingredients,
+        production: builderState.production,
+        calculations: getCalculations(),
+      },
+      updateData,
+    };
+  }, [
+    builderState.name,
+    builderState.category,
+    builderState.ingredients,
+    builderState.production,
+    tempSellingPrice,
+    tempMargin,
+    builderDispatch,
+    getCalculations,
+  ]);
 
   return (
     <div className="flex h-full max-h-[calc(100dvh-8rem)] flex-col overflow-hidden">
@@ -405,7 +517,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
       {/* Conteúdo do step atual - área flexível com scroll controlado */}
       <div className="flex-1 overflow-y-auto py-4">
         <div className="h-full">
-          <CurrentStepComponent data={formData} updateData={updateData} />
+          <CurrentStepComponent {...stepProps} />
         </div>
       </div>
 
