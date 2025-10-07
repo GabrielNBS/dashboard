@@ -39,17 +39,12 @@ export default function CategoryList() {
             type="button"
             key={category}
             onClick={() => handleSelect(category)}
-            className={`relative rounded-lg border-2 px-4 py-3 text-sm font-medium transition-all duration-200 ${
+            className={`relative rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
               state.category === category
-                ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
-                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                ? 'text-secondary bg-primary shadow-md'
+                : 'bg-muted text-muted-foreground hover:contrast-90'
             }`}
           >
-            {state.category === category && (
-              <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-blue-500">
-                <div className="absolute inset-0 animate-ping rounded-full bg-blue-500 opacity-75"></div>
-              </div>
-            )}
             {category}
           </button>
         ))}

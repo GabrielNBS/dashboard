@@ -15,30 +15,28 @@ export default function CostPreviews({
 }: CostPreviewsProps) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <div className="rounded-lg border border-red-200 bg-gradient-to-br from-red-50 to-red-100 p-4">
+      <div className="rounded-lg border border-red-200 bg-gradient-to-br from-red-50 to-red-100 p-4 shadow-md">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm font-medium text-red-700">
             {mode === 'individual' ? 'Custo Total' : 'Custo por Unidade'}
           </span>
-          <div className="h-2 w-2 rounded-full bg-red-500"></div>
         </div>
         <div className="text-2xl font-bold text-red-900">{formatCurrency(unitCost)}</div>
         <p className="mt-1 text-xs text-red-600">Soma dos ingredientes</p>
       </div>
 
-      <div className="rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-4">
+      <div className="rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-4 shadow-md">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm font-medium text-blue-700">
             {mode === 'individual' ? 'Preço Sugerido' : 'Preço por Unidade'}
           </span>
-          <div className="h-2 w-2 rounded-full bg-blue-500"></div>
         </div>
         <div className="text-2xl font-bold text-blue-900">{formatCurrency(suggestedPrice)}</div>
         <p className="mt-1 text-xs text-blue-600">Baseado na margem</p>
       </div>
 
       <div
-        className={`bg-gradient-to-br ${
+        className={`bg-gradient-to-br shadow-md ${
           realProfitMargin >= 0
             ? 'border-green-200 from-green-50 to-green-100'
             : 'border-red-200 from-red-50 to-red-100'
@@ -52,11 +50,6 @@ export default function CostPreviews({
           >
             Margem Real
           </span>
-          <div
-            className={`h-2 w-2 rounded-full ${
-              realProfitMargin >= 0 ? 'bg-green-500' : 'bg-red-500'
-            }`}
-          ></div>
         </div>
         <div
           className={`text-2xl font-bold ${

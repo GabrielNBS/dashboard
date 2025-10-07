@@ -59,7 +59,7 @@ export default function ReviewStep({ data }: ReviewStepProps) {
     <div className="space-y-4">
       <div className="mb-4 text-center">
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-          <div className="loader"></div>
+          <div className="loader bg-on-info!"></div>
         </div>
         <h2 className="text-xl font-bold text-gray-900">Revisar Produto</h2>
         <p className="mt-1 text-sm text-gray-600">Confira todas as informações antes de salvar</p>

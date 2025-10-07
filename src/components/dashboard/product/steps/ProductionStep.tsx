@@ -35,7 +35,7 @@ export default function ProductionStep({ data, updateData }: ProductionStepProps
     <div className="space-y-4">
       <div className="mb-6 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
-          <div className="loader"></div>
+          <div className="loader bg-purple-500!"></div>
         </div>
         <h2 className="text-2xl font-bold text-gray-900">Configuração de Produção</h2>
         <p className="mt-2 text-gray-600">Defina como este produto será produzido</p>

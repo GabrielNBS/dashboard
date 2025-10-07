@@ -16,6 +16,7 @@ import IngredientsStep from './steps/IngredientsStep';
 import ProductionStep from './steps/ProductionStep';
 import PricingStep from './steps/PricingStep';
 import ReviewStep from './steps/ReviewStep';
+import { Check, CheckCheck } from 'lucide-react';
 
 // Configuração dos steps
 const STEPS = [
@@ -470,14 +471,16 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
                 <div
                   className={`mb-1 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                     index === currentStep
-                      ? 'bg-blue-600 text-white shadow-lg'
+                      ? 'bg-primary text-secondary shadow-lg'
                       : index < currentStep
                         ? 'bg-green-600 text-white shadow-md'
                         : 'bg-gray-200 text-gray-500'
                   }`}
                 >
                   {index < currentStep ? (
-                    <span className="text-sm">✓</span>
+                    <span className="text-sm">
+                      <Check />
+                    </span>
                   ) : (
                     <span className="text-sm">{step.icon}</span>
                   )}
@@ -485,7 +488,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
                 <span
                   className={`text-center text-xs font-medium ${
                     index === currentStep
-                      ? 'text-blue-600'
+                      ? 'text-primary'
                       : index < currentStep
                         ? 'text-green-600'
                         : 'text-gray-500'
@@ -547,7 +550,9 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
                 </>
               ) : (
                 <>
-                  <span>✅</span>
+                  <span>
+                    <CheckCheck />
+                  </span>
                   {isEditMode ? 'Atualizar Produto' : 'Criar Produto'}
                 </>
               )}

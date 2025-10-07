@@ -21,13 +21,15 @@ export default function ProductionSelector() {
                 : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
             }`}
           >
-            {production.mode === 'individual' && (
-              <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-purple-500">
-                <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-75"></div>
-              </div>
-            )}
             <div className="text-center">
-              <div className="font-semibold">Individual</div>
+              <div className="flex items-center justify-center gap-2 font-semibold">
+                {production.mode === 'individual' && (
+                  <div className="relative h-3 w-3 rounded-full bg-purple-500">
+                    <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-75"></div>
+                  </div>
+                )}
+                <p>Individual</p>
+              </div>
               <div className="text-xs opacity-75">Uma unidade por vez</div>
             </div>
           </button>
@@ -41,13 +43,15 @@ export default function ProductionSelector() {
                 : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
             }`}
           >
-            {production.mode === 'lote' && (
-              <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-purple-500">
-                <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-75"></div>
-              </div>
-            )}
             <div className="text-center">
-              <div className="font-semibold">Lote</div>
+              <div className="flex items-center justify-center gap-2 font-semibold">
+                {production.mode === 'lote' && (
+                  <div className="relative h-3 w-3 rounded-full bg-purple-500">
+                    <div className="absolute inset-0 animate-ping rounded-full bg-purple-500 opacity-75"></div>
+                  </div>
+                )}
+                <p>Lote</p>
+              </div>
               <div className="text-xs opacity-75">Múltiplas unidades</div>
             </div>
           </button>

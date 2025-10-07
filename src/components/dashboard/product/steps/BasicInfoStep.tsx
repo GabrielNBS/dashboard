@@ -28,7 +28,7 @@ export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) 
   return (
     <div className="space-y-6">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+        <div className="bg-great mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
           <div className="loader"></div>
         </div>
         <h2 className="text-2xl font-bold text-gray-900">Informações Básicas</h2>
@@ -48,14 +48,10 @@ export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) 
             className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             required
           />
-          {data.name && <p className="mt-2 text-sm text-green-600">✓ Nome definido</p>}
         </div>
 
         <div>
           <CategoryList />
-          {data.category && (
-            <p className="mt-2 text-sm text-green-600">✓ Categoria selecionada: {data.category}</p>
-          )}
         </div>
       </div>
     </div>
