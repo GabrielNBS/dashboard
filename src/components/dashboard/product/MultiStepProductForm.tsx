@@ -10,6 +10,19 @@ import {
 } from '@/utils/calculations';
 import { ProductionMode } from '@/types/products';
 
+// Declaração de tipos para lord-icon
+declare module 'react' {
+  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
+    // permite propriedades customizadas para lord-icon
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'lord-icon': HTMLElement;
+  }
+}
+
 // Importar os steps
 import BasicInfoStep from './steps/BasicInfoStep';
 import IngredientsStep from './steps/IngredientsStep';
@@ -18,36 +31,85 @@ import PricingStep from './steps/PricingStep';
 import ReviewStep from './steps/ReviewStep';
 import { Check, CheckCheck } from 'lucide-react';
 
-// Configuração dos steps
+// Componente LordIcon
+interface LordIconProps {
+  src: string;
+  trigger?: 'hover' | 'click' | 'loop' | 'loop-on-hover' | 'morph' | 'morph-two-way';
+  colors?: string;
+  size?: number;
+  className?: string;
+}
+
+const LordIcon: React.FC<LordIconProps> = ({
+  src,
+  trigger = 'hover',
+  colors = 'primary:#121331,secondary:#08a88a',
+  size = 24,
+  className = '',
+}) => {
+  const iconRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadLordIcon = async () => {
+      if (typeof window !== 'undefined' && !window.customElements.get('lord-icon')) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.lordicon.com/lordicon.js';
+        script.async = true;
+        document.head.appendChild(script);
+      }
+    };
+
+    loadLordIcon();
+  }, []);
+
+  return (
+    <div
+      ref={iconRef}
+      className={className}
+      style={{ width: `${size}px`, height: `${size}px` }}
+      dangerouslySetInnerHTML={{
+        __html: `<lord-icon
+          src="${src}"
+          trigger="${trigger}"
+          colors="${colors}"
+          style="width:${size}px;height:${size}px">
+        </lord-icon>`,
+      }}
+    />
+  );
+};
+
+// Configuração dos steps com ícones LordIcon
+// Os ícones mantêm animação ativa (loop) quando estão na seção atual
 const STEPS = [
   {
     component: BasicInfoStep,
     label: 'Básico',
-    icon: '📝',
+    icon: 'https://cdn.lordicon.com/jgnvfzqg.json', // Document/form icon
     description: 'Nome e categoria',
   },
   {
     component: IngredientsStep,
     label: 'Ingredientes',
-    icon: '🥘',
+    icon: 'https://cdn.lordicon.com/fmsilsqx.json', // Food/ingredients icon
     description: 'Adicionar ingredientes',
   },
   {
     component: ProductionStep,
     label: 'Produção',
-    icon: '⚙️',
+    icon: 'https://cdn.lordicon.com/fspidoxv.json', // Settings/gear icon
     description: 'Modo de produção',
   },
   {
     component: PricingStep,
     label: 'Preços',
-    icon: '💰',
+    icon: 'https://cdn.lordicon.com/bgfqzjey.json', // Money/dollar icon
     description: 'Preços e margens',
   },
   {
     component: ReviewStep,
     label: 'Revisar',
-    icon: '✅',
+    icon: 'https://cdn.lordicon.com/zdfcfvwu.json', // Check/review icon
     description: 'Confirmar dados',
   },
 ];
@@ -482,7 +544,18 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
                       <Check />
                     </span>
                   ) : (
-                    <span className="text-sm">{step.icon}</span>
+                    <LordIcon
+                      src={step.icon}
+                      trigger={index === currentStep ? 'loop' : 'hover'}
+                      colors={
+                        index === currentStep
+                          ? 'primary:#ffffff,secondary:#ffffff'
+                          : index < currentStep
+                            ? 'primary:#ffffff,secondary:#ffffff'
+                            : 'primary:#6b7280,secondary:#9ca3af'
+                      }
+                      size={16}
+                    />
                   )}
                 </div>
                 <span
