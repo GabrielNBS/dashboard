@@ -10,19 +10,6 @@ import {
 } from '@/utils/calculations';
 import { ProductionMode } from '@/types/products';
 
-// Declaração de tipos para lord-icon
-declare module 'react' {
-  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-    // permite propriedades customizadas para lord-icon
-  }
-}
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'lord-icon': HTMLElement;
-  }
-}
-
 // Importar os steps
 import BasicInfoStep from './steps/BasicInfoStep';
 import IngredientsStep from './steps/IngredientsStep';
@@ -30,54 +17,7 @@ import ProductionStep from './steps/ProductionStep';
 import PricingStep from './steps/PricingStep';
 import ReviewStep from './steps/ReviewStep';
 import { Check, CheckCheck } from 'lucide-react';
-
-// Componente LordIcon
-interface LordIconProps {
-  src: string;
-  trigger?: 'hover' | 'click' | 'loop' | 'loop-on-hover' | 'morph' | 'morph-two-way';
-  colors?: string;
-  size?: number;
-  className?: string;
-}
-
-const LordIcon: React.FC<LordIconProps> = ({
-  src,
-  trigger = 'hover',
-  colors = 'primary:#121331,secondary:#08a88a',
-  size = 24,
-  className = '',
-}) => {
-  const iconRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const loadLordIcon = async () => {
-      if (typeof window !== 'undefined' && !window.customElements.get('lord-icon')) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.lordicon.com/lordicon.js';
-        script.async = true;
-        document.head.appendChild(script);
-      }
-    };
-
-    loadLordIcon();
-  }, []);
-
-  return (
-    <div
-      ref={iconRef}
-      className={className}
-      style={{ width: `${size}px`, height: `${size}px` }}
-      dangerouslySetInnerHTML={{
-        __html: `<lord-icon
-          src="${src}"
-          trigger="${trigger}"
-          colors="${colors}"
-          style="width:${size}px;height:${size}px">
-        </lord-icon>`,
-      }}
-    />
-  );
-};
+import LordIcon from '@/components/ui/LordIcon';
 
 // Configuração dos steps com ícones LordIcon
 // Os ícones mantêm animação ativa (loop) quando estão na seção atual
@@ -510,14 +450,8 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
     <div className="flex h-full max-h-[calc(100dvh-8rem)] flex-col overflow-hidden">
       {/* Header com progresso - altura fixa */}
       <div className="flex-shrink-0 border-b border-gray-200 pb-4">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-end">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              {isEditMode ? 'Editar Produto' : 'Novo Produto'}
-            </h1>
-            <p className="mt-1 text-sm text-gray-600">{STEPS[currentStep].description}</p>
-          </div>
-          <div className="text-right">
             <div className="text-xs text-gray-500">Progresso</div>
             <div className="text-sm font-semibold text-gray-900">
               {currentStep + 1}/{STEPS.length}
@@ -546,15 +480,10 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
                   ) : (
                     <LordIcon
                       src={step.icon}
-                      trigger={index === currentStep ? 'loop' : 'hover'}
-                      colors={
-                        index === currentStep
-                          ? 'primary:#ffffff,secondary:#ffffff'
-                          : index < currentStep
-                            ? 'primary:#ffffff,secondary:#ffffff'
-                            : 'primary:#6b7280,secondary:#9ca3af'
-                      }
-                      size={16}
+                      width={16}
+                      height={16}
+                      isActive={index === currentStep}
+                      isHovered={index === currentStep}
                     />
                   )}
                 </div>

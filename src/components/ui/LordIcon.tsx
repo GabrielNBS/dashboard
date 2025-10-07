@@ -120,10 +120,21 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
       );
     }
 
+    // Determine trigger based on state
+    const getTrigger = () => {
+      if (isActive) {
+        return 'loop'; // Animação contínua quando ativo
+      } else if (isHovered) {
+        return 'morph'; // Animação no hover
+      } else {
+        return 'none'; // Sem animação
+      }
+    };
+
     return React.createElement('lord-icon', {
       ref: iconRef,
       src: src,
-      trigger: isHovered ? 'morph' : 'none',
+      trigger: getTrigger(),
       colors: `primary:${colors.primary},secondary:${colors.secondary}`,
       style: {
         width: `${width}px`,
