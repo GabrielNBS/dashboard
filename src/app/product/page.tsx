@@ -52,7 +52,7 @@ export default function Product() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold">Produtos Cadastrados</h2>
         {products.length > 0 && (
-          <Button size="md" onClick={handleToggleForm}>
+          <Button size="md" className="fixed right-15 bottom-4 z-10" onClick={handleToggleForm}>
             <Plus className="mr-1" />
             Novo Produto
           </Button>

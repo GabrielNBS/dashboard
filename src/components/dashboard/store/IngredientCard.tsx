@@ -1,9 +1,3 @@
-// ============================================================
-// 🔹 Refactored IngredientCard - Using GenericCard Component
-// ============================================================
-// This component has been refactored to use the new GenericCard
-// component, eliminating duplicate card layout code
-
 import React from 'react';
 import { IngredientCardProps } from '@/types/components';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
@@ -45,7 +39,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
   const badges: BadgeConfig[] = [
     {
       text: ingredient.unit,
-      variant: 'outline',
+      variant: 'default',
     },
     {
       text,
@@ -92,7 +86,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
     },
   ];
 
-  // Render using GenericCard with all configurations
   return (
     <GenericCard
       item={ingredient}

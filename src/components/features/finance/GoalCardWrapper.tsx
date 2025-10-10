@@ -10,6 +10,7 @@ interface GoalCardWrapperProps {
   currentValue: number;
   tooltipText?: string;
   className?: string;
+  textColor?: string;
 }
 
 export default function GoalCardWrapper({
@@ -17,6 +18,7 @@ export default function GoalCardWrapper({
   goalValue,
   currentValue,
   className = '',
+  textColor = 'text-primary',
 }: GoalCardWrapperProps) {
   const percentage = goalValue > 0 ? (currentValue / goalValue) * 100 : 0;
   const barPercentage = Math.min(percentage, 100);
@@ -30,21 +32,21 @@ export default function GoalCardWrapper({
   };
 
   const getTextColor = (percentage: number) => {
-    if (percentage >= 100) return 'text-teal-400';
-    if (percentage >= 75) return 'text-green-400';
-    if (percentage >= 40) return 'text-yellow-400';
-    return 'text-red-400';
+    if (percentage >= 100) return 'text-muted';
+    if (percentage >= 75) return 'text-on-great';
+    if (percentage >= 40) return 'text-on-warning';
+    return 'text-on-bad';
   };
 
   return (
     <div
-      className={`hover:border-primary bg-primary text-secondary hover:bg-primary/95 border-primary flex w-full cursor-pointer flex-col rounded-lg border-t-4 p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className}`}
+      className={`flex ${textColor} w-full cursor-pointer flex-col rounded-lg border border-t-4 border-transparent p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className}`}
     >
       <div className="w-full">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="flex items-center gap-2 text-xs font-light text-gray-300 sm:text-sm">
-            <Flag className="h-3 w-3 text-gray-400 sm:h-4 sm:w-4" />
+          <h3 className={`flex ${textColor} items-center gap-2 text-xs font-light sm:text-sm`}>
+            <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
             {title}
           </h3>
           <span
@@ -57,7 +59,7 @@ export default function GoalCardWrapper({
 
         {/* Valores */}
         <div className="mb-3">
-          <p className="text-lg font-bold text-white sm:text-xl">
+          <p className={`text-lg font-bold ${textColor} sm:text-xl`}>
             {formatCurrency(currentValue)} / {formatCurrency(goalValue)}
           </p>
         </div>
@@ -73,7 +75,7 @@ export default function GoalCardWrapper({
         </div>
 
         {/* Status */}
-        <p className="text-xs text-gray-400 sm:text-sm">
+        <p className="text-muted-foreground text-xs sm:text-sm">
           {remaining > 0 ? `Faltam ${formatCurrency(remaining)}` : 'Meta alcançada 🎉'}
         </p>
       </div>

@@ -36,10 +36,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <Aside />
 
         {/* Área principal de conteúdo que se adapta ao sidebar */}
-        <main className="min-h-dvh w-full pt-0 pb-4 sm:ml-16 sm:pb-6">
-          <div className="mx-auto max-w-none px-4 sm:px-6 lg:px-8 xl:max-w-screen-2xl">
-            {children}
-          </div>
+        <main className="min-h-dvh w-full px-24">
+          <div className="mx-auto max-w-none">{children}</div>
         </main>
       </div>
     </SidebarContext.Provider>

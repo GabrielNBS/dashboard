@@ -7,6 +7,7 @@ import FinancePieChart from './FinancePieChart';
 import { DollarSign } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import GoalCardWrapper from './GoalCardWrapper';
+import LordIcon from '@/components/ui/LordIcon';
 
 interface MetroTilesKPIsProps {
   financialSummary: FinanceSummary;
@@ -23,6 +24,16 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
     breakEven,
   } = financialSummary;
 
+  const totalRevenueIcon = (
+    <LordIcon
+      src="https://cdn.lordicon.com/ytklkgsc.json"
+      className="absolute top-10 right-10"
+      isActive={true}
+      height={64}
+      width={64}
+    />
+  );
+
   return (
     <div className="space-y-3">
       {/* Container principal com Metro Tiles, GoalCard e Gráfico */}
@@ -36,16 +47,18 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
             {/* LARGE TILE - Lucro Líquido (Principal KPI) */}
             <CardWrapper
               title={<span className="text-base font-semibold sm:text-lg">Lucro Líquido</span>}
-              className="col-span-2 row-span-2 items-center justify-center"
+              className="relative col-span-2 row-span-2 items-center justify-center"
               value={
                 <span className="text-3xl font-bold sm:text-4xl lg:text-5xl">
                   {typeof netProfit === 'number' ? formatCurrency(netProfit) : netProfit}
                 </span>
               }
               type="custom"
-              bgColor="bg-great"
+              bgColor="bg-primary"
+              textColor="text-secondary"
               layout="vertical"
               trending
+              icon={totalRevenueIcon}
             />
 
             {/* MEDIUM TILE - Receita Total */}
@@ -77,7 +90,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                 title="Ponto de equilíbrio"
                 goalValue={breakEven || 0}
                 currentValue={grossProfit || 0}
-                className="h-full"
+                className="bg-great text-primary h-full"
               />
             </div>
 

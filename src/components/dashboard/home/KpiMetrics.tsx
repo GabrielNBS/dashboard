@@ -52,11 +52,11 @@ interface FinancialChartProps {
 // Configurações do gráfico facilmente editáveis
 const chartConfig = {
   colors: {
-    revenue: '#3B82F6',
-    expenses: '#EF4444',
-    profit: '#10B981',
-    grid: '#F1F5F9',
-    text: '#64748B',
+    revenue: 'var(--on-info)',
+    expenses: 'var(--destructive)',
+    profit: 'var(on-great)',
+    grid: 'var(muted)',
+    text: 'var(muted-foreground)',
   },
   gradients: {
     revenue: 'url(#revenueGradient)',

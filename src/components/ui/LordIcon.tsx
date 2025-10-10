@@ -14,6 +14,7 @@ interface LordIconProps {
 export interface LordIconRef {
   play: () => void;
   pause: () => void;
+  reset: () => void;
 }
 
 const LordIcon = forwardRef<LordIconRef, LordIconProps>(
@@ -21,6 +22,7 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
     const iconRef = useRef<HTMLElement>(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
+    const [key, setKey] = useState(0); // Para forçar re-render
 
     // Garantir que o componente só renderiza no cliente
     useEffect(() => {
@@ -58,7 +60,19 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
           (iconRef.current as { pause: () => void }).pause();
         }
       },
+      reset: () => {
+        if (iconRef.current && 'reset' in iconRef.current) {
+          (iconRef.current as { reset: () => void }).reset();
+        }
+      },
     }));
+
+    // Forçar re-render quando sair do estado ativo
+    useEffect(() => {
+      if (!isActive) {
+        setKey(prev => prev + 1);
+      }
+    }, [isActive]);
 
     // Trigger animation when hover state changes
     useEffect(() => {
@@ -124,14 +138,13 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
     const getTrigger = () => {
       if (isActive) {
         return 'loop'; // Animação contínua quando ativo
-      } else if (isHovered) {
-        return 'morph'; // Animação no hover
       } else {
-        return 'none'; // Sem animação
+        return 'hover'; // Animação no hover (detecta hover do elemento pai)
       }
     };
 
     return React.createElement('lord-icon', {
+      key: key, // Força re-render completo
       ref: iconRef,
       src: src,
       trigger: getTrigger(),
@@ -140,6 +153,7 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
         width: `${width}px`,
         height: `${height}px`,
         display: 'block',
+        pointerEvents: 'none',
       },
       className: className,
     });

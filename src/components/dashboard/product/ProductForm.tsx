@@ -1,9 +1,3 @@
-// ============================================================
-// 🔹 Multi-Step Product Form - Modern UI with Step Navigation
-// ============================================================
-// This component now uses a multi-step approach for better UX
-// while maintaining all existing functionality
-
 import MultiStepProductForm from './MultiStepProductForm';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';

@@ -15,6 +15,8 @@ import {
   Calculator,
   DollarSign,
 } from 'lucide-react';
+import { Button } from '@/components/ui/base';
+import CountBadgeNotify from '@/components/ui/base/CountBadgeNotify';
 
 interface ProductCardProps {
   product: ProductState;
@@ -59,20 +61,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             </div>
           </div>
           <div className="flex gap-2">
-            <button
+            <Button
               type="button"
               onClick={() => onEdit(product)}
               className="text-muted-foreground hover:bg-muted hover:text-accent cursor-pointer rounded-lg p-2 transition-colors"
             >
               <Edit className="h-4 w-4" />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => onRemove(product.uid || '')}
               className="text-muted-foreground hover:bg-muted hover:text-destructive cursor-pointer rounded-lg p-2 transition-colors"
             >
               <Trash2 className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -85,7 +87,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             { key: 'ingredients', label: 'Ingredientes', count: ingredients.length },
             { key: 'details', label: 'Detalhes', count: null },
           ].map(tab => (
-            <button
+            <Button
               key={tab.key}
               type="button"
               onClick={() => setActiveTab(tab.key)}
@@ -96,18 +98,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               }`}
             >
               {tab.label}
-              {tab.count && (
-                <span
-                  className={`rounded-full px-1.5 py-0.5 text-xs ${
-                    activeTab === tab.key
-                      ? 'bg-accent text-accent-foreground'
-                      : 'bg-border text-muted-foreground'
-                  }`}
-                >
-                  {tab.count}
-                </span>
-              )}
-            </button>
+              {tab.count && <CountBadgeNotify count={tab.count} isActive={activeTab === tab.key} />}
+            </Button>
           ))}
         </div>
       </div>
