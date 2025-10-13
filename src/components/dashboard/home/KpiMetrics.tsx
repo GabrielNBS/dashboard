@@ -30,6 +30,7 @@ interface TooltipContentProps {
   label?: string | number;
 }
 import { Calendar } from 'lucide-react';
+import { formatCurrency } from '@/utils/UnifiedUtils';
 
 export type FinancialRecord = {
   date: string;
@@ -52,11 +53,11 @@ interface FinancialChartProps {
 // Configurações do gráfico facilmente editáveis
 const chartConfig = {
   colors: {
-    revenue: 'var(--on-info)',
-    expenses: 'var(--destructive)',
-    profit: 'var(on-great)',
-    grid: 'var(muted)',
-    text: 'var(muted-foreground)',
+    revenue: 'var(--color-on-info)',
+    expenses: 'var(--color-on-bad)',
+    profit: 'var(--color-on-great)',
+    grid: 'var(--color-muted)',
+    text: 'var(--color-muted-foreground)',
   },
   gradients: {
     revenue: 'url(#revenueGradient)',
@@ -66,16 +67,6 @@ const chartConfig = {
     duration: 800,
     easing: 'ease-out',
   },
-};
-
-// Formatação de moeda
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
 };
 
 // Formatação de data nativa
@@ -316,11 +307,10 @@ export default function FinancialChart({
   };
 
   return (
-    <div className="min-full to-secondary mx-auto w-full max-w-7xl bg-gradient-to-br from-slate-50">
+    <div className="min-full to-secondary from-muted mx-auto w-full max-w-7xl bg-gradient-to-br">
       {/* Controles do gráfico */}
       <div className="bg-secondary mb-6 rounded-lg p-6 shadow-sm">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold text-slate-800">Evolução Temporal</h2>
           <div className="flex gap-2">
             {[
               { key: 'bars', label: 'Barras', icon: '📊' },
@@ -334,7 +324,7 @@ export default function FinancialChart({
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                   chartType === key
                     ? 'bg-primary text-secondary scale-105 transform shadow-lg'
-                    : 'bg-slate-100 text-slate-600 hover:scale-102 hover:bg-slate-200'
+                    : 'bg-secondary text-muted-foreground hover:bg-secondary hover:scale-102'
                 }`}
               >
                 <span>{icon}</span>

@@ -6,7 +6,7 @@ const FormError = ({ message, className }: FormErrorProps) => {
   return (
     <p
       className={clsx(
-        'text-on-critical rounded-lg bg-red-50 p-2 text-center text-sm font-medium',
+        'text-on-bad bg-bad rounded-lg p-2 text-center text-sm font-medium',
         className
       )}
     >

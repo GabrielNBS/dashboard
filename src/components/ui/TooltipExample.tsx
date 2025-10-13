@@ -70,7 +70,7 @@ export const TooltipExample: React.FC = () => {
             <span>Ajuda</span>
             <Tooltip
               content="Este é um ícone de ajuda personalizado"
-              icon={<HelpCircle className="h-4 w-4 text-blue-500" />}
+              icon={<HelpCircle className="text-accent h-4 w-4" />}
             />
           </div>
           <div className="flex items-center gap-2">

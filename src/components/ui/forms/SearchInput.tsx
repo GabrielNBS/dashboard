@@ -1,5 +1,6 @@
 import { InputHTMLAttributes, useState, useRef, useCallback } from 'react';
 import LordIcon, { LordIconRef } from '../LordIcon';
+import Input from '@/components/ui/base/Input';
 
 type SearchInputProps = {
   value: string;
@@ -59,7 +60,7 @@ export default function SearchInput({
         isHovered={isHovered || isFocused}
       />
 
-      <input
+      <Input
         type="text"
         value={value}
         onChange={handleChange}

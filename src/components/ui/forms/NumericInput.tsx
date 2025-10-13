@@ -12,6 +12,11 @@ import { NumericInputProps } from '@/types/components';
 const NumericInput = ({ label, error, quickIncrements = [1, 10], ...props }: NumericInputProps) => {
   const { register, setValue, watch } = useFormContext<IngredientFormData>();
   const name = props.name as keyof IngredientFormData;
+
+  if (!name) {
+    console.error('NumericInput: name prop is required');
+    return null;
+  }
   const value = watch(name);
 
   const adjustValue = (delta: number) => {
@@ -42,7 +47,7 @@ const NumericInput = ({ label, error, quickIncrements = [1, 10], ...props }: Num
             className={clsx(
               'border-input bg-background h-14 w-full rounded-xl border-2 px-4 py-3 text-center text-lg font-medium',
               'focus:border-primary focus:ring-primary transition-all focus:ring-2',
-              'placeholder:text-gray-400',
+              'placeholder:text-muted-foreground',
               '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
               error && 'border-on-critical focus:border-on-critical focus:ring-on-critical',
               props.className
@@ -75,7 +80,7 @@ const NumericInput = ({ label, error, quickIncrements = [1, 10], ...props }: Num
           </div>
 
           {name === 'buyPrice' && (
-            <span className="absolute top-1/2 right-4 -translate-y-[120%] text-lg font-medium text-gray-500">
+            <span className="text-muted-foreground absolute top-1/2 right-4 -translate-y-[120%] text-lg font-medium">
               R$
             </span>
           )}

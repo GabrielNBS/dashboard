@@ -32,7 +32,7 @@ export default function DashboardContent() {
     <main className="bg-surface flex min-h-screen flex-col gap-6 p-6">
       {/* Cabeçalho da página */}
       <header>
-        <h1 className="text-primary text-hero font-bold">
+        <h1 className="text-primary text-xl font-bold">
           {getHowHours()}, <strong className="text-primary">{storeName}</strong>
         </h1>
         <p className="text-muted-foreground text-lg">O resumo diário do seu negocio</p>
@@ -70,7 +70,7 @@ export default function DashboardContent() {
                       {formatCurrency(summary.totalRevenue)}
                     </p>
                   </div>
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500">
+                  <div className="bg-accent flex h-12 w-12 items-center justify-center rounded-full">
                     <ChartBarIcon className="text-background h-6 w-6" />
                   </div>
                 </div>

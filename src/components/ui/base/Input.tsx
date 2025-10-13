@@ -40,12 +40,12 @@ export default function Input({ label, error, className, ...props }: InputProps)
 
       {/* Campo de entrada */}
       <input
-        className={`focus:border-primary focus:ring-primary text-paragraph placeholder:text-hero-gray-400 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        className={`focus:border-primary focus:ring-primary text-foreground placeholder:text-muted-foreground border-border w-full rounded-md border px-3 py-2 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
         {...props}
       />
 
       {/* Mensagem de erro */}
-      {error && <span className="text-paragraph text-red-500">{error}</span>}
+      {error && <span className="text-foreground text-destructive">{error}</span>}
     </div>
   );
 }

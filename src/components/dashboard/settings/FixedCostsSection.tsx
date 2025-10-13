@@ -10,6 +10,14 @@ import { getTotalFixedCost } from '@/utils/calculations/finance';
 import { CurrencyInput } from '@/components/ui/forms';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/forms/select';
+import { Label } from '@/components/ui/base/label';
 
 export default function FixedCostsSection() {
   const { state, dispatch } = useSettings();
@@ -150,45 +158,51 @@ export default function FixedCostsSection() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Categoria</label>
-              <select
+              <Label className="mb-1 block text-sm font-medium text-gray-700">Categoria</Label>
+              <Select
                 value={editingCost.category}
-                onChange={e =>
+                onValueChange={(value: typeof editingCost.category) =>
                   setEditingCost({
                     ...editingCost,
-                    category: e.target.value as typeof editingCost.category,
+                    category: value,
                   })
                 }
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar categoria do custo"
               >
-                {categories.map(category => (
-                  <option key={category.value} value={category.value}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar categoria do custo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map(category => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Recorrência</label>
-              <select
+              <Label className="mb-1 block text-sm font-medium text-gray-700">Recorrência</Label>
+              <Select
                 value={editingCost.recurrence}
-                onChange={e =>
+                onValueChange={(value: typeof editingCost.recurrence) =>
                   setEditingCost({
                     ...editingCost,
-                    recurrence: e.target.value as typeof editingCost.recurrence,
+                    recurrence: value,
                   })
                 }
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar recorrência do custo"
               >
-                {recurrences.map(recurrence => (
-                  <option key={recurrence.value} value={recurrence.value}>
-                    {recurrence.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar recorrência do custo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {recurrences.map(recurrence => (
+                    <SelectItem key={recurrence.value} value={recurrence.value}>
+                      {recurrence.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>

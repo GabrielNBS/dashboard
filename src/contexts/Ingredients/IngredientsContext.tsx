@@ -182,7 +182,7 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
   const addBatch = (ingredientId: string, batchData: Omit<PurchaseBatch, 'id'>) => {
     const batch: PurchaseBatch = {
       ...batchData,
-      id: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `batch_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
     };
 
     dispatch({ type: 'ADD_BATCH', payload: { ingredientId, batch } });

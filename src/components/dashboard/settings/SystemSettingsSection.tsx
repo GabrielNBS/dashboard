@@ -6,13 +6,21 @@
 import React from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { Cog, Globe, Bell, Cloud, Moon, Sun, Monitor } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/forms/select';
+import { Label } from '@/components/ui/base/label';
 
 export default function SystemSettingsSection() {
   const { state, dispatch } = useSettings();
 
   const handleSystemChange = (
     field: keyof typeof state.system,
-    value: string | boolean | { [key: string]: boolean | string },
+    value: string | boolean | { [key: string]: boolean | string }
   ) => {
     dispatch({
       type: 'UPDATE_SYSTEM',
@@ -22,7 +30,7 @@ export default function SystemSettingsSection() {
 
   const handleNotificationChange = (
     key: keyof typeof state.system.notifications,
-    value: boolean,
+    value: boolean
   ) => {
     dispatch({
       type: 'UPDATE_SYSTEM',
@@ -82,21 +90,24 @@ export default function SystemSettingsSection() {
 
           <div className="space-y-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <Label className="mb-1 block text-sm font-medium text-gray-700">
                 Idioma do Sistema
-              </label>
-              <select
+              </Label>
+              <Select
                 value={state.system.language}
-                onChange={e => handleSystemChange('language', e.target.value)}
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar idioma do sistema"
+                onValueChange={(value: string) => handleSystemChange('language', value)}
               >
-                {languages.map(language => (
-                  <option key={language.value} value={language.value}>
-                    {language.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar idioma do sistema" />
+                </SelectTrigger>
+                <SelectContent>
+                  {languages.map(language => (
+                    <SelectItem key={language.value} value={language.value}>
+                      {language.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
@@ -248,22 +259,25 @@ export default function SystemSettingsSection() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <Label className="mb-1 block text-sm font-medium text-gray-700">
                 Frequência do Backup
-              </label>
-              <select
+              </Label>
+              <Select
                 value={state.system.backup.backupFrequency}
-                onChange={e => handleBackupChange('backupFrequency', e.target.value)}
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar frequência do backup"
+                onValueChange={(value: string) => handleBackupChange('backupFrequency', value)}
                 disabled={!state.system.backup.autoBackup}
               >
-                {backupFrequencies.map(frequency => (
-                  <option key={frequency.value} value={frequency.value}>
-                    {frequency.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar frequência do backup" />
+                </SelectTrigger>
+                <SelectContent>
+                  {backupFrequencies.map(frequency => (
+                    <SelectItem key={frequency.value} value={frequency.value}>
+                      {frequency.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-center justify-between">

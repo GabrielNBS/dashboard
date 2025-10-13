@@ -42,9 +42,9 @@ export default function FinancePieChart({ financialSummary }: FinancePieChartPro
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
-        <div className="rounded-lg border bg-white p-3 shadow-lg">
-          <p className="font-medium text-gray-900">{data.name}</p>
-          <p className="text-sm text-gray-600">
+        <div className="bg-popover rounded-lg border p-3 shadow-lg">
+          <p className="text-popover-foreground font-medium">{data.name}</p>
+          <p className="text-muted-foreground text-sm">
             {new Intl.NumberFormat('pt-BR', {
               style: 'currency',
               currency: 'BRL',
@@ -66,7 +66,7 @@ export default function FinancePieChart({ financialSummary }: FinancePieChartPro
   if (data.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-gray-500">Sem dados para exibir</p>
+        <p className="text-muted-foreground text-sm">Sem dados para exibir</p>
       </div>
     );
   }
@@ -93,7 +93,7 @@ export default function FinancePieChart({ financialSummary }: FinancePieChartPro
           <Legend
             verticalAlign="bottom"
             height={36}
-            formatter={value => <span className="text-xs text-gray-600">{value}</span>}
+            formatter={value => <span className="text-muted-foreground text-xs">{value}</span>}
           />
         </PieChart>
       </ResponsiveContainer>

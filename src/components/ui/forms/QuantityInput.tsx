@@ -126,7 +126,7 @@ export default function QuantityInput({
         aria-invalid={ariaInvalid}
       />
       {unit && (
-        <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform text-sm text-gray-500">
+        <div className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform text-sm">
           {unit}
         </div>
       )}

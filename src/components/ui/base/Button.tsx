@@ -11,9 +11,9 @@ export const button = tv({
       accept: 'bg-great hover:bg-great-hover text-on-great',
       edit: 'bg-warning hover:bg-warning-hover text-on-warning',
       destructive: 'bg-critical hover:bg-critical-hover text-on-critical',
-      outline: 'border border-gray-300 text-gray-700 hover:bg-gray-100',
-      ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
-      link: 'bg-transparent underline-offset-4 hover:underline text-blue-600 hover:bg-transparent',
+      outline: 'border border-border text-foreground hover:bg-muted',
+      ghost: 'bg-transparent text-foreground hover:bg-muted',
+      link: 'bg-transparent underline-offset-4 hover:underline text-accent hover:bg-transparent',
     },
     size: {
       sm: 'px-3 py-1 text-sm',

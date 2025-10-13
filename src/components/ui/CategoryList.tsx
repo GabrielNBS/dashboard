@@ -1,6 +1,8 @@
 'use client';
 
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
+import Button from '@/components/ui/base/Button';
+import { Label } from '@/components/ui/base/label';
 
 /**
  * Lista de categorias disponíveis para produtos
@@ -30,15 +32,17 @@ export default function CategoryList() {
 
   return (
     <div>
-      <label className="mb-3 block text-sm font-medium text-gray-700">
-        Categoria <span className="text-red-500">*</span>
-      </label>
+      <Label className="text-foreground mb-3 block text-sm font-medium">
+        Categoria <span className="text-destructive">*</span>
+      </Label>
       <div className="grid grid-cols-2 gap-3">
         {categories.map(category => (
-          <button
+          <Button
             type="button"
             key={category}
             onClick={() => handleSelect(category)}
+            variant={state.category === category ? 'default' : 'outline'}
+            size="md"
             className={`relative rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
               state.category === category
                 ? 'text-secondary bg-primary shadow-md'
@@ -46,11 +50,11 @@ export default function CategoryList() {
             }`}
           >
             {category}
-          </button>
+          </Button>
         ))}
       </div>
       {!state.category && (
-        <p className="mt-2 text-xs text-gray-500">Selecione uma categoria para o produto</p>
+        <p className="text-muted-foreground mt-2 text-xs">Selecione uma categoria para o produto</p>
       )}
     </div>
   );

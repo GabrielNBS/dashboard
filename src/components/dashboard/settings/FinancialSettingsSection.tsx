@@ -7,6 +7,14 @@ import React from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { DollarSign, Target, Shield, TrendingUp } from 'lucide-react';
 import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/forms/select';
+import { Label } from '@/components/ui/base/label';
 
 export default function FinancialSettingsSection() {
   const { state, dispatch } = useSettings();
@@ -130,39 +138,45 @@ export default function FinancialSettingsSection() {
 
           <div className="space-y-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <Label className="mb-1 block text-sm font-medium text-gray-700">
                 Moeda Principal
-              </label>
-              <select
+              </Label>
+              <Select
                 value={state.financial.currency}
-                onChange={e => handleFinancialChange('currency', e.target.value)}
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar moeda principal"
+                onValueChange={(value: string) => handleFinancialChange('currency', value)}
               >
-                {currencies.map(currency => (
-                  <option key={currency.value} value={currency.value}>
-                    {currency.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar moeda principal" />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencies.map(currency => (
+                    <SelectItem key={currency.value} value={currency.value}>
+                      {currency.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <Label className="mb-1 block text-sm font-medium text-gray-700">
                 Formato de Exibição
-              </label>
-              <select
+              </Label>
+              <Select
                 value={state.financial.currencyFormat}
-                onChange={e => handleFinancialChange('currencyFormat', e.target.value)}
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar formato de exibição da moeda"
+                onValueChange={(value: string) => handleFinancialChange('currencyFormat', value)}
               >
-                {currencyFormats.map(format => (
-                  <option key={format.value} value={format.value}>
-                    {format.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar formato de exibição da moeda" />
+                </SelectTrigger>
+                <SelectContent>
+                  {currencyFormats.map(format => (
+                    <SelectItem key={format.value} value={format.value}>
+                      {format.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

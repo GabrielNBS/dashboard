@@ -103,7 +103,7 @@ export default function PercentageInput({
         id={id}
         aria-invalid={ariaInvalid}
       />
-      <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-500">
+      <div className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
         %
       </div>
     </div>

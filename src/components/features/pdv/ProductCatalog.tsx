@@ -55,7 +55,7 @@ export default function ProductCatalog({
                   className={`group relative overflow-hidden rounded-lg border transition-all hover:shadow-md ${
                     inCart
                       ? 'border-primary bg-primary/5 shadow-sm'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      : 'border-border bg-card hover:border-muted-foreground'
                   } ${!canMake ? 'opacity-50' : ''}`}
                 >
                   {/* Mobile Layout */}
@@ -81,7 +81,7 @@ export default function ProductCatalog({
                               {product.category}
                             </p>
                             <p
-                              className={`ml-2 text-sm font-bold ${inCart ? 'text-primary' : 'text-green-600'}`}
+                              className={`ml-2 text-sm font-bold ${inCart ? 'text-primary' : 'text-accent'}`}
                             >
                               {formatCurrency(sellingPrice)}
                             </p>
@@ -130,7 +130,7 @@ export default function ProductCatalog({
 
                     <div className="mb-3">
                       <p
-                        className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-green-600'}`}
+                        className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-accent'}`}
                       >
                         {formatCurrency(sellingPrice)}
                       </p>
@@ -158,7 +158,7 @@ export default function ProductCatalog({
                   {/* Error Message */}
                   {!canMake && (
                     <div className="px-3 pb-2 sm:px-4">
-                      <p className="text-xs text-red-600">Estoque insuficiente</p>
+                      <p className="text-destructive text-xs">Estoque insuficiente</p>
                     </div>
                   )}
                 </div>

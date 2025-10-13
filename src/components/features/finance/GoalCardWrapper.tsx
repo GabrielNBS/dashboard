@@ -25,10 +25,10 @@ export default function GoalCardWrapper({
   const remaining = Math.max(goalValue - currentValue, 0);
 
   const getProgressColor = (percentage: number) => {
-    if (percentage >= 100) return 'bg-teal-500';
-    if (percentage >= 75) return 'bg-green-500';
-    if (percentage >= 40) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (percentage >= 100) return 'bg-great';
+    if (percentage >= 75) return 'bg-accent';
+    if (percentage >= 40) return 'bg-warning';
+    return 'bg-bad';
   };
 
   const getTextColor = (percentage: number) => {
@@ -66,7 +66,7 @@ export default function GoalCardWrapper({
 
         {/* Progress Bar */}
         <div className="mb-2">
-          <div className="h-2 w-full overflow-hidden rounded-full bg-gray-700">
+          <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
             <div
               className={`h-full rounded-full transition-all duration-500 ease-out ${getProgressColor(percentage)}`}
               style={{ width: `${barPercentage}%` }}

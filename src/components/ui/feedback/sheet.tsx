@@ -78,7 +78,7 @@ function SheetContent({
         data-slot="sheet-content"
         className={cn(
           // Base styles
-          'fixed z-[60] flex flex-col overflow-hidden border-l border-gray-200 bg-white shadow-2xl',
+          'border-border bg-card fixed z-[60] flex flex-col overflow-hidden border-l shadow-2xl',
           // Position and size
           variant.base,
           // Animation classes
@@ -91,7 +91,7 @@ function SheetContent({
           <div className="md:p-6 lg:p-6 xl:p-6">{children}</div>
         </div>
 
-        <SheetPrimitive.Close className="absolute top-4 right-4 rounded-full p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none">
+        <SheetPrimitive.Close className="text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-accent absolute top-4 right-4 rounded-full p-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none">
           <XIcon className="h-5 w-5" />
           <span className="sr-only">Fechar</span>
         </SheetPrimitive.Close>

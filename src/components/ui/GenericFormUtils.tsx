@@ -7,6 +7,15 @@
 import React from 'react';
 import { toast } from '@/components/ui/feedback/use-toast';
 import Button from '@/components/ui/base/Button';
+import Input from '@/components/ui/base/Input';
+import { Label } from '@/components/ui/base/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/forms/select';
 import { CheckCheck, X } from 'lucide-react';
 
 // Validation message configuration
@@ -102,16 +111,16 @@ export function GenericForm({
     <div className={`space-y-6 ${className}`}>
       {/* Edit mode banner */}
       {isEditMode && editItemName && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+        <div className="border-warning bg-warning rounded-lg border p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100">
-              <CheckCheck className="h-4 w-4 text-amber-600" />
+            <div className="bg-warning/50 flex h-8 w-8 items-center justify-center rounded-full">
+              <CheckCheck className="text-on-warning h-4 w-4" />
             </div>
             <div>
-              <p className="text-sm font-medium text-amber-800">
+              <p className="text-on-warning text-sm font-medium">
                 Editando: <span className="font-semibold">{editItemName}</span>
               </p>
-              <p className="text-xs text-amber-600">
+              <p className="text-on-warning text-xs">
                 Qualquer alteração será aplicada ao item existente
               </p>
             </div>
@@ -124,7 +133,7 @@ export function GenericForm({
         <div className="space-y-6">{children}</div>
 
         {/* Action buttons */}
-        <div className="sticky bottom-0 mt-8 border-t border-gray-100 bg-white pt-6">
+        <div className="border-border bg-background sticky bottom-0 mt-8 border-t pt-6">
           <div className="flex justify-end gap-3">
             <Button
               type="button"
@@ -186,27 +195,24 @@ export function GenericFormField({
 }: GenericFormFieldProps) {
   const { name, label, type, placeholder, required, options } = config;
 
-  const baseInputClasses = `w-full rounded border p-2 ${error ? 'border-destructive' : 'border-gray-300'}`;
+  const baseInputClasses = `w-full rounded border p-2 ${error ? 'border-destructive' : 'border-border'}`;
 
   const renderInput = () => {
     switch (type) {
       case 'select':
         return (
-          <select
-            id={name}
-            value={String(value)}
-            onChange={e => onChange(e.target.value)}
-            className={baseInputClasses}
-            required={required}
-            disabled={disabled}
-          >
-            <option value="">Selecione...</option>
-            {options?.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <Select value={String(value)} onValueChange={onChange} disabled={disabled}>
+            <SelectTrigger className={baseInputClasses}>
+              <SelectValue placeholder="Selecione..." />
+            </SelectTrigger>
+            <SelectContent>
+              {options?.map(option => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         );
 
       case 'textarea':
@@ -224,7 +230,7 @@ export function GenericFormField({
 
       case 'number':
         return (
-          <input
+          <Input
             type="text"
             id={name}
             value={String(value)}
@@ -239,7 +245,7 @@ export function GenericFormField({
       case 'text':
       default:
         return (
-          <input
+          <Input
             type="text"
             id={name}
             value={String(value)}
@@ -255,10 +261,10 @@ export function GenericFormField({
 
   return (
     <div>
-      <label htmlFor={name} className="mb-1 block font-medium">
+      <Label htmlFor={name} className="mb-1 block font-medium">
         {label}
         {required && <span className="text-destructive ml-1">*</span>}
-      </label>
+      </Label>
       {renderInput()}
       {error && <span className="text-destructive mt-1 block text-sm">{error}</span>}
     </div>

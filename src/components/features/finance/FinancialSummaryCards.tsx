@@ -28,31 +28,31 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
       bgColor: 'bg-warning',
     },
     { title: 'Custo Fixo', value: totalFixedCost, type: 'currency' as const, bgColor: 'bg-muted' },
-    { title: 'Lucro Bruto', value: grossProfit, type: 'currency' as const, bgColor: 'bg-blue-100' },
-    { title: 'Lucro Líquido', value: netProfit, type: 'currency' as const, bgColor: 'bg-blue-200' },
+    { title: 'Lucro Bruto', value: grossProfit, type: 'currency' as const, bgColor: 'bg-info' },
+    { title: 'Lucro Líquido', value: netProfit, type: 'currency' as const, bgColor: 'bg-info' },
     {
       title: 'Margem de Lucro',
       value: margin,
       type: 'percentage' as const,
-      bgColor: 'bg-purple-100',
+      bgColor: 'bg-accent/20',
     },
     {
       title: 'Valor a Pagar',
       value: valueToSave,
       type: 'currency' as const,
-      bgColor: 'bg-red-100',
+      bgColor: 'bg-bad',
     },
   ];
 
   // Separar KPIs principais dos secundários
   const primaryKPIs = [
     { title: 'Receita Total', value: totalRevenue, type: 'currency' as const, bgColor: 'bg-great' },
-    { title: 'Lucro Líquido', value: netProfit, type: 'currency' as const, bgColor: 'bg-blue-200' },
+    { title: 'Lucro Líquido', value: netProfit, type: 'currency' as const, bgColor: 'bg-info' },
     {
       title: 'Margem de Lucro',
       value: margin,
       type: 'percentage' as const,
-      bgColor: 'bg-purple-100',
+      bgColor: 'bg-accent/20',
     },
   ];
 
@@ -64,12 +64,12 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
       bgColor: 'bg-warning',
     },
     { title: 'Custo Fixo', value: totalFixedCost, type: 'currency' as const, bgColor: 'bg-muted' },
-    { title: 'Lucro Bruto', value: grossProfit, type: 'currency' as const, bgColor: 'bg-blue-100' },
+    { title: 'Lucro Bruto', value: grossProfit, type: 'currency' as const, bgColor: 'bg-info' },
     {
       title: 'Valor a Pagar',
       value: valueToSave,
       type: 'currency' as const,
-      bgColor: 'bg-red-100',
+      bgColor: 'bg-bad',
     },
   ];
 
@@ -80,11 +80,11 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
         {/* KPIs Principais - Destaque */}
         <div className="grid grid-cols-1 gap-3">
           {primaryKPIs.map((kpi, index) => (
-            <div key={index} className="rounded-lg bg-white p-4 shadow-sm">
+            <div key={index} className="bg-card rounded-lg p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{kpi.title}</p>
-                  <p className="text-xl font-bold text-gray-900">
+                  <p className="text-muted-foreground text-sm font-medium">{kpi.title}</p>
+                  <p className="text-card-foreground text-xl font-bold">
                     {kpi.type === 'currency'
                       ? new Intl.NumberFormat('pt-BR', {
                           style: 'currency',
@@ -96,7 +96,7 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
                 <div
                   className={`h-12 w-12 rounded-full ${kpi.bgColor} flex items-center justify-center`}
                 >
-                  <div className="h-6 w-6 rounded-full bg-white/30" />
+                  <div className="bg-card/30 h-6 w-6 rounded-full" />
                 </div>
               </div>
             </div>
@@ -104,13 +104,13 @@ export default function FinancialSummaryCards({ financialSummary }: FinancialSum
         </div>
 
         {/* KPIs Secundários - Grid Compacto */}
-        <div className="rounded-lg bg-gray-50 p-3">
-          <h4 className="mb-3 text-sm font-medium text-gray-700">Detalhamento</h4>
+        <div className="bg-muted rounded-lg p-3">
+          <h4 className="text-muted-foreground mb-3 text-sm font-medium">Detalhamento</h4>
           <div className="grid grid-cols-2 gap-3">
             {secondaryKPIs.map((kpi, index) => (
-              <div key={index} className="rounded-md bg-white p-3">
-                <p className="truncate text-xs font-medium text-gray-500">{kpi.title}</p>
-                <p className="text-sm font-bold text-gray-900">
+              <div key={index} className="bg-card rounded-md p-3">
+                <p className="text-muted-foreground truncate text-xs font-medium">{kpi.title}</p>
+                <p className="text-card-foreground text-sm font-bold">
                   {kpi.type === 'currency'
                     ? new Intl.NumberFormat('pt-BR', {
                         style: 'currency',

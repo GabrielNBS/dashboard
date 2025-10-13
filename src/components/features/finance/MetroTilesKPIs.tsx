@@ -174,7 +174,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                   </span>
                 }
                 type="custom"
-                bgColor="bg-blue-100"
+                bgColor="bg-info"
                 layout="vertical"
                 className="h-full"
               />
@@ -184,8 +184,10 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
 
         {/* Gráfico de Pizza - 1/3 do espaço */}
         <div className="lg:col-span-1">
-          <div className="h-full rounded-lg bg-white p-4 shadow-sm" style={{ minHeight: '280px' }}>
-            <h4 className="mb-3 text-sm font-medium text-gray-700">Distribuição Financeira</h4>
+          <div className="bg-card h-full rounded-lg p-4 shadow-sm" style={{ minHeight: '280px' }}>
+            <h4 className="text-card-foreground mb-3 text-sm font-medium">
+              Distribuição Financeira
+            </h4>
             <div className="h-[calc(100%-2rem)]">
               <FinancePieChart financialSummary={financialSummary} />
             </div>

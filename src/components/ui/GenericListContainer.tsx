@@ -166,13 +166,15 @@ export function GenericListContainer<T extends FilterableItem>({
               <strong>{filterStats.totalCount}</strong> {filterStats.itemNamePlural}
             </span>
             {filterStats.onClearFilters && (
-              <button
+              <Button
                 onClick={filterStats.onClearFilters}
+                variant="link"
+                size="sm"
                 className="text-primary hover:text-primary/80 cursor-pointer text-left font-medium sm:text-right"
                 type="button"
               >
                 Limpar filtros
-              </button>
+              </Button>
             )}
           </div>
         )}

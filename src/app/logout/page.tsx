@@ -3,6 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, Lock } from 'lucide-react';
+import Input from '@/components/ui/base/Input';
+import Button from '@/components/ui/base/Button';
+import { Label } from '@/components/ui/base/label';
 
 export default function LoginCadastro() {
   const router = useRouter();
@@ -81,7 +84,7 @@ export default function LoginCadastro() {
           <form onSubmit={entrar} className="space-y-5">
             <div className="relative">
               <User className="absolute top-3 left-3 text-gray-500" />
-              <input
+              <Input
                 type="email"
                 placeholder="Email"
                 value={email}
@@ -93,7 +96,7 @@ export default function LoginCadastro() {
 
             <div className="relative">
               <Lock className="absolute top-3 left-3 text-gray-500" />
-              <input
+              <Input
                 type="password"
                 placeholder="Senha"
                 value={senha}
@@ -136,7 +139,7 @@ export default function LoginCadastro() {
           <form onSubmit={cadastrar} className="space-y-5">
             <div className="relative">
               <User className="absolute top-3 left-3 text-gray-500" />
-              <input
+              <Input
                 type="email"
                 placeholder="Email"
                 value={novoEmail}
@@ -148,7 +151,7 @@ export default function LoginCadastro() {
 
             <div className="relative">
               <Lock className="absolute top-3 left-3 text-gray-500" />
-              <input
+              <Input
                 type="password"
                 placeholder="Senha"
                 value={novaSenha}
@@ -160,7 +163,7 @@ export default function LoginCadastro() {
 
             <div className="relative">
               <Lock className="absolute top-3 left-3 text-gray-500" />
-              <input
+              <Input
                 type="password"
                 placeholder="Confirmar senha"
                 value={confirmarSenha}

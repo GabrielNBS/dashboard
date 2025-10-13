@@ -6,6 +6,9 @@
 
 import React from 'react';
 import { DateRange, UnifiedFilterState } from '@/hooks/ui/useUnifiedFilter';
+import Input from '@/components/ui/base/Input';
+import { Label } from '@/components/ui/base/label';
+import Button from '@/components/ui/base/Button';
 
 interface UnifiedDateFilterControlsProps {
   quickDateFilter: UnifiedFilterState['quickDateFilter'];
@@ -64,21 +67,18 @@ export function UnifiedDateFilterControls({
     <div className={`space-y-4 ${className}`}>
       {/* Quick date filter buttons */}
       <div>
-        <label className="text-primary mb-2 block text-sm font-medium">Período</label>
+        <Label className="text-primary mb-2 block text-sm font-medium">Período</Label>
         <div className="flex flex-wrap gap-2">
           {quickFilters.map(filter => (
-            <button
+            <Button
               key={filter.value}
               onClick={() => onQuickFilterChange(filter.value)}
-              className={`cursor-pointer rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-                quickDateFilter === filter.value
-                  ? 'bg-accent text-surface'
-                  : 'bg-gray-muted hover:bg-muted/90 text-primary'
-              }`}
+              variant={quickDateFilter === filter.value ? 'default' : 'outline'}
+              size="sm"
               type="button"
             >
               {filter.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -86,21 +86,21 @@ export function UnifiedDateFilterControls({
       {/* Custom date range inputs */}
       {showCustomRange && (
         <div>
-          <label className="text-primary mb-2 block text-sm font-medium">Período Customizado</label>
+          <Label className="text-primary mb-2 block text-sm font-medium">Período Customizado</Label>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="date"
               value={formatDateForInput(dateRange.startDate)}
               onChange={e => handleDateInputChange('start', e.target.value)}
-              className="text-primary rounded-md border border-gray-300 px-3 py-2"
+              className="text-primary border-border rounded-md border px-3 py-2"
               placeholder="Data inicial"
             />
             <span className="text-primary/60">até</span>
-            <input
+            <Input
               type="date"
               value={formatDateForInput(dateRange.endDate)}
               onChange={e => handleDateInputChange('end', e.target.value)}
-              className="text-primary rounded-md border border-gray-300 px-3 py-2"
+              className="text-primary border-border rounded-md border px-3 py-2"
               placeholder="Data final"
             />
           </div>

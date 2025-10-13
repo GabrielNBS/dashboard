@@ -28,7 +28,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <SidebarContext.Provider value={{ isExpanded, setIsExpanded }}>
-      <div className="min-h-dvh bg-gray-50/30 antialiased">
+      <div className="bg-muted/30 min-h-dvh antialiased">
         {/* Header mobile para dispositivos pequenos */}
         <MobileHeader />
 

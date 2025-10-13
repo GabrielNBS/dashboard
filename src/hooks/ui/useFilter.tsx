@@ -4,6 +4,7 @@
 
 import { useMemo, useState } from 'react';
 import { Package } from 'lucide-react';
+import Button from '@/components/ui/base/Button';
 
 // Tipos genéricos para filtragem
 export interface FilterableItem {
@@ -182,12 +183,14 @@ export function FilterStats({
         Mostrando <strong>{filteredCount}</strong> de <strong>{totalCount}</strong> itens
       </span>
       {onClearFilters && (
-        <button
+        <Button
           onClick={onClearFilters}
+          variant="link"
+          size="sm"
           className="text-primary hover:text-primary/80 cursor-pointer font-medium"
         >
           Limpar filtros
-        </button>
+        </Button>
       )}
     </div>
   );

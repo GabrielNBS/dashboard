@@ -42,13 +42,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
       <div className="bg-foreground rounded-t-xl px-6 py-4">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-background mb-2 text-lg font-semibold">{product.name}</h3>
+            <h3 className="text-secondary mb-2 text-lg font-bold">{product.name}</h3>
             <div className="flex items-center gap-2">
-              <span className="bg-info text-on-info inline-flex items-center rounded-full px-2 py-1 text-xs font-medium">
+              <span className="bg-accent text-primary inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold shadow-md">
                 <Tag className="mr-1 h-3 w-3" />
                 {product.category}
               </span>
-              <span className="bg-muted text-muted-foreground inline-flex items-center rounded-full px-2 py-1 text-xs font-medium">
+              <span className="bg-muted text-muted-foreground inline-flex items-center rounded-full px-2 py-1 text-xs font-medium shadow-md">
                 <Scale className="mr-1 h-3 w-3" />
                 {mode === 'lote' ? 'Produção em Lote' : 'Unitário'}
               </span>
@@ -93,8 +93,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
                 activeTab === tab.key
-                  ? 'bg-primary text-background border-primary border'
-                  : 'text-muted-foreground hover:text-card-foreground hover:bg-muted'
+                  ? 'bg-secondary text-primary hover:text-primary hover:bg-secondary'
+                  : 'text-muted-foreground'
               }`}
             >
               {tab.label}

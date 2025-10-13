@@ -80,27 +80,27 @@ export default function CollapsibleFilters({
       {/* Header compacto - sempre visível */}
       <div
         className={`flex cursor-pointer items-center justify-between p-3 transition-all duration-200 ${
-          isExpanded ? 'bg-gray-50' : 'hover:bg-gray-50'
+          isExpanded ? 'bg-muted' : 'hover:bg-muted'
         } ${isAnimating ? 'pointer-events-none' : ''}`}
         onClick={toggleExpanded}
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Filtros</span>
+            <Filter className="text-muted-foreground h-4 w-4" />
+            <span className="text-foreground text-sm font-medium">Filtros</span>
           </div>
 
           {/* Indicadores de filtros ativos */}
           {hasActiveFilters && (
             <div className="flex items-center gap-2">
               {search && (
-                <div className="flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-700">
+                <div className="bg-info text-on-info flex items-center gap-1 rounded-full px-2 py-1 text-xs">
                   <Search className="h-3 w-3" />
                   <span className="max-w-20 truncate">{search}</span>
                 </div>
               )}
               {(dateRange?.startDate || quickDateFilter !== 'all') && (
-                <div className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-700">
+                <div className="bg-great text-on-great rounded-full px-2 py-1 text-xs">
                   Data filtrada
                 </div>
               )}
@@ -118,7 +118,7 @@ export default function CollapsibleFilters({
               }}
               variant="ghost"
               size="sm"
-              className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
+              className="text-muted-foreground hover:text-foreground h-8 w-8 p-0"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -128,7 +128,7 @@ export default function CollapsibleFilters({
           <div
             className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}
           >
-            <ChevronDown className="h-4 w-4 text-gray-500" />
+            <ChevronDown className="text-muted-foreground h-4 w-4" />
           </div>
         </div>
       </div>

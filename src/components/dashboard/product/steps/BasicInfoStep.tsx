@@ -1,6 +1,8 @@
 import React from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import CategoryList from '@/components/ui/CategoryList';
+import Input from '@/components/ui/base/Input';
+import { Label } from '@/components/ui/base/label';
 
 interface BasicInfoStepProps {
   data: {
@@ -26,21 +28,23 @@ export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) 
   }, [state.category, data.category, updateData]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <div className="mb-8 text-center">
         <div className="bg-great mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
           <div className="loader"></div>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Informações Básicas</h2>
-        <p className="mt-2 text-gray-600">Vamos começar com o nome e categoria do seu produto</p>
+        <h2 className="text-primary text-2xl font-bold">Informações Básicas</h2>
+        <p className="text-muted-foreground mt-2">
+          Vamos começar com o nome e categoria do seu produto
+        </p>
       </div>
 
       <div className="space-y-6">
         <div>
-          <label className="mb-3 block text-sm font-medium text-gray-700">
-            Nome do produto <span className="text-red-500">*</span>
-          </label>
-          <input
+          <Label className="text-muted-foreground mb-3 block text-sm font-medium">
+            Nome do produto <span className="text-on-bad">*</span>
+          </Label>
+          <Input
             type="text"
             placeholder="Ex: Bolo de Chocolate, Pizza Margherita..."
             value={data.name}

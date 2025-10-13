@@ -122,15 +122,17 @@ export function GenericCard<T extends CardableItem>({
   // Modern variant with tabs
   if (variant === 'modern' && tabs.length > 0) {
     return (
-      <div className={`rounded-xl border border-gray-200 bg-white shadow-sm ${className}`}>
+      <div className={`border-border bg-card rounded-xl border shadow-sm ${className}`}>
         {/* Header minimalista */}
-        <div className="border-b border-gray-100 px-4 py-3 sm:px-6 sm:py-4">
+        <div className="border-border border-b px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
-              <h3 className="mb-1 text-base font-semibold text-gray-900 sm:mb-2 sm:text-lg">
+              <h3 className="text-foreground mb-1 text-base font-semibold sm:mb-2 sm:text-lg">
                 {cardTitle}
               </h3>
-              {subtitle && <p className="mb-2 text-xs text-gray-600 sm:text-sm">{subtitle}</p>}
+              {subtitle && (
+                <p className="text-muted-foreground mb-2 text-xs sm:text-sm">{subtitle}</p>
+              )}
 
               {/* Badges */}
               {badges.length > 0 && (
@@ -140,10 +142,10 @@ export function GenericCard<T extends CardableItem>({
                       key={index}
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                         badge.variant === 'danger'
-                          ? 'text-on-bad bg-red-50'
+                          ? 'text-on-bad bg-bad'
                           : badge.variant === 'warning'
-                            ? 'text-on-warning bg-yellow-50'
-                            : 'text-on-info bg-blue-50'
+                            ? 'text-on-warning bg-warning'
+                            : 'text-on-info bg-info'
                       }`}
                     >
                       {badge.icon && <span className="mr-1">{badge.icon}</span>}
@@ -158,18 +160,20 @@ export function GenericCard<T extends CardableItem>({
             {actions.length > 0 && (
               <div className="ml-2 flex gap-1 sm:gap-2">
                 {actions.map((action, index) => (
-                  <button
+                  <Button
                     key={index}
                     onClick={() => action.onClick(item)}
-                    className={`rounded-lg p-1.5 transition-colors hover:bg-gray-50 sm:p-2 ${
+                    variant="ghost"
+                    size="sm"
+                    className={`hover:bg-muted rounded-lg p-1.5 transition-colors sm:p-2 ${
                       action.variant === 'destructive'
-                        ? 'text-gray-400 hover:text-red-600'
-                        : 'text-gray-400 hover:text-blue-600'
+                        ? 'text-muted-foreground hover:text-destructive'
+                        : 'text-muted-foreground hover:text-accent'
                     }`}
                     aria-label={action.label}
                   >
                     {action.icon}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -177,16 +181,18 @@ export function GenericCard<T extends CardableItem>({
         </div>
 
         {/* Tabs minimalistas */}
-        <div className="border-b border-gray-100 px-4 py-2 sm:px-6 sm:py-3">
+        <div className="border-border border-b px-4 py-2 sm:px-6 sm:py-3">
           <div className="flex gap-1 overflow-x-auto">
             {tabs.map(tab => (
-              <button
+              <Button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
+                variant={activeTab === tab.key ? 'default' : 'ghost'}
+                size="sm"
                 className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-all sm:px-3 sm:py-1.5 sm:text-sm ${
                   activeTab === tab.key
-                    ? 'border border-blue-200 bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'border-accent bg-accent/20 text-accent-foreground border'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
               >
                 <span className="whitespace-nowrap">{tab.label}</span>
@@ -194,14 +200,14 @@ export function GenericCard<T extends CardableItem>({
                   <span
                     className={`rounded-full px-1 py-0.5 text-xs sm:px-1.5 ${
                       activeTab === tab.key
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-gray-200 text-gray-600'
+                        ? 'bg-accent/30 text-accent-foreground'
+                        : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     {tab.count}
                   </span>
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

@@ -70,7 +70,7 @@ const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
       />
 
       {/* Unidade */}
-      <UnitSelect />
+      <UnitSelect register={register} errors={errors} />
 
       {/* Preço de compra */}
       <NumericInput

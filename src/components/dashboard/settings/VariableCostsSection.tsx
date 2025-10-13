@@ -12,6 +12,14 @@ import { Calculator, Plus, Edit, Trash2 } from 'lucide-react';
 import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/forms/select';
+import { Label } from '@/components/ui/base/label';
 
 export default function VariableCostsSection() {
   const { state, dispatch } = useSettings();
@@ -139,45 +147,51 @@ export default function VariableCostsSection() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Tipo de Custo</label>
-              <select
+              <Label className="mb-1 block text-sm font-medium text-gray-700">Tipo de Custo</Label>
+              <Select
                 value={editingCost.type}
-                onChange={e =>
+                onValueChange={(value: VariableCostSettings['type']) =>
                   setEditingCost({
                     ...editingCost,
-                    type: e.target.value as VariableCostSettings['type'],
+                    type: value,
                   })
                 }
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar tipo de custo variável"
               >
-                {types.map(type => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar tipo de custo variável" />
+                </SelectTrigger>
+                <SelectContent>
+                  {types.map(type => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Categoria</label>
-              <select
+              <Label className="mb-1 block text-sm font-medium text-gray-700">Categoria</Label>
+              <Select
                 value={editingCost.category}
-                onChange={e =>
+                onValueChange={(value: VariableCostSettings['category']) =>
                   setEditingCost({
                     ...editingCost,
-                    category: e.target.value as VariableCostSettings['category'],
+                    category: value,
                   })
                 }
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                aria-label="Selecionar categoria do custo variável"
               >
-                {categories.map(category => (
-                  <option key={category.value} value={category.value}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                  <SelectValue placeholder="Selecionar categoria do custo variável" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map(category => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>

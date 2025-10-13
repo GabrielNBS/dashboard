@@ -11,6 +11,13 @@ import {
 } from '@/types/sale';
 import { usePaymentFeesReadOnly } from '@/contexts/settings/SettingsContext';
 import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/forms/select';
 
 interface PaymentConfigurationProps {
   payment: PaymentConfig;
@@ -58,7 +65,7 @@ export default React.memo(function PaymentConfiguration({
                 className={`flex items-center gap-2 rounded-lg border-2 p-3 text-sm transition-all ${
                   payment.method === option.id
                     ? 'border-accent-light bg-accent-light text-on-warning'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-border hover:border-muted-foreground'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -79,20 +86,23 @@ export default React.memo(function PaymentConfiguration({
           Desconto
         </label>
         <div className="flex gap-2">
-          <select
-            title="Tipos de descontos"
+          <Select
             value={payment.discount.type}
-            onChange={e =>
+            onValueChange={(value: DiscountType) =>
               handleDiscountChange({
                 ...payment.discount,
-                type: e.target.value as DiscountType,
+                type: value,
               })
             }
-            className="rounded border px-3 py-2 text-sm"
           >
-            <option value="percentage">%</option>
-            <option value="fixed">R$</option>
-          </select>
+            <SelectTrigger className="w-20 rounded border px-3 py-2 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="percentage">%</SelectItem>
+              <SelectItem value="fixed">R$</SelectItem>
+            </SelectContent>
+          </Select>
 
           {payment.discount.type === 'percentage' ? (
             <PercentageInput

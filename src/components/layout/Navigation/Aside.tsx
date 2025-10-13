@@ -38,7 +38,7 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
         className={`group/item relative flex items-center rounded-lg px-3 py-3 font-medium transition-colors duration-200 ${
           isActive
             ? 'bg-primary text-white shadow-sm'
-            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+            : 'text-foreground hover:bg-muted hover:text-foreground'
         }`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -60,7 +60,9 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
             return (
               <IconComponent
                 className={`h-5 w-5 flex-shrink-0 transition-colors ${
-                  isActive ? 'text-white' : 'text-gray-500 group-hover/item:text-gray-700'
+                  isActive
+                    ? 'text-primary-foreground'
+                    : 'text-muted-foreground group-hover/item:text-foreground'
                 }`}
               />
             );
@@ -87,9 +89,9 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
           isExpanded ? 'opacity-0' : 'opacity-0 group-hover/item:opacity-100'
         }`}
       >
-        <div className="rounded-md bg-gray-900 px-3 py-2 text-sm whitespace-nowrap text-white shadow-lg">
+        <div className="bg-popover text-popover-foreground rounded-md px-3 py-2 text-sm whitespace-nowrap shadow-lg">
           {label}
-          <div className="absolute top-1/2 left-0 -ml-1 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
+          <div className="border-r-popover absolute top-1/2 left-0 -ml-1 -translate-y-1/2 border-4 border-transparent" />
         </div>
       </div>
     </li>
@@ -151,7 +153,7 @@ export default function Aside() {
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
-      className="fixed top-0 left-0 z-50 hidden h-dvh flex-col bg-white shadow-lg sm:flex"
+      className="bg-card fixed top-0 left-0 z-50 hidden h-dvh flex-col shadow-lg sm:flex"
     >
       {/* Header com Avatar */}
       <div className="flex h-20 items-center justify-center">
@@ -174,7 +176,7 @@ export default function Aside() {
       </div>
 
       {/* Separador */}
-      <div className="mx-4 border-t border-gray-200" />
+      <div className="border-border mx-4 border-t" />
 
       {/* Menu de Navegação */}
       <nav className="flex-1 overflow-hidden px-2 py-4">
@@ -203,7 +205,7 @@ export default function Aside() {
         <motion.div
           animate={{ width: isExpanded ? 48 : 16 }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-          className="h-1 rounded-full bg-gray-300"
+          className="bg-muted h-1 rounded-full"
         />
       </div>
     </motion.aside>

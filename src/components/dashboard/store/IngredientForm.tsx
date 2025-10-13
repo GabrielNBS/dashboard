@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/components/ui/base/Button';
 import Input from '@/components/ui/base/Input';
-import { Ingredient, UnitType, PurchaseBatch } from '@/types/ingredients';
+import { Ingredient, PurchaseBatch } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import CurrencyInputField from '@/components/ui/forms/CurrencyInputField';
 import QuantityInputField from '@/components/ui/forms/QuantityInputField';
@@ -31,13 +31,8 @@ import {
   SheetTrigger,
 } from '@/components/ui/feedback/sheet';
 import { Label } from '@/components/ui/base/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/forms/select';
+import UnitSelect from '@/components/ui/UnitSelect';
+
 import { normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 import { formatCurrency } from '@/utils/UnifiedUtils';
 
@@ -98,7 +93,7 @@ export default function IngredientForm() {
     const unitPrice = data.unit === 'un' ? rawPrice : rawPrice / normalizedQuantity;
 
     const batch: PurchaseBatch = {
-      id: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `batch_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       purchaseDate: new Date(),
       buyPrice: rawPrice,
       originalQuantity: normalizedQuantity,
@@ -180,14 +175,6 @@ export default function IngredientForm() {
     setToggle(false);
   };
 
-  const handleUnitChange = (newUnit: string) => {
-    setValue('unit', newUnit as UnitType);
-
-    if (watchedQuantity) {
-      validateQuantity(watchedQuantity);
-    }
-  };
-
   return (
     <>
       <Sheet open={toggle} onOpenChange={setToggle}>
@@ -256,20 +243,7 @@ export default function IngredientForm() {
                 <Label htmlFor="unit" className="mb-2 block">
                   Unidade de medida
                 </Label>
-                <Select
-                  onValueChange={handleUnitChange}
-                  value={watchedUnit}
-                  disabled={!!existingIngredient}
-                >
-                  <SelectTrigger aria-invalid={!!errors.unit}>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="kg">Quilo (kg)</SelectItem>
-                    <SelectItem value="l">Litro (l)</SelectItem>
-                    <SelectItem value="un">Unidade</SelectItem>
-                  </SelectContent>
-                </Select>
+                <UnitSelect register={register} errors={errors} />
                 {errors.unit && (
                   <span className="text-destructive mt-1 block text-sm">{errors.unit.message}</span>
                 )}

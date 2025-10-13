@@ -152,7 +152,7 @@ export default function StoreSettingsSection() {
       </div>
 
       {/* Resumo das Configurações */}
-      <div className="rounded-lg bg-gray-50 p-4">
+      <div className="bg-muted rounded-lg p-4">
         <h4 className="mb-2 text-sm font-medium text-gray-900">Resumo das Configurações</h4>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
@@ -173,6 +173,18 @@ export default function StoreSettingsSection() {
             <div>
               <span className="text-gray-500">Telefone:</span>
               <span className="ml-2 font-medium">{state.store.phone}</span>
+            </div>
+          )}
+          {state.store.email && (
+            <div>
+              <span className="text-gray-500">E-mail:</span>
+              <span className="ml-2 font-medium">{state.store.email}</span>
+            </div>
+          )}
+          {state.store.address && (
+            <div>
+              <span className="text-gray-500">Endereço:</span>
+              <span className="ml-2 font-medium">{state.store.address}</span>
             </div>
           )}
         </div>
