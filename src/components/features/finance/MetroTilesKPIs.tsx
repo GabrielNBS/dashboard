@@ -66,7 +66,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
               <CardWrapper
                 title={
                   <div className="flex w-full items-center justify-between">
-                    <span className="text-sm font-medium sm:text-base">Receita Total</span>
+                    <span className="text-sm font-medium sm:text-base">Receita total</span>
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-transparent">
                       <DollarSign className="text-primary h-4 w-4" />
                     </div>
@@ -123,7 +123,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                 title={
                   <div>
                     <span className="mb-1 block text-xs font-light opacity-70">Fixo</span>
-                    <span className="text-xs font-medium">Custo Fixo</span>
+                    <span className="text-xs font-medium">Custo fixo</span>
                   </div>
                 }
                 value={
@@ -165,7 +165,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                 title={
                   <div>
                     <span className="mb-1 block text-xs font-light opacity-70">Bruto</span>
-                    <span className="text-xs font-medium">Lucro Bruto</span>
+                    <span className="text-xs font-medium">Lucro bruto</span>
                   </div>
                 }
                 value={

@@ -55,7 +55,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
       value: formatQuantity(ingredient.totalQuantity, ingredient.unit),
     },
     {
-      label: 'Preço de compra',
+      label: ingredient.unit === 'un' ? 'Preço por unidade' : 'Preço por grama/litro',
       value: formatCurrency(ingredient.averageUnitPrice),
     },
   ];

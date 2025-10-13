@@ -40,7 +40,7 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
         <thead className="bg-primary text-muted uppercase">
           <tr>
             <th className="p-3">Data</th>
-            <th className="p-3">Produto Vendido</th>
+            <th className="p-3">Produto vendido</th>
             <th className="p-3 text-center">Qtd</th>
             <th className="p-3">Canal de venda</th>
             <th className="p-3">Taxa</th>

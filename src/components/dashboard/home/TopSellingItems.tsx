@@ -80,7 +80,7 @@ const TopSellingItems = () => {
     <aside className="w-full">
       <div className="bg-card overflow-hidden rounded-lg shadow-sm">
         <div className="from-primary to-secondary-foreground bg-gradient-to-r px-4 py-3">
-          <h3 className="text-primary-foreground text-sm font-semibold">Top Produtos</h3>
+          <h3 className="text-primary-foreground text-sm font-semibold">Top produtos</h3>
         </div>
 
         <div className="min-h-64 space-y-2 p-3">

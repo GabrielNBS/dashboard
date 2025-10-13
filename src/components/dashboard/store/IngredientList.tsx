@@ -149,7 +149,7 @@ export default function IngredientCardList() {
           <div className="rounded-lg bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Valor em Estoque</p>
+                <p className="text-sm font-medium text-gray-600">Valor em estoque</p>
                 <p className="text-xl font-bold text-gray-900">
                   {formatCurrency(summary.ingredientsTotalValue)}
                 </p>
@@ -164,7 +164,7 @@ export default function IngredientCardList() {
 
         {/* Alertas de Estoque - Grid Compacto */}
         <div className="rounded-lg bg-gray-50 p-3">
-          <h4 className="mb-3 text-sm font-medium text-gray-700">Status do Estoque</h4>
+          <h4 className="mb-3 text-sm font-medium text-gray-700">Status do estoque</h4>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-md bg-white p-3">
               <div className="flex items-center gap-2">
@@ -195,21 +195,21 @@ export default function IngredientCardList() {
           className="hover:border-primary border-t-4"
         />
         <CardWrapper
-          title="Estoque Crítico"
+          title="Estoque crítico"
           value={summary.critico}
           icon={<AlertOctagon />}
           subtitle="atenção imediata"
           className="hover:border-primary border-t-4"
         />
         <CardWrapper
-          title="Estoque em Alerta"
+          title="Estoque em alerta"
           value={summary.atencao}
           icon={<AlertTriangle />}
           subtitle="precisam de reposição"
           className="hover:border-primary border-t-4"
         />
         <CardWrapper
-          title="Valor Total"
+          title="Valor total"
           value={formatCurrency(summary.ingredientsTotalValue)}
           icon={<BadgeDollarSign />}
           subtitle="em estoque"

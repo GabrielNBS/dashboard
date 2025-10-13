@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Input from '@/components/ui/base/Input';
+import { cn } from '@/utils/utils';
 
 interface QuantityInputProps {
   value: string | number;
@@ -16,6 +17,9 @@ interface QuantityInputProps {
   allowDecimals?: boolean;
   maxValue?: number;
   minValue?: number;
+  label?: string;
+  error?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export default function QuantityInput({
@@ -31,6 +35,9 @@ export default function QuantityInput({
   allowDecimals = true,
   maxValue = 99999, // Limite padrão: 99.999 unidades (adequado para PME)
   minValue = 0,
+  label,
+  error,
+  size = 'md',
 }: QuantityInputProps) {
   const [displayValue, setDisplayValue] = useState('');
 
@@ -112,24 +119,63 @@ export default function QuantityInput({
     onChange(formatted);
   };
 
+  const paddingClasses = {
+    sm: unit ? 'pr-8' : '',
+    md: unit ? 'pr-12' : '',
+    lg: unit ? 'pr-14' : '',
+  };
+
+  const iconSizes = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base',
+  };
+
+  const iconPositions = {
+    sm: 'right-2',
+    md: 'right-3',
+    lg: 'right-4',
+  };
+
   return (
-    <div className="relative">
-      <Input
-        type="text"
-        value={displayValue}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className={unit ? `pr-12 ${className}` : className}
-        disabled={disabled}
-        required={required}
-        id={id}
-        aria-invalid={ariaInvalid}
-      />
-      {unit && (
-        <div className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform text-sm">
-          {unit}
-        </div>
+    <div className="flex flex-col gap-1">
+      {/* Label do campo */}
+      {label && (
+        <label className="text-foreground mb-1 block text-sm font-medium">
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
       )}
+
+      <div className="relative">
+        <Input
+          type="text"
+          value={displayValue}
+          onChange={handleChange}
+          placeholder={placeholder}
+          className={cn(paddingClasses[size], className)}
+          disabled={disabled}
+          required={required}
+          id={id}
+          aria-invalid={ariaInvalid}
+          error={error}
+          size={size}
+        />
+        {unit && (
+          <div
+            className={cn(
+              'text-muted-foreground pointer-events-none absolute top-1/2 -translate-y-1/2 transform',
+              iconPositions[size],
+              iconSizes[size]
+            )}
+          >
+            {unit}
+          </div>
+        )}
+      </div>
+
+      {/* Mensagem de erro */}
+      {error && <span className="text-destructive text-sm font-medium">{error}</span>}
     </div>
   );
 }

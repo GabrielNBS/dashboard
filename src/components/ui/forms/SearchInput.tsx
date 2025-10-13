@@ -1,13 +1,17 @@
 import { InputHTMLAttributes, useState, useRef, useCallback } from 'react';
 import LordIcon, { LordIconRef } from '../LordIcon';
 import Input from '@/components/ui/base/Input';
+import { cn } from '@/utils/utils';
 
 type SearchInputProps = {
   value: string;
   onChange: (value: string) => void;
   className?: string;
   placeholder?: string;
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>;
+  label?: string;
+  error?: string;
+  size?: 'sm' | 'md' | 'lg';
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size'>;
 
 /**
  * 🔎 SearchInput
@@ -20,6 +24,9 @@ export default function SearchInput({
   onChange,
   placeholder = 'Buscar...',
   className = '',
+  label,
+  error,
+  size = 'md',
   ...props
 }: SearchInputProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -49,27 +56,58 @@ export default function SearchInput({
     [onChange]
   );
 
-  return (
-    <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <LordIcon
-        ref={iconRef}
-        src="https://cdn.lordicon.com/vayiyuqd.json"
-        width={20}
-        height={20}
-        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
-        isHovered={isHovered || isFocused}
-      />
+  const paddingClasses = {
+    sm: 'pl-8',
+    md: 'pl-10',
+    lg: 'pl-12',
+  };
 
-      <Input
-        type="text"
-        value={value}
-        onChange={handleChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        placeholder={placeholder}
-        className={`focus:border-primary focus:ring-primary/20 w-full rounded-lg border py-2 pr-4 pl-10 text-sm shadow-sm transition-colors focus:ring ${className}`}
-        {...props}
-      />
+  const iconSizes = {
+    sm: { width: 16, height: 16 },
+    md: { width: 20, height: 20 },
+    lg: { width: 24, height: 24 },
+  };
+
+  const iconPositions = {
+    sm: 'left-2',
+    md: 'left-3',
+    lg: 'left-4',
+  };
+
+  return (
+    <div className="flex flex-col gap-1">
+      {/* Label do campo */}
+      {label && <label className="text-foreground mb-1 block text-sm font-medium">{label}</label>}
+
+      <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <LordIcon
+          ref={iconRef}
+          src="https://cdn.lordicon.com/vayiyuqd.json"
+          width={iconSizes[size].width}
+          height={iconSizes[size].height}
+          className={cn(
+            'pointer-events-none absolute top-1/2 -translate-y-1/2',
+            iconPositions[size]
+          )}
+          isHovered={isHovered || isFocused}
+        />
+
+        <Input
+          type="text"
+          value={value}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          className={cn(paddingClasses[size], className)}
+          error={error}
+          size={size}
+          {...props}
+        />
+      </div>
+
+      {/* Mensagem de erro */}
+      {error && <span className="text-destructive text-sm font-medium">{error}</span>}
     </div>
   );
 }

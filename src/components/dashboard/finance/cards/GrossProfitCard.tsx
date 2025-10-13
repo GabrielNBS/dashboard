@@ -5,5 +5,5 @@ export default function GrossProfitCard({
   summary,
   ...props
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
-  return <CardWrapper title="Lucro Bruto" value={summary.grossProfit} type="currency" {...props} />;
+  return <CardWrapper title="Lucro bruto" value={summary.grossProfit} type="currency" {...props} />;
 }

@@ -5,5 +5,5 @@ export default function NetProfitCard({
   summary,
   ...props
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
-  return <CardWrapper title="Lucro Líquido" value={summary.netProfit} type="currency" {...props} />;
+  return <CardWrapper title="Lucro líquido" value={summary.netProfit} type="currency" {...props} />;
 }

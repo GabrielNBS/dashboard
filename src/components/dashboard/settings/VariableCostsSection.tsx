@@ -99,7 +99,7 @@ export default function VariableCostsSection() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Calculator className="text-primary h-6 w-6" />
-          <h2 className="text-xl font-semibold">Custos Variáveis</h2>
+          <h2 className="text-xl font-semibold">Custos variáveis</h2>
         </div>
         <Button onClick={handleAddCost} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
@@ -109,7 +109,7 @@ export default function VariableCostsSection() {
 
       {/* Resumo */}
       <div className="rounded-lg bg-green-50 p-4">
-        <h3 className="mb-2 text-lg font-medium text-green-900">Resumo dos Custos Variáveis</h3>
+        <h3 className="mb-2 text-lg font-medium text-green-900">Resumo dos custos variáveis</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-green-600">Total de Custos:</span>

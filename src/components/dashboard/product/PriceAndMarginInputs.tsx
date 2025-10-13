@@ -55,47 +55,27 @@ export default function PriceAndMarginInputs({
   }, [state.ingredients, state.production, margin, sellingPrice]);
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-        <div>
-          <label className="text-foreground mb-2 block text-sm font-medium">
-            {mode === 'lote' ? 'Preço por Unidade' : 'Preço de Venda'}{' '}
-            <span className="text-destructive">*</span>
-          </label>
-          <div className="relative">
-            <CurrencyInput
-              value={sellingPrice}
-              onChange={onSellingPriceChange}
-              className="border-border focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 text-sm transition-colors focus:ring-2"
-              placeholder="R$ 0,00"
-              maxValue={9999.99}
-              required
-            />
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              <span className="text-muted-foreground text-sm">BRL</span>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <CurrencyInput
+          label={mode === 'lote' ? 'Preço por Unidade' : 'Preço de Venda'}
+          value={sellingPrice}
+          onChange={onSellingPriceChange}
+          placeholder="R$ 0,00"
+          maxValue={9999.99}
+          required
+          size="md"
+        />
 
-        <div>
-          <label className="text-foreground mb-2 block text-sm font-medium">
-            Margem de Lucro <span className="text-destructive">*</span>
-          </label>
-          <div className="relative">
-            <PercentageInput
-              value={margin}
-              onChange={onMarginChange}
-              className="border-border focus:border-primary focus:ring-primary/20 w-full rounded-lg border px-4 py-3 text-sm transition-colors focus:ring-2"
-              placeholder="0%"
-              maxValue={300}
-              minValue={0}
-            />
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              <span className="text-muted-foreground text-sm">%</span>
-            </div>
-          </div>
-
-          {/* Área fixa para preço sugerido - evita saltos visuais */}
-        </div>
+        <PercentageInput
+          label="Margem de Lucro"
+          value={margin}
+          onChange={onMarginChange}
+          placeholder="0%"
+          maxValue={300}
+          minValue={0}
+          required
+          size="md"
+        />
       </div>
 
       {/* Resumo dos cálculos - altura fixa */}

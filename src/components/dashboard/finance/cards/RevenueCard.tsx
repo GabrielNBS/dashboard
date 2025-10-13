@@ -6,6 +6,6 @@ export default function RevenueCard({
   ...props
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
-    <CardWrapper title="Receita Total" value={summary.totalRevenue} type="currency" {...props} />
+    <CardWrapper title="Receita total" value={summary.totalRevenue} type="currency" {...props} />
   );
 }

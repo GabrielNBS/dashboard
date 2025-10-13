@@ -79,7 +79,7 @@ export default function FixedCostsSection() {
 
     showConfirmation(
       {
-        title: 'Excluir Custo Fixo',
+        title: 'Excluir custo fixo',
         description: `Tem certeza que deseja excluir "${costName}"? Esta ação não pode ser desfeita.`,
         variant: 'destructive',
       },
@@ -101,20 +101,20 @@ export default function FixedCostsSection() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <DollarSign className="text-primary h-6 w-6" />
-          <h2 className="text-xl font-semibold">Custos Fixos</h2>
+          <h2 className="text-xl font-semibold">Custos fixos</h2>
         </div>
         <Button onClick={handleAddCost} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          Adicionar Custo
+          Adicionar custo
         </Button>
       </div>
 
       {/* Resumo */}
       <div className="rounded-lg bg-blue-50 p-4">
-        <h3 className="mb-2 text-lg font-medium text-blue-900">Resumo dos Custos Fixos</h3>
+        <h3 className="mb-2 text-lg font-medium text-blue-900">Resumo dos custos fixos</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-blue-600">Total de Custos:</span>
+            <span className="text-blue-600">Total de custos:</span>
             <span className="ml-2 font-bold text-blue-900">R$ {totalFixedCosts.toFixed(2)}</span>
           </div>
           <div>
@@ -128,13 +128,13 @@ export default function FixedCostsSection() {
       {editingCost && (
         <div className="space-y-4 rounded-lg bg-gray-50 p-4">
           <h3 className="text-lg font-medium">
-            {isAdding ? 'Adicionar Novo Custo Fixo' : 'Editar Custo Fixo'}
+            {isAdding ? 'Adicionar novo custo fixo' : 'Editar custo fixo'}
           </h3>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Nome do Custo *
+                Nome do custo *
               </label>
               <Input
                 value={editingCost.name}
@@ -207,7 +207,7 @@ export default function FixedCostsSection() {
 
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Data de Vencimento
+                Data de vencimento
               </label>
               <Input
                 type="date"
@@ -241,13 +241,13 @@ export default function FixedCostsSection() {
 
       {/* Lista de Custos Fixos */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Custos Fixos Configurados</h3>
+        <h3 className="text-lg font-medium">Custos fixos configurados</h3>
 
         {state.fixedCosts.length === 0 ? (
           <div className="py-8 text-center text-gray-500">
             <DollarSign className="mx-auto mb-4 h-12 w-12 text-gray-300" />
             <p>Nenhum custo fixo configurado.</p>
-            <p className="text-sm">Clique em &quot;Adicionar Custo&quot; para começar.</p>
+            <p className="text-sm">Clique em &quot;Adicionar custo&quot; para começar.</p>
           </div>
         ) : (
           <div className="space-y-3">

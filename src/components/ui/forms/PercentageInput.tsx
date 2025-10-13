@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Input from '@/components/ui/base/Input';
+import { cn } from '@/utils/utils';
 
 interface PercentageInputProps {
   value: string | number;
@@ -14,6 +15,9 @@ interface PercentageInputProps {
   'aria-invalid'?: boolean;
   maxValue?: number;
   minValue?: number;
+  label?: string;
+  error?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export default function PercentageInput({
@@ -27,6 +31,9 @@ export default function PercentageInput({
   'aria-invalid': ariaInvalid,
   maxValue = 100,
   minValue = 0,
+  label,
+  error,
+  size = 'md',
 }: PercentageInputProps) {
   const [displayValue, setDisplayValue] = useState('');
 
@@ -90,22 +97,61 @@ export default function PercentageInput({
     onChange(formatted);
   };
 
+  const paddingClasses = {
+    sm: 'pr-6',
+    md: 'pr-8',
+    lg: 'pr-10',
+  };
+
+  const iconSizes = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base',
+  };
+
+  const iconPositions = {
+    sm: 'right-2',
+    md: 'right-3',
+    lg: 'right-4',
+  };
+
   return (
-    <div className="relative">
-      <Input
-        type="text"
-        value={displayValue}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className={`pr-8 ${className}`}
-        disabled={disabled}
-        required={required}
-        id={id}
-        aria-invalid={ariaInvalid}
-      />
-      <div className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transform">
-        %
+    <div className="flex flex-col gap-1">
+      {/* Label do campo */}
+      {label && (
+        <label className="text-foreground mb-1 block text-sm font-medium">
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      )}
+
+      <div className="relative">
+        <Input
+          type="text"
+          value={displayValue}
+          onChange={handleChange}
+          placeholder={placeholder}
+          className={cn(paddingClasses[size], className)}
+          disabled={disabled}
+          required={required}
+          id={id}
+          aria-invalid={ariaInvalid}
+          error={error}
+          size={size}
+        />
+        <div
+          className={cn(
+            'text-muted-foreground pointer-events-none absolute top-1/2 -translate-y-1/2 transform',
+            iconPositions[size],
+            iconSizes[size]
+          )}
+        >
+          %
+        </div>
       </div>
+
+      {/* Mensagem de erro */}
+      {error && <span className="text-destructive text-sm font-medium">{error}</span>}
     </div>
   );
 }

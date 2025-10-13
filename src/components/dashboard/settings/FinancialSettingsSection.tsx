@@ -42,7 +42,7 @@ export default function FinancialSettingsSection() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <DollarSign className="text-primary h-6 w-6" />
-        <h2 className="text-xl font-semibold">Configurações Financeiras</h2>
+        <h2 className="text-xl font-semibold">Configurações financeiras</h2>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -50,13 +50,13 @@ export default function FinancialSettingsSection() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-green-600" />
-            <h3 className="text-lg font-medium text-gray-900">Margem de Lucro</h3>
+            <h3 className="text-lg font-medium text-gray-900">Margem de lucro</h3>
           </div>
 
           <div className="space-y-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Margem de Lucro Padrão (%)
+                Margem de lucro padrão (%)
               </label>
               <PercentageInput
                 value={state.financial.defaultProfitMargin?.toString() || ''}
@@ -78,13 +78,13 @@ export default function FinancialSettingsSection() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-blue-600" />
-            <h3 className="text-lg font-medium text-gray-900">Reserva de Emergência</h3>
+            <h3 className="text-lg font-medium text-gray-900">Reserva de emergência</h3>
           </div>
 
           <div className="space-y-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Percentual de Reserva (%)
+                Percentual de reserva (%)
               </label>
               <PercentageInput
                 value={state.financial.emergencyReservePercentage?.toString() || ''}
@@ -106,13 +106,13 @@ export default function FinancialSettingsSection() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Target className="h-5 w-5 text-orange-600" />
-            <h3 className="text-lg font-medium text-gray-900">Meta de Vendas</h3>
+            <h3 className="text-lg font-medium text-gray-900">Meta de vendas</h3>
           </div>
 
           <div className="space-y-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Meta Mensal (R$)
+                Meta mensal (R$)
               </label>
               <CurrencyInput
                 value={state.financial.monthlySalesGoal?.toString() || ''}
@@ -133,13 +133,13 @@ export default function FinancialSettingsSection() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <DollarSign className="h-5 w-5 text-purple-600" />
-            <h3 className="text-lg font-medium text-gray-900">Configurações de Moeda</h3>
+            <h3 className="text-lg font-medium text-gray-900">Configurações de moeda</h3>
           </div>
 
           <div className="space-y-3">
             <div>
               <Label className="mb-1 block text-sm font-medium text-gray-700">
-                Moeda Principal
+                Moeda principal
               </Label>
               <Select
                 value={state.financial.currency}
@@ -160,7 +160,7 @@ export default function FinancialSettingsSection() {
 
             <div>
               <Label className="mb-1 block text-sm font-medium text-gray-700">
-                Formato de Exibição
+                Formato de exibição
               </Label>
               <Select
                 value={state.financial.currencyFormat}
@@ -185,13 +185,13 @@ export default function FinancialSettingsSection() {
       {/* Resumo das Configurações */}
       <div className="rounded-lg bg-gradient-to-r from-blue-50 to-green-50 p-6">
         <h3 className="mb-4 text-lg font-medium text-gray-900">
-          Resumo das Configurações Financeiras
+          Resumo das configurações financeiras
         </h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="rounded-lg bg-white p-3">
             <div className="mb-2 flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-green-600" />
-              <span className="font-medium text-gray-700">Margem de Lucro</span>
+              <span className="font-medium text-gray-700">Margem de lucro</span>
             </div>
             <span className="text-2xl font-bold text-green-600">
               {state.financial.defaultProfitMargin}%
@@ -211,7 +211,7 @@ export default function FinancialSettingsSection() {
           <div className="rounded-lg bg-white p-3">
             <div className="mb-2 flex items-center gap-2">
               <Target className="h-4 w-4 text-orange-600" />
-              <span className="font-medium text-gray-700">Meta Mensal</span>
+              <span className="font-medium text-gray-700">Meta mensal</span>
             </div>
             <span className="text-2xl font-bold text-orange-600">
               R$ {state.financial.monthlySalesGoal.toLocaleString()}
@@ -230,17 +230,17 @@ export default function FinancialSettingsSection() {
 
       {/* Informações Adicionais */}
       <div className="rounded-lg bg-yellow-50 p-4">
-        <h4 className="mb-2 text-sm font-medium text-yellow-900">💡 Dicas de Configuração</h4>
+        <h4 className="mb-2 text-sm font-medium text-yellow-900">💡 Dicas de configuração</h4>
         <ul className="space-y-1 text-sm text-yellow-800">
           <li>
-            • <strong>Margem de Lucro:</strong> Recomendamos entre 20% e 40% para a maioria dos
+            • <strong>Margem de lucro:</strong> Recomendamos entre 20% e 40% para a maioria dos
             segmentos
           </li>
           <li>
-            • <strong>Reserva de Emergência:</strong> Ideal manter 10-15% do lucro para imprevistos
+            • <strong>Reserva de emergência:</strong> Ideal manter 10-15% do lucro para imprevistos
           </li>
           <li>
-            • <strong>Meta de Vendas:</strong> Defina metas realistas baseadas no histórico da loja
+            • <strong>Meta de vendas:</strong> Defina metas realistas baseadas no histórico da loja
           </li>
           <li>
             • <strong>Moeda:</strong> A moeda selecionada será usada em todos os relatórios

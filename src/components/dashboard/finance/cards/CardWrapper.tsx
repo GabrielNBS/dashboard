@@ -48,7 +48,7 @@ export default function CardWrapper({
       }`}
     >
       <div className="w-full">
-        <h3 className="flex justify-between gap-2 text-xs font-light sm:text-sm">
+        <h3 className="flex justify-between gap-2 text-xs font-semibold sm:text-sm">
           {title}
           {icon && <span className="text-2xl sm:text-3xl">{icon}</span>}
         </h3>

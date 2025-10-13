@@ -77,7 +77,7 @@ export default function SystemSettingsSection() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Cog className="text-primary h-6 w-6" />
-        <h2 className="text-xl font-semibold">Configurações do Sistema</h2>
+        <h2 className="text-xl font-semibold">Configurações do sistema</h2>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -91,7 +91,7 @@ export default function SystemSettingsSection() {
           <div className="space-y-3">
             <div>
               <Label className="mb-1 block text-sm font-medium text-gray-700">
-                Idioma do Sistema
+                Idioma do sistema
               </Label>
               <Select
                 value={state.system.language}
@@ -122,7 +122,7 @@ export default function SystemSettingsSection() {
           <div className="space-y-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
-                Tema do Sistema
+                Tema do sistema
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {themes.map(theme => {
@@ -159,7 +159,7 @@ export default function SystemSettingsSection() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">Estoque Baixo</label>
+                <label className="text-sm font-medium text-gray-700">Estoque baixo</label>
                 <p className="text-xs text-gray-500">
                   Alertas quando produtos estiverem com estoque baixo
                 </p>
@@ -178,7 +178,7 @@ export default function SystemSettingsSection() {
 
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">Meta de Vendas</label>
+                <label className="text-sm font-medium text-gray-700">Meta de vendas</label>
                 <p className="text-xs text-gray-500">
                   Notificações sobre o progresso da meta mensal
                 </p>
@@ -197,7 +197,7 @@ export default function SystemSettingsSection() {
 
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">Alertas de Custos</label>
+                <label className="text-sm font-medium text-gray-700">Alertas de custos</label>
                 <p className="text-xs text-gray-500">Avisos sobre custos elevados ou inesperados</p>
               </div>
               <label className="relative inline-flex cursor-pointer items-center">
@@ -214,7 +214,7 @@ export default function SystemSettingsSection() {
 
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">Lembretes de Backup</label>
+                <label className="text-sm font-medium text-gray-700">Lembretes de backup</label>
                 <p className="text-xs text-gray-500">Lembretes para fazer backup dos dados</p>
               </div>
               <label className="relative inline-flex cursor-pointer items-center">
@@ -236,14 +236,14 @@ export default function SystemSettingsSection() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Cloud className="h-5 w-5 text-purple-600" />
-          <h3 className="text-lg font-medium text-gray-900">Backup e Segurança</h3>
+          <h3 className="text-lg font-medium text-gray-900">Backup e segurança</h3>
         </div>
 
         <div className="rounded-lg border border-gray-200 bg-white p-4">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">Backup Automático</label>
+                <label className="text-sm font-medium text-gray-700">Backup automático</label>
                 <p className="text-xs text-gray-500">Fazer backup automático dos dados</p>
               </div>
               <label className="relative inline-flex cursor-pointer items-center">
@@ -260,7 +260,7 @@ export default function SystemSettingsSection() {
 
             <div>
               <Label className="mb-1 block text-sm font-medium text-gray-700">
-                Frequência do Backup
+                Frequência do backup
               </Label>
               <Select
                 value={state.system.backup.backupFrequency}
@@ -282,7 +282,7 @@ export default function SystemSettingsSection() {
 
             <div className="flex items-center justify-between">
               <div>
-                <label className="text-sm font-medium text-gray-700">Backup na Nuvem</label>
+                <label className="text-sm font-medium text-gray-700">Backup na nuvem</label>
                 <p className="text-xs text-gray-500">Sincronizar backup com serviços na nuvem</p>
               </div>
               <label className="relative inline-flex cursor-pointer items-center">
@@ -303,7 +303,7 @@ export default function SystemSettingsSection() {
       {/* Resumo das Configurações */}
       <div className="rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 p-6">
         <h3 className="mb-4 text-lg font-medium text-gray-900">
-          Resumo das Configurações do Sistema
+          Resumo das configurações do sistema
         </h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="rounded-lg bg-white p-3">
@@ -329,7 +329,7 @@ export default function SystemSettingsSection() {
           <div className="rounded-lg bg-white p-3">
             <div className="mb-2 flex items-center gap-2">
               <Bell className="h-4 w-4 text-orange-600" />
-              <span className="font-medium text-gray-700">Notificações Ativas</span>
+              <span className="font-medium text-gray-700">Notificações ativas</span>
             </div>
             <span className="text-lg font-bold text-orange-600">
               {Object.values(state.system.notifications).filter(Boolean).length}/4
@@ -350,13 +350,13 @@ export default function SystemSettingsSection() {
 
       {/* Informações de Segurança */}
       <div className="rounded-lg bg-green-50 p-4">
-        <h4 className="mb-2 text-sm font-medium text-green-900">🔒 Dicas de Segurança</h4>
+        <h4 className="mb-2 text-sm font-medium text-green-900">🔒 Dicas de segurança</h4>
         <ul className="space-y-1 text-sm text-green-800">
           <li>
-            • <strong>Backup Automático:</strong> Recomendamos ativar para proteger seus dados
+            • <strong>Backup automático:</strong> Recomendamos ativar para proteger seus dados
           </li>
           <li>
-            • <strong>Backup na Nuvem:</strong> Mantenha uma cópia extra na nuvem
+            • <strong>Backup na nuvem:</strong> Mantenha uma cópia extra na nuvem
           </li>
           <li>
             • <strong>Notificações:</strong> Mantenha alertas ativos para monitorar a loja

@@ -6,6 +6,6 @@ export default function ProfitMarginCard({
   ...props
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
-    <CardWrapper title="Margem de Lucro" value={summary.margin} type="percentage" {...props} />
+    <CardWrapper title="Margem de lucro" value={summary.margin} type="percentage" {...props} />
   );
 }

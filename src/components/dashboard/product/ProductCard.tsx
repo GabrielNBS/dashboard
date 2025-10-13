@@ -50,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               </span>
               <span className="bg-muted text-muted-foreground inline-flex items-center rounded-full px-2 py-1 text-xs font-medium shadow-md">
                 <Scale className="mr-1 h-3 w-3" />
-                {mode === 'lote' ? 'Produção em Lote' : 'Unitário'}
+                {mode === 'lote' ? 'Produção em lote' : 'Unitário'}
               </span>
               {!isProfit && (
                 <span className="bg-bad text-on-bad inline-flex items-center rounded-full px-2 py-1 text-xs font-medium">
@@ -83,7 +83,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
       <div className="bg-foreground px-6 py-3">
         <div className="flex gap-1">
           {[
-            { key: 'overview', label: 'Visão Geral', count: null },
+            { key: 'overview', label: 'Visão geral', count: null },
             { key: 'ingredients', label: 'Ingredientes', count: ingredients.length },
             { key: 'details', label: 'Detalhes', count: null },
           ].map(tab => (
@@ -125,7 +125,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                     <span
                       className={`text-sm font-medium ${isProfit ? 'text-on-great' : 'text-on-bad'}`}
                     >
-                      Margem de Lucro
+                      Margem de lucro
                     </span>
                   </div>
                   <div
@@ -147,7 +147,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               <div className="bg-muted rounded-lg p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <Calculator className="text-muted-foreground h-4 w-4" />
-                  <span className="text-muted-foreground text-sm font-medium">Custo Total</span>
+                  <span className="text-muted-foreground text-sm font-medium">Custo total</span>
                 </div>
                 <div className="text-card-foreground text-2xl font-bold">
                   {formatCurrency(totalCost)}
@@ -158,7 +158,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
               <div className="bg-muted rounded-lg p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <DollarSign className="text-muted-foreground h-4 w-4" />
-                  <span className="text-muted-foreground text-sm font-medium">Preço de Venda</span>
+                  <span className="text-muted-foreground text-sm font-medium">Preço de venda</span>
                 </div>
                 <div className="text-primary text-2xl font-bold">
                   {formatCurrency(sellingPrice)}
@@ -191,15 +191,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             <div className="bg-info rounded-lg p-4">
               <div className="mb-2 flex items-center gap-2">
                 <Package className="text-on-info h-4 w-4" />
-                <span className="text-on-info text-sm font-medium">Informações de Produção</span>
+                <span className="text-on-info text-sm font-medium">Informações de produção</span>
               </div>
               {mode === 'lote' ? (
                 <div className="text-on-info text-sm">
-                  <strong>Produção em Lote:</strong> {yieldQuantity} unidades por lote
+                  <strong>Produção em lote:</strong> {yieldQuantity} unidades por lote
                 </div>
               ) : (
                 <div className="text-on-info text-sm">
-                  <strong>Produção Individual:</strong> 1 unidade por lote
+                  <strong>Produção individual:</strong> 1 unidade por lote
                 </div>
               )}
             </div>
@@ -212,7 +212,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <PieChart className="text-primary h-5 w-5" />
-                <span className="text-card-foreground font-medium">Composição do Produto</span>
+                <span className="text-card-foreground font-medium">Composição do produto</span>
               </div>
               <span className="text-muted-foreground text-sm">
                 {ingredients.length} ingredientes
@@ -259,7 +259,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             {/* Total dos ingredientes */}
             <div className="border-border border-t pt-4">
               <div className="bg-primary text-primary-foreground flex items-center justify-between rounded-lg p-3">
-                <span className="font-medium">Total dos Ingredientes</span>
+                <span className="font-medium">Total dos ingredientes</span>
                 <span className="text-lg font-bold">
                   {formatCurrency(
                     ingredients.reduce(
@@ -277,10 +277,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
           <div className="space-y-6">
             {/* Informações do produto */}
             <div>
-              <h4 className="text-card-foreground mb-3 font-medium">Informações do Produto</h4>
+              <h4 className="text-card-foreground mb-3 font-medium">Informações do produto</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-muted-foreground text-sm">ID do Produto</label>
+                  <label className="text-muted-foreground text-sm">ID do produto</label>
                   <div className="bg-muted border-border rounded border p-2 font-mono text-sm">
                     {product.uid}
                   </div>
@@ -293,14 +293,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-muted-foreground text-sm">Modo de Produção</label>
+                  <label className="text-muted-foreground text-sm">Modo de produção</label>
                   <div className="flex items-center gap-2 p-2">
                     <Scale className="text-muted-foreground h-4 w-4" />
                     <span className="text-sm capitalize">{mode}</span>
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-muted-foreground text-sm">Última Atualização</label>
+                  <label className="text-muted-foreground text-sm">Última atualização</label>
                   <div className="p-2 text-sm">{new Date().toLocaleDateString('pt-BR')}</div>
                 </div>
               </div>
@@ -309,11 +309,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
             {/* Análise financeira detalhada */}
             <div>
               <h4 className="text-card-foreground mb-3 font-medium">
-                Análise Financeira Detalhada
+                Análise financeira detalhada
               </h4>
               <div className="space-y-3">
                 <div className="border-border flex items-center justify-between border-b py-2">
-                  <span className="text-muted-foreground">Custo por Ingrediente</span>
+                  <span className="text-muted-foreground">Custo por ingrediente</span>
                   <span className="font-medium">
                     {formatCurrency(
                       ingredients.reduce(
@@ -324,15 +324,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
                   </span>
                 </div>
                 <div className="border-border flex items-center justify-between border-b py-2">
-                  <span className="text-muted-foreground">Custo Total</span>
+                  <span className="text-muted-foreground">Custo total</span>
                   <span className="font-medium">{formatCurrency(totalCost)}</span>
                 </div>
                 <div className="border-border flex items-center justify-between border-b py-2">
-                  <span className="text-muted-foreground">Preço de Venda</span>
+                  <span className="text-muted-foreground">Preço de venda</span>
                   <span className="text-on-great font-medium">{formatCurrency(sellingPrice)}</span>
                 </div>
                 <div className="bg-muted flex items-center justify-between rounded-lg px-3 py-2">
-                  <span className="font-medium">Resultado Final</span>
+                  <span className="font-medium">Resultado final</span>
                   <span
                     className={`text-lg font-bold ${isProfit ? 'text-on-great' : 'text-on-bad'}`}
                   >
@@ -345,16 +345,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onRem
 
             {/* Métricas unitárias */}
             <div>
-              <h4 className="text-card-foreground mb-3 font-medium">Métricas Unitárias</h4>
+              <h4 className="text-card-foreground mb-3 font-medium">Métricas unitárias</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-muted rounded-lg p-3">
-                  <div className="text-muted-foreground mb-1 text-sm">Custo por Unidade</div>
+                  <div className="text-muted-foreground mb-1 text-sm">Custo por unidade</div>
                   <div className="text-card-foreground text-lg font-bold">
                     {formatCurrency(unitCost)}
                   </div>
                 </div>
                 <div className="bg-muted rounded-lg p-3">
-                  <div className="text-muted-foreground mb-1 text-sm">Preço por Unidade</div>
+                  <div className="text-muted-foreground mb-1 text-sm">Preço por unidade</div>
                   <div className="text-on-great text-lg font-bold">
                     {formatCurrency(unitSellingPrice)}
                   </div>

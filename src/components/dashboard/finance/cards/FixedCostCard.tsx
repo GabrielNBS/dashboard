@@ -7,7 +7,7 @@ export default function FixedCostCard({
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
   return (
     <CardWrapper
-      title="Custo Fixo Total"
+      title="Custo fixo total"
       value={summary.totalFixedCost}
       type="currency"
       {...props}

@@ -36,9 +36,9 @@ export default function SettingsPage() {
     useConfirmation();
 
   const sections = [
-    { id: 'store', label: 'Dados da Loja', icon: Store },
-    { id: 'fixed-costs', label: 'Custos Fixos', icon: DollarSign },
-    { id: 'variable-costs', label: 'Custos Variáveis', icon: Calculator },
+    { id: 'store', label: 'Dados da loja', icon: Store },
+    { id: 'fixed-costs', label: 'Custos fixos', icon: DollarSign },
+    { id: 'variable-costs', label: 'Custos variáveis', icon: Calculator },
     { id: 'financial', label: 'Configurações Financeiras', icon: DollarSign },
     { id: 'payment-fees', label: 'Taxas de Pagamento', icon: CreditCard },
     { id: 'system', label: 'Sistema', icon: Cog },

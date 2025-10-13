@@ -17,16 +17,43 @@ export default function IngredientSelector() {
 
   const [inputValue, setInputValue] = useState('');
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
-  const [quantityUtilized, setQuantity] = useState<string>('1');
+  const [, setQuantity] = useState<string>('1');
+  const [displayQuantity, setDisplayQuantity] = useState<string>('1');
+
+  // Converte valor de display para valor real baseado na unidade
+  const convertDisplayToReal = (displayValue: string, unit: string): number => {
+    const parsed = parseFloat(displayValue);
+    if (isNaN(parsed) || parsed <= 0) return 0;
+
+    // Para kg e l, o usuário digita em gramas/ml, então dividimos por 1000
+    if (unit === 'kg' || unit === 'l') {
+      return parsed / 1000;
+    }
+
+    return parsed;
+  };
+
+  // Converte valor real para valor de display baseado na unidade
+  const convertRealToDisplay = (realValue: string, unit: string): string => {
+    const parsed = parseFloat(realValue);
+    if (isNaN(parsed) || parsed <= 0) return '';
+
+    // Para kg e l, mostramos em gramas/ml
+    if (unit === 'kg' || unit === 'l') {
+      return (parsed * 1000).toString();
+    }
+
+    return realValue;
+  };
 
   // Função para calcular o custo usando preço médio ponderado
-  const getTotalPrice = (quantityUtilized: string, ingredient: Ingredient): string => {
-    const parsed = parseFloat(quantityUtilized);
+  const getTotalPrice = (displayQuantity: string, ingredient: Ingredient): string => {
+    const realQuantity = convertDisplayToReal(displayQuantity, ingredient.unit);
 
-    if (isNaN(parsed) || parsed <= 0) return '0.00';
+    if (realQuantity <= 0) return '0.00';
 
     // Converte a quantidade para unidade base (ex: g, ml, un)
-    const normalized = normalizeQuantity(parsed, ingredient.unit);
+    const normalized = normalizeQuantity(realQuantity, ingredient.unit);
 
     // Usa o preço médio ponderado atual
     const total = normalized * ingredient.averageUnitPrice;
@@ -35,39 +62,39 @@ export default function IngredientSelector() {
   };
 
   // Verifica se há quantidade suficiente em estoque
-  const hasEnoughStock = (ingredient: Ingredient, requiredQuantity: number): boolean => {
-    const normalizedRequired = normalizeQuantity(requiredQuantity, ingredient.unit);
+  const hasEnoughStock = (ingredient: Ingredient, displayQuantity: string): boolean => {
+    const realQuantity = convertDisplayToReal(displayQuantity, ingredient.unit);
+    const normalizedRequired = normalizeQuantity(realQuantity, ingredient.unit);
     return ingredient.totalQuantity >= normalizedRequired;
   };
 
   const handleSelectIngredient = (ingredient: Ingredient) => {
     setSelectedIngredient(ingredient);
     setInputValue(ingredient.name);
+    // Reset quantity when selecting new ingredient
+    setQuantity('0');
+    setDisplayQuantity(convertRealToDisplay('0', ingredient.unit));
   };
 
   const handleAddIngredient = () => {
-    const parsedInput = parseFloat(quantityUtilized);
+    if (!selectedIngredient) return;
 
-    if (
-      !selectedIngredient ||
-      !quantityUtilized ||
-      isNaN(parsedInput) ||
-      parsedInput <= 0 ||
-      !selectedIngredient.name
-    ) {
+    const realQuantity = convertDisplayToReal(displayQuantity, selectedIngredient.unit);
+
+    if (!selectedIngredient || !displayQuantity || realQuantity <= 0 || !selectedIngredient.name) {
       alert('Preencha todos os campos');
       return;
     }
 
     // Verifica se há estoque suficiente (apenas validação, não consome)
-    if (!hasEnoughStock(selectedIngredient, parsedInput)) {
+    if (!hasEnoughStock(selectedIngredient, displayQuantity)) {
       alert(
         `Estoque insuficiente. Disponível: ${selectedIngredient.totalQuantity} ${getBaseUnit(selectedIngredient.unit)}`
       );
       return;
     }
 
-    const normalizedQuantity = normalizeQuantity(parsedInput, selectedIngredient.unit);
+    const normalizedQuantity = normalizeQuantity(realQuantity, selectedIngredient.unit);
 
     const alreadyAdded = finalProduct.ingredients.some(
       ingredient => ingredient.id === selectedIngredient.id
@@ -104,7 +131,8 @@ export default function IngredientSelector() {
     // NÃO chama consumeIngredient aqui - estoque permanece inalterado
 
     setSelectedIngredient(null);
-    setQuantity('1');
+    setQuantity('');
+    setDisplayQuantity('');
     setInputValue('');
   };
 
@@ -116,7 +144,9 @@ export default function IngredientSelector() {
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">Buscar ingrediente</label>
+        <label className="text-card-foreground mb-2 block text-sm font-medium">
+          Buscar ingrediente
+        </label>
         <SearchableInput<Ingredient>
           items={ingredientsWithStock}
           onSelectItem={handleSelectIngredient}
@@ -124,29 +154,30 @@ export default function IngredientSelector() {
           placeholder="Digite o nome do ingrediente..."
           inputValue={inputValue}
           onInputChange={setInputValue}
+          className="bg-surface rounded-md"
         />
       </div>
 
       {selectedIngredient && (
-        <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4">
+        <div className="border-border bg-card space-y-4 rounded-lg border p-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium text-gray-900">{selectedIngredient.name}</h4>
-            <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600">
+            <h4 className="text-card-foreground font-medium">{selectedIngredient.name}</h4>
+            <span className="bg-muted text-muted-foreground rounded-full px-2 py-1 text-xs">
               {selectedIngredient.unit}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="rounded-lg bg-blue-50 p-3">
-              <p className="font-medium text-blue-600">Preço médio</p>
-              <p className="font-semibold text-blue-900">
+            <div className="rounded-lg bg-[var(--color-info)] p-3">
+              <p className="font-medium text-[var(--color-on-info)]">Preço médio</p>
+              <p className="font-semibold text-[var(--color-on-info)]">
                 R$ {selectedIngredient.averageUnitPrice.toFixed(3)}/
                 {getBaseUnit(selectedIngredient.unit)}
               </p>
             </div>
-            <div className="rounded-lg bg-green-50 p-3">
-              <p className="font-medium text-green-600">Estoque disponível</p>
-              <p className="font-semibold text-green-900">
+            <div className="rounded-lg bg-[var(--color-great)] p-3">
+              <p className="font-medium text-[var(--color-on-great)]">Estoque disponível</p>
+              <p className="font-semibold text-[var(--color-on-great)]">
                 {selectedIngredient.totalQuantity} {getBaseUnit(selectedIngredient.unit)}
               </p>
             </div>
@@ -154,60 +185,97 @@ export default function IngredientSelector() {
 
           <div className="flex items-end gap-4">
             <div className="flex-1">
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="text-card-foreground mb-1 block text-sm font-medium">
                 Quantidade necessária
+                {(selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l') && (
+                  <span className="text-muted-foreground ml-1 text-xs">
+                    (em {selectedIngredient.unit === 'kg' ? 'gramas' : 'mililitros'})
+                  </span>
+                )}
               </label>
               <QuantityInput
-                value={quantityUtilized}
-                onChange={setQuantity}
+                value={displayQuantity}
+                onChange={value => {
+                  setDisplayQuantity(value);
+                  const realValue = convertDisplayToReal(value, selectedIngredient.unit);
+                  setQuantity(realValue.toString());
+                }}
                 placeholder="0"
                 className="w-full"
-                unit={getBaseUnit(selectedIngredient.unit)}
-                maxValue={selectedIngredient.unit === 'un' ? 1000 : 100}
+                unit={
+                  selectedIngredient.unit === 'kg'
+                    ? 'g'
+                    : selectedIngredient.unit === 'l'
+                      ? 'ml'
+                      : getBaseUnit(selectedIngredient.unit)
+                }
+                maxValue={
+                  selectedIngredient.unit === 'un'
+                    ? 1000
+                    : selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l'
+                      ? 100000
+                      : 100
+                }
               />
             </div>
             <div className="flex-1">
-              <label className="mb-1 block text-sm font-medium text-gray-700">Custo total</label>
-              <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium">
-                R$ {getTotalPrice(quantityUtilized, selectedIngredient)}
+              <label className="text-card-foreground mb-1 block text-sm font-medium">
+                Custo total
+              </label>
+              <div className="border-border bg-muted rounded-lg border px-3 py-2 text-sm font-medium">
+                R$ {getTotalPrice(displayQuantity, selectedIngredient)}
               </div>
             </div>
             <button
               type="button"
               onClick={handleAddIngredient}
-              className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-              disabled={!hasEnoughStock(selectedIngredient, parseFloat(quantityUtilized) || 0)}
+              className="disabled:bg-muted rounded-lg bg-[var(--color-great)] px-4 py-2 text-sm font-medium text-[var(--color-on-great)] transition-colors hover:bg-[var(--color-great)]/80 disabled:cursor-not-allowed"
+              disabled={!hasEnoughStock(selectedIngredient, displayQuantity)}
             >
               Adicionar
             </button>
           </div>
 
-          <div className="rounded bg-gray-50 p-2 text-xs text-gray-500">
+          <div className="bg-muted text-muted-foreground rounded p-2 text-xs">
             <p>
-              <strong>Quantidade normalizada:</strong>{' '}
+              <strong>Quantidade na receita:</strong>{' '}
               {(() => {
-                const parsed = parseFloat(quantityUtilized);
-                if (!quantityUtilized || isNaN(parsed)) return 0;
-                return normalizeQuantity(parsed, selectedIngredient.unit);
+                const realQuantity = convertDisplayToReal(displayQuantity, selectedIngredient.unit);
+                if (!displayQuantity || realQuantity <= 0) return '0';
+                return `${realQuantity} ${selectedIngredient.unit}`;
               })()}{' '}
-              {getBaseUnit(selectedIngredient.unit)}
+              <span className="text-muted-foreground/70">
+                (normalizada:{' '}
+                {(() => {
+                  const realQuantity = convertDisplayToReal(
+                    displayQuantity,
+                    selectedIngredient.unit
+                  );
+                  if (realQuantity <= 0) return 0;
+                  return normalizeQuantity(realQuantity, selectedIngredient.unit);
+                })()}{' '}
+                {getBaseUnit(selectedIngredient.unit)})
+              </span>
             </p>
           </div>
 
           {/* Mostrar informações dos batches disponíveis */}
           {selectedIngredient.batches.length > 0 && (
             <details className="text-xs">
-              <summary className="cursor-pointer font-medium text-gray-600 hover:text-gray-800">
+              <summary className="text-muted-foreground hover:text-card-foreground cursor-pointer font-medium">
                 Ver lotes em estoque ({selectedIngredient.batches.length})
               </summary>
-              <div className="mt-2 space-y-2 rounded bg-gray-50 p-3">
+              <div className="bg-muted mt-2 space-y-2 rounded p-3">
                 {selectedIngredient.batches.map(batch => (
-                  <div key={batch.id} className="flex items-center justify-between text-gray-600">
+                  <div
+                    key={batch.id}
+                    className="text-muted-foreground flex items-center justify-between"
+                  >
                     <span>{new Date(batch.purchaseDate).toLocaleDateString()}</span>
                     <span className="font-medium">
                       {batch.currentQuantity} {getBaseUnit(selectedIngredient.unit)}
                     </span>
-                    <span className="text-green-600">
+                    <span className="text-[var(--color-on-great)]">
                       R$ {batch.unitPrice.toFixed(3)}/{getBaseUnit(selectedIngredient.unit)}
                     </span>
                   </div>

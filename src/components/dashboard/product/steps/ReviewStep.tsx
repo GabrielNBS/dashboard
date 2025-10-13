@@ -61,7 +61,7 @@ export default function ReviewStep({ data }: ReviewStepProps) {
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
           <div className="loader bg-on-info!"></div>
         </div>
-        <h2 className="text-xl font-bold text-gray-900">Revisar Produto</h2>
+        <h2 className="text-xl font-bold text-gray-900">Revisar produto</h2>
         <p className="mt-1 text-sm text-gray-600">Confira todas as informações antes de salvar</p>
       </div>
 
@@ -69,7 +69,7 @@ export default function ReviewStep({ data }: ReviewStepProps) {
       <div className="rounded-lg border border-gray-200 bg-white p-4">
         <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-gray-900">
           <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-          Informações Básicas
+          Informações básicas
         </h3>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div>
@@ -167,7 +167,7 @@ export default function ReviewStep({ data }: ReviewStepProps) {
             </p>
           </div>
           <div>
-            <span className="text-sm font-medium text-gray-500">Margem Desejada</span>
+            <span className="text-sm font-medium text-gray-500">Margem desejada</span>
             <p className="font-medium text-gray-900">{data.margin}%</p>
           </div>
         </div>

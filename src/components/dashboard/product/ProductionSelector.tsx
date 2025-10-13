@@ -74,7 +74,7 @@ export default function ProductionSelector() {
               });
             }}
             placeholder="Ex: 12 unidades"
-            className="w-full"
+            className="bg-surface w-full"
             unit="un"
             allowDecimals={false}
             maxValue={10000}

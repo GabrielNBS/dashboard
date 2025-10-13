@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import IngredientSelector from '@/components/dashboard/product/IngredientSelector';
 
@@ -13,7 +13,7 @@ export default function IngredientsStep({ data, updateData }: IngredientsStepPro
   const { state } = useProductBuilderContext();
 
   // Atualizar o contador quando ingredientes mudarem
-  React.useEffect(() => {
+  useEffect(() => {
     if (state.ingredients.length !== data.ingredientsCount) {
       updateData({ ingredientsCount: state.ingredients.length });
     }

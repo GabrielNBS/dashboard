@@ -2,14 +2,23 @@ import React from 'react';
 import FormError from './FormError';
 import Button from '../base/Button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Label } from '../base/label';
 import Input from '../base/Input';
 import { IngredientFormData } from '@/schemas/validationSchemas';
-import clsx from 'clsx';
 import { useFormContext } from 'react-hook-form';
 import { NumericInputProps } from '@/types/components';
+import { cn } from '@/utils/utils';
 
-const NumericInput = ({ label, error, quickIncrements = [1, 10], ...props }: NumericInputProps) => {
+interface ExtendedNumericInputProps extends Omit<NumericInputProps, 'size'> {
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const NumericInput = ({
+  label,
+  error,
+  quickIncrements = [1, 10],
+  size = 'lg',
+  ...props
+}: ExtendedNumericInputProps) => {
   const { register, setValue, watch } = useFormContext<IngredientFormData>();
   const name = props.name as keyof IngredientFormData;
 
@@ -26,30 +35,29 @@ const NumericInput = ({ label, error, quickIncrements = [1, 10], ...props }: Num
   };
 
   return (
-    <div className="flex w-full flex-col">
-      <Label
-        htmlFor={props.id}
-        className="text-primary font-foreground block text-center text-base"
-      >
-        {label}
-      </Label>
+    <div className="flex w-full flex-col gap-1">
+      {/* Label do campo */}
+      {label && (
+        <label className="text-foreground mb-1 block text-center text-sm font-medium">
+          {label}
+        </label>
+      )}
 
       <div className="flex w-full flex-col gap-2">
         <div className="relative w-full max-w-[400px]">
           <Input
             {...register(name)}
             {...props}
+            size={size}
+            error={error}
             style={{
               MozAppearance: 'textfield',
               WebkitAppearance: 'none',
               ...props.style,
             }}
-            className={clsx(
-              'border-input bg-background h-14 w-full rounded-xl border-2 px-4 py-3 text-center text-lg font-medium',
-              'focus:border-primary focus:ring-primary transition-all focus:ring-2',
-              'placeholder:text-muted-foreground',
+            className={cn(
+              'text-center text-lg font-medium',
               '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
-              error && 'border-on-critical focus:border-on-critical focus:ring-on-critical',
               props.className
             )}
           />

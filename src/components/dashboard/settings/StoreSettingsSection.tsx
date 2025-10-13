@@ -34,17 +34,17 @@ export default function StoreSettingsSection() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Store className="text-primary h-6 w-6" />
-        <h2 className="text-xl font-semibold">Dados da Loja</h2>
+        <h2 className="text-xl font-semibold">Dados da loja</h2>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Informações Básicas */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">Informações Básicas</h3>
+          <h3 className="text-lg font-medium text-gray-900">Informações básicas</h3>
 
           <div className="space-y-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Nome da Loja *</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">Nome da loja *</label>
               <Input
                 value={state.store.storeName}
                 onChange={e => handleInputChange('storeName', e.target.value)}
@@ -76,7 +76,7 @@ export default function StoreSettingsSection() {
 
         {/* Contato */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">Informações de Contato</h3>
+          <h3 className="text-lg font-medium text-gray-900">Informações de contato</h3>
 
           <div className="space-y-3">
             <div>
@@ -112,7 +112,7 @@ export default function StoreSettingsSection() {
 
       {/* Logo da Loja */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Logo da Loja</h3>
+        <h3 className="text-lg font-medium text-gray-900">Logo da loja</h3>
 
         <div className="flex items-center gap-4">
           {state.store.logo ? (
@@ -136,7 +136,7 @@ export default function StoreSettingsSection() {
           )}
 
           <div className="flex-1">
-            <label className="mb-2 block text-sm font-medium text-gray-700">Upload do Logo</label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">Upload do logo</label>
             <input
               type="file"
               accept="image/*"
@@ -153,7 +153,7 @@ export default function StoreSettingsSection() {
 
       {/* Resumo das Configurações */}
       <div className="bg-muted rounded-lg p-4">
-        <h4 className="mb-2 text-sm font-medium text-gray-900">Resumo das Configurações</h4>
+        <h4 className="mb-2 text-sm font-medium text-gray-900">Resumo das configurações</h4>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-gray-500">Nome:</span>
