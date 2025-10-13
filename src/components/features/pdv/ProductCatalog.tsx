@@ -81,7 +81,7 @@ export default function ProductCatalog({
                               {product.category}
                             </p>
                             <p
-                              className={`ml-2 text-sm font-bold ${inCart ? 'text-primary' : 'text-accent'}`}
+                              className={`ml-2 text-sm font-bold ${inCart ? 'text-primary' : 'text-on-great'}`}
                             >
                               {formatCurrency(sellingPrice)}
                             </p>
@@ -106,7 +106,7 @@ export default function ProductCatalog({
                     {/* Cart Quantity Badge */}
                     {inCart && (
                       <div className="absolute -top-0.5 -right-0.5">
-                        <span className="bg-primary flex h-4 w-4 items-center justify-center rounded-full text-xs font-bold text-white">
+                        <span className="bg-primary text-secondary flex h-4 w-4 items-center justify-center rounded-full text-xs font-bold">
                           {inCart.quantity}
                         </span>
                       </div>
@@ -130,7 +130,7 @@ export default function ProductCatalog({
 
                     <div className="mb-3">
                       <p
-                        className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-accent'}`}
+                        className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-on-great'}`}
                       >
                         {formatCurrency(sellingPrice)}
                       </p>
@@ -138,7 +138,7 @@ export default function ProductCatalog({
 
                     {inCart && (
                       <div className="absolute top-2 right-2">
-                        <span className="bg-primary flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white">
+                        <span className="bg-primary text-secondary flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
                           {inCart.quantity}
                         </span>
                       </div>

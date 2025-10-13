@@ -23,7 +23,7 @@ export default function ShoppingCart({
 }: ShoppingCartProps) {
   return (
     <div className="bg-surface rounded-lg p-6 shadow-sm">
-      <div className="mb-4 flex items-center gap-2">
+      <div className="mb-4 flex items-center gap-2 border-b-1">
         <ShoppingCartIcon className="text-primary h-5 w-5" />
         <h3 className="text-lg font-semibold">Carrinho</h3>
         <span className="text-primary bg-accent-light rounded-full px-2 py-1 text-xs font-medium">
@@ -44,34 +44,41 @@ export default function ShoppingCart({
             const sellingPrice = product.production.sellingPrice;
 
             return (
-              <div key={item.uid} className="flex items-center gap-3 rounded-lg border p-3">
-                <div className="flex-1">
-                  <p className="text-muted-foreground font-medium">{product.name}</p>
-                  <p className="text-muted-foreground text-sm">R$ {sellingPrice.toFixed(2)} cada</p>
-                </div>
-
-                <div className="flex items-center gap-2">
+              <div key={item.uid} className="flex flex-col gap-3 rounded-lg p-3">
+                <div className="mb-4 flex flex-1 justify-around">
+                  <div>
+                    <p className="text-muted-foreground font-medium">{product.name}</p>
+                    <p className="text-muted-foreground text-sm">
+                      R$ {sellingPrice.toFixed(2)} cada
+                    </p>
+                  </div>
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="destructive"
+                    onClick={() => onRemoveFromCart(item.uid)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+
+                <div className="flex items-center gap-2 self-center">
+                  <Button
+                    size="md"
+                    variant="default"
                     onClick={() => onUpdateQuantity(item.uid, item.quantity - 1)}
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
                   <span className="w-8 text-center font-medium">{item.quantity}</span>
                   <Button
-                    size="sm"
-                    variant="outline"
+                    size="md"
+                    variant="default"
                     onClick={() => onUpdateQuantity(item.uid, item.quantity + 1)}
                     disabled={!canMakeProduct(item.uid, item.quantity + 1)}
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
                 </div>
-
-                <Button size="sm" variant="destructive" onClick={() => onRemoveFromCart(item.uid)}>
-                  <Trash2 className="h-3 w-3" />
-                </Button>
               </div>
             );
           })}

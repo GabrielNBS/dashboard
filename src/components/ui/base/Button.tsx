@@ -10,7 +10,7 @@ export const button = tv({
       default: 'bg-primary hover:bg-primary/98 text-secondary',
       accept: 'bg-great hover:bg-great-hover text-on-great',
       edit: 'bg-warning hover:bg-warning-hover text-on-warning',
-      destructive: 'bg-critical hover:bg-critical-hover text-on-critical',
+      destructive: 'bg-bad hover:bg-bad-hover text-on-bad',
       outline: 'border border-border text-foreground hover:bg-muted',
       ghost: 'bg-transparent text-foreground hover:bg-muted',
       link: 'bg-transparent underline-offset-4 hover:underline text-accent hover:bg-transparent',
