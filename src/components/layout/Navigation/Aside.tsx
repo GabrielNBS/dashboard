@@ -9,6 +9,7 @@ import { useSidebar } from '../MainLayout';
 
 import { LogOut } from 'lucide-react';
 import LordIcon, { LordIconRef } from '@/components/ui/LordIcon';
+import { useSettings } from '@/contexts/settings/SettingsContext';
 
 interface MenuItemProps {
   label: string;
@@ -145,6 +146,15 @@ const menuItems = [
 export default function Aside() {
   const pathname = usePathname();
   const { isExpanded, setIsExpanded } = useSidebar();
+  const { state } = useSettings();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Evita problemas de hidratação usando um fallback consistente
+  const logoSrc = mounted && state.store.logo ? state.store.logo : 'https://placehold.co/150';
 
   return (
     <motion.aside
@@ -166,11 +176,12 @@ export default function Aside() {
           className="bg-accent overflow-hidden rounded-full"
         >
           <Image
-            src="https://placehold.co/150"
+            src={logoSrc}
             alt="Avatar do usuário"
             width={48}
             height={48}
             className="h-full w-full object-cover"
+            priority={false}
           />
         </motion.div>
       </div>
