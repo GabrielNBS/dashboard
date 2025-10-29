@@ -1,6 +1,5 @@
 'use client';
 
-import { useHydrated } from '@/hooks/ui/useHydrated';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useDashboardMetrics } from '@/hooks/business/useDashboardMetrics';
 
@@ -20,13 +19,8 @@ import { formatCurrency } from '@/utils/UnifiedUtils';
 export default function DashboardContent() {
   const { state: settings } = useSettings();
   const { summary, trending, chartData, aggregatedData } = useDashboardMetrics();
-  const hydrated = useHydrated();
 
   const { storeName } = settings.store;
-
-  if (!hydrated) {
-    return <p>Carregando ...</p>;
-  }
 
   return (
     <main className="bg-surface flex min-h-screen flex-col gap-6 p-6">

@@ -13,7 +13,6 @@ import { useSalesFilter } from '@/hooks/ui/useUnifiedFilter';
 import MetroTilesKPIs from '@/components/features/finance/MetroTilesKPIs';
 import SalesTable from '@/components/features/finance/SalesTable';
 import CollapsibleFilters from '@/components/features/finance/CollapsibleFilters';
-import { useHydrated } from '@/hooks/ui/useHydrated';
 
 // Enhanced sale type with searchable content for filtering
 type SearchableSale = Sale & { searchableContent: string };
@@ -23,7 +22,6 @@ export default function Finance() {
   const { handleRemoveSale, confirmationState, hideConfirmation, handleConfirm } =
     useFinanceActions();
   const contentRef = useRef<HTMLDivElement>(null);
-  const hydrated = useHydrated();
 
   // Create searchable sales data - memoized for performance
   const searchableSales = useMemo((): SearchableSale[] => {
@@ -46,10 +44,6 @@ export default function Finance() {
   } = useSalesFilter(searchableSales);
 
   const financialSummary = useFinanceSummary(filteredItems);
-
-  if (!hydrated) {
-    return <p>Carregando...</p>;
-  }
 
   return (
     <>

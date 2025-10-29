@@ -108,13 +108,20 @@ export function GenericListContainer<T extends FilterableItem>({
 
   // Loading state
   if (isLoading) {
+    const GenericListSkeleton = React.lazy(() => import('./skeletons/GenericListSkeleton'));
     return (
-      <div className="flex h-64 items-center justify-center rounded-lg border">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="border-muted-foreground border-t-accent h-8 w-8 animate-spin rounded-full border-2"></div>
-          <p className="text-muted text-sm">Carregando...</p>
-        </div>
-      </div>
+      <React.Suspense
+        fallback={
+          <div className="flex h-64 items-center justify-center rounded-lg border">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="border-muted-foreground border-t-accent h-8 w-8 animate-spin rounded-full border-2"></div>
+              <p className="text-muted text-sm">Carregando...</p>
+            </div>
+          </div>
+        }
+      >
+        <GenericListSkeleton gridCols={gridCols} />
+      </React.Suspense>
     );
   }
 

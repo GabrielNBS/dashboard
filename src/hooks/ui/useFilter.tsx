@@ -114,11 +114,14 @@ export function SearchResultsContainer<T extends FilterableItem>({
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center rounded-lg border">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="border-muted-foreground border-t-accent h-8 w-8 animate-spin rounded-full border-2"></div>
-          <p className="text-muted text-sm">Carregando...</p>
-        </div>
+      <div className="space-y-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+            <div className="mb-2 h-5 w-full animate-pulse rounded bg-gray-200" />
+            <div className="mb-2 h-4 w-3/4 animate-pulse rounded bg-gray-200" />
+            <div className="h-4 w-1/2 animate-pulse rounded bg-gray-200" />
+          </div>
+        ))}
       </div>
     );
   }

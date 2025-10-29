@@ -26,7 +26,6 @@ import VariableCostsSection from '@/components/dashboard/settings/VariableCostsS
 import FinancialSettingsSection from '@/components/dashboard/settings/FinancialSettingsSection';
 import PaymentFeesSection from '@/components/dashboard/settings/PaymentFeesSection';
 import SystemSettingsSection from '@/components/dashboard/settings/SystemSettingsSection';
-import { useHydrated } from '@/hooks/ui/useHydrated';
 
 export default function SettingsPage() {
   const { saveSettings, resetSettings } = useSettings();
@@ -93,12 +92,6 @@ export default function SettingsPage() {
         return <StoreSettingsSection />;
     }
   };
-
-  const hydrated = useHydrated();
-
-  if (!hydrated) {
-    return <p>Carregando ...</p>;
-  }
 
   return (
     <div className="flex flex-col gap-6 p-6">

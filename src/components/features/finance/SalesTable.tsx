@@ -3,7 +3,7 @@
 import React from 'react';
 import { Sale, PaymentMethod, PAYMENT_METHODS } from '@/types/sale';
 import Button from '@/components/ui/base/Button';
-import { useHydrated } from '@/hooks/ui/useHydrated';
+
 import { DollarSign, CreditCard } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { JSX } from 'react';
@@ -16,8 +16,6 @@ interface SalesTableProps {
 }
 
 export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
-  const hydrated = useHydrated();
-
   // Mapa de ícones por método de pagamento
   const PAYMENT_ICONS: Record<PaymentMethod, JSX.Element> = {
     dinheiro: <DollarSign className="text-accent h-5 w-5" />,
@@ -28,10 +26,6 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
 
   function getPaymentIcon(method: PaymentMethod) {
     return PAYMENT_ICONS[method];
-  }
-
-  if (!hydrated) {
-    return <p>Carregando...</p>;
   }
 
   return (

@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 import { Ingredient } from '@/types/ingredients';
-import { useHydrated } from '@/hooks/ui/useHydrated';
+
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { Package, BadgeDollarSign, AlertTriangle, AlertOctagon } from 'lucide-react';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
@@ -31,7 +31,6 @@ interface IngredientWithStatus extends Ingredient {
 export default function IngredientCardList() {
   const { state, dispatch } = useIngredientContext();
   const { ingredients } = state;
-  const hydrated = useHydrated();
   const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
     useConfirmation();
 
@@ -72,10 +71,6 @@ export default function IngredientCardList() {
       ingredientsTotalValue,
     };
   }, [ingredients, ingredientsWithStatus]);
-
-  if (!hydrated) {
-    return <GenericListContainer items={[]} isLoading={true} renderItem={() => null} />;
-  }
 
   const handleDelete = (id: string) => {
     const ingredient = ingredients.find(i => i.id === id);

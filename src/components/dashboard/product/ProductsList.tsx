@@ -13,10 +13,9 @@ import {
   createFilterStatsConfig,
   createAddItemEmptyState,
 } from '@/components/ui/GenericListContainer';
-import { useHydrated } from '@/hooks/ui/useHydrated';
+import ProductsListSkeleton from '@/components/ui/skeletons/ProductsListSkeleton';
 
 const ProductsList: React.FC = () => {
-  const hydrated = useHydrated();
   const { state, dispatch } = useProductContext();
   const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
     useConfirmation();
@@ -32,7 +31,7 @@ const ProductsList: React.FC = () => {
   } = useProductFilter(state?.products || []);
 
   if (!state) {
-    return <GenericListContainer items={[]} isLoading={true} renderItem={() => null} />;
+    return <ProductsListSkeleton />;
   }
 
   const handleRemoveProduct = (productId: string): void => {
@@ -75,28 +74,6 @@ const ProductsList: React.FC = () => {
   );
 
   const emptyStateConfig = createAddItemEmptyState('produto', handleAddProduct, !!search, search);
-
-  if (!hydrated) {
-    return (
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-            <span className="text-muted-foreground text-sm">Carregando produtos...</span>
-          </div>
-          <div className="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="w-full lg:w-auto lg:flex-shrink-0">
-              <div className="h-10 w-full animate-pulse rounded-lg bg-gray-200 sm:w-80" />
-            </div>
-          </div>
-        </div>
-        <div className="bg-muted flex flex-col items-center justify-center gap-4 rounded-lg px-4 py-8 sm:py-12">
-          <div className="h-16 w-16 animate-pulse rounded bg-gray-300" />
-          <div className="h-6 w-48 animate-pulse rounded bg-gray-300" />
-          <div className="h-4 w-64 animate-pulse rounded bg-gray-300" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>

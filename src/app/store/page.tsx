@@ -1,8 +1,36 @@
 'use client';
 
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 import ProductForm from '@/components/dashboard/store/IngredientForm';
 import ProductEditModal from '@/components/dashboard/store/IngredientEditPanel';
 import ProductTable from '@/components/dashboard/store/IngredientList';
+
+// Componente para simular carregamento assíncrono
+function AsyncProductTable() {
+  return (
+    <Suspense fallback={<ProductTableSkeleton />}>
+      <ProductTable />
+    </Suspense>
+  );
+}
+
+// Skeleton específico para a tabela de produtos
+function ProductTableSkeleton() {
+  return (
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-9 w-32" />
+      </div>
+      <div className="space-y-2">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Store() {
   return (
@@ -14,7 +42,7 @@ export default function Store() {
         </p>
       </div>
       <ProductForm />
-      <ProductTable />
+      <AsyncProductTable />
       <ProductEditModal />
     </div>
   );

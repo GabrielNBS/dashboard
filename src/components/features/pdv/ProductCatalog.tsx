@@ -5,7 +5,7 @@ import { PackagePlus, Plus } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { CartItem } from '@/types/sale';
 import { ProductState } from '@/types/products';
-import { useHydrated } from '@/hooks/ui/useHydrated';
+
 import { formatCurrency } from '@/utils/UnifiedUtils';
 
 import EmptyList from '@/components/ui/feedback/EmptyList';
@@ -23,12 +23,6 @@ export default function ProductCatalog({
   onAddToCart,
   canMakeProduct,
 }: ProductCatalogProps) {
-  const hydrated = useHydrated();
-
-  if (!hydrated) {
-    return <p>carregando ...</p>;
-  }
-
   products.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
