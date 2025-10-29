@@ -1,8 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Aside from './Navigation/Aside';
 import MobileHeader from './Headers/MobileHeader';
+import { useSmartPrefetch } from '@/hooks/ui/usePrefetch';
+import ResourcePreloader from '@/components/ui/ResourcePreloader';
+import { usePerformanceMonitor } from '@/hooks/ui/usePerformanceMonitor';
 
 interface SidebarContextType {
   isExpanded: boolean;
@@ -25,9 +29,25 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const pathname = usePathname();
+  const { prefetchRelatedRoutes } = useSmartPrefetch();
+  const { measureRouteChange } = usePerformanceMonitor();
+
+  // Prefetch inteligente baseado na rota atual
+  useEffect(() => {
+    const endMeasurement = measureRouteChange();
+
+    const timer = setTimeout(() => {
+      prefetchRelatedRoutes(pathname);
+      endMeasurement(); // Finaliza a medição da mudança de rota
+    }, 100); // Pequeno delay para não interferir no carregamento inicial
+
+    return () => clearTimeout(timer);
+  }, [pathname, prefetchRelatedRoutes, measureRouteChange]);
 
   return (
     <SidebarContext.Provider value={{ isExpanded, setIsExpanded }}>
+      <ResourcePreloader />
       <div className="bg-muted/30 min-h-dvh antialiased">
         {/* Header mobile para dispositivos pequenos */}
         <MobileHeader />

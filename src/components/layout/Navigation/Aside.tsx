@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import PrefetchLink from '@/components/ui/PrefetchLink';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -34,55 +34,60 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
 
   return (
     <li className="relative">
-      <Link
+      <PrefetchLink
         href={href}
         className={`group/item relative flex items-center rounded-lg px-3 py-3 font-medium transition-colors duration-200 ${
           isActive
             ? 'bg-primary text-white shadow-sm'
             : 'text-foreground hover:bg-muted hover:text-foreground'
         }`}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        prefetch={true}
       >
-        {icon === 'lordicon' && lordIconSrc ? (
-          <LordIcon
-            ref={iconRef}
-            src={lordIconSrc}
-            width={20}
-            height={20}
-            className="flex-shrink-0"
-            isActive={isActive}
-            isHovered={isHovered}
-          />
-        ) : (
-          typeof icon !== 'string' &&
-          (() => {
-            const IconComponent = icon as React.ComponentType<{ className?: string }>;
-            return (
-              <IconComponent
-                className={`h-5 w-5 flex-shrink-0 transition-colors ${
-                  isActive
-                    ? 'text-primary-foreground'
-                    : 'text-muted-foreground group-hover/item:text-foreground'
-                }`}
-              />
-            );
-          })()
-        )}
-
-        <motion.span
-          initial={false}
-          animate={{
-            opacity: isExpanded ? 1 : 0,
-            x: isExpanded ? 0 : -10,
-            width: isExpanded ? 'auto' : 0,
-          }}
-          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-          className="ml-3 overflow-hidden whitespace-nowrap"
+        <div
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className="flex w-full items-center"
         >
-          {label}
-        </motion.span>
-      </Link>
+          {icon === 'lordicon' && lordIconSrc ? (
+            <LordIcon
+              ref={iconRef}
+              src={lordIconSrc}
+              width={20}
+              height={20}
+              className="flex-shrink-0"
+              isActive={isActive}
+              isHovered={isHovered}
+            />
+          ) : (
+            typeof icon !== 'string' &&
+            (() => {
+              const IconComponent = icon as React.ComponentType<{ className?: string }>;
+              return (
+                <IconComponent
+                  className={`h-5 w-5 flex-shrink-0 transition-colors ${
+                    isActive
+                      ? 'text-primary-foreground'
+                      : 'text-muted-foreground group-hover/item:text-foreground'
+                  }`}
+                />
+              );
+            })()
+          )}
+
+          <motion.span
+            initial={false}
+            animate={{
+              opacity: isExpanded ? 1 : 0,
+              x: isExpanded ? 0 : -10,
+              width: isExpanded ? 'auto' : 0,
+            }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="ml-3 overflow-hidden whitespace-nowrap"
+          >
+            {label}
+          </motion.span>
+        </div>
+      </PrefetchLink>
 
       {/* Tooltip para quando colapsado */}
       <div

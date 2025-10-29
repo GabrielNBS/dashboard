@@ -23,3 +23,17 @@
         box-shadow: 0 0 0 14px #69ffa800;
     }
 }
+
+/* Performance optimizations - no animations to prevent jumps */
+main {
+    contain: layout style;
+    transform: translateZ(0);
+    /* Hardware acceleration */
+}
+
+/* Smooth rendering without transitions */
+.page-container {
+    min-height: 100vh;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
