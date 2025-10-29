@@ -8,8 +8,8 @@
 console.log('🚀 Testando Otimizações de Performance...\n');
 
 // Verificar se os arquivos de configuração existem
-const fs = require('fs');
-const path = require('path');
+import { existsSync, readFileSync } from 'fs';
+import { join } from 'path';
 
 const requiredFiles = [
   'next.config.ts',
@@ -23,7 +23,7 @@ const requiredFiles = [
 
 console.log('📁 Verificando arquivos de configuração...');
 requiredFiles.forEach(file => {
-  if (fs.existsSync(path.join(process.cwd(), file))) {
+  if (existsSync(join(process.cwd(), file))) {
     console.log(`✅ ${file}`);
   } else {
     console.log(`❌ ${file} - FALTANDO`);
@@ -43,7 +43,7 @@ const skeletonFiles = [
 ];
 
 skeletonFiles.forEach(file => {
-  if (fs.existsSync(path.join(process.cwd(), file))) {
+  if (existsSync(join(process.cwd(), file))) {
     console.log(`✅ ${file}`);
   } else {
     console.log(`❌ ${file} - FALTANDO`);
@@ -53,7 +53,7 @@ skeletonFiles.forEach(file => {
 // Verificar configurações no next.config.ts
 console.log('\n⚙️ Verificando configurações do Next.js...');
 try {
-  const configContent = fs.readFileSync('next.config.ts', 'utf8');
+  const configContent = readFileSync('next.config.ts', 'utf8');
 
   const checks = [
     { name: 'Image Optimization', pattern: /images:\s*{/ },
@@ -77,7 +77,7 @@ try {
 // Verificar middleware
 console.log('\n🌐 Verificando middleware...');
 try {
-  const middlewareContent = fs.readFileSync('middleware.ts', 'utf8');
+  const middlewareContent = readFileSync('middleware.ts', 'utf8');
 
   if (middlewareContent.includes('X-DNS-Prefetch-Control')) {
     console.log('✅ DNS Prefetch configurado');

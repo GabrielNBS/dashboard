@@ -18,6 +18,7 @@ import PricingStep from './steps/PricingStep';
 import ReviewStep from './steps/ReviewStep';
 import { Check, CheckCheck } from 'lucide-react';
 import LordIcon from '@/components/ui/LordIcon';
+import { Button } from '@/components/ui/base';
 
 // Configuração dos steps com ícones LordIcon
 // Os ícones mantêm animação ativa (loop) quando estão na seção atual
@@ -529,17 +530,17 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
       {/* Botões de navegação - altura fixa */}
       <div className="flex-shrink-0 border-t border-gray-200 pt-4">
         <div className="flex justify-between">
-          <button
+          <Button
             type="button"
             onClick={prevStep}
             disabled={currentStep === 0}
             className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Voltar
-          </button>
+          </Button>
 
           {isLastStep ? (
-            <button
+            <Button
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
@@ -558,16 +559,16 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
                   {isEditMode ? 'Atualizar Produto' : 'Criar Produto'}
                 </>
               )}
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
               onClick={nextStep}
               className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             >
               Próximo
               <span>→</span>
-            </button>
+            </Button>
           )}
         </div>
       </div>

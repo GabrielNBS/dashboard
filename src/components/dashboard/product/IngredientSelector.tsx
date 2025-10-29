@@ -10,6 +10,7 @@ import SearchableInput from '@/components/ui/SearcheableInput';
 import { getBaseUnit, normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 import { formatCurrency } from '@/utils/UnifiedUtils';
 import { QuantityInput } from '@/components/ui/forms';
+import { Button } from '@/components/ui/base';
 
 export default function IngredientSelector() {
   const { state: estoque } = useIngredientContext();
@@ -136,6 +137,13 @@ export default function IngredientSelector() {
     setInputValue('');
   };
 
+  const handleCancelSelection = () => {
+    setSelectedIngredient(null);
+    setQuantity('');
+    setDisplayQuantity('');
+    setInputValue('');
+  };
+
   // Filtrar apenas ingredientes que têm estoque
   const ingredientsWithStock = estoque.ingredients.filter(
     ingredient => ingredient.totalQuantity > 0
@@ -171,8 +179,10 @@ export default function IngredientSelector() {
             <div className="rounded-lg bg-[var(--color-info)] p-3">
               <p className="font-medium text-[var(--color-on-info)]">Preço médio</p>
               <p className="font-semibold text-[var(--color-on-info)]">
-                R$ {selectedIngredient.averageUnitPrice.toFixed(3)}/
-                {getBaseUnit(selectedIngredient.unit)}
+                {selectedIngredient.unit === 'un'
+                  ? `R$ ${selectedIngredient.averageUnitPrice.toFixed(2)}`
+                  : ` R$ ${selectedIngredient.averageUnitPrice.toFixed(3)}`}
+                /{getBaseUnit(selectedIngredient.unit)}
               </p>
             </div>
             <div className="rounded-lg bg-[var(--color-great)] p-3">
@@ -226,14 +236,23 @@ export default function IngredientSelector() {
                 R$ {getTotalPrice(displayQuantity, selectedIngredient)}
               </div>
             </div>
-            <button
-              type="button"
-              onClick={handleAddIngredient}
-              className="disabled:bg-muted rounded-lg bg-[var(--color-great)] px-4 py-2 text-sm font-medium text-[var(--color-on-great)] transition-colors hover:bg-[var(--color-great)]/80 disabled:cursor-not-allowed"
-              disabled={!hasEnoughStock(selectedIngredient, displayQuantity)}
-            >
-              Adicionar
-            </button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                onClick={handleCancelSelection}
+                className="rounded-lg bg-[var(--color-danger)] px-4 py-2 text-sm font-medium text-[var(--color-on-danger)] transition-colors hover:bg-[var(--color-danger)]/80"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="button"
+                onClick={handleAddIngredient}
+                className="disabled:bg-muted rounded-lg bg-[var(--color-great)] px-4 py-2 text-sm font-medium text-[var(--color-on-great)] transition-colors hover:bg-[var(--color-great)]/80 disabled:cursor-not-allowed"
+                disabled={!hasEnoughStock(selectedIngredient, displayQuantity)}
+              >
+                Adicionar
+              </Button>
+            </div>
           </div>
 
           <div className="bg-muted text-muted-foreground rounded p-2 text-xs">
