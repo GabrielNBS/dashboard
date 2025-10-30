@@ -23,7 +23,7 @@ export default function ProductsListSkeleton() {
       {/* Products Grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+          <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
             {/* Product Image */}
             <div className="mb-4 flex justify-center">
               <Skeleton className="h-32 w-32 rounded-lg" />
@@ -70,11 +70,11 @@ export default function ProductsListSkeleton() {
       </div>
 
       {/* Category Summary */}
-      <div className="rounded-lg bg-gray-50 p-4 shadow-md">
+      <div className="bg-muted rounded-lg p-4 shadow-md">
         <Skeleton className="mb-3 h-4 w-40" />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded bg-white p-3">
+            <div key={i} className="bg-card rounded p-3">
               <Skeleton className="mb-2 h-4 w-24" />
               <div className="space-y-1">
                 <Skeleton className="h-3 w-20" />

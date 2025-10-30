@@ -110,23 +110,25 @@ export default function FixedCostsSection() {
       </div>
 
       {/* Resumo */}
-      <div className="rounded-lg bg-blue-50 p-4">
-        <h3 className="mb-2 text-lg font-medium text-blue-900">Resumo dos custos fixos</h3>
+      <div className="bg-primary/10 rounded-lg p-4">
+        <h3 className="text-primary mb-2 text-lg font-medium">Resumo dos custos fixos</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-blue-600">Total de custos:</span>
-            <span className="ml-2 font-bold text-blue-900">R$ {totalFixedCosts.toFixed(2)}</span>
+            <span className="text-primary">Total de custos:</span>
+            <span className="text-foreground ml-2 font-bold">R$ {totalFixedCosts.toFixed(2)}</span>
           </div>
           <div>
-            <span className="text-blue-600">Quantidade:</span>
-            <span className="ml-2 font-bold text-blue-900">{state.fixedCosts.length} custo(s)</span>
+            <span className="text-primary">Quantidade:</span>
+            <span className="text-foreground ml-2 font-bold">
+              {state.fixedCosts.length} custo(s)
+            </span>
           </div>
         </div>
       </div>
 
       {/* Formulário de Edição */}
       {editingCost && (
-        <div className="space-y-4 rounded-lg bg-gray-50 p-4">
+        <div className="bg-muted space-y-4 rounded-lg p-4">
           <h3 className="text-lg font-medium">
             {isAdding ? 'Adicionar novo custo fixo' : 'Editar custo fixo'}
           </h3>

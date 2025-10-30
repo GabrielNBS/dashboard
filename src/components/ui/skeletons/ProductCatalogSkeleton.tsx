@@ -3,12 +3,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function ProductCatalogSkeleton() {
   return (
     <div className="w-full">
-      <div className="rounded-lg bg-gray-50 p-3 shadow-sm sm:p-6">
+      <div className="bg-muted rounded-lg p-3 shadow-sm sm:p-6">
         <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-lg bg-white p-4 shadow-sm"
+              className="group bg-card relative overflow-hidden rounded-lg p-4 shadow-sm"
             >
               {/* Mobile Layout Skeleton */}
               <div className="flex items-center gap-3 sm:hidden">

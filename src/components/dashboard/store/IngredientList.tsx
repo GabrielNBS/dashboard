@@ -128,53 +128,53 @@ export default function IngredientCardList() {
       <div className="space-y-4 lg:hidden">
         {/* KPIs Principais - Destaque */}
         <div className="grid grid-cols-1 gap-3">
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-card rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total de Ingredientes</p>
-                <p className="text-xl font-bold text-gray-900">{summary.total}</p>
-                <p className="text-xs text-gray-500">cadastrados</p>
+                <p className="text-muted-foreground text-sm font-medium">Total de Ingredientes</p>
+                <p className="text-foreground text-xl font-bold">{summary.total}</p>
+                <p className="text-muted-foreground text-xs">cadastrados</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500">
-                <Package className="h-6 w-6 text-white" />
+              <div className="bg-primary flex h-12 w-12 items-center justify-center rounded-full">
+                <Package className="text-primary-foreground h-6 w-6" />
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-card rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Valor em estoque</p>
-                <p className="text-xl font-bold text-gray-900">
+                <p className="text-muted-foreground text-sm font-medium">Valor em estoque</p>
+                <p className="text-foreground text-xl font-bold">
                   {formatCurrency(summary.ingredientsTotalValue)}
                 </p>
-                <p className="text-xs text-gray-500">valor total</p>
+                <p className="text-muted-foreground text-xs">valor total</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500">
-                <BadgeDollarSign className="h-6 w-6 text-white" />
+              <div className="bg-accent flex h-12 w-12 items-center justify-center rounded-full">
+                <BadgeDollarSign className="text-accent-foreground h-6 w-6" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Alertas de Estoque - Grid Compacto */}
-        <div className="rounded-lg bg-gray-50 p-3">
-          <h4 className="mb-3 text-sm font-medium text-gray-700">Status do estoque</h4>
+        <div className="bg-muted rounded-lg p-3">
+          <h4 className="text-muted-foreground mb-3 text-sm font-medium">Status do estoque</h4>
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-md bg-white p-3">
+            <div className="bg-card rounded-md p-3">
               <div className="flex items-center gap-2">
-                <AlertOctagon className="h-4 w-4 text-red-500" />
-                <p className="truncate text-xs font-medium text-gray-500">Crítico</p>
+                <AlertOctagon className="text-destructive h-4 w-4" />
+                <p className="text-muted-foreground truncate text-xs font-medium">Crítico</p>
               </div>
-              <p className="text-sm font-bold text-red-600">{summary.critico}</p>
+              <p className="text-destructive text-sm font-bold">{summary.critico}</p>
             </div>
 
-            <div className="rounded-md bg-white p-3">
+            <div className="bg-card rounded-md p-3">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                <p className="truncate text-xs font-medium text-gray-500">Atenção</p>
+                <AlertTriangle className="text-accent h-4 w-4" />
+                <p className="text-muted-foreground truncate text-xs font-medium">Atenção</p>
               </div>
-              <p className="text-sm font-bold text-yellow-600">{summary.atencao}</p>
+              <p className="text-accent text-sm font-bold">{summary.atencao}</p>
             </div>
           </div>
         </div>

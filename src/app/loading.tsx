@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardLoading() {
   return (
-    <main className="flex min-h-screen flex-col gap-6 bg-gray-50 p-6">
+    <main className="bg-background flex min-h-screen flex-col gap-6 p-6">
       {/* Header Skeleton */}
       <header className="space-y-2">
         <Skeleton className="h-7 w-64 sm:h-8 sm:w-80" />
@@ -37,7 +37,7 @@ export default function DashboardLoading() {
             </div>
 
             {/* Secondary KPIs */}
-            <div className="rounded-lg bg-gray-100 p-3">
+            <div className="bg-muted rounded-lg p-3">
               <Skeleton className="mb-3 h-4 w-24" />
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-md bg-white p-3">

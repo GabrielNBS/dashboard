@@ -10,7 +10,7 @@ export default function StoreLoading() {
       </div>
 
       {/* Product Form Skeleton */}
-      <div className="w-full space-y-4 rounded-lg bg-white p-4 shadow-sm sm:p-6">
+      <div className="bg-card w-full space-y-4 rounded-lg p-4 shadow-sm sm:p-6">
         <Skeleton className="h-5 w-32" />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-2">
@@ -49,9 +49,9 @@ export default function StoreLoading() {
         </div>
 
         {/* Table Skeleton */}
-        <div className="rounded-md bg-white shadow-sm">
+        <div className="bg-card rounded-md shadow-sm">
           {/* Table Header */}
-          <div className="grid grid-cols-4 gap-4 bg-gray-50 p-4 sm:grid-cols-6">
+          <div className="bg-muted grid grid-cols-4 gap-4 p-4 sm:grid-cols-6">
             <Skeleton className="h-4 w-16" />
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-4 w-24" />

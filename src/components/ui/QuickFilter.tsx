@@ -10,8 +10,8 @@ const FILTERS = [
     label: 'Todos',
     description: 'Mostrar todos os itens',
     lordIconSrc: 'https://cdn.lordicon.com/vayiyuqd.json', // filter icon
-    color: 'var(--color-on-info)',
-    bgColor: 'var(--color-info)',
+    color: 'var(--color-muted-foreground)',
+    bgColor: 'var(--color-muted)',
     activeColor: 'var(--color-primary)',
     activeTextColor: 'var(--color-primary-foreground)',
   },
@@ -20,8 +20,8 @@ const FILTERS = [
     label: 'Crítico',
     description: 'Estoque muito baixo - ação imediata',
     lordIconSrc: 'https://cdn.lordicon.com/keaiyjcx.json', // alert circle icon
-    color: 'var(--color-on-bad)',
-    bgColor: 'var(--color-bad)',
+    color: 'var(--color-muted-foreground)',
+    bgColor: 'var(--color-muted)',
     activeColor: 'var(--color-primary)',
     activeTextColor: 'var(--color-primary-foreground)',
   },
@@ -30,8 +30,8 @@ const FILTERS = [
     label: 'Atenção',
     description: 'Estoque baixo - reposição necessária',
     lordIconSrc: 'https://cdn.lordicon.com/aszgxiei.json', // warning triangle icon
-    color: 'var(--color-on-warning)',
-    bgColor: 'var(--color-warning)',
+    color: 'var(--color-muted-foreground)',
+    bgColor: 'var(--color-muted)',
     activeColor: 'var(--color-primary)',
     activeTextColor: 'var(--color-primary-foreground)',
   },
@@ -40,13 +40,12 @@ const FILTERS = [
     label: 'Normal',
     description: 'Estoque adequado - sem problemas',
     lordIconSrc: 'https://cdn.lordicon.com/zdfcfvwu.json', // check circle icon
-    color: 'var(--color-on-great)',
-    bgColor: 'var(--color-great)',
+    color: 'var(--color-muted-foreground)',
+    bgColor: 'var(--color-muted)',
     activeColor: 'var(--color-primary)', // A darker version for active state
     activeTextColor: 'var(--color-primary-foreground)',
   },
 ] as const;
-
 function QuickFilters({
   activeFilter,
   onChange,

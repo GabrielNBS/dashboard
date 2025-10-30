@@ -154,7 +154,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                   </span>
                 }
                 type="custom"
-                bgColor="bg-purple-100"
+                bgColor="bg-primary/10"
                 layout="vertical"
                 className="h-full"
               />

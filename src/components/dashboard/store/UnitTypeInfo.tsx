@@ -57,26 +57,26 @@ export default function UnitTypeInfo({ unit }: UnitTypeInfoProps) {
   const unitInfo = getUnitDescription(unit);
 
   return (
-    <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-      <h3 className="mb-2 font-semibold text-blue-800">{unitInfo.title}</h3>
-      <p className="mb-3 text-sm text-blue-700">{unitInfo.description}</p>
+    <div className="border-primary/20 bg-primary/5 mb-4 rounded-lg border p-4">
+      <h3 className="text-primary mb-2 font-semibold">{unitInfo.title}</h3>
+      <p className="text-primary/80 mb-3 text-sm">{unitInfo.description}</p>
 
       <div className="space-y-2">
         <div className="text-sm">
-          <span className="font-medium text-blue-800">Valor mínimo:</span> {unitInfo.minValue}
+          <span className="text-primary font-medium">Valor mínimo:</span> {unitInfo.minValue}
         </div>
         <div className="text-sm">
-          <span className="font-medium text-blue-800">Valor máximo:</span> {unitInfo.maxValue}
+          <span className="text-primary font-medium">Valor máximo:</span> {unitInfo.maxValue}
         </div>
         <div className="text-sm">
-          <span className="font-medium text-blue-800">Incremento:</span> {unitInfo.step}
+          <span className="text-primary font-medium">Incremento:</span> {unitInfo.step}
         </div>
       </div>
 
       {unitInfo.examples.length > 0 && (
         <div className="mt-3">
-          <span className="text-sm font-medium text-blue-800">Exemplos:</span>
-          <ul className="mt-1 space-y-1 text-sm text-blue-700">
+          <span className="text-primary text-sm font-medium">Exemplos:</span>
+          <ul className="text-primary/80 mt-1 space-y-1 text-sm">
             {unitInfo.examples.map((example, index) => (
               <li key={index} className="text-xs">
                 • {example}
@@ -86,7 +86,7 @@ export default function UnitTypeInfo({ unit }: UnitTypeInfoProps) {
         </div>
       )}
 
-      <div className="mt-3 text-xs text-blue-600">
+      <div className="text-primary/70 mt-3 text-xs">
         <span className="font-medium">Unidade base para cálculos:</span> {getBaseUnit(unit)}
       </div>
     </div>

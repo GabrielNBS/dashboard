@@ -10,7 +10,7 @@ export default function FinanceSkeleton() {
         {/* Mobile Layout */}
         <div className="space-y-4 lg:hidden">
           <div className="grid grid-cols-1 gap-3">
-            <div className="rounded-lg bg-white p-4 shadow-sm">
+            <div className="bg-card rounded-lg p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-24" />
@@ -20,7 +20,7 @@ export default function FinanceSkeleton() {
                 <Skeleton className="h-12 w-12 rounded-full" />
               </div>
             </div>
-            <div className="rounded-lg bg-white p-4 shadow-sm">
+            <div className="bg-card rounded-lg p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-20" />
@@ -32,14 +32,14 @@ export default function FinanceSkeleton() {
             </div>
           </div>
 
-          <div className="rounded-lg bg-gray-50 p-3">
+          <div className="bg-muted rounded-lg p-3">
             <Skeleton className="mb-3 h-4 w-28" />
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-md bg-white p-3">
+              <div className="bg-card rounded-md p-3">
                 <Skeleton className="mb-2 h-3 w-20" />
                 <Skeleton className="h-4 w-16" />
               </div>
-              <div className="rounded-md bg-white p-3">
+              <div className="bg-card rounded-md p-3">
                 <Skeleton className="mb-2 h-3 w-24" />
                 <Skeleton className="h-4 w-12" />
               </div>
@@ -50,7 +50,7 @@ export default function FinanceSkeleton() {
         {/* Desktop Layout */}
         <div className="hidden grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+            <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
                   <Skeleton className="h-4 w-24" />
@@ -65,7 +65,7 @@ export default function FinanceSkeleton() {
       </div>
 
       {/* Filtros Colapsáveis */}
-      <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="bg-card rounded-lg p-4 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <Skeleton className="h-5 w-32" />
           <Skeleton className="h-8 w-8 rounded-md" />
@@ -87,10 +87,10 @@ export default function FinanceSkeleton() {
       {/* Tabela de Vendas */}
       <div className="space-y-3">
         <Skeleton className="h-5 w-40" />
-        <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+        <div className="bg-card overflow-hidden rounded-lg shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50">
+              <thead className="bg-muted">
                 <tr>
                   {Array.from({ length: 8 }).map((_, i) => (
                     <th key={i} className="p-3">
@@ -99,7 +99,7 @@ export default function FinanceSkeleton() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-border bg-card divide-y">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i}>
                     {Array.from({ length: 8 }).map((_, j) => (

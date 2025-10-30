@@ -110,9 +110,9 @@ export default function StoreSettingsSection() {
         </div>
 
         {isFirstSetup && (
-          <div className="rounded-lg bg-blue-50 p-4">
-            <h3 className="mb-2 font-medium text-blue-900">👋 Bem-vindo!</h3>
-            <p className="text-sm text-blue-800">
+          <div className="bg-primary/10 rounded-lg p-4">
+            <h3 className="text-primary mb-2 font-medium">👋 Bem-vindo!</h3>
+            <p className="text-primary/80 text-sm">
               Vamos começar configurando os dados básicos da sua loja. Essas informações serão
               usadas em relatórios e na identificação do seu negócio.
             </p>
@@ -122,14 +122,14 @@ export default function StoreSettingsSection() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Informações Básicas */}
           <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-medium text-gray-900">
-              <Building2 className="h-5 w-5 text-blue-600" />
+            <h3 className="text-foreground flex items-center gap-2 text-lg font-medium">
+              <Building2 className="text-primary h-5 w-5" />
               Informações básicas
             </h3>
 
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="text-muted-foreground mb-1 block text-sm font-medium">
                   Nome da loja *
                 </label>
                 <Input
@@ -143,7 +143,9 @@ export default function StoreSettingsSection() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Segmento *</label>
+                <label className="text-muted-foreground mb-1 block text-sm font-medium">
+                  Segmento *
+                </label>
                 <Input
                   value={formData.segment}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -155,7 +157,7 @@ export default function StoreSettingsSection() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">CNPJ</label>
+                <label className="text-muted-foreground mb-1 block text-sm font-medium">CNPJ</label>
                 <Input
                   value={formData.cnpj}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -169,14 +171,16 @@ export default function StoreSettingsSection() {
 
           {/* Contato */}
           <div className="space-y-4">
-            <h3 className="flex items-center gap-2 text-lg font-medium text-gray-900">
-              <Phone className="h-5 w-5 text-green-600" />
+            <h3 className="text-foreground flex items-center gap-2 text-lg font-medium">
+              <Phone className="text-accent h-5 w-5" />
               Informações de contato
             </h3>
 
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Endereço</label>
+                <label className="text-muted-foreground mb-1 block text-sm font-medium">
+                  Endereço
+                </label>
                 <Input
                   value={formData.address}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -187,7 +191,9 @@ export default function StoreSettingsSection() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Telefone</label>
+                <label className="text-muted-foreground mb-1 block text-sm font-medium">
+                  Telefone
+                </label>
                 <Input
                   value={formData.phone}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -198,7 +204,9 @@ export default function StoreSettingsSection() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
+                <label className="text-muted-foreground mb-1 block text-sm font-medium">
+                  Email
+                </label>
                 <Input
                   type="email"
                   value={formData.email}
@@ -214,8 +222,8 @@ export default function StoreSettingsSection() {
 
         {/* Logo da Loja */}
         <div className="space-y-4">
-          <h3 className="flex items-center gap-2 text-lg font-medium text-gray-900">
-            <Upload className="h-5 w-5 text-purple-600" />
+          <h3 className="text-foreground flex items-center gap-2 text-lg font-medium">
+            <Upload className="text-primary h-5 w-5" />
             Logo da loja
           </h3>
 
@@ -227,32 +235,34 @@ export default function StoreSettingsSection() {
                   alt="Logo da loja"
                   width={80}
                   height={80}
-                  className="h-20 w-20 rounded-lg border border-gray-200 object-cover"
+                  className="border-border h-20 w-20 rounded-lg border object-cover"
                 />
                 <button
                   type="button"
                   onClick={removeLogo}
-                  className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs text-white transition-colors hover:bg-red-600"
+                  className="bg-destructive text-primary-foreground hover:bg-destructive/80 absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full text-xs transition-colors"
                 >
                   ×
                 </button>
               </div>
             ) : (
-              <div className="flex h-20 w-20 items-center justify-center rounded-lg border-2 border-dashed border-gray-300">
-                <Upload className="h-8 w-8 text-gray-400" />
+              <div className="border-border flex h-20 w-20 items-center justify-center rounded-lg border-2 border-dashed">
+                <Upload className="text-muted-foreground h-8 w-8" />
               </div>
             )}
 
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium text-gray-700">Upload do logo</label>
+              <label className="text-muted-foreground mb-2 block text-sm font-medium">
+                Upload do logo
+              </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleLogoUpload}
-                className="file:bg-primary hover:file:bg-primary/90 block w-full text-sm text-gray-500 transition-colors file:mr-4 file:rounded-full file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                className="file:bg-primary hover:file:bg-primary/90 text-muted-foreground file:text-primary-foreground block w-full text-sm transition-colors file:mr-4 file:rounded-full file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold"
                 aria-label="Selecionar arquivo de logo"
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="text-muted-foreground mt-1 text-xs">
                 Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 2MB
               </p>
             </div>
@@ -303,8 +313,8 @@ export default function StoreSettingsSection() {
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
             </div>
           ) : (
-            <div className="flex h-32 w-32 items-center justify-center rounded-2xl border-4 border-dashed border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100">
-              <Store className="h-12 w-12 text-gray-400" />
+            <div className="border-border from-muted to-muted/50 flex h-32 w-32 items-center justify-center rounded-2xl border-4 border-dashed bg-gradient-to-br">
+              <Store className="text-muted-foreground h-12 w-12" />
             </div>
           )}
         </div>
@@ -312,66 +322,66 @@ export default function StoreSettingsSection() {
 
       {/* Informações da Loja */}
       <div className="mb-8 text-center">
-        <h3 className="mb-2 text-3xl font-bold text-gray-900">{state.store.storeName}</h3>
+        <h3 className="text-foreground mb-2 text-3xl font-bold">{state.store.storeName}</h3>
         <div className="mb-6 flex items-center justify-center gap-2">
-          <Tag className="h-5 w-5 text-blue-600" />
-          <span className="text-lg font-medium text-blue-700">{state.store.segment}</span>
+          <Tag className="text-primary h-5 w-5" />
+          <span className="text-primary text-lg font-medium">{state.store.segment}</span>
         </div>
       </div>
 
       {/* Cards de Informações */}
       <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         {state.store.cnpj && (
-          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                <Building2 className="h-5 w-5 text-blue-600" />
+              <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                <Building2 className="text-primary h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">CNPJ</p>
-                <p className="font-semibold text-gray-900">{state.store.cnpj}</p>
+                <p className="text-muted-foreground text-sm">CNPJ</p>
+                <p className="text-foreground font-semibold">{state.store.cnpj}</p>
               </div>
             </div>
           </div>
         )}
 
         {state.store.phone && (
-          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-                <Phone className="h-5 w-5 text-green-600" />
+              <div className="bg-accent/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                <Phone className="text-accent h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Telefone</p>
-                <p className="font-semibold text-gray-900">{state.store.phone}</p>
+                <p className="text-muted-foreground text-sm">Telefone</p>
+                <p className="text-foreground font-semibold">{state.store.phone}</p>
               </div>
             </div>
           </div>
         )}
 
         {state.store.email && (
-          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-                <Mail className="h-5 w-5 text-purple-600" />
+              <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                <Mail className="text-primary h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="font-semibold text-gray-900">{state.store.email}</p>
+                <p className="text-muted-foreground text-sm">Email</p>
+                <p className="text-foreground font-semibold">{state.store.email}</p>
               </div>
             </div>
           </div>
         )}
 
         {state.store.address && (
-          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm md:col-span-2">
+          <div className="border-border bg-card rounded-lg border p-4 shadow-sm md:col-span-2">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100">
                 <MapPin className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Endereço</p>
-                <p className="font-semibold text-gray-900">{state.store.address}</p>
+                <p className="text-muted-foreground text-sm">Endereço</p>
+                <p className="text-foreground font-semibold">{state.store.address}</p>
               </div>
             </div>
           </div>
@@ -379,12 +389,12 @@ export default function StoreSettingsSection() {
       </div>
 
       {/* Status da Configuração */}
-      <div className="rounded-lg bg-green-50 p-4">
+      <div className="bg-accent/10 rounded-lg p-4">
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-green-500"></div>
-          <span className="text-sm font-medium text-green-800">Loja configurada com sucesso</span>
+          <div className="bg-accent h-2 w-2 rounded-full"></div>
+          <span className="text-accent text-sm font-medium">Loja configurada com sucesso</span>
         </div>
-        <p className="mt-1 text-sm text-green-700">
+        <p className="text-accent/80 mt-1 text-sm">
           Todas as informações básicas estão preenchidas. Você pode editar os dados a qualquer
           momento clicando no botão &quot;Editar&quot;.
         </p>

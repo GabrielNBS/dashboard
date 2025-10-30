@@ -12,7 +12,7 @@ export default function ProductLoading() {
       {/* Products Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+          <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
             {/* Product Image */}
             <Skeleton className="mb-4 h-32 w-full rounded" />
 
@@ -57,7 +57,7 @@ export default function ProductLoading() {
 
       {/* Empty State Alternative (for when no products) */}
       <div className="hidden">
-        <div className="rounded-lg bg-gray-50 py-12 text-center">
+        <div className="bg-muted rounded-lg py-12 text-center">
           <div className="mb-4 flex flex-col items-center justify-center gap-2">
             <Skeleton className="h-16 w-16 rounded" />
             <Skeleton className="h-5 w-48" />

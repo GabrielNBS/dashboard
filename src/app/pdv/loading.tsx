@@ -32,7 +32,7 @@ export default function PDVLoading() {
             {/* Products Grid */}
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+                <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
                   <Skeleton className="mb-3 h-24 w-full rounded" />
                   <Skeleton className="mb-2 h-4 w-full" />
                   <Skeleton className="mb-2 h-3 w-16" />
@@ -43,7 +43,7 @@ export default function PDVLoading() {
           </div>
 
           {/* Cart and Payment Area - Right Side */}
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="bg-card rounded-lg p-6 shadow-sm">
             {/* Cart Header */}
             <div className="mb-4 flex items-center justify-between pb-4">
               <Skeleton className="h-6 w-24" />

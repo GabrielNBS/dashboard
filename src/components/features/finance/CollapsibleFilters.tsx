@@ -136,7 +136,7 @@ export default function CollapsibleFilters({
       {/* Conteúdo expandido com animação */}
       <div
         ref={contentRef}
-        className={`overflow-hidden border-t bg-gray-50 transition-all duration-300 ease-in-out ${
+        className={`bg-muted overflow-hidden border-t transition-all duration-300 ease-in-out ${
           isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
@@ -146,11 +146,14 @@ export default function CollapsibleFilters({
           <div className="flex flex-col gap-4">
             {/* Campo de busca */}
             <div>
-              <label htmlFor="search" className="mb-2 block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="search"
+                className="text-muted-foreground mb-2 block text-sm font-medium"
+              >
                 Buscar Produto na Venda
               </label>
               <div className="relative">
-                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                 <Input
                   id="search"
                   type="text"
@@ -187,7 +190,7 @@ export default function CollapsibleFilters({
                   onClick={resetFilters}
                   variant="outline"
                   size="sm"
-                  className="text-gray-600 hover:text-gray-800"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <X className="mr-2 h-4 w-4" />
                   Limpar todos os filtros

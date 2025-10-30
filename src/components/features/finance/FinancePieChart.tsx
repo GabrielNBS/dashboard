@@ -9,10 +9,10 @@ interface FinancePieChartProps {
 }
 
 const COLORS = {
-  revenue: '#3B82F6', // blue-500
-  variableCost: '#F59E0B', // amber-500
-  fixedCost: '#6B7280', // gray-500
-  profit: '#10B981', // emerald-500
+  revenue: 'hsl(var(--primary))',
+  variableCost: 'hsl(var(--accent))',
+  fixedCost: 'hsl(var(--muted-foreground))',
+  profit: 'hsl(var(--accent))',
 };
 
 export default function FinancePieChart({ financialSummary }: FinancePieChartProps) {

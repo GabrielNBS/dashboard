@@ -77,7 +77,7 @@ export const TooltipExample: React.FC = () => {
             <span>Alerta</span>
             <Tooltip
               content="Este é um ícone de alerta personalizado"
-              icon={<AlertCircle className="h-4 w-4 text-orange-500" />}
+              icon={<AlertCircle className="text-accent h-4 w-4" />}
             />
           </div>
         </div>
@@ -102,12 +102,11 @@ export const TooltipExample: React.FC = () => {
           <span>Tooltip customizado</span>
           <Tooltip
             content="Tooltip com estilos personalizados"
-            iconClassName="text-purple-500"
-            tooltipClassName="bg-purple-900 text-purple-100"
+            iconClassName="text-accent"
+            tooltipClassName="bg-primary text-primary-foreground"
           />
         </div>
       </div>
     </div>
   );
 };
-

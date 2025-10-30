@@ -90,13 +90,13 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
         };
       } else if (isHovered) {
         return {
-          primary: '#374151', // gray-700
-          secondary: '#374151',
+          primary: 'hsl(var(--foreground))',
+          secondary: 'hsl(var(--foreground))',
         };
       } else {
         return {
-          primary: '#6b7280', // gray-500
-          secondary: '#6b7280',
+          primary: 'hsl(var(--muted-foreground))',
+          secondary: 'hsl(var(--muted-foreground))',
         };
       }
     };

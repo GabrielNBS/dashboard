@@ -74,7 +74,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       {icon || defaultIcon}
       <div
         className={cn(
-          'absolute z-10 hidden rounded-lg bg-black/90 px-3 py-2 text-xs text-white shadow-lg group-hover:block',
+          'bg-popover text-popover-foreground absolute z-10 hidden rounded-lg px-3 py-2 text-xs shadow-lg group-hover:block',
           maxWidth,
           getPositionClasses(),
           tooltipClassName
@@ -85,4 +85,3 @@ export const Tooltip: React.FC<TooltipProps> = ({
     </div>
   );
 };
-

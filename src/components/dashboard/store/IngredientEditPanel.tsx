@@ -98,7 +98,7 @@ export default function IngredientEditPanel() {
             <DrawerTitle className="text-primary text-2xl font-bold">
               Editar Ingrediente
             </DrawerTitle>
-            <DrawerDescription className="text-base text-gray-600">
+            <DrawerDescription className="text-muted-foreground text-base">
               Atualize as informações do ingrediente
             </DrawerDescription>
           </DrawerHeader>
@@ -115,7 +115,7 @@ export default function IngredientEditPanel() {
             </FormProvider>
           </div>
 
-          <DrawerFooter className="flex flex-row justify-center gap-3 bg-gray-50 px-6 pt-4 pb-6">
+          <DrawerFooter className="bg-muted flex flex-row justify-center gap-3 px-6 pt-4 pb-6">
             <Button
               type="button"
               variant="destructive"

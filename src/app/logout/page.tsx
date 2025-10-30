@@ -55,15 +55,15 @@ export default function LoginCadastro() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white px-4">
-      <div className="w-full max-w-md rounded-2xl bg-gray-100 p-8 shadow-xl">
-        <div className="mb-8 flex border-b border-gray-300">
+    <div className="bg-background flex min-h-screen items-center justify-center px-4">
+      <div className="bg-card w-full max-w-md rounded-2xl p-8 shadow-xl">
+        <div className="border-border mb-8 flex border-b">
           <button
             onClick={() => setModo('login')}
             className={`flex-1 py-3 text-center font-semibold ${
               modo === 'login'
-                ? 'border-b-4 border-purple-700 text-purple-700'
-                : 'text-gray-600 hover:text-purple-700'
+                ? 'border-primary text-primary border-b-4'
+                : 'text-muted-foreground hover:text-primary'
             }`}
           >
             Entrar
@@ -72,8 +72,8 @@ export default function LoginCadastro() {
             onClick={() => setModo('cadastro')}
             className={`flex-1 py-3 text-center font-semibold ${
               modo === 'cadastro'
-                ? 'border-b-4 border-purple-700 text-purple-700'
-                : 'text-gray-600 hover:text-purple-700'
+                ? 'border-primary text-primary border-b-4'
+                : 'text-muted-foreground hover:text-primary'
             }`}
           >
             Cadastrar
@@ -83,25 +83,25 @@ export default function LoginCadastro() {
         {modo === 'login' ? (
           <form onSubmit={entrar} className="space-y-5">
             <div className="relative">
-              <User className="absolute top-3 left-3 text-gray-500" />
+              <User className="text-muted-foreground absolute top-3 left-3" />
               <Input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full rounded border border-gray-300 bg-white py-2 pr-4 pl-10 text-black focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                className="border-border bg-background text-foreground focus:ring-ring w-full rounded border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none"
                 required
               />
             </div>
 
             <div className="relative">
-              <Lock className="absolute top-3 left-3 text-gray-500" />
+              <Lock className="text-muted-foreground absolute top-3 left-3" />
               <Input
                 type="password"
                 placeholder="Senha"
                 value={senha}
                 onChange={e => setSenha(e.target.value)}
-                className="w-full rounded border border-gray-300 bg-white py-2 pr-4 pl-10 text-black focus:ring-2 focus:ring-purple-400 focus:outline-none"
+                className="border-border bg-background text-foreground focus:ring-ring w-full rounded border py-2 pr-4 pl-10 focus:ring-2 focus:outline-none"
                 required
               />
             </div>

@@ -38,7 +38,7 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
         href={href}
         className={`group/item relative flex items-center rounded-lg px-3 py-3 font-medium transition-colors duration-200 ${
           isActive
-            ? 'bg-primary text-white shadow-sm'
+            ? 'bg-primary text-primary-foreground shadow-sm'
             : 'text-foreground hover:bg-muted hover:text-foreground'
         }`}
         prefetch={true}

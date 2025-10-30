@@ -26,7 +26,7 @@ export default function GenericListSkeleton({
       {/* Items Grid */}
       <div className={`grid gap-4 ${gridCols}`}>
         {Array.from({ length: itemCount }).map((_, i) => (
-          <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+          <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
             <div className="space-y-3">
               <Skeleton className="h-5 w-full" />
               <Skeleton className="h-4 w-3/4" />

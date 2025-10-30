@@ -61,8 +61,8 @@ export default function FinanceLoading() {
         </div>
 
         {/* Transactions Table */}
-        <div className="rounded-lg bg-white shadow-sm">
-          <div className="bg-gray-50 p-4">
+        <div className="bg-card rounded-lg shadow-sm">
+          <div className="bg-muted p-4">
             <div className="flex items-center justify-between">
               <Skeleton className="h-6 w-40" />
               <Skeleton className="h-9 w-32" />
@@ -70,7 +70,7 @@ export default function FinanceLoading() {
           </div>
 
           {/* Table Header */}
-          <div className="grid grid-cols-4 gap-4 bg-gray-50 p-4 sm:grid-cols-6">
+          <div className="bg-muted grid grid-cols-4 gap-4 p-4 sm:grid-cols-6">
             <Skeleton className="h-4 w-16" />
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-4 w-24" />

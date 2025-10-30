@@ -233,7 +233,7 @@ export default function IngredientSelector() {
                 Custo total
               </label>
               <div className="border-border bg-muted rounded-lg border px-3 py-2 text-sm font-medium">
-                R$ {getTotalPrice(displayQuantity, selectedIngredient)}
+                {getTotalPrice(displayQuantity, selectedIngredient)}
               </div>
             </div>
             <div className="flex gap-2">

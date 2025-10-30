@@ -153,7 +153,7 @@ export function GenericForm({
             >
               {isSubmitting ? (
                 <>
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <div className="border-primary-foreground mr-2 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                   Salvando...
                 </>
               ) : (

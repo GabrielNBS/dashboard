@@ -1,9 +1,3 @@
-// ============================================================
-// 🔹 Generic List Container Component
-// ============================================================
-// Reusable list container that eliminates duplication between
-// ProductsList, IngredientList, and other similar list components
-
 import React from 'react';
 import { Package, Plus } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
@@ -115,7 +109,7 @@ export function GenericListContainer<T extends FilterableItem>({
           <div className="flex h-64 items-center justify-center rounded-lg border">
             <div className="flex flex-col items-center space-y-2">
               <div className="border-muted-foreground border-t-accent h-8 w-8 animate-spin rounded-full border-2"></div>
-              <p className="text-muted text-sm">Carregando...</p>
+              <p className="text-muted-foreground text-sm">Carregando...</p>
             </div>
           </div>
         }
@@ -190,7 +184,7 @@ export function GenericListContainer<T extends FilterableItem>({
       {/* Content Section */}
       {items.length === 0 ? (
         // Empty state
-        <div className="bg-muted flex flex-col items-center justify-center gap-4 rounded-lg px-4 py-8 sm:py-12">
+        <div className="bg-muted/50 flex flex-col items-center justify-center gap-4 rounded-lg px-4 py-8 sm:py-12">
           {finalEmptyState.icon}
           <h3 className="text-center text-lg font-medium">{finalEmptyState.title}</h3>
           <p className="text-muted-foreground text-center text-sm sm:text-base">

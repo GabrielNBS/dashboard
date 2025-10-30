@@ -205,7 +205,7 @@ export default function IngredientForm() {
 
           {/* Aviso de reabastecimento */}
           {existingIngredient && (
-            <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
+            <div className="border-primary/20 bg-primary/5 mb-4 rounded-lg border p-3">
               <h4 className="text-on-info mb-1 font-medium">Reabastecimento detectado</h4>
               <p className="text-on-info/80 text-sm">
                 Estoque atual: {existingIngredient.totalQuantity} {existingIngredient.unit}
@@ -301,8 +301,8 @@ export default function IngredientForm() {
 
             {/* Preview do novo preço médio para reabastecimento */}
             {existingIngredient && watchedQuantity && watch('buyPrice') && (
-              <div className="rounded-lg border bg-gray-50 p-3">
-                <h4 className="mb-2 font-medium text-gray-800">Preview do novo preço médio</h4>
+              <div className="bg-muted rounded-lg border p-3">
+                <h4 className="text-foreground mb-2 font-medium">Preview do novo preço médio</h4>
                 {(() => {
                   const newQuantity = normalizeQuantity(parseFloat(watchedQuantity), watchedUnit);
                   const newPrice = parseFloat(watch('buyPrice'));
@@ -317,7 +317,7 @@ export default function IngredientForm() {
                   const newAveragePrice = combinedValue / combinedQuantity;
 
                   return (
-                    <div className="space-y-1 text-sm text-gray-600">
+                    <div className="text-muted-foreground space-y-1 text-sm">
                       <p>Preço atual: R$ {existingIngredient.averageUnitPrice.toFixed(3)}</p>
                       <p>Preço do novo lote: R$ {newUnitPrice.toFixed(3)}</p>
                       <p className="font-medium">

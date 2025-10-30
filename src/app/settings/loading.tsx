@@ -17,7 +17,7 @@ export default function SettingsLoading() {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-border border-b">
         <nav className="flex space-x-1 overflow-x-auto pb-0">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
@@ -71,7 +71,7 @@ export default function SettingsLoading() {
           {/* Cards Grid */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+              <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
                 <div className="mb-3 flex items-center gap-3">
                   <Skeleton className="h-8 w-8 rounded" />
                   <Skeleton className="h-5 w-24" />

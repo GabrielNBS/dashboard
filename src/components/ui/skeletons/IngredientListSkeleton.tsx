@@ -7,7 +7,7 @@ export default function IngredientListSkeleton() {
       <div className="space-y-4 lg:hidden">
         {/* KPIs Principais */}
         <div className="grid grid-cols-1 gap-3">
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-card rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-32" />
@@ -18,7 +18,7 @@ export default function IngredientListSkeleton() {
             </div>
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-card rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-28" />
@@ -31,17 +31,17 @@ export default function IngredientListSkeleton() {
         </div>
 
         {/* Status do estoque */}
-        <div className="rounded-lg bg-gray-50 p-3">
+        <div className="bg-muted rounded-lg p-3">
           <Skeleton className="mb-3 h-4 w-32" />
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-md bg-white p-3">
+            <div className="bg-card rounded-md p-3">
               <div className="mb-2 flex items-center gap-2">
                 <Skeleton className="h-4 w-4" />
                 <Skeleton className="h-3 w-16" />
               </div>
               <Skeleton className="h-4 w-8" />
             </div>
-            <div className="rounded-md bg-white p-3">
+            <div className="bg-card rounded-md p-3">
               <div className="mb-2 flex items-center gap-2">
                 <Skeleton className="h-4 w-4" />
                 <Skeleton className="h-3 w-16" />
@@ -55,7 +55,7 @@ export default function IngredientListSkeleton() {
       {/* Desktop Layout */}
       <div className="hidden grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+          <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-24" />
@@ -85,7 +85,7 @@ export default function IngredientListSkeleton() {
       {/* Ingredient Cards Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-lg bg-white p-4 shadow-sm">
+          <div key={i} className="bg-card rounded-lg p-4 shadow-sm">
             <div className="flex items-start justify-between">
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-5 w-32" />

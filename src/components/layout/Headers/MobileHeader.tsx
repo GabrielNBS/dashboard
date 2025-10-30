@@ -96,7 +96,7 @@ export default function MobileHeader() {
             <div className="border-border flex items-center justify-between border-b p-4">
               <div className="flex items-center gap-3">
                 <div className="from-primary to-primary/80 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm">
-                  <span className="text-lg font-bold text-white">K</span>
+                  <span className="text-primary-foreground text-lg font-bold">K</span>
                 </div>
                 <div>
                   <h2 className="text-foreground text-lg font-bold">Kiro</h2>
@@ -126,7 +126,7 @@ export default function MobileHeader() {
                         onClick={closeMenu}
                         className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all ${
                           isActive
-                            ? 'bg-primary text-white shadow-sm'
+                            ? 'bg-primary text-primary-foreground shadow-sm'
                             : 'text-foreground hover:bg-muted active:bg-muted/80'
                         }`}
                       >

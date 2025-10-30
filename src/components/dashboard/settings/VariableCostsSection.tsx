@@ -108,18 +108,18 @@ export default function VariableCostsSection() {
       </div>
 
       {/* Resumo */}
-      <div className="rounded-lg bg-green-50 p-4">
-        <h3 className="mb-2 text-lg font-medium text-green-900">Resumo dos custos variáveis</h3>
+      <div className="bg-accent/10 rounded-lg p-4">
+        <h3 className="text-foreground mb-2 text-lg font-medium">Resumo dos custos variáveis</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-green-600">Total de Custos:</span>
-            <span className="ml-2 font-bold text-green-900">
+            <span className="text-accent">Total de Custos:</span>
+            <span className="text-foreground ml-2 font-bold">
               {state.variableCosts.length} custo(s)
             </span>
           </div>
           <div>
-            <span className="text-green-600">Tipos:</span>
-            <span className="ml-2 font-bold text-green-900">
+            <span className="text-accent">Tipos:</span>
+            <span className="text-foreground ml-2 font-bold">
               {new Set(state.variableCosts.map(c => c.type)).size} tipo(s)
             </span>
           </div>
@@ -128,14 +128,14 @@ export default function VariableCostsSection() {
 
       {/* Formulário de Edição */}
       {editingCost && (
-        <div className="space-y-4 rounded-lg bg-gray-50 p-4">
+        <div className="bg-muted space-y-4 rounded-lg p-4">
           <h3 className="text-lg font-medium">
             {isAdding ? 'Adicionar Novo Custo Variável' : 'Editar Custo Variável'}
           </h3>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="text-muted-foreground mb-1 block text-sm font-medium">
                 Nome do Custo *
               </label>
               <Input
@@ -147,7 +147,9 @@ export default function VariableCostsSection() {
             </div>
 
             <div>
-              <Label className="mb-1 block text-sm font-medium text-gray-700">Tipo de Custo</Label>
+              <Label className="text-muted-foreground mb-1 block text-sm font-medium">
+                Tipo de Custo
+              </Label>
               <Select
                 value={editingCost.type}
                 onValueChange={(value: VariableCostSettings['type']) =>
@@ -171,7 +173,9 @@ export default function VariableCostsSection() {
             </div>
 
             <div>
-              <Label className="mb-1 block text-sm font-medium text-gray-700">Categoria</Label>
+              <Label className="text-muted-foreground mb-1 block text-sm font-medium">
+                Categoria
+              </Label>
               <Select
                 value={editingCost.category}
                 onValueChange={(value: VariableCostSettings['category']) =>
@@ -195,7 +199,7 @@ export default function VariableCostsSection() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="text-muted-foreground mb-1 block text-sm font-medium">
                 Percentual sobre Vendas (%)
               </label>
               <PercentageInput
@@ -210,7 +214,7 @@ export default function VariableCostsSection() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
+              <label className="text-muted-foreground mb-1 block text-sm font-medium">
                 Valor Fixo por Unidade (R$)
               </label>
               <CurrencyInput
@@ -224,12 +228,14 @@ export default function VariableCostsSection() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-gray-700">Observações</label>
+              <label className="text-muted-foreground mb-1 block text-sm font-medium">
+                Observações
+              </label>
               <textarea
                 value={editingCost.notes}
                 onChange={e => setEditingCost({ ...editingCost, notes: e.target.value })}
                 placeholder="Observações adicionais sobre este custo..."
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
+                className="focus:ring-primary border-border w-full rounded-md border px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
                 rows={3}
               />
             </div>
@@ -251,8 +257,8 @@ export default function VariableCostsSection() {
         <h3 className="text-lg font-medium">Custos Variáveis Configurados</h3>
 
         {state.variableCosts.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">
-            <Calculator className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+          <div className="text-muted-foreground py-8 text-center">
+            <Calculator className="text-muted-foreground/50 mx-auto mb-4 h-12 w-12" />
             <p>Nenhum custo variável configurado.</p>
             <p className="text-sm">Clique em &apos;Adicionar Custo&apos; para começar.</p>
           </div>
@@ -261,20 +267,20 @@ export default function VariableCostsSection() {
             {state.variableCosts.map(cost => (
               <div
                 key={cost.id}
-                className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
+                className="border-border bg-card rounded-lg border p-4 transition-shadow hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <h4 className="font-medium text-gray-900">{cost.name}</h4>
-                      <span className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
+                      <h4 className="text-foreground font-medium">{cost.name}</h4>
+                      <span className="bg-accent/20 text-accent rounded-full px-2 py-1 text-xs">
                         {cost.type}
                       </span>
-                      <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                      <span className="bg-primary/20 text-primary rounded-full px-2 py-1 text-xs">
                         {cost.category}
                       </span>
                     </div>
-                    <div className="mt-2 grid grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div className="text-muted-foreground mt-2 grid grid-cols-2 gap-4 text-sm">
                       {cost.percentage && cost.percentage > 0 && (
                         <div>
                           <span className="font-medium">Percentual:</span>
@@ -301,7 +307,7 @@ export default function VariableCostsSection() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditCost(cost)}
-                      className="text-blue-600 hover:text-blue-700"
+                      className="text-primary hover:text-primary/80"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -309,7 +315,7 @@ export default function VariableCostsSection() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteCost(cost.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-destructive hover:text-destructive/80"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

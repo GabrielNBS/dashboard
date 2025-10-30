@@ -123,7 +123,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Navegação das seções */}
-      <div className="border-b border-gray-200">
+      <div className="border-border border-b">
         <nav className="flex space-x-1 overflow-x-auto pb-0" aria-label="Tabs">
           {sections.map(({ id, label, icon: Icon }) => (
             <button
@@ -132,7 +132,7 @@ export default function SettingsPage() {
               className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all ${
                 activeSection === id
                   ? 'border-primary text-primary bg-primary/5'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  : 'text-muted-foreground hover:border-border hover:text-foreground border-transparent'
               }`}
             >
               <Icon className="h-4 w-4" />

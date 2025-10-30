@@ -59,16 +59,16 @@ export default function Product() {
       >
         <SheetContent side="right" className="max-w-3xl overflow-hidden p-0">
           <div className="flex h-full flex-col">
-            <SheetHeader className="flex-shrink-0 border-b border-gray-100 p-6">
+            <SheetHeader className="border-border flex-shrink-0 border-b p-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-                  <PackagePlus className="h-5 w-5 text-blue-600" />
+                <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                  <PackagePlus className="text-primary h-5 w-5" />
                 </div>
                 <div className="text-left">
-                  <SheetTitle className="text-lg font-semibold text-gray-900">
+                  <SheetTitle className="text-foreground text-lg font-semibold">
                     {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
                   </SheetTitle>
-                  <SheetDescription className="text-sm text-gray-500">
+                  <SheetDescription className="text-muted-foreground text-sm">
                     {state.isEditMode
                       ? 'Atualize as informações do produto existente'
                       : 'Preencha as informações para criar um novo produto'}

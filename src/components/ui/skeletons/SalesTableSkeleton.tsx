@@ -2,9 +2,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function SalesTableSkeleton() {
   return (
-    <div className="overflow-x-auto rounded-lg bg-white shadow-sm">
+    <div className="bg-card overflow-x-auto rounded-lg shadow-sm">
       <table className="w-full text-left text-sm">
-        <thead className="bg-gray-50">
+        <thead className="bg-muted">
           <tr>
             <th className="p-3">
               <Skeleton className="h-4 w-12" />
@@ -32,7 +32,7 @@ export default function SalesTableSkeleton() {
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 bg-white">
+        <tbody className="divide-border bg-card divide-y">
           {Array.from({ length: 5 }).map((_, i) => (
             <tr key={i}>
               <td className="p-3">
