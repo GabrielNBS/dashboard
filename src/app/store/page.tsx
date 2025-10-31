@@ -7,7 +7,6 @@ import ProductEditModal from '@/components/dashboard/store/IngredientEditPanel';
 import ProductTable from '@/components/dashboard/store/IngredientList';
 import { Header } from '@/components/ui/Header';
 
-// Componente para simular carregamento assíncrono
 function AsyncProductTable() {
   return (
     <Suspense fallback={<ProductTableSkeleton />}>
@@ -16,7 +15,6 @@ function AsyncProductTable() {
   );
 }
 
-// Skeleton específico para a tabela de produtos
 function ProductTableSkeleton() {
   return (
     <div className="w-full space-y-4">
@@ -37,18 +35,15 @@ export default function Store() {
   return (
     <div className="relative p-4 sm:p-6">
       <Header title="Estoque" subtitle="Gerencie os produtos da loja" className="mb-4 sm:mb-6" />
-
-      <main className="flex w-full flex-col items-center justify-center gap-4 sm:gap-6">
-        <h2 id="product-form-title" className="sr-only">
-          Formulário de produtos
-        </h2>
-        <ProductForm />
-        <h2 id="product-table-title" className="sr-only">
-          Lista de produtos em estoque
-        </h2>{' '}
-        <AsyncProductTable />
-        <ProductEditModal />
-      </main>
+      <h2 id="product-form-title" className="sr-only">
+        Formulário de produtos
+      </h2>
+      <ProductForm />
+      <h2 id="product-table-title" className="sr-only">
+        Lista de produtos em estoque
+      </h2>{' '}
+      <AsyncProductTable />
+      <ProductEditModal />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import NumericInput from './NumericInput';
 import FormError from './FormError';
 import Input from '../base/Input';
 import clsx from 'clsx';
-import UnitSelect from '../UnitSelect';
+import QuantityWithUnitInput from './QuantityWithUnitInput';
 import { getQuantityInputConfig } from '@/utils/helpers/quantityInputConfig';
 
 const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
@@ -54,23 +54,15 @@ const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
         <FormError message={errors.name?.message} />
       </div>
 
-      {/* Quantidade */}
-      <NumericInput
-        name="quantity"
+      {/* Quantidade com Unidade */}
+      <QuantityWithUnitInput
         label="Quantidade"
-        step={
-          typeof quantityConfig.step === 'string'
-            ? parseFloat(quantityConfig.step)
-            : quantityConfig.step
-        }
         min={quantityConfig.min}
         placeholder={quantityConfig.placeholder}
-        error={errors.quantity?.message}
+        quantityError={errors.quantity?.message}
+        unitError={errors.unit?.message}
         quickIncrements={getQuickIncrements('quantity', quantityValue)}
       />
-
-      {/* Unidade */}
-      <UnitSelect register={register} errors={errors} />
 
       {/* Preço de compra */}
       <NumericInput
