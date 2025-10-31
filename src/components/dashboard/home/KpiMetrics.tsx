@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   ComposedChart,
   Bar,
@@ -16,8 +16,9 @@ import {
   RadialBarChart,
   RadialBar,
 } from 'recharts';
+import { Calendar } from 'lucide-react';
+import { formatCurrency } from '@/utils/UnifiedUtils';
 
-// Import the correct type for tooltip content
 interface TooltipContentProps {
   active?: boolean;
   payload?: Array<{
@@ -29,8 +30,6 @@ interface TooltipContentProps {
   }>;
   label?: string | number;
 }
-import { Calendar } from 'lucide-react';
-import { formatCurrency } from '@/utils/UnifiedUtils';
 
 export type FinancialRecord = {
   date: string;
@@ -50,26 +49,20 @@ interface FinancialChartProps {
   aggregatedData?: AggregatedData[];
 }
 
-// Configurações do gráfico facilmente editáveis
 const chartConfig = {
   colors: {
-    revenue: 'var(--color-on-info)',
-    expenses: 'var(--color-on-bad)',
-    profit: 'var(--color-on-great)',
-    grid: 'var(--color-muted)',
-    text: 'var(--color-muted-foreground)',
+    revenue: '#3b82f6',
+    expenses: '#ef4444',
+    profit: '#22c55e',
+    grid: '#e5e7eb',
+    text: '#6b7281',
   },
   gradients: {
     revenue: 'url(#revenueGradient)',
     profit: 'url(#profitGradient)',
   },
-  animation: {
-    duration: 800,
-    easing: 'ease-out',
-  },
 };
 
-// Formatação de data nativa
 const formatDate = (dateString: string): string => {
   try {
     const date = new Date(dateString);
@@ -91,24 +84,23 @@ const formatFullDate = (dateString: string): string => {
   }
 };
 
-// Tooltip customizado
 const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="bg-secondary/95 rounded-xl border border-slate-200 p-4 shadow-xl backdrop-blur-sm">
+    <div className="rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
       <div className="mb-3 flex items-center gap-2">
-        <Calendar className="text-muted-foreground h-4 w-4" />
-        <p className="text-primary/90 font-semibold">{formatFullDate(String(label || ''))}</p>
+        <Calendar className="h-4 w-4 text-gray-500" />
+        <p className="font-semibold text-gray-800">{formatFullDate(String(label || ''))}</p>
       </div>
       <div className="space-y-2">
         {payload.map((entry, index) => (
           <div key={entry.dataKey || index} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
-              <span className="text-muted-foreground text-sm">{entry.name}</span>
+              <span className="text-sm text-gray-600">{entry.name}</span>
             </div>
-            <span className="text-primary font-bold">{formatCurrency(entry.value || 0)}</span>
+            <span className="font-bold text-gray-900">{formatCurrency(entry.value || 0)}</span>
           </div>
         ))}
       </div>
@@ -116,64 +108,80 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
   );
 };
 
+interface CustomPieTooltipProps extends TooltipContentProps {
+  total: number;
+}
+
+const CustomPieTooltip = ({ active, payload, total }: CustomPieTooltipProps) => {
+  if (!active || !payload?.length) return null;
+
+  const data = payload[0]?.payload as { name: string; value: number; color: string };
+  if (!data) return null;
+
+  const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : 0;
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
+      <div className="flex items-center gap-3">
+        <div className="h-4 w-4 rounded-full" style={{ backgroundColor: data.color }} />
+        <div>
+          <p className="font-semibold text-slate-700">{data.name}</p>
+          <p className="text-sm text-gray-600">
+            {formatCurrency(data.value)} ({percentage}%)
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+type ChartType = 'bars' | 'pie' | 'radial';
+
+const chartTypes: { key: ChartType; label: string; icon: string }[] = [
+  { key: 'bars', label: 'Barras', icon: '📊' },
+  { key: 'pie', label: 'Pizza', icon: '🍕' },
+  { key: 'radial', label: 'Meia Lua', icon: '🌙' },
+];
+
 export default function FinancialChart({
   chartData = [],
   aggregatedData = [],
 }: FinancialChartProps) {
-  const [chartType, setChartType] = useState<'bars' | 'pie' | 'radial'>('bars');
+  const [chartType, setChartType] = useState<ChartType>('bars');
 
-  // Use provided data or fallback to empty arrays
-  const data = chartData.length > 0 ? chartData : [];
+  const data = useMemo(() => (chartData.length > 0 ? chartData : []), [chartData]);
 
-  // Cálculos de estatísticas
-  const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
-  const totalExpenses = data.reduce((sum, item) => sum + item.expenses, 0);
-  const totalProfit = data.reduce((sum, item) => sum + item.profit, 0);
+  const totals = useMemo(() => {
+    const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0);
+    const totalExpenses = data.reduce((sum, item) => sum + item.expenses, 0);
+    const totalProfit = data.reduce((sum, item) => sum + item.profit, 0);
+    return { totalRevenue, totalExpenses, totalProfit };
+  }, [data]);
 
-  // Use provided aggregated data or calculate from chart data
-  const pieData =
-    aggregatedData.length > 0
-      ? aggregatedData
-      : [
-          { name: 'Receita', value: totalRevenue, color: chartConfig.colors.revenue },
-          { name: 'Gastos', value: totalExpenses, color: chartConfig.colors.expenses },
-          { name: 'Lucro', value: totalProfit, color: chartConfig.colors.profit },
-        ];
+  const pieData = useMemo(() => {
+    if (aggregatedData.length > 0) {
+      return aggregatedData;
+    }
+    const { totalRevenue, totalExpenses, totalProfit } = totals;
+    return [
+      { name: 'Receita', value: totalRevenue, color: chartConfig.colors.revenue },
+      { name: 'Gastos', value: totalExpenses, color: chartConfig.colors.expenses },
+      { name: 'Lucro', value: totalProfit, color: chartConfig.colors.profit },
+    ];
+  }, [aggregatedData, totals]);
 
-  // Dados para gráfico radial (formato específico)
-  const radialData = pieData.map(item => ({
-    ...item,
-    fill: item.color,
-    angle: (item.value / Math.max(totalRevenue, totalExpenses, totalProfit)) * 180,
-  }));
+  const totalForPie = useMemo(() => {
+    return pieData.reduce((sum, item) => sum + item.value, 0);
+  }, [pieData]);
 
-  // Tooltip customizado para gráficos circulares
-  const CustomPieTooltip = ({ active, payload }: TooltipContentProps) => {
-    if (!active || !payload?.length) return null;
+  const radialData = useMemo(() => {
+    return pieData.map(item => ({
+      ...item,
+      fill: item.color,
+    }));
+  }, [pieData]);
 
-    const data = payload[0]?.payload as { name: string; value: number; color: string };
-    if (!data) return null;
-
-    const percentage = ((data.value / (totalRevenue + totalExpenses + totalProfit)) * 100).toFixed(
-      1
-    );
-
-    return (
-      <div className="bg-secondary/95 rounded-xl border border-slate-200 p-4 shadow-xl backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <div className="h-4 w-4 rounded-full" style={{ backgroundColor: data.color }} />
-          <div>
-            <p className="font-semibold text-slate-700">{data.name}</p>
-            <p className="text-muted-foreground text-sm">
-              {formatCurrency(data.value)} ({percentage}%)
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderChartElements = () => {
+  const currentChart = useMemo(() => {
     switch (chartType) {
       case 'bars':
         return (
@@ -188,9 +196,7 @@ export default function FinancialChart({
                 <stop offset="95%" stopColor={chartConfig.colors.profit} stopOpacity={0.1} />
               </linearGradient>
             </defs>
-
             <CartesianGrid strokeDasharray="3 3" stroke={chartConfig.colors.grid} opacity={0.7} />
-
             <XAxis
               dataKey="date"
               tickFormatter={formatDate}
@@ -198,18 +204,14 @@ export default function FinancialChart({
               axisLine={{ stroke: chartConfig.colors.grid }}
               tickLine={{ stroke: chartConfig.colors.grid }}
             />
-
             <YAxis
               tickFormatter={formatCurrency}
               tick={{ fontSize: 12, fill: chartConfig.colors.text }}
               axisLine={{ stroke: chartConfig.colors.grid }}
               tickLine={{ stroke: chartConfig.colors.grid }}
             />
-
             <Tooltip content={<CustomTooltip />} />
-
             <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
-
             <Area
               type="monotone"
               dataKey="profit"
@@ -254,7 +256,7 @@ export default function FinancialChart({
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip content={<CustomPieTooltip />} />
+            <Tooltip content={<CustomPieTooltip total={totalForPie} />} />
             <Legend
               verticalAlign="bottom"
               height={36}
@@ -282,7 +284,7 @@ export default function FinancialChart({
             startAngle={180}
             endAngle={0}
           >
-            <RadialBar dataKey="value" cornerRadius={8} fill="#8884d8" />
+            <RadialBar dataKey="value" cornerRadius={8} />
             <Legend
               iconSize={18}
               layout="vertical"
@@ -297,47 +299,41 @@ export default function FinancialChart({
                 );
               }}
             />
-            <Tooltip content={<CustomPieTooltip />} />
+            <Tooltip content={<CustomPieTooltip total={totalForPie} />} />
           </RadialBarChart>
         );
 
       default:
         return <></>;
     }
-  };
+  }, [chartType, data, pieData, radialData, totalForPie]);
 
   return (
-    <div className="min-full to-secondary from-muted mx-auto w-full max-w-7xl bg-gradient-to-br">
-      {/* Controles do gráfico */}
-      <div className="bg-secondary mb-6 rounded-lg p-6 shadow-sm">
+    <div className="min-full mx-auto w-full max-w-7xl">
+      <div className="mb-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex gap-2">
-            {[
-              { key: 'bars', label: 'Barras', icon: '📊' },
-              { key: 'pie', label: 'Pizza', icon: '🍕' },
-              { key: 'radial', label: 'Meia Lua', icon: '🌙' },
-            ].map(({ key, label, icon }) => (
+            {chartTypes.map(chart => (
               <button
-                key={key}
+                key={chart.key}
                 type="button"
-                onClick={() => setChartType(key as 'bars' | 'pie' | 'radial')}
+                onClick={() => setChartType(chart.key)}
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                  chartType === key
-                    ? 'bg-primary text-secondary scale-105 transform shadow-lg'
-                    : 'bg-secondary text-muted-foreground hover:bg-secondary hover:scale-102'
+                  chartType === chart.key
+                    ? 'scale-105 transform bg-blue-600 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-600 hover:scale-102 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
-                <span>{icon}</span>
-                {label}
+                <span>{chart.icon}</span>
+                {chart.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Gráfico */}
         <div className="h-96 w-full">
           {data.length === 0 ? (
-            <div className="text-muted-foreground flex h-full items-center justify-center">
+            <div className="flex h-full items-center justify-center text-gray-500">
               <div className="text-center">
                 <Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
                 <p className="text-lg font-medium">Nenhum dado disponível</p>
@@ -346,22 +342,9 @@ export default function FinancialChart({
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
-              {renderChartElements()}
+              {currentChart}
             </ResponsiveContainer>
           )}
-        </div>
-      </div>
-
-      {/* Seção de informações */}
-      <div className="bg-secondary rounded-lg border-slate-100 p-6 shadow-sm">
-        <h3 className="mb-4 text-lg font-semibold text-slate-800">Informações</h3>
-        <div className="text-sm text-slate-600">
-          <p>• Os dados são carregados automaticamente das vendas registradas no sistema</p>
-          <p>
-            • Cores podem ser alteradas em{' '}
-            <code className="rounded bg-slate-100 px-2 py-1">chartConfig.colors</code>
-          </p>
-          <p>• Formatos de data e moeda são configuráveis nas funções de formatação</p>
         </div>
       </div>
     </div>

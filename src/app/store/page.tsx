@@ -35,25 +35,20 @@ function ProductTableSkeleton() {
 
 export default function Store() {
   return (
-    <div className="relative flex flex-col items-center justify-center gap-4 p-4 sm:gap-6 sm:p-6">
-      <header className="flex w-full flex-col items-start justify-start">
-        <Header title="Estoque" subtitle="Gerencie os produtos da loja" />
-      </header>
-      <main role="main" aria-label="Gestão de estoque">
-        <section aria-labelledby="product-form-title">
-          <h2 id="product-form-title" className="sr-only">
-            Formulário de produtos
-          </h2>
-          <ProductForm />
-        </section>
-        <section aria-labelledby="product-table-title">
-          <h2 id="product-table-title" className="sr-only">
-            Lista de produtos em estoque
-          </h2>
-          <AsyncProductTable />
-        </section>
+    <div className="relative p-4 sm:p-6">
+      <Header title="Estoque" subtitle="Gerencie os produtos da loja" className="mb-4 sm:mb-6" />
+
+      <main className="flex w-full flex-col items-center justify-center gap-4 sm:gap-6">
+        <h2 id="product-form-title" className="sr-only">
+          Formulário de produtos
+        </h2>
+        <ProductForm />
+        <h2 id="product-table-title" className="sr-only">
+          Lista de produtos em estoque
+        </h2>{' '}
+        <AsyncProductTable />
+        <ProductEditModal />
       </main>
-      <ProductEditModal />
     </div>
   );
 }
