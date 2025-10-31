@@ -5,16 +5,7 @@
 
 import React, { useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import {
-  Settings,
-  Store,
-  DollarSign,
-  Calculator,
-  CreditCard,
-  Cog,
-  Save,
-  RotateCcw,
-} from 'lucide-react';
+import { Store, DollarSign, Calculator, CreditCard, Cog, Save, RotateCcw } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
@@ -26,6 +17,7 @@ import VariableCostsSection from '@/components/dashboard/settings/VariableCostsS
 import FinancialSettingsSection from '@/components/dashboard/settings/FinancialSettingsSection';
 import PaymentFeesSection from '@/components/dashboard/settings/PaymentFeesSection';
 import SystemSettingsSection from '@/components/dashboard/settings/SystemSettingsSection';
+import { Header } from '@/components/ui/Header';
 
 export default function SettingsPage() {
   const { saveSettings, resetSettings } = useSettings();
@@ -98,8 +90,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Settings className="text-primary h-8 w-8" />
-          <h1 className="text-xl font-bold">Configurações</h1>
+          <Header title="Configurações" subtitle="Gerencie os dados da sua loja" />
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row">

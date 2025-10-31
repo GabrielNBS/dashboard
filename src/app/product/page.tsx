@@ -13,6 +13,7 @@ import {
   SheetTitle,
 } from '@/components/ui/feedback/sheet';
 import ProductForm from '@/components/dashboard/product/ProductForm';
+import { Header } from '@/components/ui/Header';
 
 export default function Product() {
   const { state, dispatch } = useProductContext();
@@ -20,8 +21,6 @@ export default function Product() {
   const { products } = state;
 
   const handleToggleForm = () => {
-    // Sempre limpar dados do produto em edição e resetar builder context
-    // para garantir que não há dados residuais do modo de edição
     dispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
     builderDispatch({ type: 'RESET_PRODUCT' });
     dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
@@ -30,7 +29,7 @@ export default function Product() {
   return (
     <div className="w-full rounded-lg p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-bold">Produtos Cadastrados</h2>
+        <Header title="Produtos" subtitle="Gerencie seus produtos" />
         {products.length > 0 && (
           <Button size="md" className="fixed right-15 bottom-4 z-10" onClick={handleToggleForm}>
             <Plus className="mr-1" />

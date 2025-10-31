@@ -14,8 +14,8 @@ import MetricsIntegrationDemo from '@/components/dashboard/home/MetricsIntegrati
 import { ChartBarIcon, PercentIcon, DollarSign, ShoppingBagIcon } from 'lucide-react';
 import { getHowHours } from '@/utils/utils';
 import { formatCurrency } from '@/utils/UnifiedUtils';
+import { Header } from '@/components/ui/Header';
 
-// pages/dashboard.tsx
 export default function DashboardContent() {
   const { state: settings } = useSettings();
   const { summary, trending, chartData, aggregatedData } = useDashboardMetrics();
@@ -24,13 +24,14 @@ export default function DashboardContent() {
 
   return (
     <main className="bg-surface flex min-h-screen flex-col gap-6 p-6">
-      {/* Cabeçalho da página */}
-      <header>
-        <h1 className="text-primary text-xl font-bold">
-          {getHowHours()}, <strong className="text-primary">{storeName}</strong>
-        </h1>
-        <p className="text-muted-foreground text-lg">O resumo diário do seu negocio</p>
-      </header>
+      <Header
+        title={
+          <>
+            {getHowHours()}, <strong>{storeName}</strong>
+          </>
+        }
+        subtitle={'o resumo diário do seu dia'}
+      />
 
       <section className="grid gap-6 lg:grid-cols-4">
         {/* Container dos cards, ocupando 3 das 4 colunas em telas grandes. */}
@@ -44,10 +45,7 @@ export default function DashboardContent() {
                   <div>
                     <p className="text-muted-foreground text-sm font-medium">Lucro Líquido</p>
                     <p className="text-primary text-xl font-bold">
-                      {new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL',
-                      }).format(summary.netProfit || 0)}
+                      {formatCurrency(summary.netProfit)}
                     </p>
                   </div>
                   <div className="bg-primary flex h-12 w-12 items-center justify-center rounded-full">
