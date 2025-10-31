@@ -87,6 +87,9 @@ function SheetContent({
         )}
         {...props}
       >
+        {/* Add hidden title for accessibility - Radix requires DialogTitle */}
+        <SheetPrimitive.Title className="sr-only">Dialog</SheetPrimitive.Title>
+
         <div className="flex-1 overflow-y-auto">
           <div className="md:p-6 lg:p-6 xl:p-6">{children}</div>
         </div>
