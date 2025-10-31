@@ -28,57 +28,53 @@ export default function Product() {
 
   return (
     <div className="w-full rounded-lg p-6">
-      <header className="mb-6 flex items-center justify-between">
-        <Header title="Produtos" subtitle="Gerencie seus produtos" />
-        {products.length > 0 && (
+      <Header title="Produtos" subtitle="Gerencie seus produtos" />
+      {products.length > 0 && (
+        <Button
+          type="button"
+          size="md"
+          className="fixed right-15 bottom-4 z-10"
+          onClick={handleToggleForm}
+          aria-label="Criar novo produto"
+        >
+          <Plus className="mr-1" aria-hidden="true" />
+          Novo Produto
+        </Button>
+      )}
+
+      {products.length === 0 ? (
+        <section
+          className="bg-muted rounded-lg py-12 text-center"
+          aria-labelledby="empty-state-title"
+        >
+          <div className="mb-4 flex flex-col items-center justify-center gap-2">
+            <PackagePlus
+              className="text-muted-foreground"
+              width={60}
+              height={60}
+              aria-hidden="true"
+            />
+            <p id="empty-state-title" className="text-muted-foreground">
+              Nenhum produto cadastrado
+            </p>
+          </div>
           <Button
             type="button"
             size="md"
-            className="fixed right-15 bottom-4 z-10"
             onClick={handleToggleForm}
-            aria-label="Criar novo produto"
+            aria-describedby="empty-state-title"
           >
-            <Plus className="mr-1" aria-hidden="true" />
-            Novo Produto
+            Criar Primeiro Produto
           </Button>
-        )}
-      </header>
-
-      <main role="main">
-        {products.length === 0 ? (
-          <section
-            className="bg-muted rounded-lg py-12 text-center"
-            aria-labelledby="empty-state-title"
-          >
-            <div className="mb-4 flex flex-col items-center justify-center gap-2">
-              <PackagePlus
-                className="text-muted-foreground"
-                width={60}
-                height={60}
-                aria-hidden="true"
-              />
-              <p id="empty-state-title" className="text-muted-foreground">
-                Nenhum produto cadastrado
-              </p>
-            </div>
-            <Button
-              type="button"
-              size="md"
-              onClick={handleToggleForm}
-              aria-describedby="empty-state-title"
-            >
-              Criar Primeiro Produto
-            </Button>
-          </section>
-        ) : (
-          <section aria-labelledby="products-list-title">
-            <h2 id="products-list-title" className="sr-only">
-              Lista de produtos
-            </h2>
-            <ProductsList />
-          </section>
-        )}
-      </main>
+        </section>
+      ) : (
+        <section aria-labelledby="products-list-title">
+          <h2 id="products-list-title" className="sr-only">
+            Lista de produtos
+          </h2>
+          <ProductsList />
+        </section>
+      )}
 
       <Sheet
         open={state.isFormVisible}
