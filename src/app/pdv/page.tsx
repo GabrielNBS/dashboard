@@ -6,13 +6,15 @@ function PDV() {
   return (
     <div className="min-h-dvh w-full overflow-hidden p-4 sm:p-6">
       <div className="mx-auto w-full max-w-7xl">
-        <div className="mb-4 sm:mb-6">
+        <header className="mb-4 sm:mb-6">
           <Header
             title="Sistema de vendas"
             subtitle="Selecione os produtos e configure o pagamento"
           />
-        </div>
-        <RegisterSaleForm />
+        </header>
+        <main role="main" aria-label="Formulário de registro de vendas">
+          <RegisterSaleForm />
+        </main>
       </div>
     </div>
   );

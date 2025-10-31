@@ -23,6 +23,10 @@ export default function SearchableInput<T>({
   size?: 'sm' | 'md' | 'lg';
 }) {
   const [localValue, setLocalValue] = useState(inputValue);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const inputId = `searchable-input-${Math.random().toString(36).substr(2, 9)}`;
+  const listboxId = `${inputId}-listbox`;
 
   useEffect(() => {
     setLocalValue(inputValue);
@@ -35,6 +39,8 @@ export default function SearchableInput<T>({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setLocalValue(value);
+    setIsOpen(value.length > 0);
+    setActiveIndex(-1);
     if (onInputChange) onInputChange(value);
   };
 
@@ -43,44 +49,104 @@ export default function SearchableInput<T>({
       onSelectItem(item);
     }
     setLocalValue('');
+    setIsOpen(false);
+    setActiveIndex(-1);
     if (onInputChange) onInputChange('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setActiveIndex(prev => (prev < filteredItems.length - 1 ? prev + 1 : prev));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setActiveIndex(prev => (prev > 0 ? prev - 1 : prev));
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (activeIndex >= 0 && filteredItems[activeIndex]) {
+          handleSelect(filteredItems[activeIndex]);
+        }
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        setActiveIndex(-1);
+        break;
+    }
   };
 
   return (
     <div className="flex flex-col gap-1">
-      {/* Label do campo */}
-      {label && <label className="text-foreground mb-1 block text-sm font-medium">{label}</label>}
+      {label && (
+        <label htmlFor={inputId} className="text-foreground mb-1 block text-sm font-medium">
+          {label}
+        </label>
+      )}
 
       <div className={cn('relative', className)}>
         <Input
+          id={inputId}
           type="text"
           placeholder={placeholder}
           value={localValue}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           error={error}
           size={size}
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-owns={isOpen ? listboxId : undefined}
+          aria-activedescendant={
+            activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
+          }
+          aria-describedby={error ? `${inputId}-error` : undefined}
+          autoComplete="off"
         />
 
-        {localValue && (
-          <ul className="bg-popover border-border absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg">
+        {isOpen && localValue && (
+          <ul
+            id={listboxId}
+            className="bg-popover border-border absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
+            role="listbox"
+            aria-label="Opções de busca"
+          >
             {filteredItems.map((item, index) => (
               <li
                 key={index}
+                id={`${listboxId}-option-${index}`}
                 onClick={() => handleSelect(item)}
-                className="hover:bg-muted cursor-pointer px-4 py-2 transition-colors"
+                className={`cursor-pointer px-4 py-2 transition-colors ${
+                  index === activeIndex ? 'bg-muted' : 'hover:bg-muted'
+                }`}
+                role="option"
+                aria-selected={index === activeIndex}
               >
                 {String(item[displayAttribute])}
               </li>
             ))}
             {filteredItems.length === 0 && (
-              <li className="text-muted-foreground px-4 py-2 text-sm">Nenhum item encontrado</li>
+              <li
+                className="text-muted-foreground px-4 py-2 text-sm"
+                role="option"
+                aria-selected={false}
+              >
+                Nenhum item encontrado
+              </li>
             )}
           </ul>
         )}
       </div>
 
-      {/* Mensagem de erro */}
-      {error && <span className="text-destructive text-sm font-medium">{error}</span>}
+      {error && (
+        <span id={`${inputId}-error`} className="text-destructive text-sm font-medium" role="alert">
+          {error}
+        </span>
+      )}
     </div>
   );
 }

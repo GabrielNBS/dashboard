@@ -76,8 +76,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ toast }}>
       {children}
 
-      {/* Container de toasts - posicionado no canto superior direito */}
-      <div className="fixed top-4 left-4 z-100 flex flex-col gap-2">
+      <div
+        className="fixed top-4 left-4 z-100 flex flex-col gap-2"
+        aria-live="polite"
+        aria-label="Notificações"
+        role="region"
+      >
         {toasts.map(({ id, title, description, variant = 'default' }) => (
           <div
             key={id}
@@ -90,17 +94,26 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                     ? 'bg-bad'
                     : 'bg-muted'
             } `}
+            role="alert"
+            aria-labelledby={`toast-title-${id}`}
+            aria-describedby={description ? `toast-description-${id}` : undefined}
           >
-            <strong className="text-base font-semibold">{title}</strong>
-            {description && <span className="text-primary text-sm">{description}</span>}
+            <strong id={`toast-title-${id}`} className="text-base font-semibold">
+              {title}
+            </strong>
+            {description && (
+              <span id={`toast-description-${id}`} className="text-primary text-sm">
+                {description}
+              </span>
+            )}
 
-            {/* Botão para fechar o toast */}
             <Button
+              type="button"
               className="text-surface hover:bg-muted-foreground absolute top-2 right-2"
               onClick={() => removeToast(id)}
-              aria-label="Fechar"
+              aria-label={`Fechar notificação: ${title}`}
             >
-              ×
+              <span aria-hidden="true">×</span>
             </Button>
           </div>
         ))}

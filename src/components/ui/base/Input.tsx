@@ -37,40 +37,46 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
  *   size="md"
  * />
  */
-export default function Input({ label, error, size = 'md', className, ...props }: InputProps) {
+export default function Input({ label, error, size = 'md', className, id, ...props }: InputProps) {
   const sizeClasses = {
     sm: 'px-3 py-2 text-sm',
     md: 'px-4 py-3 text-sm',
     lg: 'px-4 py-4 text-base',
   };
 
+  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const errorId = `${inputId}-error`;
+
   return (
     <div className="flex flex-col gap-1">
-      {/* Label do campo */}
-      {label && <label className="text-foreground mb-1 block text-sm font-medium">{label}</label>}
+      {label && (
+        <label htmlFor={inputId} className="text-foreground mb-1 block text-sm font-medium">
+          {label}
+        </label>
+      )}
 
-      {/* Campo de entrada */}
       <input
+        id={inputId}
         className={cn(
-          // Base styles
           'w-full rounded-lg border transition-colors',
           'text-foreground placeholder:text-muted-foreground',
           'border-border bg-background',
-          // Focus states
           'focus:border-primary focus:ring-primary/20 focus:ring-2 focus:outline-none',
-          // Disabled states
           'disabled:cursor-not-allowed disabled:opacity-50',
-          // Error states
           error && 'border-destructive focus:border-destructive focus:ring-destructive/20',
-          // Size variants
           sizeClasses[size],
           className
         )}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? errorId : undefined}
         {...props}
       />
 
-      {/* Mensagem de erro */}
-      {error && <span className="text-destructive text-sm font-medium">{error}</span>}
+      {error && (
+        <span id={errorId} className="text-destructive text-sm font-medium" role="alert">
+          {error}
+        </span>
+      )}
     </div>
   );
 }

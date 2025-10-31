@@ -49,14 +49,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
     <SidebarContext.Provider value={{ isExpanded, setIsExpanded }}>
       <ResourcePreloader />
       <div className="bg-muted/30 min-h-dvh antialiased">
-        {/* Header mobile para dispositivos pequenos */}
         <MobileHeader />
-
-        {/* Sidebar com navegação colapsável */}
         <Aside />
-
-        {/* Área principal de conteúdo que se adapta ao sidebar */}
-        <main className="min-h-dvh w-full px-24">
+        <main
+          id="main-content"
+          className="min-h-dvh w-full px-24"
+          role="main"
+          aria-label="Conteúdo principal"
+        >
           <div className="mx-auto max-w-none">{children}</div>
         </main>
       </div>

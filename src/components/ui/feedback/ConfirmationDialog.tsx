@@ -121,15 +121,26 @@ export default function ConfirmationDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-xl lg:max-w-xl">
+      <DialogContent
+        className="sm:max-w-xl lg:max-w-xl"
+        aria-labelledby="confirmation-title"
+        aria-describedby="confirmation-description"
+      >
         <DialogHeader className="pb-4">
           <div className="flex items-start gap-4">
             <div className={cn('flex-shrink-0 rounded-full p-2', styles.iconBg)}>
-              <AlertTriangleIcon className={cn('h-6 w-6', styles.icon)} />
+              <AlertTriangleIcon className={cn('h-6 w-6', styles.icon)} aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
-              <DialogTitle className={cn('text-left', styles.title)}>{title}</DialogTitle>
-              <div className="text-muted-foreground mt-2 text-left text-sm">{description}</div>
+              <DialogTitle id="confirmation-title" className={cn('text-left', styles.title)}>
+                {title}
+              </DialogTitle>
+              <div
+                id="confirmation-description"
+                className="text-muted-foreground mt-2 text-left text-sm"
+              >
+                {description}
+              </div>
             </div>
           </div>
         </DialogHeader>
@@ -183,15 +194,23 @@ export default function ConfirmationDialog({
         </div>
 
         <DialogFooter className="gap-2 pt-4">
-          <Button variant="outline" onClick={handleClose}>
+          <Button type="button" variant="outline" onClick={handleClose} aria-label="Cancelar ação">
             {cancelButtonText}
           </Button>
           <Button
+            type="button"
             variant={isConfirmEnabled ? 'accept' : 'outline'}
             onClick={handleConfirm}
             disabled={!isConfirmEnabled}
+            aria-label={
+              isConfirmEnabled ? 'Confirmar ação' : 'Digite a frase de confirmação para habilitar'
+            }
           >
-            {isConfirmEnabled && <span className="mr-1">✓</span>}
+            {isConfirmEnabled && (
+              <span className="mr-1" aria-hidden="true">
+                ✓
+              </span>
+            )}
             {confirmButtonText}
           </Button>
         </DialogFooter>

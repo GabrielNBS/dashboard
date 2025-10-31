@@ -42,6 +42,8 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
             : 'text-foreground hover:bg-muted hover:text-foreground'
         }`}
         prefetch={true}
+        aria-current={isActive ? 'page' : undefined}
+        aria-label={`Navegar para ${label}`}
       >
         <div
           onMouseEnter={handleMouseEnter}
@@ -169,6 +171,9 @@ export default function Aside() {
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
       className="bg-card fixed top-0 left-0 z-50 hidden h-dvh flex-col shadow-lg sm:flex"
+      role="navigation"
+      aria-label="Navegação principal"
+      id="main-navigation"
     >
       {/* Header com Avatar */}
       <div className="flex h-20 items-center justify-center">
@@ -182,7 +187,7 @@ export default function Aside() {
         >
           <Image
             src={logoSrc}
-            alt="Avatar do usuário"
+            alt="Logo da empresa"
             width={48}
             height={48}
             className="h-full w-full object-cover"
@@ -194,9 +199,8 @@ export default function Aside() {
       {/* Separador */}
       <div className="border-border mx-4 border-t" />
 
-      {/* Menu de Navegação */}
-      <nav className="flex-1 overflow-hidden px-2 py-4">
-        <ul className="space-y-2">
+      <nav className="flex-1 overflow-hidden px-2 py-4" aria-label="Menu principal">
+        <ul className="space-y-2" role="list">
           {menuItems.map(item => {
             const { label, href, icon, lordIconSrc } = item;
             const isActive = pathname === href;

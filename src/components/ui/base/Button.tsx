@@ -35,10 +35,17 @@ export default function Button({
   className,
   disabled,
   tooltip,
+  type = 'button',
   ...props
 }: ButtonProps) {
   const buttonEl = (
-    <button className={button({ variant, size, className })} disabled={disabled} {...props}>
+    <button
+      type={type}
+      className={button({ variant, size, className })}
+      disabled={disabled}
+      aria-disabled={disabled}
+      {...props}
+    >
       {children}
     </button>
   );

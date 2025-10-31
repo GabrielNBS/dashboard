@@ -28,46 +28,85 @@ export default function Product() {
 
   return (
     <div className="w-full rounded-lg p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <header className="mb-6 flex items-center justify-between">
         <Header title="Produtos" subtitle="Gerencie seus produtos" />
         {products.length > 0 && (
-          <Button size="md" className="fixed right-15 bottom-4 z-10" onClick={handleToggleForm}>
-            <Plus className="mr-1" />
+          <Button
+            type="button"
+            size="md"
+            className="fixed right-15 bottom-4 z-10"
+            onClick={handleToggleForm}
+            aria-label="Criar novo produto"
+          >
+            <Plus className="mr-1" aria-hidden="true" />
             Novo Produto
           </Button>
         )}
-      </div>
+      </header>
 
-      {products.length === 0 ? (
-        <div className="bg-muted rounded-lg py-12 text-center">
-          <div className="mb-4 flex flex-col items-center justify-center gap-2">
-            <PackagePlus className="text-muted-foreground" width={60} height={60} />
-            <p className="text-muted-foreground">Nenhum produto cadastrado</p>
-          </div>
-          <Button size="md" onClick={handleToggleForm}>
-            Criar Primeiro Produto
-          </Button>
-        </div>
-      ) : (
-        <ProductsList />
-      )}
+      <main role="main">
+        {products.length === 0 ? (
+          <section
+            className="bg-muted rounded-lg py-12 text-center"
+            aria-labelledby="empty-state-title"
+          >
+            <div className="mb-4 flex flex-col items-center justify-center gap-2">
+              <PackagePlus
+                className="text-muted-foreground"
+                width={60}
+                height={60}
+                aria-hidden="true"
+              />
+              <p id="empty-state-title" className="text-muted-foreground">
+                Nenhum produto cadastrado
+              </p>
+            </div>
+            <Button
+              type="button"
+              size="md"
+              onClick={handleToggleForm}
+              aria-describedby="empty-state-title"
+            >
+              Criar Primeiro Produto
+            </Button>
+          </section>
+        ) : (
+          <section aria-labelledby="products-list-title">
+            <h2 id="products-list-title" className="sr-only">
+              Lista de produtos
+            </h2>
+            <ProductsList />
+          </section>
+        )}
+      </main>
 
       <Sheet
         open={state.isFormVisible}
         onOpenChange={() => dispatch({ type: 'TOGGLE_FORM_VISIBILITY' })}
       >
-        <SheetContent side="right" className="max-w-3xl overflow-hidden p-0">
+        <SheetContent
+          side="right"
+          className="max-w-3xl overflow-hidden p-0"
+          aria-labelledby="product-form-title"
+          aria-describedby="product-form-description"
+        >
           <div className="flex h-full flex-col">
             <SheetHeader className="border-border flex-shrink-0 border-b p-6">
               <div className="flex items-center gap-3">
                 <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                  <PackagePlus className="text-primary h-5 w-5" />
+                  <PackagePlus className="text-primary h-5 w-5" aria-hidden="true" />
                 </div>
                 <div className="text-left">
-                  <SheetTitle className="text-foreground text-lg font-semibold">
+                  <SheetTitle
+                    id="product-form-title"
+                    className="text-foreground text-lg font-semibold"
+                  >
                     {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
                   </SheetTitle>
-                  <SheetDescription className="text-muted-foreground text-sm">
+                  <SheetDescription
+                    id="product-form-description"
+                    className="text-muted-foreground text-sm"
+                  >
                     {state.isEditMode
                       ? 'Atualize as informações do produto existente'
                       : 'Preencha as informações para criar um novo produto'}

@@ -77,62 +77,79 @@ const TopSellingItems = () => {
   };
 
   return (
-    <aside className="w-full">
+    <aside className="w-full" aria-labelledby="top-products-title">
       <div className="bg-card overflow-hidden rounded-lg shadow-sm">
-        <div className="from-primary to-secondary-foreground bg-gradient-to-r px-4 py-3">
-          <h3 className="text-primary-foreground text-sm font-semibold">Top produtos</h3>
-        </div>
+        <header className="from-primary to-secondary-foreground bg-gradient-to-r px-4 py-3">
+          <h3 id="top-products-title" className="text-primary-foreground text-sm font-semibold">
+            Top produtos
+          </h3>
+        </header>
 
         <div className="min-h-64 space-y-2 p-3">
           {topItems.length === 0 && (
-            <div className="text-muted-foreground flex justify-center gap-4 py-6 text-center text-sm">
-              <ThumbsDown />
-              <p>nenhum item foi vendido ainda</p>
+            <div
+              className="text-muted-foreground flex justify-center gap-4 py-6 text-center text-sm"
+              role="status"
+            >
+              <ThumbsDown aria-hidden="true" />
+              <p>Nenhum item foi vendido ainda</p>
             </div>
           )}
 
-          {topItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="hover:bg-muted/50 flex items-center gap-3 rounded-md p-2 transition-colors"
-            >
-              {getRankBadge(index)}
-
-              <div className="h-10 w-10 flex-shrink-0">
-                <Image
-                  src={item.imagem}
-                  alt={item.nome}
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-md border object-cover"
-                />
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <div className="text-foreground truncate text-sm font-medium">{item.nome}</div>
-                <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                  <span>{item.quantidade} un.</span>
-                  <span>•</span>
-                  <span className="text-on-great font-medium">{formatCurrency(item.revenue)}</span>
-                </div>
-              </div>
-
-              <div className="text-right">
-                <span
-                  className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${getPercentageColor(
-                    item.percentualVendas
-                  )}`}
+          {topItems.length > 0 && (
+            <ol className="space-y-2" role="list" aria-label="Lista dos produtos mais vendidos">
+              {topItems.map((item, index) => (
+                <li
+                  key={item.id}
+                  className="hover:bg-muted/50 flex items-center gap-3 rounded-md p-2 transition-colors"
                 >
-                  {item.percentualVendas.toFixed(1)}%
-                </span>
-              </div>
-            </div>
-          ))}
+                  <div aria-label={`Posição ${index + 1}`}>{getRankBadge(index)}</div>
+
+                  <div className="h-10 w-10 flex-shrink-0">
+                    <Image
+                      src={item.imagem}
+                      alt={`Imagem do produto ${item.nome}`}
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 rounded-md border object-cover"
+                    />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="text-foreground truncate text-sm font-medium">{item.nome}</div>
+                    <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                      <span aria-label={`${item.quantidade} unidades vendidas`}>
+                        {item.quantidade} un.
+                      </span>
+                      <span aria-hidden="true">•</span>
+                      <span
+                        className="text-on-great font-medium"
+                        aria-label={`Receita de ${formatCurrency(item.revenue)}`}
+                      >
+                        {formatCurrency(item.revenue)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <span
+                      className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${getPercentageColor(
+                        item.percentualVendas
+                      )}`}
+                      aria-label={`${item.percentualVendas.toFixed(1)}% das vendas totais`}
+                    >
+                      {item.percentualVendas.toFixed(1)}%
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
         </div>
 
-        <div className="bg-muted/30 border-t px-4 py-2">
+        <footer className="bg-muted/30 border-t px-4 py-2">
           <div className="text-muted-foreground text-xs">
-            <div className="flex justify-between">
+            <div className="flex justify-between" role="status" aria-live="polite">
               <span>Total: {topItems.length} produtos</span>
               <span>
                 {topItems.reduce((acc, item) => acc + item.percentualVendas, 0).toFixed(1)}% das
@@ -140,7 +157,7 @@ const TopSellingItems = () => {
               </span>
             </div>
           </div>
-        </div>
+        </footer>
       </div>
     </aside>
   );

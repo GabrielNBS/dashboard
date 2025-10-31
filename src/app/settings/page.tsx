@@ -87,54 +87,80 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Header title="Configurações" subtitle="Gerencie os dados da sua loja" />
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div
+          className="flex flex-col gap-2 sm:flex-row"
+          role="group"
+          aria-label="Ações das configurações"
+        >
           <Button
+            type="button"
             variant="outline"
             onClick={handleReset}
             className="flex items-center justify-center gap-2"
+            aria-label="Resetar todas as configurações"
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className="h-4 w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Resetar</span>
           </Button>
           <Button
+            type="button"
             onClick={handleSave}
             disabled={isSaving}
             className="flex items-center justify-center gap-2"
+            aria-label={isSaving ? 'Salvando configurações...' : 'Salvar configurações'}
           >
-            <Save className="h-4 w-4" />
+            <Save className="h-4 w-4" aria-hidden="true" />
             <span>{isSaving ? 'Salvando...' : 'Salvar'}</span>
           </Button>
         </div>
-      </div>
+      </header>
 
-      {/* Navegação das seções */}
-      <div className="border-border border-b">
-        <nav className="flex space-x-1 overflow-x-auto pb-0" aria-label="Tabs">
-          {sections.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setActiveSection(id)}
-              className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all ${
-                activeSection === id
-                  ? 'border-primary text-primary bg-primary/5'
-                  : 'text-muted-foreground hover:border-border hover:text-foreground border-transparent'
-              }`}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="hidden sm:inline">{label}</span>
-            </button>
-          ))}
-        </nav>
-      </div>
+      <section aria-labelledby="settings-navigation">
+        <h2 id="settings-navigation" className="sr-only">
+          Navegação das configurações
+        </h2>
+        <div className="border-border border-b">
+          <nav
+            className="flex space-x-1 overflow-x-auto pb-0"
+            role="tablist"
+            aria-label="Seções de configurações"
+          >
+            {sections.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setActiveSection(id)}
+                className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all ${
+                  activeSection === id
+                    ? 'border-primary text-primary bg-primary/5'
+                    : 'text-muted-foreground hover:border-border hover:text-foreground border-transparent'
+                }`}
+                role="tab"
+                aria-selected={activeSection === id}
+                aria-controls={`panel-${id}`}
+                id={`tab-${id}`}
+              >
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+      </section>
 
-      {/* Conteúdo da seção ativa */}
-      <div className="min-h-[600px]">{renderSection()}</div>
+      <section
+        className="min-h-[600px]"
+        role="tabpanel"
+        id={`panel-${activeSection}`}
+        aria-labelledby={`tab-${activeSection}`}
+      >
+        {renderSection()}
+      </section>
 
       {/* Dialog de confirmação */}
       {confirmationState && (

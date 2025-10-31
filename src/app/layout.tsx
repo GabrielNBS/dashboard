@@ -60,11 +60,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
-        {/* DNS Prefetch para domínios externos */}
         <link rel="dns-prefetch" href="https://cdn.lordicon.com" />
-        {/* Preconnect para recursos críticos */}
         <link rel="preconnect" href="https://cdn.lordicon.com" crossOrigin="anonymous" />
-        {/* Prefetch de rotas críticas */}
         <link rel="prefetch" href="/store" as="document" />
         <link rel="prefetch" href="/product" as="document" />
         <link rel="prefetch" href="/finance" as="document" />
@@ -73,21 +70,22 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} `}>
         <Script src="https://cdn.lordicon.com/lordicon.js" strategy="beforeInteractive" />
-        {/* Provider do sistema de toast */}
+        <div id="skip-links" className="sr-only">
+          <a href="#main-content" className="skip-link">
+            Pular para o conteúdo principal
+          </a>
+          <a href="#main-navigation" className="skip-link">
+            Pular para a navegação
+          </a>
+        </div>
         <ToastProvider>
           <TooltipProvider>
             <ToastGlobalRegister />
-            {/* Provider do contexto de ingredientes */}
             <IngredientProvider>
-              {/* Provider do contexto de construção de produtos */}
               <ProductBuilderProvider>
-                {/* Provider do contexto de produtos finais */}
                 <ProductProvider>
-                  {/* Provider do contexto de vendas */}
                   <SalesProvider>
-                    {/* Provider do contexto de configurações */}
                     <SettingsProvider>
-                      {/* Layout principal com sidebar colapsável */}
                       <MainLayout>{children}</MainLayout>
                     </SettingsProvider>
                   </SalesProvider>

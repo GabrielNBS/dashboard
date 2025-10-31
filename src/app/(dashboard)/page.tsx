@@ -21,24 +21,24 @@ export default function DashboardContent() {
   const { summary, trending, chartData, aggregatedData } = useDashboardMetrics();
 
   const { storeName } = settings.store;
+  const title = (
+    <>
+      {getHowHours()}, <strong>{storeName}</strong>
+    </>
+  );
+  const subtitle = 'o resumo diário do seu dia';
 
   return (
     <main className="bg-surface flex min-h-screen flex-col gap-6 p-6">
-      <Header
-        title={
-          <>
-            {getHowHours()}, <strong>{storeName}</strong>
-          </>
-        }
-        subtitle={'o resumo diário do seu dia'}
-      />
+      <Header title={title} subtitle={subtitle} />
 
-      <section className="grid gap-6 lg:grid-cols-4">
-        {/* Container dos cards, ocupando 3 das 4 colunas em telas grandes. */}
+      <section aria-labelledby="kpi-title" className="grid gap-6 lg:grid-cols-4">
+        <h2 id="kpi-title" className="sr-only">
+          Indicadores Chave de Performance
+        </h2>
+
         <div className="lg:col-span-3">
-          {/* Mobile Layout - Hierárquico */}
           <div className="space-y-4 lg:hidden">
-            {/* KPIs Principais - Destaque */}
             <div className="grid grid-cols-1 gap-3">
               <div className="bg-background rounded-lg p-4 shadow-sm">
                 <div className="flex items-center justify-between">
@@ -49,7 +49,7 @@ export default function DashboardContent() {
                     </p>
                   </div>
                   <div className="bg-primary flex h-12 w-12 items-center justify-center rounded-full">
-                    <DollarSign className="text-background h-6 w-6" />
+                    <DollarSign className="text-background h-6 w-6" aria-hidden="true" />
                   </div>
                 </div>
               </div>
@@ -63,15 +63,14 @@ export default function DashboardContent() {
                     </p>
                   </div>
                   <div className="bg-accent flex h-12 w-12 items-center justify-center rounded-full">
-                    <ChartBarIcon className="text-background h-6 w-6" />
+                    <ChartBarIcon className="text-background h-6 w-6" aria-hidden="true" />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* KPIs Secundários - Grid Compacto */}
             <div className="bg-muted rounded-lg p-3">
-              <h4 className="text-accent-foreground mb-3 text-sm font-medium">Detalhamento</h4>
+              <h3 className="text-accent-foreground mb-3 text-sm font-medium">Detalhamento</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-background rounded-md p-3">
                   <p className="text-muted-foreground truncate text-xs font-medium">
@@ -94,31 +93,46 @@ export default function DashboardContent() {
             </div>
           </div>
 
-          {/* Desktop Layout - Original */}
-          <div className="hidden grid-cols-1 gap-6 md:grid-cols-2 lg:grid lg:grid-cols-4">
+          <div className="hidden grid-cols-4 gap-6 lg:grid">
             <NetProfitCard
               summary={summary}
               bgColor="bg-primary"
               textColor="text-secondary"
-              icon={<DollarSign />}
+              icon={<DollarSign aria-hidden="true" />}
               trending={trending.netProfit}
             />
-            <RevenueCard summary={summary} icon={<ChartBarIcon />} trending={trending.revenue} />
+            <RevenueCard
+              summary={summary}
+              icon={<ChartBarIcon aria-hidden="true" />}
+              trending={trending.revenue}
+            />
             <VariableCostCard
               summary={summary}
-              icon={<ShoppingBagIcon />}
+              icon={<ShoppingBagIcon aria-hidden="true" />}
               trending={trending.variableCost}
             />
-            <ProfitMarginCard summary={summary} icon={<PercentIcon />} trending={trending.margin} />
+            <ProfitMarginCard
+              summary={summary}
+              icon={<PercentIcon aria-hidden="true" />}
+              trending={trending.margin}
+            />
           </div>
 
-          {/* Charts Section */}
-          <section className="mt-6 flex flex-col gap-6">
+          <section aria-labelledby="charts-title" className="mt-6 flex flex-col gap-6">
+            <h2 id="charts-title" className="sr-only">
+              Gráficos e Métricas
+            </h2>
             <FinancialChart chartData={chartData} aggregatedData={aggregatedData} />
             <MetricsIntegrationDemo />
           </section>
         </div>
-        <TopSellingItems />
+
+        <section aria-labelledby="top-selling-title">
+          <h2 id="top-selling-title" className="sr-only">
+            Itens Mais Vendidos
+          </h2>
+          <TopSellingItems />
+        </section>
       </section>
     </main>
   );

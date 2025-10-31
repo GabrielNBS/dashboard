@@ -42,44 +42,67 @@ export default function CardWrapper({
   };
 
   return (
-    <div
+    <article
       className={`w-full rounded-lg p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className} ${bgColor} ${textColor} hover:${bgColor} flex ${
         layout === 'horizontal' ? 'flex-row items-center gap-3 sm:gap-4' : 'flex-col'
       }`}
+      role="region"
+      aria-labelledby={`card-title-${title}`}
     >
       <div className="w-full">
-        <h3 className="flex justify-between gap-2 text-xs font-semibold sm:text-sm">
+        <h3
+          id={`card-title-${title}`}
+          className="flex justify-between gap-2 text-xs font-semibold sm:text-sm"
+        >
           {title}
-          {icon && <span className="text-2xl sm:text-3xl">{icon}</span>}
+          {icon && (
+            <span className="text-2xl sm:text-3xl" aria-hidden="true">
+              {icon}
+            </span>
+          )}
         </h3>
         {type === 'custom' ? (
-          <div className="mt-1">{formatValue()}</div>
+          <div className="mt-1" role="text" aria-label={`Valor: ${formatValue()}`}>
+            {formatValue()}
+          </div>
         ) : (
-          <p className="mt-1 text-lg font-bold sm:text-xl">{formatValue()}</p>
+          <p
+            className="mt-1 text-lg font-bold sm:text-xl"
+            role="text"
+            aria-label={`Valor: ${formatValue()}`}
+          >
+            {formatValue()}
+          </p>
         )}
         {subtitle && <p className="text-muted-foreground text-xs sm:text-sm">{subtitle}</p>}
         {trending && (
-          <div className="flex items-center gap-1 text-xs sm:text-sm">
+          <div
+            className="flex items-center gap-1 text-xs sm:text-sm"
+            role="status"
+            aria-live="polite"
+          >
             {typeof trending === 'boolean' ? (
-              // Fallback para compatibilidade com o formato antigo
               <div className="text-on-great items-center gap-2">
                 <strong className="flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                  15%
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
+                  <span aria-label="Tendência positiva de 15%">15%</span>
                 </strong>
               </div>
             ) : (
-              // Novo formato com dados dinâmicos
               <div
                 className={`items-center gap-2 ${trending.isPositive ? 'text-on-great' : 'text-on-bad'}`}
               >
                 <strong className="flex items-center gap-1">
                   {trending.isPositive ? (
-                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
                   ) : (
-                    <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
                   )}
-                  {trending.percentage.toFixed(1)}%
+                  <span
+                    aria-label={`Tendência ${trending.isPositive ? 'positiva' : 'negativa'} de ${trending.percentage.toFixed(1)}%`}
+                  >
+                    {trending.percentage.toFixed(1)}%
+                  </span>
                 </strong>
                 <span className="text-muted-foreground ml-1 text-xs">{trending.period}</span>
               </div>
@@ -87,6 +110,6 @@ export default function CardWrapper({
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }
