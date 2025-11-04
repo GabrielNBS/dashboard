@@ -11,6 +11,9 @@ export interface ProductionModel {
   unitMargin: number; // margem unitária (%)
   sellingPrice: number; // preço de venda total (se for lote)
   profitMargin: number; // margem total (%)
+  // Controle de produção para lotes
+  producedQuantity?: number; // Quantidade já produzida e disponível para venda
+  lastProductionDate?: string; // Data da última produção
 }
 
 export interface ProductState {

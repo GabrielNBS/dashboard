@@ -8,8 +8,8 @@ function PDV() {
       <div className="mx-auto w-full max-w-7xl">
         <header className="mb-4 sm:mb-6">
           <Header
-            title="Sistema de vendas"
-            subtitle="Selecione os produtos e configure o pagamento"
+            title="PDV Unificado"
+            subtitle="Vendas individuais e em lote com desconto dinâmico"
           />
         </header>
         <main role="main" aria-label="Formulário de registro de vendas">

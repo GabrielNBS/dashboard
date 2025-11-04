@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { PackagePlus, Plus } from 'lucide-react';
+import { PackagePlus, Plus, Package, AlertTriangle } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { CartItem } from '@/types/sale';
 import { ProductState } from '@/types/products';
 
 import { formatCurrency } from '@/utils/UnifiedUtils';
+import BatchBadge from '@/components/ui/feedback/BatchBadge';
 
 import EmptyList from '@/components/ui/feedback/EmptyList';
 
@@ -42,6 +43,8 @@ export default function ProductCatalog({
               const inCart = cart.find(item => item.uid === product.uid);
               const canMake = canMakeProduct(product.uid, inCart?.quantity ?? 0 + 1);
               const sellingPrice = product.production.sellingPrice;
+              const isBatchProduct = product.production.mode === 'lote';
+              const yieldQuantity = product.production.yieldQuantity;
 
               return (
                 <div
@@ -67,9 +70,14 @@ export default function ProductCatalog({
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between">
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-primary truncate text-sm font-medium">
-                            {product.name}
-                          </h3>
+                          <div className="flex items-center gap-1">
+                            <h3 className="text-primary truncate text-sm font-medium">
+                              {product.name}
+                            </h3>
+                            {isBatchProduct && (
+                              <Package className="text-primary h-3 w-3 flex-shrink-0" />
+                            )}
+                          </div>
                           <div className="flex items-center justify-between">
                             <p className="text-muted-foreground truncate text-xs">
                               {product.category}
@@ -110,8 +118,20 @@ export default function ProductCatalog({
                   {/* Desktop Layout */}
                   <div className="hidden p-4 sm:block">
                     <div className="mb-3">
-                      <h3 className="text-primary font-semibold">{product.name}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-primary font-semibold">{product.name}</h3>
+                        {isBatchProduct && (
+                          <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-xs font-medium">
+                            Lote
+                          </span>
+                        )}
+                      </div>
                       <p className="text-muted-foreground text-sm">{product.category}</p>
+                      {isBatchProduct && (
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          Rendimento: {yieldQuantity} unidades
+                        </p>
+                      )}
                     </div>
 
                     <div className="mb-3 flex justify-center">
@@ -149,12 +169,24 @@ export default function ProductCatalog({
                     </Button>
                   </div>
 
-                  {/* Error Message */}
-                  {!canMake && (
-                    <div className="px-3 pb-2 sm:px-4">
-                      <p className="text-destructive text-xs">Estoque insuficiente</p>
-                    </div>
-                  )}
+                  {/* Status Messages */}
+                  <div className="px-3 pb-2 sm:px-4">
+                    {!canMake && (
+                      <div className="flex items-center gap-1 text-red-600">
+                        <AlertTriangle className="h-3 w-3" />
+                        <p className="text-xs">Estoque insuficiente</p>
+                      </div>
+                    )}
+
+                    {canMake && isBatchProduct && (
+                      <div className="flex items-center gap-1 text-blue-600">
+                        <Package className="h-3 w-3" />
+                        <p className="text-xs">
+                          Produto em lote - Use o PDV com Lotes para venda parcial
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}

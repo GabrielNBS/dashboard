@@ -2,11 +2,13 @@
 'use client';
 
 import React from 'react';
-import ProductCatalog from '@/components/features/pdv/ProductCatalog';
-import ShoppingCart from '@/components/features/pdv/ShoppingCart';
+import UnifiedProductCatalog from '@/components/features/pdv/UnifiedProductCatalog';
+import UnifiedShoppingCart from '@/components/features/pdv/UnifiedShoppingCart';
 import PaymentConfiguration from '@/components/features/pdv/PaymentConfiguration';
 import OrderSummary from '@/components/features/pdv/OrderSummary';
-import { useSaleProcess } from '@/hooks/business/useSaleProcess';
+import BatchStatusBar from '@/components/features/pdv/BatchStatusBar';
+import { useUnifiedSaleProcess } from '@/hooks/business/useUnifiedSaleProcess';
+import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 
 export default function RegisterSaleForm() {
   const {
@@ -20,43 +22,57 @@ export default function RegisterSaleForm() {
     setPayment,
     confirmSale,
     canMakeProduct,
-  } = useSaleProcess();
+    getBatchInfo,
+  } = useUnifiedSaleProcess();
+
+  const { state: ingredientStore } = useIngredientContext();
 
   return (
     <div className="w-full overflow-hidden">
-      <div className="flex flex-col gap-4 sm:gap-6 xl:flex-row">
-        {/* Catálogo de Produtos */}
-        <div className="min-w-0 flex-1 xl:flex-[2]">
-          <ProductCatalog
-            products={products}
-            cart={cart}
-            onAddToCart={addToCart}
-            canMakeProduct={canMakeProduct}
-          />
-        </div>
+      <div className="space-y-4 sm:space-y-6">
+        <BatchStatusBar
+          products={products}
+          availableIngredients={ingredientStore.ingredients}
+          cartItemsCount={cart.length}
+        />
 
-        {/* Carrinho e Pagamento */}
-        <div className="w-full xl:w-80 xl:flex-shrink-0">
-          <div className="space-y-4 xl:sticky xl:top-4">
-            <ShoppingCart
-              cart={cart}
+        <div className="flex flex-col gap-4 sm:gap-6 xl:flex-row">
+          {/* Catálogo de Produtos */}
+          <div className="min-w-0 flex-1 xl:flex-[2]">
+            <UnifiedProductCatalog
               products={products}
-              onRemoveFromCart={removeFromCart}
-              onUpdateQuantity={updateQuantity}
+              cart={cart}
+              availableIngredients={ingredientStore.ingredients}
+              onAddToCart={addToCart}
               canMakeProduct={canMakeProduct}
+              getBatchInfo={getBatchInfo}
             />
+          </div>
 
-            {cart.length > 0 && (
-              <>
-                <PaymentConfiguration payment={payment} onPaymentChange={setPayment} />
-                <OrderSummary
-                  sellingResume={sellingResume}
-                  payment={payment}
-                  onConfirmSale={confirmSale}
-                  isCartEmpty={cart.length === 0}
-                />
-              </>
-            )}
+          {/* Carrinho e Pagamento */}
+          <div className="w-full xl:w-80 xl:flex-shrink-0">
+            <div className="space-y-4 xl:sticky xl:top-4">
+              <UnifiedShoppingCart
+                cart={cart}
+                products={products}
+                availableIngredients={ingredientStore.ingredients}
+                onRemoveFromCart={removeFromCart}
+                onUpdateQuantity={updateQuantity}
+                canMakeProduct={canMakeProduct}
+              />
+
+              {cart.length > 0 && (
+                <>
+                  <PaymentConfiguration payment={payment} onPaymentChange={setPayment} />
+                  <OrderSummary
+                    sellingResume={sellingResume}
+                    payment={payment}
+                    onConfirmSale={confirmSale}
+                    isCartEmpty={cart.length === 0}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

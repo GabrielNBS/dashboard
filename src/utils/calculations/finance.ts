@@ -72,7 +72,8 @@ export function getTotalVariableCost(
  * Calcula o custo real dos ingredientes baseado nas vendas realizadas.
  *
  * Esta função analisa cada venda e calcula o custo real dos ingredientes
- * utilizados nos produtos vendidos, considerando os preços médios atuais.
+ * utilizados nos produtos vendidos, considerando os preços médios atuais
+ * e suportando vendas parciais de lotes.
  *
  * @param sales - Array de vendas realizadas
  * @returns Custo total real dos ingredientes utilizados nas vendas
@@ -80,6 +81,12 @@ export function getTotalVariableCost(
 export function getRealIngredientsCost(sales: Sale[]): number {
   return sales.reduce((totalCost, sale) => {
     const saleCost = sale.items.reduce((itemsCost, item) => {
+      // Verifica se é um BatchSaleItem com custo proporcional já calculado
+      const batchItem = item as { isBatchSale?: boolean; proportionalCost?: number };
+      if (batchItem.isBatchSale && typeof batchItem.proportionalCost === 'number') {
+        return itemsCost + Math.abs(batchItem.proportionalCost);
+      }
+
       // Calcula o custo dos ingredientes para este item específico
       const ingredientsCost =
         item.product.ingredients.reduce((ingCost, ingredient) => {
@@ -87,17 +94,23 @@ export function getRealIngredientsCost(sales: Sale[]): number {
           const unitIngredientCost =
             (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
 
-          // Se for produção em lote, divide pelo rendimento para obter custo unitário
-          const unitCost =
-            item.product.production.mode === 'lote' && item.product.production.yieldQuantity > 0
-              ? unitIngredientCost / item.product.production.yieldQuantity
-              : unitIngredientCost;
+          let unitCost: number;
+          if (
+            item.product.production.mode === 'lote' &&
+            item.product.production.yieldQuantity > 0
+          ) {
+            // Para produtos em lote, calcula custo proporcional
+            const proportion = item.quantity / item.product.production.yieldQuantity;
+            unitCost = unitIngredientCost * proportion;
+          } else {
+            // Para produtos individuais, usa custo total por unidade
+            unitCost = unitIngredientCost * item.quantity;
+          }
 
           return ingCost + unitCost;
         }, 0) || 0;
 
-      // Multiplica pelo número de unidades vendidas
-      return itemsCost + ingredientsCost * item.quantity;
+      return itemsCost + ingredientsCost;
     }, 0);
 
     return totalCost + saleCost;

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { ProductState } from '@/types/products';
 import { Ingredient } from '@/types/ingredients';
+import ProductionButton from '@/components/features/production/ProductionButton';
 
 interface ProductCardProps {
   product: ProductState;
@@ -540,6 +541,9 @@ const OverviewTab: React.FC<{
         )}
       </div>
     </div>
+
+    {/* Production Button for Batch Products */}
+    {product.production.mode === 'lote' && <ProductionButton product={product} />}
   </div>
 );
 

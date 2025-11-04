@@ -73,3 +73,16 @@ export const DEFAULT_PAYMENT_FEES: PaymentFees = {
   credit: 3.5,
   ifood: 15,
 };
+
+// Tipos para venda parcial de lotes
+export interface BatchSaleItem extends SaleItem {
+  isBatchSale: boolean;
+  batchYieldQuantity?: number; // Quantidade total do lote
+  batchSoldQuantity?: number; // Quantidade vendida do lote
+  batchRemainingQuantity?: number; // Quantidade restante do lote
+  proportionalCost?: number; // Custo proporcional à quantidade vendida
+}
+
+export interface BatchSale extends Omit<Sale, 'items'> {
+  items: BatchSaleItem[];
+}

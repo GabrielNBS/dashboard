@@ -53,7 +53,7 @@ export function useSaleProcess() {
     [removeFromCart]
   );
 
-  // Stock validation
+  // Stock validation with batch support
   const validateStock = useCallback(
     (productUid: string, requestedQuantity: number) => {
       const product = finalProducts.products.find(p => p.uid === productUid);
@@ -61,9 +61,20 @@ export function useSaleProcess() {
 
       const missingIngredients: string[] = [];
 
+      // For batch products, calculate proportional ingredient consumption
       const isValid = product.ingredients.every(ingredient => {
         const storeItem = store.ingredients.find(i => i.id === ingredient.id);
-        const totalNeeded = ingredient.totalQuantity * requestedQuantity;
+
+        let totalNeeded: number;
+        if (product.production.mode === 'lote' && product.production.yieldQuantity > 0) {
+          // For batch products, calculate proportional consumption
+          const proportion = requestedQuantity / product.production.yieldQuantity;
+          totalNeeded = ingredient.totalQuantity * proportion;
+        } else {
+          // For individual products, use direct multiplication
+          totalNeeded = ingredient.totalQuantity * requestedQuantity;
+        }
+
         const hasEnough = !!storeItem && storeItem.totalQuantity >= totalNeeded;
         if (!hasEnough) missingIngredients.push(ingredient.name);
         return hasEnough;
@@ -105,14 +116,24 @@ export function useSaleProcess() {
       }
     }
 
-    // Create sale items and update stocks
+    // Create sale items and update stocks with batch support
     const saleItems: SaleItem[] = cart.map(item => {
       const product = finalProducts.products.find(p => p.uid === item.uid)!;
 
       product.ingredients.forEach(ingredient => {
-        const totalToRemove = ingredient.totalQuantity * item.quantity;
+        let totalToRemove: number;
+
+        if (product.production.mode === 'lote' && product.production.yieldQuantity > 0) {
+          // For batch products, calculate proportional consumption
+          const proportion = item.quantity / product.production.yieldQuantity;
+          totalToRemove = ingredient.totalQuantity * proportion;
+        } else {
+          // For individual products, use direct multiplication
+          totalToRemove = ingredient.totalQuantity * item.quantity;
+        }
+
         const storeItem = store.ingredients.find(i => i.id === ingredient.id)!;
-        const newQuantity = storeItem.totalQuantity - totalToRemove;
+        const newQuantity = Math.max(0, storeItem.totalQuantity - totalToRemove);
 
         storeDispatch({
           type: 'EDIT_INGREDIENT',
@@ -123,10 +144,16 @@ export function useSaleProcess() {
         });
       });
 
+      // Use unit selling price for consistent pricing
+      const unitPrice =
+        product.production.mode === 'lote'
+          ? product.production.unitSellingPrice
+          : product.production.sellingPrice;
+
       return {
         product: product,
         quantity: item.quantity,
-        subtotal: product.production.sellingPrice * item.quantity,
+        subtotal: unitPrice * item.quantity,
       };
     });
 

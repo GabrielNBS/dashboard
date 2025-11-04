@@ -28,16 +28,30 @@ export function useFinanceActions() {
           variant: 'destructive',
         },
         () => {
-          // restaurar ingredientes vendidos
+          // restaurar ingredientes vendidos (considerando lotes)
           sale.items.forEach(item => {
             item.product.ingredients.forEach(used => {
               const estoqueItem = storeState.ingredients.find(i => i.id === used.id);
               if (estoqueItem) {
+                let quantityToRestore: number;
+
+                if (
+                  item.product.production.mode === 'lote' &&
+                  item.product.production.yieldQuantity > 0
+                ) {
+                  // Para produtos em lote, calcula proporcionalmente
+                  const proportion = item.quantity / item.product.production.yieldQuantity;
+                  quantityToRestore = used.totalQuantity * proportion;
+                } else {
+                  // Para produtos individuais, usa a quantidade total
+                  quantityToRestore = used.totalQuantity * item.quantity;
+                }
+
                 storeDispatch({
                   type: 'EDIT_INGREDIENT',
                   payload: {
                     ...estoqueItem,
-                    totalQuantity: estoqueItem.totalQuantity + used.totalQuantity * item.quantity,
+                    totalQuantity: estoqueItem.totalQuantity + quantityToRestore,
                   },
                 });
               }
