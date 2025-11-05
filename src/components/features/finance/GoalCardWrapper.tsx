@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Flag, TrendingUp } from 'lucide-react';
+import { Flag, TrendingUp, ChevronRight } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 
 interface GoalCardWrapperProps {
@@ -11,6 +11,7 @@ interface GoalCardWrapperProps {
   tooltipText?: string;
   className?: string;
   textColor?: string;
+  onClick?: () => void;
 }
 
 export default function GoalCardWrapper({
@@ -19,6 +20,7 @@ export default function GoalCardWrapper({
   currentValue,
   className = '',
   textColor = 'text-primary',
+  onClick,
 }: GoalCardWrapperProps) {
   // Trata casos especiais do ponto de equilíbrio
   const isInfinite = !isFinite(goalValue) || goalValue === Infinity;
@@ -44,7 +46,8 @@ export default function GoalCardWrapper({
 
   return (
     <div
-      className={`flex ${textColor} w-full cursor-pointer flex-col rounded-lg border border-t-4 border-transparent p-3 shadow-md transition-all duration-300 ease-in-out sm:p-4 ${className}`}
+      onClick={onClick}
+      className={`group flex ${textColor} w-full flex-col rounded-lg border border-t-4 border-transparent p-3 shadow-md transition-all duration-300 ease-in-out hover:shadow-lg sm:p-4 ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
       <div className="w-full">
         {/* Header */}
@@ -80,15 +83,20 @@ export default function GoalCardWrapper({
         </div>
 
         {/* Status */}
-        <p className="text-muted-foreground text-xs sm:text-sm">
-          {isInfinite
-            ? 'Negócio não é viável com custos atuais'
-            : isInvalid
-              ? 'Dados insuficientes para calcular'
-              : remaining > 0
-                ? `Faltam ${formatCurrency(remaining)}`
-                : 'Meta alcançada 🎉'}
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-muted-foreground text-xs sm:text-sm">
+            {isInfinite
+              ? 'Negócio não é viável com custos atuais'
+              : isInvalid
+                ? 'Dados insuficientes para calcular'
+                : remaining > 0
+                  ? `Faltam ${formatCurrency(remaining)}`
+                  : 'Meta alcançada 🎉'}
+          </p>
+          {onClick && (
+            <ChevronRight className="text-muted-foreground h-4 w-4 transition-transform group-hover:translate-x-1" />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -224,13 +224,8 @@ export function useUnifiedSaleProcess() {
         });
       }
 
-      // Calcula preço baseado no modo de produção
-      let unitPrice: number;
-      if (product.production.mode === 'lote') {
-        unitPrice = product.production.unitSellingPrice;
-      } else {
-        unitPrice = product.production.sellingPrice;
-      }
+      // Sempre usar unitSellingPrice para consistência
+      const unitPrice = product.production.unitSellingPrice;
 
       // Cria item de venda regular
       const regularSaleItem = {
@@ -312,13 +307,8 @@ export function useUnifiedSaleProcess() {
         const product = finalProducts.products.find(p => p.uid === item.uid);
         if (!product) return null;
 
-        // Usa preço unitário correto baseado no modo de produção
-        let unitPrice: number;
-        if (product.production.mode === 'lote') {
-          unitPrice = product.production.unitSellingPrice;
-        } else {
-          unitPrice = product.production.sellingPrice;
-        }
+        // Sempre usar unitSellingPrice para consistência
+        const unitPrice = product.production.unitSellingPrice;
 
         const regularSaleItem = {
           product,

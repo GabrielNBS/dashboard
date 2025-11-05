@@ -44,9 +44,12 @@ export default function BatchQuantitySelector({
     ? calculateProportionalIngredientCost(product, selectedQuantity)
     : product.production.totalCost * selectedQuantity;
 
-  const proportionalMargin = isBatchProduct
-    ? calculateProportionalProfitMargin(product, selectedQuantity, unitPrice)
-    : product.production.unitMargin;
+  // Sempre calcular margem real baseada no preço atual
+  const proportionalMargin = calculateProportionalProfitMargin(
+    product,
+    selectedQuantity,
+    unitPrice
+  );
 
   const totalValue = unitPrice * selectedQuantity;
   const remainingInBatch = isBatchProduct ? yieldQuantity - selectedQuantity : 0;

@@ -52,6 +52,9 @@ export default function Finance() {
         {/* KPIs em Metro Tiles */}
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-gray-700 sm:text-base">Resumo Financeiro</h3>
+          <p className="text-muted-foreground text-xs">
+            Clique no card &quot;Ponto de equilíbrio&quot; para ver análise detalhada
+          </p>
           <MetroTilesKPIs financialSummary={financialSummary} />
         </div>
 

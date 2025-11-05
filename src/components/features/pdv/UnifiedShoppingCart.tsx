@@ -72,10 +72,8 @@ export default function UnifiedShoppingCart({
             const maxAvailable = calculateMaxSellableQuantity(product, availableIngredients);
             const yieldQuantity = product.production.yieldQuantity;
 
-            // Calcula preços baseado no modo de produção
-            const unitPrice = isBatchProduct
-              ? product.production.unitSellingPrice
-              : product.production.sellingPrice;
+            // Sempre usar unitSellingPrice para consistência
+            const unitPrice = product.production.unitSellingPrice;
 
             const proportionalCost = isBatchProduct
               ? calculateProportionalIngredientCost(product, item.quantity)

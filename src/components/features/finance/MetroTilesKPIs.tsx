@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { FinanceSummary } from '@/hooks/business/useSummaryFinance';
 import CardWrapper from '@/components/dashboard/finance/cards/CardWrapper';
 import FinancePieChart from './FinancePieChart';
@@ -8,12 +8,15 @@ import { DollarSign } from 'lucide-react';
 import { formatCurrency, formatPercent } from '@/utils/formatting/formatCurrency';
 import GoalCardWrapper from './GoalCardWrapper';
 import LordIcon from '@/components/ui/LordIcon';
+import FinancialMetricsModal from './FinancialMetricsModal';
 
 interface MetroTilesKPIsProps {
   financialSummary: FinanceSummary;
 }
 
 export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
     totalRevenue,
     totalVariableCost,
@@ -91,10 +94,31 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                 goalValue={breakEven || 0}
                 currentValue={totalRevenue || 0}
                 className="bg-great text-primary h-full"
+                onClick={() => setIsModalOpen(true)}
               />
             </div>
 
             {/* SMALL TILES - 4 KPIs secundários */}
+            <div className="col-span-1 h-full">
+              <CardWrapper
+                title={
+                  <div>
+                    <span className="mb-1 block text-xs font-light opacity-70">Bruto</span>
+                    <span className="text-xs font-medium">Lucro bruto</span>
+                  </div>
+                }
+                value={
+                  <span className="text-sm font-bold sm:text-base">
+                    {typeof grossProfit === 'number' ? formatCurrency(grossProfit) : grossProfit}
+                  </span>
+                }
+                type="custom"
+                bgColor="bg-info"
+                layout="vertical"
+                className="h-full"
+              />
+            </div>
+
             <div className="col-span-1 h-full">
               <CardWrapper
                 title={
@@ -159,26 +183,6 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                 className="h-full"
               />
             </div>
-
-            <div className="col-span-1 h-full">
-              <CardWrapper
-                title={
-                  <div>
-                    <span className="mb-1 block text-xs font-light opacity-70">Bruto</span>
-                    <span className="text-xs font-medium">Lucro bruto</span>
-                  </div>
-                }
-                value={
-                  <span className="text-sm font-bold sm:text-base">
-                    {typeof grossProfit === 'number' ? formatCurrency(grossProfit) : grossProfit}
-                  </span>
-                }
-                type="custom"
-                bgColor="bg-info"
-                layout="vertical"
-                className="h-full"
-              />
-            </div>
           </div>
         </div>
 
@@ -194,6 +198,13 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
           </div>
         </div>
       </div>
+
+      {/* Modal de Métricas Financeiras */}
+      <FinancialMetricsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        financialSummary={financialSummary}
+      />
     </div>
   );
 }

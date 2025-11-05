@@ -4,56 +4,40 @@ import { BatchSaleItem, SaleItem } from '@/types/sale';
 import { Ingredient } from '@/types/ingredients';
 
 /**
- * Calcula o custo proporcional dos ingredientes para uma venda parcial de lote
+ * Calcula o custo proporcional para uma venda
  * @param product - Produto sendo vendido
- * @param soldQuantity - Quantidade vendida do lote
- * @returns Custo proporcional dos ingredientes
+ * @param soldQuantity - Quantidade vendida
+ * @returns Custo proporcional baseado no unitCost do produto
  */
 export function calculateProportionalIngredientCost(
   product: ProductState,
   soldQuantity: number
 ): number {
-  if (product.production.mode !== 'lote' || product.production.yieldQuantity <= 0) {
-    // Para produtos individuais, multiplica o custo unitário pela quantidade
-    const unitIngredientCost = product.ingredients.reduce((total, ingredient) => {
-      return total + (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
-    }, 0);
-    return unitIngredientCost * soldQuantity;
-  }
-
-  // Para produtos em lote, calcula a proporção vendida
-  const proportion = soldQuantity / product.production.yieldQuantity;
-
-  // Calcula o custo proporcional baseado nos ingredientes do lote completo
-  const totalLotIngredientCost = product.ingredients.reduce((total, ingredient) => {
-    const ingredientCostForWholeLot =
-      (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
-    return total + ingredientCostForWholeLot;
-  }, 0);
-
-  const proportionalCost = totalLotIngredientCost * proportion;
-
-  return Math.max(0, proportionalCost); // Garante que nunca seja negativo
+  // Usar o custo unitário já calculado do produto
+  // Isso garante consistência com os custos definidos no produto
+  return product.production.unitCost * soldQuantity;
 }
 
 /**
- * Calcula a margem de lucro proporcional para uma venda parcial de lote
+ * Calcula a margem de lucro real para uma venda
  * @param product - Produto sendo vendido
- * @param soldQuantity - Quantidade vendida do lote
+ * @param soldQuantity - Quantidade vendida
  * @param sellingPrice - Preço de venda por unidade
- * @returns Margem de lucro proporcional
+ * @returns Margem de lucro real baseada no unitCost
  */
 export function calculateProportionalProfitMargin(
   product: ProductState,
   soldQuantity: number,
   sellingPrice: number
 ): number {
-  const proportionalCost = calculateProportionalIngredientCost(product, soldQuantity);
+  // Usar o custo unitário já calculado do produto
+  const totalCost = product.production.unitCost * soldQuantity;
   const totalRevenue = sellingPrice * soldQuantity;
 
   if (totalRevenue <= 0) return 0;
 
-  return ((totalRevenue - proportionalCost) / totalRevenue) * 100;
+  // Fórmula: ((receita - custo) / receita) * 100
+  return ((totalRevenue - totalCost) / totalRevenue) * 100;
 }
 
 /**

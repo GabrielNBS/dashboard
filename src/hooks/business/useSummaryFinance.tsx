@@ -14,8 +14,16 @@ import {
   getProfitMargin,
   getValueToSave,
   getBreakEven,
+  getBreakEvenUnits,
   getTotalUnitsSold,
+  getAverageSellingPrice,
+  getAverageVariableCostPerUnit,
+  getContributionMarginPercentage,
+  getFinancialHealthIndicators,
+  projectBreakEvenDate,
 } from '@/utils/calculations/finance';
+
+import type { FinancialHealthIndicators, BreakEvenProjection } from '@/utils/calculations/finance';
 
 export interface FinanceSummary {
   totalRevenue: number;
@@ -26,7 +34,13 @@ export interface FinanceSummary {
   margin: number;
   valueToSave: number;
   breakEven: number;
+  breakEvenUnits: number;
   totalUnitsSold: number;
+  averageSellingPrice: number;
+  averageVariableCostPerUnit: number;
+  contributionMarginPercentage: number;
+  healthIndicators: FinancialHealthIndicators;
+  breakEvenProjection: BreakEvenProjection | null;
 }
 
 /**
@@ -66,7 +80,17 @@ export function useFinanceSummary(
         margin: 0,
         valueToSave: 0,
         breakEven: 0,
+        breakEvenUnits: 0,
         totalUnitsSold: 0,
+        averageSellingPrice: 0,
+        averageVariableCostPerUnit: 0,
+        contributionMarginPercentage: 0,
+        healthIndicators: {
+          status: 'critical',
+          alerts: ['Dados de vendas inválidos'],
+          recommendations: ['Verifique se há vendas registradas'],
+        },
+        breakEvenProjection: null,
       };
     }
 
@@ -109,8 +133,45 @@ export function useFinanceSummary(
       // Valor a ser reservado (poupança)
       const valueToSave = getValueToSave(netProfit, effectiveSavingRate);
 
-      // Ponto de equilíbrio
+      // Ponto de equilíbrio em receita
       const breakEven = getBreakEven(totalFixedCost, totalVariableCost, totalRevenue);
+
+      // Métricas adicionais
+      const averageSellingPrice = getAverageSellingPrice(totalRevenue, totalUnitsSold);
+      const averageVariableCostPerUnit = getAverageVariableCostPerUnit(
+        totalVariableCost,
+        totalUnitsSold
+      );
+
+      // Ponto de equilíbrio em unidades
+      const breakEvenUnits = getBreakEvenUnits(
+        totalFixedCost,
+        averageSellingPrice,
+        averageVariableCostPerUnit
+      );
+
+      // Margem de contribuição
+      const contributionMarginPercentage = getContributionMarginPercentage(
+        grossProfit,
+        totalRevenue
+      );
+
+      // Indicadores de saúde financeira
+      const healthIndicators = getFinancialHealthIndicators(
+        netProfit,
+        totalRevenue,
+        totalFixedCost,
+        breakEven,
+        grossProfit
+      );
+
+      // Projeção do ponto de equilíbrio (assumindo receita média diária)
+      const averageDailyRevenue = totalRevenue / 30; // Aproximação mensal
+      const breakEvenProjection = projectBreakEvenDate(
+        totalRevenue,
+        breakEven,
+        averageDailyRevenue
+      );
 
       // Log para debugging em desenvolvimento
       if (process.env.NODE_ENV === 'development') {
@@ -119,6 +180,8 @@ export function useFinanceSummary(
           totalRevenue,
           netProfit,
           margin: `${margin}%`,
+          breakEvenUnits,
+          healthStatus: healthIndicators.status,
         });
       }
 
@@ -131,7 +194,13 @@ export function useFinanceSummary(
         margin,
         valueToSave,
         breakEven,
+        breakEvenUnits,
         totalUnitsSold,
+        averageSellingPrice,
+        averageVariableCostPerUnit,
+        contributionMarginPercentage,
+        healthIndicators,
+        breakEvenProjection,
       };
     } catch (error) {
       console.error('Erro ao calcular resumo financeiro:', error);
@@ -146,7 +215,17 @@ export function useFinanceSummary(
         margin: 0,
         valueToSave: 0,
         breakEven: 0,
+        breakEvenUnits: 0,
         totalUnitsSold: 0,
+        averageSellingPrice: 0,
+        averageVariableCostPerUnit: 0,
+        contributionMarginPercentage: 0,
+        healthIndicators: {
+          status: 'critical',
+          alerts: ['Erro ao calcular métricas financeiras'],
+          recommendations: ['Verifique os dados de entrada'],
+        },
+        breakEvenProjection: null,
       };
     }
   }, [
