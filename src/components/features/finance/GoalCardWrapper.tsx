@@ -20,9 +20,13 @@ export default function GoalCardWrapper({
   className = '',
   textColor = 'text-primary',
 }: GoalCardWrapperProps) {
-  const percentage = goalValue > 0 ? (currentValue / goalValue) * 100 : 0;
+  // Trata casos especiais do ponto de equilíbrio
+  const isInfinite = !isFinite(goalValue) || goalValue === Infinity;
+  const isInvalid = isNaN(goalValue) || goalValue < 0;
+
+  const percentage = !isInfinite && goalValue > 0 ? (currentValue / goalValue) * 100 : 0;
   const barPercentage = Math.min(percentage, 100);
-  const remaining = Math.max(goalValue - currentValue, 0);
+  const remaining = !isInfinite && goalValue > currentValue ? goalValue - currentValue : 0;
 
   const getProgressColor = (percentage: number) => {
     if (percentage >= 100) return 'bg-great';
@@ -60,7 +64,8 @@ export default function GoalCardWrapper({
         {/* Valores */}
         <div className="mb-3">
           <p className={`text-lg font-bold ${textColor} sm:text-xl`}>
-            {formatCurrency(currentValue)} / {formatCurrency(goalValue)}
+            {formatCurrency(currentValue)} /{' '}
+            {isInfinite ? '∞' : isInvalid ? 'N/A' : formatCurrency(goalValue)}
           </p>
         </div>
 
@@ -76,7 +81,13 @@ export default function GoalCardWrapper({
 
         {/* Status */}
         <p className="text-muted-foreground text-xs sm:text-sm">
-          {remaining > 0 ? `Faltam ${formatCurrency(remaining)}` : 'Meta alcançada 🎉'}
+          {isInfinite
+            ? 'Negócio não é viável com custos atuais'
+            : isInvalid
+              ? 'Dados insuficientes para calcular'
+              : remaining > 0
+                ? `Faltam ${formatCurrency(remaining)}`
+                : 'Meta alcançada 🎉'}
         </p>
       </div>
     </div>

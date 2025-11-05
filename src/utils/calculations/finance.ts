@@ -84,31 +84,28 @@ export function getRealIngredientsCost(sales: Sale[]): number {
       // Verifica se é um BatchSaleItem com custo proporcional já calculado
       const batchItem = item as { isBatchSale?: boolean; proportionalCost?: number };
       if (batchItem.isBatchSale && typeof batchItem.proportionalCost === 'number') {
+        // Para vendas em lote, usa o custo proporcional já calculado
         return itemsCost + Math.abs(batchItem.proportionalCost);
       }
 
-      // Calcula o custo dos ingredientes para este item específico
-      const ingredientsCost =
-        item.product.ingredients.reduce((ingCost, ingredient) => {
-          // Custo por unidade do ingrediente = preço médio * quantidade utilizada
-          const unitIngredientCost =
-            (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
+      // Para produtos individuais ou lotes sem custo proporcional calculado
+      const ingredientsCost = item.product.ingredients.reduce((ingCost, ingredient) => {
+        // Custo total do ingrediente no produto = preço médio * quantidade utilizada na receita
+        const ingredientCostPerProduct =
+          (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
 
-          let unitCost: number;
-          if (
-            item.product.production.mode === 'lote' &&
-            item.product.production.yieldQuantity > 0
-          ) {
-            // Para produtos em lote, calcula custo proporcional
-            const proportion = item.quantity / item.product.production.yieldQuantity;
-            unitCost = unitIngredientCost * proportion;
-          } else {
-            // Para produtos individuais, usa custo total por unidade
-            unitCost = unitIngredientCost * item.quantity;
-          }
+        let totalIngredientCost: number;
+        if (item.product.production.mode === 'lote' && item.product.production.yieldQuantity > 0) {
+          // Para produtos em lote, calcula custo proporcional baseado na quantidade vendida
+          const proportion = item.quantity / item.product.production.yieldQuantity;
+          totalIngredientCost = ingredientCostPerProduct * proportion;
+        } else {
+          // Para produtos individuais, multiplica pelo número de unidades vendidas
+          totalIngredientCost = ingredientCostPerProduct * item.quantity;
+        }
 
-          return ingCost + unitCost;
-        }, 0) || 0;
+        return ingCost + totalIngredientCost;
+      }, 0);
 
       return itemsCost + ingredientsCost;
     }, 0);
@@ -238,14 +235,23 @@ export function getNetProfit(
  * console.log(margin); // 33.33
  */
 export function getProfitMargin(netProfit: number, totalRevenue: number): number {
-  if (totalRevenue <= 0) return 0;
+  if (totalRevenue <= 0) {
+    // Se não há receita, não é possível calcular margem
+    return 0;
+  }
 
   const margin = (netProfit / totalRevenue) * 100;
 
-  // Validação para garantir que a margem está dentro de limites razoáveis
-  if (margin < -100 || margin > 1000) {
-    console.warn('Margem de lucro fora dos limites esperados:', margin);
+  // Validação mais flexível - permite margens negativas (prejuízo) e altas margens
+  if (isNaN(margin) || !isFinite(margin)) {
+    console.warn('Margem de lucro inválida (NaN ou Infinito):', margin);
     return 0;
+  }
+
+  // Limita apenas valores extremamente irreais (mais de 10000% ou menos de -1000%)
+  if (margin < -1000 || margin > 10000) {
+    console.warn('Margem de lucro fora dos limites esperados:', margin);
+    return margin < -1000 ? -1000 : 10000;
   }
 
   return Number(margin.toFixed(2));
@@ -263,7 +269,19 @@ export function getProfitMargin(netProfit: number, totalRevenue: number): number
  * console.log(valueToSave); // 100.00
  */
 export function getValueToSave(netProfit: number, percentageToSave: number = 20): number {
-  return Number(((netProfit * percentageToSave) / 100).toFixed(2));
+  // Se há prejuízo, não há valor para poupar
+  if (netProfit <= 0) {
+    return 0;
+  }
+
+  // Valida percentual de poupança
+  if (percentageToSave < 0 || percentageToSave > 100) {
+    console.warn('Percentual de poupança inválido:', percentageToSave);
+    return 0;
+  }
+
+  const valueToSave = (netProfit * percentageToSave) / 100;
+  return Number(valueToSave.toFixed(2));
 }
 
 /**
@@ -288,22 +306,36 @@ export function getBreakEven(
   variableCosts: number,
   totalRevenue: number
 ): number {
-  // Validações para evitar divisões inválidas
-  if (fixedCosts <= 0 || totalRevenue <= 0 || variableCosts < 0 || variableCosts > totalRevenue) {
-    console.warn('Dados inválidos para cálculo do ponto de equilíbrio.');
+  // Validações básicas
+  if (fixedCosts < 0 || variableCosts < 0 || totalRevenue < 0) {
+    console.warn('Valores negativos não são válidos para cálculo do ponto de equilíbrio.');
     return 0;
   }
 
-  // Margem de contribuição = Receita líquida proporcional após custos variáveis
+  // Se não há custos fixos, o ponto de equilíbrio é zero
+  if (fixedCosts === 0) {
+    return 0;
+  }
+
+  // Se não há receita, não é possível calcular margem de contribuição
+  if (totalRevenue === 0) {
+    // Retorna os custos fixos como ponto de equilíbrio mínimo
+    return fixedCosts;
+  }
+
+  // Se custos variáveis são maiores ou iguais à receita, não há margem de contribuição
+  if (variableCosts >= totalRevenue) {
+    console.warn('Custos variáveis excedem a receita. Negócio não é viável.');
+    return Infinity; // Indica que o ponto de equilíbrio não pode ser alcançado
+  }
+
+  // Margem de contribuição = proporção da receita que sobra após custos variáveis
   const contributionMargin = 1 - variableCosts / totalRevenue;
 
-  if (contributionMargin <= 0) {
-    console.warn('Margem de contribuição inválida ou zero.');
-    return 0;
-  }
+  // Ponto de equilíbrio = custos fixos divididos pela margem de contribuição
+  const breakEvenPoint = fixedCosts / contributionMargin;
 
-  // Retorna o valor necessário para cobrir os custos fixos
-  return fixedCosts / contributionMargin;
+  return Math.round(breakEvenPoint * 100) / 100; // Arredonda para 2 casas decimais
 }
 
 /**

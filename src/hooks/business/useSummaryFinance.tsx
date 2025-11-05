@@ -7,7 +7,6 @@ import { useSettings } from '@/contexts/settings/SettingsContext';
 import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
 import {
   getTotalRevenue,
-  getTotalVariableCost,
   getIntegratedVariableCost,
   getTotalFixedCost,
   getGrossProfit,

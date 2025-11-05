@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { PackagePlus, Plus, AlertTriangle, CheckCircle, XCircle, Layers } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { ProductState } from '@/types/products';
@@ -99,108 +100,120 @@ export default function UnifiedProductCatalog({
                       : 'border-border bg-card hover:border-muted-foreground'
                   } ${!canMake ? 'opacity-50' : ''}`}
                 >
+                  {/* Cart Quantity Badge - Posicionado no topo */}
+                  {inCart && (
+                    <div className="absolute top-2 right-2 z-10">
+                      <span className="bg-primary text-secondary flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold sm:h-6 sm:w-6">
+                        {inCart.quantity}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Mobile Layout */}
-                  <div className="flex items-center gap-3 p-2.5 sm:hidden">
-                    {/* Image */}
+                  <div className="flex items-center gap-3 p-3 sm:hidden">
+                    {/* Imagem do Produto */}
                     <div className="flex-shrink-0">
-                      <img
+                      <Image
                         className="h-12 w-12 rounded-md object-cover"
-                        src={'https://placehold.co/250'}
+                        src="https://placehold.co/150"
                         alt={product.name}
+                        width={150}
+                        height={150}
                       />
                     </div>
 
-                    {/* Content */}
+                    {/* Informações do Produto */}
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1">
-                            <h3 className="text-primary truncate text-sm font-medium">
-                              {product.name}
-                            </h3>
-                            {isBatchProduct && (
-                              <BatchBadge
-                                yieldQuantity={yieldQuantity}
-                                availableQuantity={maxAvailable}
-                                variant="compact"
-                                showIcon={false}
-                              />
-                            )}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <p className="text-muted-foreground truncate text-xs">
-                              {product.category}
-                            </p>
-                            <div className="ml-2 text-right">
-                              <p
-                                className={`text-sm font-bold ${inCart ? 'text-primary' : 'text-on-great'}`}
-                              >
-                                {formatCurrency(unitPrice)}
-                              </p>
-                              {isBatchProduct && (
-                                <p className="text-xs text-gray-500">
-                                  Lote: {formatCurrency(batchPrice)}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          {isBatchProduct && (
-                            <div className="mt-1">
-                              <BatchProgress
-                                yieldQuantity={yieldQuantity}
-                                availableQuantity={maxAvailable}
-                                soldQuantity={inCart?.quantity || 0}
-                                showLabels={false}
-                                showPercentage={false}
-                                size="sm"
-                              />
-                            </div>
-                          )}
-                        </div>
+                      {/* Header: Nome + Badge de Lote */}
+                      <div className="mb-1 flex items-center gap-1">
+                        <h3 className="text-primary truncate text-sm font-medium">
+                          {product.name}
+                        </h3>
+                        {isBatchProduct && (
+                          <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs font-medium">
+                            Lote
+                          </span>
+                        )}
+                      </div>
 
-                        {/* Action Buttons */}
-                        <div className="ml-3 flex flex-col gap-1">
-                          <Button
-                            size="sm"
-                            onClick={() => handleProductClick(product, 'unit')}
-                            disabled={!canMake || !validation.isValid}
-                            variant={inCart ? 'default' : 'outline'}
-                            className="h-6 w-12 p-0 text-xs"
+                      {/* Categoria + Preço */}
+                      <div className="mb-1 flex items-center justify-between">
+                        <p className="text-muted-foreground truncate text-xs">{product.category}</p>
+                        <div className="text-right">
+                          <p
+                            className={`text-sm font-bold ${inCart ? 'text-primary' : 'text-foreground'}`}
                           >
-                            {isBatchProduct ? 'Un.' : <Plus className="h-3 w-3" />}
-                          </Button>
+                            {formatCurrency(unitPrice)}
+                          </p>
                           {isBatchProduct && (
-                            <Button
-                              size="sm"
-                              onClick={() => handleProductClick(product, 'batch')}
-                              disabled={
-                                !canMake || !validation.isValid || maxAvailable < yieldQuantity
-                              }
-                              variant="outline"
-                              className="h-6 w-12 p-0 text-xs"
-                            >
-                              <Layers className="h-3 w-3" />
-                            </Button>
+                            <p className="text-muted-foreground text-xs">
+                              Lote: {formatCurrency(batchPrice)}
+                            </p>
                           )}
                         </div>
                       </div>
+
+                      {/* Progress Bar para Lotes */}
+                      {isBatchProduct && (
+                        <div className="mb-2">
+                          <BatchProgress
+                            yieldQuantity={yieldQuantity}
+                            availableQuantity={maxAvailable}
+                            soldQuantity={inCart?.quantity || 0}
+                            showLabels={false}
+                            showPercentage={false}
+                            size="sm"
+                          />
+                        </div>
+                      )}
+
+                      {/* Status Messages */}
+                      {!validation.isValid && validation.missingIngredients.length > 0 && (
+                        <div className="mb-1 flex items-center gap-1 text-red-600">
+                          <XCircle className="h-3 w-3" />
+                          <p className="truncate text-xs">Ingredientes em falta</p>
+                        </div>
+                      )}
+
+                      {validation.isValid && !canMake && (
+                        <div className="mb-1 flex items-center gap-1 text-red-600">
+                          <XCircle className="h-3 w-3" />
+                          <p className="text-xs">Estoque insuficiente</p>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Cart Quantity Badge */}
-                    {inCart && (
-                      <div className="absolute -top-0.5 -right-0.5">
-                        <span className="bg-primary text-secondary flex h-4 w-4 items-center justify-center rounded-full text-xs font-bold">
-                          {inCart.quantity}
-                        </span>
-                      </div>
-                    )}
+                    {/* Botões de Ação */}
+                    <div className="flex flex-col gap-1">
+                      <Button
+                        size="sm"
+                        onClick={() => handleProductClick(product, 'unit')}
+                        disabled={!canMake || !validation.isValid}
+                        variant={inCart ? 'default' : 'outline'}
+                        className="h-7 w-12 p-0 text-xs"
+                      >
+                        {isBatchProduct ? 'Un.' : <Plus className="h-3 w-3" />}
+                      </Button>
+                      {isBatchProduct && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleProductClick(product, 'batch')}
+                          disabled={!canMake || !validation.isValid || maxAvailable < yieldQuantity}
+                          variant="outline"
+                          className="h-7 w-12 p-0 text-xs"
+                        >
+                          <Layers className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
 
                   {/* Desktop Layout */}
                   <div className="hidden p-4 sm:block">
+                    {/* Header: Nome + Badge de Lote */}
                     <div className="mb-3">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-primary font-semibold">{product.name}</h3>
+                      <div className="mb-1 flex items-center gap-2">
+                        <h3 className="text-primary truncate font-semibold">{product.name}</h3>
                         {isBatchProduct && (
                           <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-xs font-medium">
                             Lote
@@ -208,57 +221,95 @@ export default function UnifiedProductCatalog({
                         )}
                       </div>
                       <p className="text-muted-foreground text-sm">{product.category}</p>
-                      {isBatchProduct && (
-                        <div className="mt-2">
-                          <BatchBadge
-                            yieldQuantity={yieldQuantity}
-                            availableQuantity={maxAvailable}
-                            variant="default"
-                          />
-                          <div className="mt-2">
-                            <BatchProgress
-                              yieldQuantity={yieldQuantity}
-                              availableQuantity={maxAvailable}
-                              soldQuantity={inCart?.quantity || 0}
-                              size="sm"
-                            />
-                          </div>
-                        </div>
-                      )}
                     </div>
 
+                    {/* Imagem do Produto */}
                     <div className="mb-3 flex justify-center">
-                      <img
+                      <Image
                         className="h-32 w-32 rounded-xl object-cover lg:h-40 lg:w-40"
                         src={'https://placehold.co/250'}
                         alt={product.name}
+                        width={160}
+                        height={160}
                       />
                     </div>
 
-                    <div className="mb-3">
-                      <div className="text-center">
-                        <p
-                          className={`text-lg font-bold ${inCart ? 'text-primary font-black' : 'text-on-great'}`}
-                        >
-                          {formatCurrency(unitPrice)} / unidade
-                        </p>
-                        {isBatchProduct && (
-                          <p className="text-sm text-gray-600">
-                            Lote completo: {formatCurrency(batchPrice)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {inCart && (
-                      <div className="absolute top-2 right-2">
-                        <span className="bg-primary text-secondary flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
-                          {inCart.quantity}
-                        </span>
+                    {/* Informações de Lote */}
+                    {isBatchProduct && (
+                      <div className="mb-3">
+                        <BatchBadge
+                          yieldQuantity={yieldQuantity}
+                          availableQuantity={maxAvailable}
+                          variant="default"
+                        />
+                        <div className="mt-2">
+                          <BatchProgress
+                            yieldQuantity={yieldQuantity}
+                            availableQuantity={maxAvailable}
+                            soldQuantity={inCart?.quantity || 0}
+                            size="sm"
+                          />
+                        </div>
                       </div>
                     )}
 
-                    {/* Action Buttons */}
+                    {/* Preços */}
+                    <div className="mb-3 text-center">
+                      <p
+                        className={`text-lg font-bold ${inCart ? 'text-primary' : 'text-foreground'}`}
+                      >
+                        {formatCurrency(unitPrice)}
+                      </p>
+                      <p className="text-muted-foreground text-sm">por unidade</p>
+                      {isBatchProduct && (
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          Lote completo: {formatCurrency(batchPrice)}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Status Messages */}
+                    <div className="mb-3 min-h-[20px]">
+                      {!validation.isValid && validation.missingIngredients.length > 0 && (
+                        <div className="flex items-center gap-1 text-red-600">
+                          <XCircle className="h-3 w-3" />
+                          <p className="text-xs">
+                            Ingredientes em falta: {validation.missingIngredients.join(', ')}
+                          </p>
+                        </div>
+                      )}
+
+                      {validation.isValid && !canMake && (
+                        <div className="flex items-center gap-1 text-red-600">
+                          <XCircle className="h-3 w-3" />
+                          <p className="text-xs">Estoque insuficiente</p>
+                        </div>
+                      )}
+
+                      {validation.isValid &&
+                        canMake &&
+                        maxAvailable < yieldQuantity &&
+                        isBatchProduct && (
+                          <div className="flex items-center gap-1 text-orange-600">
+                            <AlertTriangle className="h-3 w-3" />
+                            <p className="text-xs">
+                              Estoque limitado: {maxAvailable}/{yieldQuantity}
+                            </p>
+                          </div>
+                        )}
+
+                      {validation.isValid &&
+                        canMake &&
+                        maxAvailable >= yieldQuantity &&
+                        isBatchProduct && (
+                          <div className="flex items-center gap-1 text-green-600">
+                            <CheckCircle className="h-3 w-3" />
+                            <p className="text-xs">Lote completo disponível</p>
+                          </div>
+                        )}
+                    </div>
+
+                    {/* Botões de Ação */}
                     <div className="space-y-2">
                       <Button
                         className="w-full"
@@ -268,17 +319,17 @@ export default function UnifiedProductCatalog({
                       >
                         {!validation.isValid ? (
                           <>
-                            <XCircle className="mr-1 h-4 w-4" />
+                            <XCircle className="mr-2 h-4 w-4" />
                             Indisponível
                           </>
                         ) : canMake ? (
                           <>
-                            <Plus className="mr-1 h-4 w-4" />
+                            <Plus className="mr-2 h-4 w-4" />
                             {inCart ? 'Adicionar +1' : 'Adicionar'}
                           </>
                         ) : (
                           <>
-                            <XCircle className="mr-1 h-4 w-4" />
+                            <XCircle className="mr-2 h-4 w-4" />
                             Sem Estoque
                           </>
                         )}
@@ -293,59 +344,18 @@ export default function UnifiedProductCatalog({
                         >
                           {maxAvailable >= yieldQuantity ? (
                             <>
-                              <Layers className="mr-1 h-4 w-4" />
+                              <Layers className="mr-2 h-4 w-4" />
                               Vender Lote Completo
                             </>
                           ) : (
                             <>
-                              <AlertTriangle className="mr-1 h-4 w-4" />
+                              <AlertTriangle className="mr-2 h-4 w-4" />
                               Lote Incompleto
                             </>
                           )}
                         </Button>
                       )}
                     </div>
-                  </div>
-
-                  {/* Status Messages */}
-                  <div className="px-3 pb-2 sm:px-4">
-                    {!validation.isValid && validation.missingIngredients.length > 0 && (
-                      <div className="flex items-center gap-1 text-red-600">
-                        <XCircle className="h-3 w-3" />
-                        <p className="text-xs">
-                          Ingredientes em falta: {validation.missingIngredients.join(', ')}
-                        </p>
-                      </div>
-                    )}
-
-                    {validation.isValid && !canMake && (
-                      <div className="flex items-center gap-1 text-red-600">
-                        <XCircle className="h-3 w-3" />
-                        <p className="text-xs">Estoque insuficiente</p>
-                      </div>
-                    )}
-
-                    {validation.isValid &&
-                      canMake &&
-                      maxAvailable < yieldQuantity &&
-                      isBatchProduct && (
-                        <div className="flex items-center gap-1 text-orange-600">
-                          <AlertTriangle className="h-3 w-3" />
-                          <p className="text-xs">
-                            Estoque limitado: {maxAvailable}/{yieldQuantity} disponível
-                          </p>
-                        </div>
-                      )}
-
-                    {validation.isValid &&
-                      canMake &&
-                      maxAvailable === yieldQuantity &&
-                      isBatchProduct && (
-                        <div className="flex items-center gap-1 text-green-600">
-                          <CheckCircle className="h-3 w-3" />
-                          <p className="text-xs">Lote completo disponível</p>
-                        </div>
-                      )}
                   </div>
                 </div>
               );

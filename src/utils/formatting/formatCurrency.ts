@@ -13,6 +13,29 @@ export function formatCurrency(value: number): string {
     return 'R$ 0,00';
   }
 
+  // Trata valores infinitos
+  if (!isFinite(value)) {
+    return value === Infinity ? 'R$ ∞' : value === -Infinity ? 'R$ -∞' : 'R$ N/A';
+  }
+
+  // Trata valores muito grandes (acima de 1 trilhão)
+  if (Math.abs(value) >= 1e12) {
+    const simplified = value / 1e12;
+    return `R$ ${simplified.toFixed(1).replace('.', ',')}T`;
+  }
+
+  // Trata valores muito grandes (acima de 1 bilhão)
+  if (Math.abs(value) >= 1e9) {
+    const simplified = value / 1e9;
+    return `R$ ${simplified.toFixed(1).replace('.', ',')}B`;
+  }
+
+  // Trata valores grandes (acima de 1 milhão)
+  if (Math.abs(value) >= 1e6) {
+    const simplified = value / 1e6;
+    return `R$ ${simplified.toFixed(1).replace('.', ',')}M`;
+  }
+
   try {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -23,7 +46,7 @@ export function formatCurrency(value: number): string {
   } catch (error) {
     console.error('Erro ao formatar moeda:', error);
     // Fallback para formatação manual
-    return `R$ ${value.toFixed(3).replace('.', ',')}`;
+    return `R$ ${value.toFixed(2).replace('.', ',')}`;
   }
 }
 
@@ -38,6 +61,17 @@ export function formatPercent(value: number): string {
   if (typeof value !== 'number' || isNaN(value)) {
     console.warn('formatPercent: valor inválido fornecido, retornando 0,00%');
     return '0,00%';
+  }
+
+  // Trata valores infinitos
+  if (!isFinite(value)) {
+    return value === Infinity ? '∞%' : value === -Infinity ? '-∞%' : 'N/A%';
+  }
+
+  // Trata valores muito grandes (acima de 10000%)
+  if (Math.abs(value) >= 10000) {
+    const simplified = value / 1000;
+    return `${simplified.toFixed(1).replace('.', ',')}k%`;
   }
 
   try {

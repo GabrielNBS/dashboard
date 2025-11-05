@@ -74,7 +74,7 @@ export default function VariableCostsSection() {
   };
 
   const handleDeleteCost = (id: string) => {
-    const cost = state.variableCosts.find(c => c.id === id);
+    const cost = state.variableCosts.find(cost => cost.id === id);
     const costName = cost?.name || 'este custo variável';
 
     showConfirmation(
@@ -120,7 +120,7 @@ export default function VariableCostsSection() {
           <div>
             <span className="text-accent">Tipos:</span>
             <span className="text-foreground ml-2 font-bold">
-              {new Set(state.variableCosts.map(c => c.type)).size} tipo(s)
+              {new Set(state.variableCosts.map(cost => cost.type)).size} tipo(s)
             </span>
           </div>
         </div>

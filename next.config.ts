@@ -25,6 +25,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/250',
+        search: '',
+      },
+      {
+        protocol: 'https',
         hostname: 'source.unsplash.com',
         port: '',
         pathname: '/random/**',

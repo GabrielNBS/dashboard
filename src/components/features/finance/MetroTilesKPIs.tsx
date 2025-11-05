@@ -5,7 +5,7 @@ import { FinanceSummary } from '@/hooks/business/useSummaryFinance';
 import CardWrapper from '@/components/dashboard/finance/cards/CardWrapper';
 import FinancePieChart from './FinancePieChart';
 import { DollarSign } from 'lucide-react';
-import { formatCurrency } from '@/utils/formatting/formatCurrency';
+import { formatCurrency, formatPercent } from '@/utils/formatting/formatCurrency';
 import GoalCardWrapper from './GoalCardWrapper';
 import LordIcon from '@/components/ui/LordIcon';
 
@@ -89,7 +89,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
               <GoalCardWrapper
                 title="Ponto de equilíbrio"
                 goalValue={breakEven || 0}
-                currentValue={grossProfit || 0}
+                currentValue={totalRevenue || 0}
                 className="bg-great text-primary h-full"
               />
             </div>
@@ -150,7 +150,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
                 }
                 value={
                   <span className="text-sm font-bold sm:text-base">
-                    {typeof margin === 'number' ? `${margin.toFixed(2)}%` : margin}
+                    {typeof margin === 'number' ? formatPercent(margin) : margin}
                   </span>
                 }
                 type="custom"

@@ -14,18 +14,24 @@ export function calculateProportionalIngredientCost(
   soldQuantity: number
 ): number {
   if (product.production.mode !== 'lote' || product.production.yieldQuantity <= 0) {
-    return product.production.totalCost;
+    // Para produtos individuais, multiplica o custo unitário pela quantidade
+    const unitIngredientCost = product.ingredients.reduce((total, ingredient) => {
+      return total + (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
+    }, 0);
+    return unitIngredientCost * soldQuantity;
   }
 
-  // Calcula a proporção vendida do lote
+  // Para produtos em lote, calcula a proporção vendida
   const proportion = soldQuantity / product.production.yieldQuantity;
 
-  // Calcula o custo proporcional baseado nos ingredientes
-  const proportionalCost = product.ingredients.reduce((total, ingredient) => {
-    const ingredientTotalCost =
+  // Calcula o custo proporcional baseado nos ingredientes do lote completo
+  const totalLotIngredientCost = product.ingredients.reduce((total, ingredient) => {
+    const ingredientCostForWholeLot =
       (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
-    return total + ingredientTotalCost * proportion;
+    return total + ingredientCostForWholeLot;
   }, 0);
+
+  const proportionalCost = totalLotIngredientCost * proportion;
 
   return Math.max(0, proportionalCost); // Garante que nunca seja negativo
 }

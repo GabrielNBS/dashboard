@@ -70,7 +70,6 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
           mass: 0.8,
         }}
       >
-        {/* Action buttons - Always visible on mobile/tablet, hover on desktop */}
         <div className="absolute top-3 right-3 z-10 flex gap-1.5 opacity-100 transition-opacity duration-200 sm:gap-2 md:opacity-0 md:group-hover:opacity-100">
           <motion.button
             type="button"
@@ -188,7 +187,6 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
             </div>
           </motion.div>
 
-          {/* Quick Metrics */}
           <motion.div
             className="grid grid-cols-2 gap-3"
             layoutId={`product-metrics-${product.uid}`}
@@ -220,7 +218,6 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
             </div>
           </motion.div>
 
-          {/* See More Indicator - Always visible on mobile/tablet, hover on desktop */}
           <div className="mt-4 flex items-center justify-center gap-1 text-sm font-medium text-indigo-600 opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100">
             <span className="block md:hidden">Toque para ver detalhes</span>
             <span className="hidden md:block">Clique para ver detalhes</span>
@@ -234,7 +231,6 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
 
 ProductCard.displayName = 'ProductCard';
 
-// Optimized Modal Component
 export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -271,7 +267,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
           {/* Modal */}
           <motion.div
             layoutId={`product-card-${product.uid}`}
-            className="fixed top-2 right-2 bottom-2 left-2 z-50 mx-auto max-w-4xl overflow-hidden bg-white shadow-2xl sm:top-4 sm:right-4 sm:bottom-4 sm:left-4 md:top-1/2 md:left-1/2 md:h-[90vh] md:w-[90vw] md:max-w-4xl md:-translate-x-1/2 md:-translate-y-1/2"
+            className="fixed inset-4 z-50 mx-auto flex max-w-4xl flex-col overflow-hidden bg-white shadow-2xl sm:inset-6 md:inset-8 lg:top-1/2 lg:left-1/2 lg:h-[80vh] lg:w-[90vw] lg:max-w-4xl lg:-translate-x-1/2 lg:-translate-y-1/2"
             style={{ borderRadius: 12 }}
             transition={{
               type: 'spring',
@@ -348,13 +344,13 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
 
               {/* Content */}
               <motion.div
-                className="flex-1 overflow-hidden"
+                className="flex min-h-0 flex-1 flex-col overflow-hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.4 }}
               >
                 {/* Tabs */}
-                <div className="border-b border-slate-200 px-4 sm:px-6">
+                <div className="flex-shrink-0 border-b border-slate-200 px-4 sm:px-6">
                   <div className="flex gap-1 overflow-x-auto sm:gap-2">
                     {tabs.map(tab => (
                       <motion.button
@@ -387,33 +383,36 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
                 </div>
 
                 {/* Tab Content */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeTab}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {activeTab === 'overview' && (
-                        <OverviewTab
-                          product={product}
-                          isProfit={isProfit}
-                          realProfitValue={realProfitValue}
-                          unitCost={unitCost}
-                        />
-                      )}
-                      {activeTab === 'ingredients' && <IngredientsTab product={product} />}
-                      {activeTab === 'details' && (
-                        <DetailsTab
-                          product={product}
-                          isProfit={isProfit}
-                          realProfitValue={realProfitValue}
-                        />
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
+                <div className="min-h-0 flex-1 overflow-y-auto">
+                  <div className="p-4 sm:p-6">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-4"
+                      >
+                        {activeTab === 'overview' && (
+                          <OverviewTab
+                            product={product}
+                            isProfit={isProfit}
+                            realProfitValue={realProfitValue}
+                            unitCost={unitCost}
+                          />
+                        )}
+                        {activeTab === 'ingredients' && <IngredientsTab product={product} />}
+                        {activeTab === 'details' && (
+                          <DetailsTab
+                            product={product}
+                            isProfit={isProfit}
+                            realProfitValue={realProfitValue}
+                          />
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </motion.div>
             </div>
@@ -431,11 +430,11 @@ const OverviewTab: React.FC<{
   realProfitValue: number;
   unitCost: number;
 }> = ({ product, isProfit, realProfitValue, unitCost }) => (
-  <div className="space-y-6">
-    {/* Profit Margin Highlight */}
+  <div className="space-y-4">
+    {/* Profit Margin Highlight - Compacto */}
     <motion.div
       layoutId={`product-margin-${product.uid}`}
-      className={`rounded-lg border-l-4 p-4 ${
+      className={`rounded-lg border-l-4 p-3 ${
         isProfit ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
       }`}
       transition={{
@@ -446,30 +445,30 @@ const OverviewTab: React.FC<{
       }}
     >
       <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {isProfit ? (
+            <TrendingUp className="h-4 w-4 text-green-600" />
+          ) : (
+            <TrendingDown className="h-4 w-4 text-red-600" />
+          )}
+          <span className={`text-sm font-medium ${isProfit ? 'text-green-800' : 'text-red-800'}`}>
+            Margem de lucro
+          </span>
+        </div>
         <div>
-          <div className="mb-1 flex items-center gap-2">
-            {isProfit ? (
-              <TrendingUp className="h-5 w-5 text-green-600" />
-            ) : (
-              <TrendingDown className="h-5 w-5 text-red-600" />
-            )}
-            <span className={`text-sm font-medium ${isProfit ? 'text-green-800' : 'text-red-800'}`}>
-              Margem de lucro
-            </span>
-          </div>
-          <div className={`text-3xl font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`text-xl font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
             {product.production.profitMargin.toFixed(1)}%
           </div>
-          <div className={`mt-1 text-sm ${isProfit ? 'text-green-700' : 'text-red-700'}`}>
-            {isProfit ? 'Lucro' : 'Prejuízo'}: {formatCurrency(Math.abs(realProfitValue))}
+          <div className={`text-right text-xs ${isProfit ? 'text-green-700' : 'text-red-700'}`}>
+            {formatCurrency(Math.abs(realProfitValue))}
           </div>
         </div>
       </div>
     </motion.div>
 
-    {/* Metrics Grid */}
+    {/* Metrics Grid - Mais compacto */}
     <motion.div
-      className="grid gap-4 sm:grid-cols-2"
+      className="grid gap-3 sm:grid-cols-2"
       layoutId={`product-metrics-${product.uid}`}
       transition={{
         type: 'spring',
@@ -478,42 +477,42 @@ const OverviewTab: React.FC<{
         duration: 0.4,
       }}
     >
-      <div className="rounded-lg bg-slate-50 p-4">
-        <div className="mb-2 flex items-center gap-2">
-          <Calculator className="h-4 w-4 text-slate-600" />
-          <span className="text-sm font-medium text-slate-700">Custo total</span>
+      <div className="rounded-lg bg-slate-50 p-3">
+        <div className="mb-1 flex items-center gap-2">
+          <Calculator className="h-3.5 w-3.5 text-slate-500" />
+          <span className="text-xs text-slate-600">Custo total</span>
         </div>
-        <div className="text-2xl font-bold text-slate-900">
+        <div className="text-lg font-bold text-slate-900">
           {formatCurrency(product.production.totalCost)}
         </div>
-        <span className="mt-1 text-sm text-slate-600">{formatCurrency(unitCost)} por unidade</span>
+        <span className="text-xs text-slate-500">{formatCurrency(unitCost)}/un.</span>
       </div>
 
-      <div className="rounded-lg bg-slate-50 p-4">
-        <div className="mb-2 flex items-center gap-2">
-          <DollarSign className="h-4 w-4 text-slate-600" />
-          <span className="text-sm font-medium text-slate-700">Preço de venda</span>
+      <div className="rounded-lg bg-slate-50 p-3">
+        <div className="mb-1 flex items-center gap-2">
+          <DollarSign className="h-3.5 w-3.5 text-slate-500" />
+          <span className="text-xs text-slate-600">Preço de venda</span>
         </div>
-        <div className="text-2xl font-bold text-indigo-600">
+        <div className="text-lg font-bold text-indigo-600">
           {formatCurrency(product.production.sellingPrice)}
         </div>
-        <span className="mt-1 text-sm text-slate-600">
-          {formatCurrency(product.production.unitSellingPrice)} por unidade
+        <span className="text-xs text-slate-500">
+          {formatCurrency(product.production.unitSellingPrice)}/un.
         </span>
       </div>
     </motion.div>
 
-    {/* Progress Bar */}
+    {/* Progress Bar - Compacto */}
     <div>
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-slate-700">Relação Custo vs Venda</span>
-        <span className="text-sm text-slate-600">
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-xs font-medium text-slate-600">Relação Custo vs Venda</span>
+        <span className="text-xs text-slate-500">
           {Math.min(100, (unitCost / product.production.unitSellingPrice) * 100).toFixed(1)}%
         </span>
       </div>
-      <div className="h-2 w-full rounded-full bg-slate-200">
+      <div className="h-1.5 w-full rounded-full bg-slate-200">
         <motion.div
-          className={`h-2 rounded-full ${isProfit ? 'bg-green-500' : 'bg-red-500'}`}
+          className={`h-1.5 rounded-full ${isProfit ? 'bg-green-500' : 'bg-red-500'}`}
           initial={{ width: 0 }}
           animate={{
             width: `${Math.min(100, (unitCost / product.production.unitSellingPrice) * 100)}%`,
@@ -523,27 +522,24 @@ const OverviewTab: React.FC<{
       </div>
     </div>
 
-    {/* Production Info */}
-    <div className="rounded-lg bg-blue-50 p-4">
-      <div className="mb-2 flex items-center gap-2">
-        <Package className="h-4 w-4 text-blue-600" />
-        <span className="text-sm font-medium text-blue-900">Informações de produção</span>
-      </div>
-      <div className="text-sm text-blue-800">
-        {product.production.mode === 'lote' ? (
-          <>
-            <strong>Produção em lote:</strong> {product.production.yieldQuantity} unidades por lote
-          </>
-        ) : (
-          <>
-            <strong>Produção individual:</strong> 1 unidade por lote
-          </>
-        )}
+    {/* Production Info - Compacto */}
+    <div className="rounded-lg bg-blue-50 p-3">
+      <div className="flex items-center gap-2">
+        <Package className="h-3.5 w-3.5 text-blue-600" />
+        <span className="text-xs font-medium text-blue-900">
+          {product.production.mode === 'lote'
+            ? `Produção em lote: ${product.production.yieldQuantity} unidades`
+            : 'Produção individual: 1 unidade'}
+        </span>
       </div>
     </div>
 
     {/* Production Button for Batch Products */}
-    {product.production.mode === 'lote' && <ProductionButton product={product} />}
+    {product.production.mode === 'lote' && (
+      <div className="border-t border-slate-200 pt-4">
+        <ProductionButton product={product} />
+      </div>
+    )}
   </div>
 );
 
