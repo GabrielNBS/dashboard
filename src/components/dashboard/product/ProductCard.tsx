@@ -210,11 +210,18 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
             <div className="rounded-lg bg-slate-50 p-3">
               <div className="mb-1 flex items-center gap-1.5">
                 <DollarSign className="h-3.5 w-3.5 text-slate-500" />
-                <span className="text-xs text-slate-600">Venda</span>
+                <span className="text-xs text-slate-600">
+                  {product.production.mode === 'lote' ? 'Venda/Un.' : 'Venda'}
+                </span>
               </div>
               <div className="text-base font-bold text-indigo-600 sm:text-lg">
-                {formatCurrency(product.production.sellingPrice)}
+                {formatCurrency(product.production.unitSellingPrice)}
               </div>
+              {product.production.mode === 'lote' && (
+                <span className="text-xs text-slate-500">
+                  Lote: {formatCurrency(product.production.sellingPrice)}
+                </span>
+              )}
             </div>
           </motion.div>
 
@@ -491,14 +498,18 @@ const OverviewTab: React.FC<{
       <div className="rounded-lg bg-slate-50 p-3">
         <div className="mb-1 flex items-center gap-2">
           <DollarSign className="h-3.5 w-3.5 text-slate-500" />
-          <span className="text-xs text-slate-600">Preço de venda</span>
+          <span className="text-xs text-slate-600">
+            {product.production.mode === 'lote' ? 'Preço unitário' : 'Preço de venda'}
+          </span>
         </div>
         <div className="text-lg font-bold text-indigo-600">
-          {formatCurrency(product.production.sellingPrice)}
+          {formatCurrency(product.production.unitSellingPrice)}
         </div>
-        <span className="text-xs text-slate-500">
-          {formatCurrency(product.production.unitSellingPrice)}/un.
-        </span>
+        {product.production.mode === 'lote' && (
+          <span className="text-xs text-slate-500">
+            Lote completo: {formatCurrency(product.production.sellingPrice)}
+          </span>
+        )}
       </div>
     </motion.div>
 

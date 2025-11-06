@@ -62,7 +62,7 @@ export default function PricingStep({ data, updateData }: PricingStepProps) {
               <h4 className="text-on-warning text-sm font-medium">Preço de Venda</h4>
               <p className="text-on-warning mt-1 text-xs">
                 {state.production.mode === 'lote'
-                  ? 'Valor que cada unidade será vendida'
+                  ? `Valor de CADA unidade (lote completo: R$ ${(parseFloat(data.sellingPrice) * state.production.yieldQuantity).toFixed(2)})`
                   : 'Valor total do produto'}
               </p>
             </div>

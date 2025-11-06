@@ -104,7 +104,7 @@ export function calculateProportionalIngredientConsumption(
 }
 
 /**
- * Valida se é possível vender uma quantidade específica de um lote
+ * Valida se é possível vender uma quantidade específica de um produto
  * @param product - Produto sendo validado
  * @param requestedQuantity - Quantidade solicitada
  * @param availableIngredients - Ingredientes disponíveis no estoque
@@ -117,6 +117,22 @@ export function validateBatchSale(
 ): { isValid: boolean; missingIngredients: string[] } {
   const missingIngredients: string[] = [];
 
+  // Para produtos em lote, valida apenas producedQuantity
+  // Ingredientes já foram descontados na produção
+  if (product.production.mode === 'lote') {
+    const producedQuantity = product.production.producedQuantity || 0;
+    const isValid = producedQuantity >= requestedQuantity;
+
+    if (!isValid) {
+      missingIngredients.push(
+        `Estoque insuficiente (disponível: ${producedQuantity}, solicitado: ${requestedQuantity})`
+      );
+    }
+
+    return { isValid, missingIngredients };
+  }
+
+  // Para produtos individuais, valida ingredientes disponíveis
   const ingredientConsumption = calculateProportionalIngredientConsumption(
     product,
     requestedQuantity
@@ -147,27 +163,28 @@ export function calculateMaxSellableQuantity(
   product: ProductState,
   availableIngredients: Ingredient[]
 ): number {
-  if (product.production.mode !== 'lote') {
-    // Para produtos individuais, calcula baseado no ingrediente mais limitante
-    let maxQuantity = Infinity;
-
-    for (const ingredient of product.ingredients) {
-      const availableIngredient = availableIngredients.find(ing => ing.id === ingredient.id);
-      if (!availableIngredient || ingredient.totalQuantity <= 0) {
-        return 0;
-      }
-
-      const possibleQuantity = Math.floor(
-        availableIngredient.totalQuantity / ingredient.totalQuantity
-      );
-      maxQuantity = Math.min(maxQuantity, possibleQuantity);
-    }
-
-    return maxQuantity === Infinity ? 0 : maxQuantity;
+  if (product.production.mode === 'lote') {
+    // Para produtos em lote, retorna apenas a quantidade já produzida
+    // Ingredientes já foram descontados na produção
+    return product.production.producedQuantity || 0;
   }
 
-  // Para produtos em lote, retorna apenas a quantidade já produzida
-  return product.production.producedQuantity || 0;
+  // Para produtos individuais, calcula baseado no ingrediente mais limitante
+  let maxQuantity = Infinity;
+
+  for (const ingredient of product.ingredients) {
+    const availableIngredient = availableIngredients.find(ing => ing.id === ingredient.id);
+    if (!availableIngredient || ingredient.totalQuantity <= 0) {
+      return 0;
+    }
+
+    const possibleQuantity = Math.floor(
+      availableIngredient.totalQuantity / ingredient.totalQuantity
+    );
+    maxQuantity = Math.min(maxQuantity, possibleQuantity);
+  }
+
+  return maxQuantity === Infinity ? 0 : maxQuantity;
 }
 
 /**
@@ -199,6 +216,42 @@ export function calculateMaxProducibleBatches(
   }
 
   return maxBatches === Infinity ? 0 : maxBatches;
+}
+
+/**
+ * Valida se é possível produzir uma quantidade específica de lotes
+ * @param product - Produto em lote
+ * @param batchCount - Número de lotes a produzir
+ * @param availableIngredients - Ingredientes disponíveis no estoque
+ * @returns Objeto com validação e ingredientes em falta
+ */
+export function validateBatchProduction(
+  product: ProductState,
+  batchCount: number,
+  availableIngredients: Ingredient[]
+): { isValid: boolean; missingIngredients: string[] } {
+  if (product.production.mode !== 'lote') {
+    return { isValid: false, missingIngredients: ['Produto não é produzido em lote'] };
+  }
+
+  const missingIngredients: string[] = [];
+
+  const isValid = product.ingredients.every(ingredient => {
+    const required = ingredient.totalQuantity * batchCount;
+    const available = availableIngredients.find(i => i.id === ingredient.id);
+    const hasEnough = available && available.totalQuantity >= required;
+
+    if (!hasEnough) {
+      const availableQty = available?.totalQuantity || 0;
+      missingIngredients.push(
+        `${ingredient.name} (necessário: ${required}, disponível: ${availableQty})`
+      );
+    }
+
+    return hasEnough;
+  });
+
+  return { isValid, missingIngredients };
 }
 
 /**

@@ -118,32 +118,26 @@ export function getTotalVariableCost(
 }
 
 /**
- * Calcula o custo real dos ingredientes baseado nas vendas realizadas.
+ * Calcula o custo real dos produtos vendidos baseado no unitCost.
+ *
+ * IMPORTANTE: Para produtos em lote, os ingredientes já foram descontados
+ * na PRODUÇÃO, não na venda. Por isso, usamos sempre o unitCost que já
+ * considera todos os custos calculados corretamente.
+ *
+ * @param sales - Array de vendas realizadas
+ * @returns Custo total dos produtos vendidos
  */
 export function getRealIngredientsCost(sales: Sale[]): number {
   return sales.reduce((totalCost, sale) => {
     const saleCost = sale.items.reduce((itemsCost, item) => {
-      const batchItem = item as { isBatchSale?: boolean; proportionalCost?: number };
-      if (batchItem.isBatchSale && typeof batchItem.proportionalCost === 'number') {
-        return itemsCost + Math.abs(batchItem.proportionalCost);
-      }
+      // Sempre usar unitCost do produto que já considera:
+      // - Custo total dos ingredientes
+      // - Rendimento (para lotes)
+      // - Outros custos incluídos no produto
+      const unitCost = item.product.production.unitCost || 0;
+      const totalItemCost = unitCost * item.quantity;
 
-      const ingredientsCost = item.product.ingredients.reduce((ingCost, ingredient) => {
-        const ingredientCostPerProduct =
-          (ingredient.averageUnitPrice || 0) * (ingredient.totalQuantity || 0);
-
-        let totalIngredientCost: number;
-        if (item.product.production.mode === 'lote' && item.product.production.yieldQuantity > 0) {
-          const proportion = item.quantity / item.product.production.yieldQuantity;
-          totalIngredientCost = ingredientCostPerProduct * proportion;
-        } else {
-          totalIngredientCost = ingredientCostPerProduct * item.quantity;
-        }
-
-        return ingCost + totalIngredientCost;
-      }, 0);
-
-      return itemsCost + ingredientsCost;
+      return itemsCost + totalItemCost;
     }, 0);
 
     return totalCost + saleCost;

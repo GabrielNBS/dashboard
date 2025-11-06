@@ -2,13 +2,13 @@
 'use client';
 
 import React from 'react';
-import UnifiedProductCatalog from '@/components/features/pdv/UnifiedProductCatalog';
 import UnifiedShoppingCart from '@/components/features/pdv/UnifiedShoppingCart';
 import PaymentConfiguration from '@/components/features/pdv/PaymentConfiguration';
 import OrderSummary from '@/components/features/pdv/OrderSummary';
 import BatchStatusBar from '@/components/features/pdv/BatchStatusBar';
 import { useUnifiedSaleProcess } from '@/hooks/business/useUnifiedSaleProcess';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
+import UnifiedProductCatalog from '@/components/features/pdv/unifiedProductCatalog';
 
 export default function RegisterSaleForm() {
   const {
@@ -22,7 +22,6 @@ export default function RegisterSaleForm() {
     setPayment,
     confirmSale,
     canMakeProduct,
-    getBatchInfo,
   } = useUnifiedSaleProcess();
 
   const { state: ingredientStore } = useIngredientContext();
@@ -45,7 +44,6 @@ export default function RegisterSaleForm() {
               availableIngredients={ingredientStore.ingredients}
               onAddToCart={addToCart}
               canMakeProduct={canMakeProduct}
-              getBatchInfo={getBatchInfo}
             />
           </div>
 

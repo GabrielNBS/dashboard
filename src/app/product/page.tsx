@@ -28,7 +28,10 @@ export default function Product() {
 
   return (
     <div className="w-full rounded-lg p-6">
-      <Header title="Produtos" subtitle="Gerencie seus produtos" />
+      <Header
+        title="Produtos"
+        subtitle="Gerencie seus produtos e produza lotes quando necessário"
+      />
       {products.length > 0 && (
         <Button
           type="button"

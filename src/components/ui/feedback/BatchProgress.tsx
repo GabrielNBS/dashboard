@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { Package, TrendingDown, TrendingUp } from 'lucide-react';
+import { Package } from 'lucide-react';
 
 interface BatchProgressProps {
   yieldQuantity: number;
@@ -112,13 +112,7 @@ export default function BatchProgress({
   return (
     <div className="space-y-2">
       {showLabels && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Package className={`text-gray-600 ${config.icon}`} />
-            <span className={`font-medium ${config.text}`}>
-              Lote: {availableQuantity + soldQuantity}/{yieldQuantity}
-            </span>
-          </div>
+        <div className="flex items-center justify-end">
           {showPercentage && (
             <span className={`text-gray-600 ${config.text}`}>
               {availablePercentage.toFixed(0)}% disponível
@@ -153,24 +147,6 @@ export default function BatchProgress({
           )}
         </div>
       </div>
-
-      {showLabels && (
-        <div className={`flex justify-between ${config.text} text-gray-600`}>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <TrendingUp className="h-3 w-3 text-green-500" />
-              <span>Disp: {availableQuantity}</span>
-            </div>
-            {soldQuantity > 0 && (
-              <div className="flex items-center gap-1">
-                <TrendingDown className="h-3 w-3 text-blue-500" />
-                <span>Vend: {soldQuantity}</span>
-              </div>
-            )}
-          </div>
-          <span>Total: {yieldQuantity}</span>
-        </div>
-      )}
     </div>
   );
 }

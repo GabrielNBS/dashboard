@@ -308,14 +308,19 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
 
       // DECISÃO: Construir objeto de produção completo aqui
       // RAZÃO: Centraliza lógica de negócio e garante consistência
+      // IMPORTANTE: sellingPriceValue é sempre o preço UNITÁRIO (o que o usuário digitou)
       const production = {
         ...builderState.production,
         totalCost: calculations.totalCost,
-        sellingPrice: sellingPriceValue,
-        unitSellingPrice:
+        unitCost: calculations.unitCost,
+        // Para lotes: sellingPrice = preço unitário × rendimento
+        // Para individuais: sellingPrice = preço unitário
+        sellingPrice:
           builderState.production.mode === 'lote'
-            ? sellingPriceValue / builderState.production.yieldQuantity
+            ? sellingPriceValue * builderState.production.yieldQuantity
             : sellingPriceValue,
+        // unitSellingPrice é sempre o valor digitado pelo usuário
+        unitSellingPrice: sellingPriceValue,
         unitMargin: customMarginValue,
         profitMargin: calculations.realProfitMargin,
       };
