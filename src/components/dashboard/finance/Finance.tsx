@@ -14,7 +14,6 @@ import MetroTilesKPIs from '@/components/features/finance/MetroTilesKPIs';
 import SalesTable from '@/components/features/finance/SalesTable';
 import CollapsibleFilters from '@/components/features/finance/CollapsibleFilters';
 
-// Enhanced sale type with searchable content for filtering
 type SearchableSale = Sale & { searchableContent: string };
 
 export default function Finance() {
@@ -51,11 +50,7 @@ export default function Finance() {
       <div ref={contentRef} className="flex flex-col gap-4 sm:gap-6">
         {/* KPIs em Metro Tiles */}
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-gray-700 sm:text-base">Resumo Financeiro</h3>
-          <p className="text-muted-foreground text-xs">
-            Clique no card &quot;Ponto de equilíbrio&quot; para ver análise detalhada
-          </p>
-          <MetroTilesKPIs financialSummary={financialSummary} />
+          <MetroTilesKPIs financialSummary={financialSummary} sales={salesState.sales} />
         </div>
 
         {/* Filtros Colapsáveis */}

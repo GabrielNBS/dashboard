@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { useFinanceSummary } from './useSummaryFinance';
+import { useFinanceSummary, FinanceSummary } from './useSummaryFinance';
 import { useTrendingMetrics, TrendingMetrics } from './useTrendingMetrics';
 import { Sale } from '@/types/sale';
 import {
@@ -13,17 +13,7 @@ import {
 
 export interface DashboardMetrics {
   // Financial summary data
-  summary: {
-    totalRevenue: number;
-    totalVariableCost: number;
-    totalFixedCost: number;
-    grossProfit: number;
-    netProfit: number;
-    margin: number;
-    valueToSave: number;
-    breakEven: number;
-    totalUnitsSold: number;
-  };
+  summary: FinanceSummary;
 
   // Trending metrics for month-over-month comparison
   trending: TrendingMetrics;

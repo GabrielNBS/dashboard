@@ -1,7 +1,7 @@
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { ReactNode } from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
 import { TrendingData } from '@/hooks/business/useTrendingMetrics';
+import LordIcon from '@/components/ui/LordIcon';
 
 export type CardWrapperProps = {
   title: string | ReactNode;
@@ -84,7 +84,16 @@ export default function CardWrapper({
             {typeof trending === 'boolean' ? (
               <div className="text-on-great items-center gap-2">
                 <strong className="flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
+                  <LordIcon
+                    src="https://cdn.lordicon.com/erxuunyq.json"
+                    width={16}
+                    height={16}
+                    isActive={true}
+                    colors={{
+                      primary: '#0a5c2e',
+                      secondary: '#0a5c2e',
+                    }}
+                  />
                   <span aria-label="Tendência positiva de 15%">15%</span>
                 </strong>
               </div>
@@ -94,9 +103,27 @@ export default function CardWrapper({
               >
                 <strong className="flex items-center gap-1">
                   {trending.isPositive ? (
-                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
+                    <LordIcon
+                      src="https://cdn.lordicon.com/erxuunyq.json"
+                      width={16}
+                      height={16}
+                      isActive={true}
+                      colors={{
+                        primary: '#0a5c2e',
+                        secondary: '#0a5c2e',
+                      }}
+                    />
                   ) : (
-                    <TrendingDown className="h-3 w-3 sm:h-4 sm:w-4" aria-hidden="true" />
+                    <LordIcon
+                      src="https://cdn.lordicon.com/rxkwccmc.json"
+                      width={16}
+                      height={16}
+                      isActive={true}
+                      colors={{
+                        primary: '#730a0a',
+                        secondary: '#730a0a',
+                      }}
+                    />
                   )}
                   <span
                     aria-label={`Tendência ${trending.isPositive ? 'positiva' : 'negativa'} de ${trending.percentage.toFixed(1)}%`}

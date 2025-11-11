@@ -9,6 +9,10 @@ interface LordIconProps {
   className?: string;
   isActive?: boolean;
   isHovered?: boolean;
+  colors?: {
+    primary: string;
+    secondary: string;
+  };
 }
 
 export interface LordIconRef {
@@ -18,7 +22,7 @@ export interface LordIconRef {
 }
 
 const LordIcon = forwardRef<LordIconRef, LordIconProps>(
-  ({ src, width = 24, height = 24, className = '', isActive = false, isHovered = false }, ref) => {
+  ({ src, width = 24, height = 24, className = '', isActive = false, isHovered = false, colors: customColors }, ref) => {
     const iconRef = useRef<HTMLElement>(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
@@ -67,12 +71,19 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
       },
     }));
 
-    // Forçar re-render quando sair do estado ativo
+    // Forçar re-render quando sair do estado ativo ou cores mudarem
     useEffect(() => {
       if (!isActive) {
         setKey(prev => prev + 1);
       }
     }, [isActive]);
+
+    // Forçar re-render quando cores customizadas mudarem
+    useEffect(() => {
+      if (customColors) {
+        setKey(prev => prev + 1);
+      }
+    }, [customColors]);
 
     // Trigger animation when hover state changes
     useEffect(() => {
@@ -83,6 +94,11 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
 
     // Determine colors based on state
     const getColors = () => {
+      // Se cores customizadas foram fornecidas, use-as
+      if (customColors) {
+        return customColors;
+      }
+      
       if (isActive) {
         return {
           primary: '#ffffff',

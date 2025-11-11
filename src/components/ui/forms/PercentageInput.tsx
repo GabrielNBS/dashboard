@@ -54,13 +54,6 @@ export default function PercentageInput({
       numbers = parts.join('.');
     }
 
-    // Aplica limites de valor
-    const numValue = parseFloat(numbers);
-    if (!isNaN(numValue)) {
-      const limitedValue = Math.min(Math.max(numValue, minValue), maxValue);
-      return limitedValue.toString();
-    }
-
     return numbers;
   };
 
@@ -82,7 +75,7 @@ export default function PercentageInput({
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
+    let inputValue = e.target.value;
 
     // Se o usuário apagou tudo, limpa o campo
     if (!inputValue) {
@@ -91,10 +84,40 @@ export default function PercentageInput({
       return;
     }
 
-    // Formata o valor
-    const formatted = formatPercentage(inputValue);
-    setDisplayValue(formatted);
-    onChange(formatted);
+    // Remove tudo que não é dígito ou vírgula/ponto
+    inputValue = inputValue.replace(/[^\d.,]/g, '');
+    
+    // Substitui vírgula por ponto para cálculos
+    inputValue = inputValue.replace(',', '.');
+
+    if (!inputValue) {
+      setDisplayValue('');
+      onChange('');
+      return;
+    }
+
+    // Limita casas decimais para percentuais (máximo 2 casas)
+    const parts = inputValue.split('.');
+    if (parts.length > 2) {
+      // Remove pontos extras
+      inputValue = parts[0] + '.' + parts.slice(1).join('');
+    } else if (parts.length === 2) {
+      parts[1] = parts[1].substring(0, 2); // Máximo 2 casas decimais
+      inputValue = parts.join('.');
+    }
+    
+    // Aplica limites de valor
+    const numValue = parseFloat(inputValue);
+    if (!isNaN(numValue)) {
+      const limitedValue = Math.min(Math.max(numValue, minValue), maxValue);
+      const limitedStr = limitedValue.toString();
+      setDisplayValue(limitedStr);
+      onChange(limitedStr);
+    } else {
+      // Permite valores parciais como "5." durante digitação
+      setDisplayValue(inputValue);
+      onChange(inputValue);
+    }
   };
 
   const paddingClasses = {

@@ -9,13 +9,19 @@ import { formatCurrency, formatPercent } from '@/utils/formatting/formatCurrency
 import GoalCardWrapper from './GoalCardWrapper';
 import LordIcon from '@/components/ui/LordIcon';
 import FinancialMetricsModal from './FinancialMetricsModal';
+import { Sale } from '@/types/sale';
+import { useRevenueMonthlyTrending } from '@/hooks/business/useRevenueMonthlyTrending';
 
 interface MetroTilesKPIsProps {
   financialSummary: FinanceSummary;
+  sales: Sale[];
 }
 
-export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps) {
+export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKPIsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Calcular trending dinâmico baseado nas vendas
+  const revenueTrending = useRevenueMonthlyTrending(sales);
 
   const {
     totalRevenue,
@@ -60,7 +66,7 @@ export default function MetroTilesKPIs({ financialSummary }: MetroTilesKPIsProps
               bgColor="bg-primary"
               textColor="text-secondary"
               layout="vertical"
-              trending
+              trending={revenueTrending || false}
               icon={totalRevenueIcon}
             />
 

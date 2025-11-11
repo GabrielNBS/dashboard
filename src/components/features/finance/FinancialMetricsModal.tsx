@@ -34,6 +34,16 @@ export default function FinancialMetricsModal({
 }: FinancialMetricsModalProps) {
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Estilos padronizados para cards e containers
+  const cardStyles = {
+    base: 'bg-card rounded-lg shadow-sm p-4',
+    withBorder: 'bg-card rounded-lg border p-4',
+    metric: 'bg-card rounded-lg shadow-sm p-4',
+    info: 'bg-info/10 border-info/20 rounded-lg border p-4',
+    warning: 'bg-warning/10 border-warning/20 rounded-lg shadow-sm p-4',
+    muted: 'bg-muted/50 rounded-lg shadow-sm p-4',
+  };
+
   const {
     totalRevenue,
     totalVariableCost,
@@ -56,21 +66,24 @@ export default function FinancialMetricsModal({
       case 'critical':
         return {
           icon: AlertTriangle,
-          bgColor: 'bg-critical',
+          background: 'bg-bad/40',
+          borderStatus: 'border-critical',
           iconColor: 'text-critical',
           title: 'Situação Crítica',
         };
       case 'warning':
         return {
           icon: AlertCircle,
-          bgColor: 'bg-warning',
+          background: 'bg-warning/40',
+          borderStatus: 'border-warning',
           iconColor: 'text-warning',
           title: 'Atenção Necessária',
         };
       case 'healthy':
         return {
           icon: CheckCircle,
-          bgColor: 'bg-great',
+          background: 'bg-great/40',
+          borderStatus: 'border-great',
           iconColor: 'text-great',
           title: 'Situação Saudável',
         };
@@ -121,8 +134,8 @@ export default function FinancialMetricsModal({
               {/* Header */}
               <motion.div
                 className={cn(
-                  'relative bg-gradient-to-r px-4 py-4 sm:px-6 sm:py-6',
-                  config.bgColor,
+                  'relative bg-gradient-to-r border-t-4 px-4 py-4 sm:px-6 sm:py-6',
+                  config.borderStatus,
                   'from-primary to-primary/90'
                 )}
                 initial={{ opacity: 0, y: -20 }}
@@ -158,7 +171,7 @@ export default function FinancialMetricsModal({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-sm font-medium text-white">
+                  <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-sm font-medium text-white", config.background)}>
                     <StatusIcon className="mr-1.5 h-3.5 w-3.5" />
                     {config.title}
                   </span>
@@ -205,45 +218,45 @@ export default function FinancialMetricsModal({
                   <div className="space-y-6">
                     {/* Métricas Principais */}
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.metric}>
                         <div className="mb-2 flex items-center gap-2">
                           <DollarSign className="text-primary h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">Receita Total</h4>
+                          <h2 className="text-foreground text-sm font-medium">Receita Total</h2>
                         </div>
                         <p className="text-foreground text-2xl font-bold">
                           {formatCurrency(totalRevenue)}
                         </p>
                       </div>
 
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.metric}>
                         <div className="mb-2 flex items-center gap-2">
-                          <TrendingUp className="text-great h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">Lucro Líquido</h4>
+                          <TrendingUp className="text-on-great h-5 w-5" />
+                          <h2 className="text-foreground text-sm font-md">Lucro Líquido</h2>
                         </div>
                         <p
                           className={cn(
                             'text-2xl font-bold',
-                            netProfit >= 0 ? 'text-great' : 'text-critical'
+                            netProfit >= 0 ? 'text-on-great' : 'text-critical'
                           )}
                         >
                           {formatCurrency(netProfit)}
                         </p>
                       </div>
 
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.metric}>
                         <div className="mb-2 flex items-center gap-2">
                           <PieChart className="text-accent h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">Margem</h4>
+                          <h2 className="text-foreground text-sm font-medium">Margem</h2>
                         </div>
                         <p className="text-foreground text-2xl font-bold">
                           {formatPercent(margin)}
                         </p>
                       </div>
 
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.metric}>
                         <div className="mb-2 flex items-center gap-2">
                           <Target className="text-info h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">Lucro Bruto</h4>
+                          <h2 className="text-foreground text-sm font-medium">Lucro Bruto</h2>
                         </div>
                         <p className="text-foreground text-2xl font-bold">
                           {formatCurrency(grossProfit)}
@@ -257,18 +270,18 @@ export default function FinancialMetricsModal({
                         Estrutura de Custos
                       </h3>
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="bg-warning/10 border-warning/20 rounded-lg border p-4">
+                        <div className={cardStyles.warning}>
                           <div className="mb-2 flex items-center justify-between">
-                            <h4 className="text-foreground text-sm font-medium">
+                            <h2 className="text-foreground text-sm font-medium">
                               Custos Variáveis
-                            </h4>
-                            <span className="text-warning text-xs font-medium">
+                            </h2>
+                            <span className="text-on-warning text-xs font-medium">
                               {totalRevenue > 0
                                 ? `${((totalVariableCost / totalRevenue) * 100).toFixed(1)}%`
                                 : '0%'}
                             </span>
                           </div>
-                          <p className="text-warning text-xl font-bold">
+                          <p className="text-primary text-xl font-bold">
                             {formatCurrency(totalVariableCost)}
                           </p>
                           <p className="text-muted-foreground mt-1 text-xs">
@@ -276,9 +289,9 @@ export default function FinancialMetricsModal({
                           </p>
                         </div>
 
-                        <div className="bg-muted/50 rounded-lg border p-4">
+                        <div className={cardStyles.muted}>
                           <div className="mb-2 flex items-center justify-between">
-                            <h4 className="text-foreground text-sm font-medium">Custos Fixos</h4>
+                            <h2 className="text-foreground text-sm font-medium">Custos Fixos</h2>
                             <span className="text-muted-foreground text-xs font-medium">
                               {totalRevenue > 0
                                 ? `${((totalFixedCost / totalRevenue) * 100).toFixed(1)}%`
@@ -298,7 +311,7 @@ export default function FinancialMetricsModal({
                       <h3 className="text-foreground mb-3 text-lg font-semibold">
                         Distribuição Financeira
                       </h3>
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.base}>
                         <div className="h-64">
                           <FinancePieChart financialSummary={financialSummary} />
                         </div>
@@ -311,12 +324,12 @@ export default function FinancialMetricsModal({
                   <div className="space-y-6">
                     {/* Métricas de Ponto de Equilíbrio */}
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.withBorder}>
                         <div className="mb-2 flex items-center gap-2">
                           <Target className="text-primary h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">
+                          <h2 className="text-foreground text-sm font-medium">
                             Ponto de Equilíbrio
-                          </h4>
+                          </h2>
                         </div>
                         <p className="text-foreground text-2xl font-bold">
                           {isInfinite ? '∞' : breakEvenUnits}
@@ -326,10 +339,10 @@ export default function FinancialMetricsModal({
                         </p>
                       </div>
 
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.withBorder}>
                         <div className="mb-2 flex items-center gap-2">
                           <Package className="text-accent h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">Preço Médio</h4>
+                          <h2 className="text-foreground text-sm font-medium">Preço Médio</h2>
                         </div>
                         <p className="text-foreground text-2xl font-bold">
                           {formatCurrency(averageSellingPrice)}
@@ -337,12 +350,12 @@ export default function FinancialMetricsModal({
                         <p className="text-muted-foreground text-xs">por unidade vendida</p>
                       </div>
 
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.withBorder}>
                         <div className="mb-2 flex items-center gap-2">
                           <TrendingUp className="text-great h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">
+                          <h2 className="text-foreground text-sm font-medium">
                             Margem de Contribuição
-                          </h4>
+                          </h2>
                         </div>
                         <p className="text-foreground text-2xl font-bold">
                           {contributionMarginPercentage.toFixed(1)}%
@@ -352,10 +365,10 @@ export default function FinancialMetricsModal({
                         </p>
                       </div>
 
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.withBorder}>
                         <div className="mb-2 flex items-center gap-2">
                           <Calendar className="text-info h-5 w-5" />
-                          <h4 className="text-foreground text-sm font-medium">Projeção</h4>
+                          <h2 className="text-foreground text-sm font-medium">Projeção</h2>
                         </div>
                         {breakEvenProjection ? (
                           <>
@@ -378,7 +391,7 @@ export default function FinancialMetricsModal({
                     </div>
 
                     {/* Explicação do Ponto de Equilíbrio */}
-                    <div className="bg-info/10 border-info/20 rounded-lg border p-4">
+                    <div className={cardStyles.info}>
                       <h3 className="text-foreground mb-3 flex items-center gap-2 text-lg font-semibold">
                         <Target className="text-info h-5 w-5" />O que é Ponto de Equilíbrio?
                       </h3>
@@ -393,9 +406,9 @@ export default function FinancialMetricsModal({
                             <DollarSign className="text-primary h-4 w-4" />
                           </div>
                           <div>
-                            <h4 className="text-foreground text-sm font-medium">
+                            <h2 className="text-foreground text-sm font-medium">
                               Ponto de Equilíbrio em Receita
-                            </h4>
+                            </h2>
                             <p className="text-muted-foreground text-sm">
                               {formatCurrency(breakEven)} - Receita necessária para cobrir todos os
                               custos
@@ -407,9 +420,9 @@ export default function FinancialMetricsModal({
                             <Package className="text-accent h-4 w-4" />
                           </div>
                           <div>
-                            <h4 className="text-foreground text-sm font-medium">
+                            <h2 className="text-foreground text-sm font-medium">
                               Ponto de Equilíbrio em Unidades
-                            </h4>
+                            </h2>
                             <p className="text-muted-foreground text-sm">
                               {isInfinite
                                 ? 'Negócio não é viável com os custos e preços atuais'
@@ -422,7 +435,7 @@ export default function FinancialMetricsModal({
 
                     {/* Progresso até o Ponto de Equilíbrio */}
                     {!isInfinite && isFinite(breakEven) && (
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.withBorder}>
                         <h3 className="text-foreground mb-3 text-lg font-semibold">
                           Progresso até o Equilíbrio
                         </h3>
@@ -497,10 +510,10 @@ export default function FinancialMetricsModal({
 
                     {/* Alertas */}
                     {healthIndicators.alerts.length > 0 && (
-                      <div className="bg-card rounded-lg border p-4">
+                      <div className={cardStyles.withBorder}>
                         <div className="mb-3 flex items-center gap-2">
                           <TrendingUp className="text-muted-foreground h-5 w-5" />
-                          <h4 className="text-foreground text-lg font-semibold">Indicadores</h4>
+                          <h2 className="text-foreground text-lg font-semibold">Indicadores</h2>
                         </div>
                         <ul className="space-y-3">
                           {healthIndicators.alerts.map((alert, index) => (
@@ -523,7 +536,7 @@ export default function FinancialMetricsModal({
                       <div className="bg-accent/10 border-accent/20 rounded-lg border p-4">
                         <div className="mb-3 flex items-center gap-2">
                           <Lightbulb className="text-accent h-5 w-5" />
-                          <h4 className="text-foreground text-lg font-semibold">Recomendações</h4>
+                          <h2 className="text-foreground text-lg font-semibold">Recomendações</h2>
                         </div>
                         <ul className="space-y-3">
                           {healthIndicators.recommendations.map((recommendation, index) => (

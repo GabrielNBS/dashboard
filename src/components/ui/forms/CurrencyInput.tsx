@@ -36,80 +36,74 @@ export default function CurrencyInput({
   size = 'md',
 }: CurrencyInputProps) {
   const [displayValue, setDisplayValue] = useState('');
+  const [rawDigits, setRawDigits] = useState(''); // Mantém apenas os dígitos puros
 
-  // Função para formatar valor como moeda
-  const formatCurrency = useCallback(
-    (val: string): string => {
-      // Remove tudo que não é dígito
-      const numbers = val.replace(/\D/g, '');
-
-      if (!numbers) return '';
-
-      // Converte para centavos e depois para reais
-      const cents = parseInt(numbers);
-      const reais = cents / 100;
-
-      // Aplica limites de valor
-      const limitedValue = Math.min(Math.max(reais, minValue), maxValue);
-
-      // Formata como moeda brasileira
-      return limitedValue.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    },
-    [minValue, maxValue]
-  );
-
-  // Função para extrair valor numérico
-  const extractNumericValue = (formattedValue: string): string => {
-    const numbers = formattedValue.replace(/\D/g, '');
-    if (!numbers) return '';
-
-    const cents = parseInt(numbers);
+  // Função para formatar centavos como moeda
+  const formatCentsAsCurrency = useCallback((cents: number): string => {
     const reais = cents / 100;
-    return reais.toString();
-  };
+    return reais.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }, []);
 
-  // Atualiza display quando value prop muda
+  // Atualiza display quando value prop muda externamente
   useEffect(() => {
     if (typeof value === 'number') {
       if (value === 0) {
         setDisplayValue('');
+        setRawDigits('');
       } else {
-        setDisplayValue(formatCurrency((value * 100).toString()));
+        const cents = Math.round(value * 100);
+        setRawDigits(cents.toString());
+        setDisplayValue(formatCentsAsCurrency(cents));
       }
     } else if (typeof value === 'string') {
       if (!value || value === '0') {
         setDisplayValue('');
+        setRawDigits('');
       } else {
         const numValue = parseFloat(value);
         if (!isNaN(numValue)) {
-          setDisplayValue(formatCurrency((numValue * 100).toString()));
+          const cents = Math.round(numValue * 100);
+          setRawDigits(cents.toString());
+          setDisplayValue(formatCentsAsCurrency(cents));
         } else {
           setDisplayValue('');
+          setRawDigits('');
         }
       }
     }
-  }, [formatCurrency, value]);
+  }, [formatCentsAsCurrency, value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
 
+    // Remove tudo que não é dígito do input
+    const newDigits = inputValue.replace(/\D/g, '');
+
     // Se o usuário apagou tudo, limpa o campo
-    if (!inputValue) {
+    if (!newDigits) {
+      setRawDigits('');
       setDisplayValue('');
       onChange('');
       return;
     }
 
-    // Formata o valor
-    const formatted = formatCurrency(inputValue);
-    setDisplayValue(formatted);
+    // Converte para centavos (número inteiro)
+    const cents = parseInt(newDigits, 10);
+    const reais = cents / 100;
 
-    // Extrai o valor numérico e passa para o onChange
-    const numericValue = extractNumericValue(formatted);
-    onChange(numericValue);
+    // Aplica limites de valor
+    const limitedReais = Math.min(Math.max(reais, minValue), maxValue);
+    const limitedCents = Math.round(limitedReais * 100);
+
+    // Atualiza os estados
+    setRawDigits(limitedCents.toString());
+    setDisplayValue(formatCentsAsCurrency(limitedCents));
+
+    // Passa o valor numérico para o onChange
+    onChange(limitedReais.toString());
   };
 
   const paddingClasses = {

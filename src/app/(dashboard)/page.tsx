@@ -32,7 +32,7 @@ export default function DashboardContent() {
     <main className="bg-surface flex min-h-screen flex-col gap-6 p-6">
       <Header title={title} subtitle={subtitle} />
 
-      <section aria-labelledby="kpi-title" className="grid gap-6 lg:grid-cols-4">
+      <section aria-labelledby="kpi-title" className="grid gap-6 lresg:grid-cols-4">
         <h2 id="kpi-title" className="sr-only">
           Indicadores Chave de Performance
         </h2>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { cn } from '@/utils/utils';
 
 /**
@@ -38,13 +38,15 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
  * />
  */
 export default function Input({ label, error, size = 'md', className, id, ...props }: InputProps) {
+  const generatedId = useId();
+  
   const sizeClasses = {
     sm: 'px-3 py-2 text-sm',
     md: 'px-4 py-3 text-sm',
     lg: 'px-4 py-4 text-base',
   };
 
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const inputId = id || generatedId;
   const errorId = `${inputId}-error`;
 
   return (

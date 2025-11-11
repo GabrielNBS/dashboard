@@ -44,11 +44,6 @@ const QuantityWithUnitInput = ({
 
     if (!allowDecimals) {
       const numbers = val.replace(/\D/g, '');
-      const numValue = parseInt(numbers);
-      if (!isNaN(numValue)) {
-        const limitedValue = Math.max(numValue, min);
-        return limitedValue.toString();
-      }
       return numbers;
     }
 
@@ -66,17 +61,11 @@ const QuantityWithUnitInput = ({
       numbers = parts.join('.');
     }
 
-    const numValue = parseFloat(numbers);
-    if (!isNaN(numValue)) {
-      const limitedValue = Math.max(numValue, min);
-      return limitedValue.toString();
-    }
-
     return numbers;
   };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
+    let inputValue = e.target.value;
 
     if (!inputValue) {
       setDisplayValue('');
@@ -84,9 +73,60 @@ const QuantityWithUnitInput = ({
       return;
     }
 
-    const formatted = formatQuantity(inputValue);
-    setDisplayValue(formatted);
-    setValue('quantity', formatted, { shouldValidate: true });
+    const allowDecimals = unitValue !== 'un';
+
+    if (!allowDecimals) {
+      // Remove tudo que não é dígito
+      inputValue = inputValue.replace(/\D/g, '');
+      
+      if (!inputValue) {
+        setDisplayValue('');
+        setValue('quantity', '', { shouldValidate: true });
+        return;
+      }
+
+      const numValue = parseInt(inputValue, 10);
+      if (!isNaN(numValue)) {
+        const limitedValue = Math.max(numValue, min);
+        const limitedStr = limitedValue.toString();
+        setDisplayValue(limitedStr);
+        setValue('quantity', limitedStr, { shouldValidate: true });
+      }
+    } else {
+      // Remove tudo que não é dígito, vírgula ou ponto
+      inputValue = inputValue.replace(/[^\d.,]/g, '');
+      
+      // Substitui vírgula por ponto para cálculos
+      inputValue = inputValue.replace(',', '.');
+
+      if (!inputValue) {
+        setDisplayValue('');
+        setValue('quantity', '', { shouldValidate: true });
+        return;
+      }
+
+      // Garante apenas um ponto decimal
+      const parts = inputValue.split('.');
+      if (parts.length > 2) {
+        inputValue = parts[0] + '.' + parts.slice(1).join('');
+      } else if (parts.length === 2) {
+        const maxDecimals = unitValue === 'kg' || unitValue === 'l' ? 3 : 2;
+        parts[1] = parts[1].substring(0, maxDecimals);
+        inputValue = parts.join('.');
+      }
+
+      const numValue = parseFloat(inputValue);
+      if (!isNaN(numValue)) {
+        const limitedValue = Math.max(numValue, min);
+        const limitedStr = limitedValue.toString();
+        setDisplayValue(limitedStr);
+        setValue('quantity', limitedStr, { shouldValidate: true });
+      } else {
+        // Permite valores parciais como "5." durante digitação
+        setDisplayValue(inputValue);
+        setValue('quantity', inputValue, { shouldValidate: true });
+      }
+    }
   };
 
   const adjustValue = (delta: number) => {
