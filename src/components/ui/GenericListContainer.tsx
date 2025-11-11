@@ -1,5 +1,6 @@
 import React from 'react';
 import { Package, Plus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/base/Button';
 import SearchInput from '@/components/ui/forms/SearchInput';
 import { FilterableItem } from '@/hooks/ui/useUnifiedFilter';
@@ -123,105 +124,137 @@ export function GenericListContainer<T extends FilterableItem>({
     <div className={`space-y-6 ${className}`}>
       {/* Header Section */}
       <div className="flex flex-col gap-4">
-        {/* Statistics Row */}
-        {filterStats && (
-          <div className="flex items-center gap-4">
-            <span className="text-muted-foreground text-sm">
-              {filterStats.totalCount}{' '}
-              {filterStats.totalCount === 1 ? filterStats.itemName : filterStats.itemNamePlural}{' '}
-              cadastrado
-              {filterStats.totalCount !== 1 ? 's' : ''}
-            </span>
-            {filterStats.hasActiveFilters && (
-              <span className="text-accent text-sm">
-                • {filterStats.filteredCount} encontrado
-                {filterStats.filteredCount !== 1 ? 's' : ''}
-              </span>
-            )}
-          </div>
-        )}
-
         {/* Filters and Search Row */}
-        <div className="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* Additional header content (filters) */}
-          {headerContent}
+        <div className="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-start lg:justify-between">
+          {/* QuickFilters (headerContent) */}
+          <AnimatePresence mode="wait">
+            {headerContent && (
+              <motion.div
+                key="quick-filters"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-wrap items-center gap-3"
+              >
+                {headerContent}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.div
+            initial={false}
+            animate={{
+              opacity: filterStats?.hasActiveFilters ? 1 : 0,
+            }}
+            transition={{ duration: 0.2 }}
+            className={`lg:flex-1 lg:px-3 ${filterStats?.hasActiveFilters ? '' : 'pointer-events-none'}`}
+          >
+            <div className="bg-accent/50 flex flex-col gap-2 rounded-lg p-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-0">
+              <span className="text-primary">
+                Mostrando <strong>{filterStats?.filteredCount || 0}</strong> de{' '}
+                <strong>{filterStats?.totalCount || 0}</strong> {filterStats?.itemNamePlural || 'itens'}
+              </span>
+              {filterStats?.onClearFilters && (
+                <Button
+                  onClick={filterStats.onClearFilters}
+                  variant="link"
+                  size="sm"
+                  className="text-primary hover:text-primary/80 cursor-pointer text-left font-medium sm:text-right"
+                  type="button"
+                >
+                  Limpar filtros
+                </Button>
+              )}
+            </div>
+          </motion.div>
 
           {/* Search input */}
           {search && (
-            <div className="w-full lg:w-auto lg:flex-shrink-0">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2 }}
+              className="w-full lg:w-auto lg:flex-shrink-0"
+            >
               <SearchInput
                 placeholder={search.placeholder}
                 value={search.value}
                 onChange={search.onChange}
                 className={search.className || 'w-full sm:w-80'}
               />
-            </div>
+            </motion.div>
           )}
         </div>
-
-        {/* Filter statistics with clear button */}
-        {filterStats?.hasActiveFilters && (
-          <div className="bg-accent/50 flex flex-col gap-2 rounded-lg p-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-0">
-            <span className="text-primary">
-              Mostrando <strong>{filterStats.filteredCount}</strong> de{' '}
-              <strong>{filterStats.totalCount}</strong> {filterStats.itemNamePlural}
-            </span>
-            {filterStats.onClearFilters && (
-              <Button
-                onClick={filterStats.onClearFilters}
-                variant="link"
-                size="sm"
-                className="text-primary hover:text-primary/80 cursor-pointer text-left font-medium sm:text-right"
-                type="button"
-              >
-                Limpar filtros
-              </Button>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Content Section */}
-      {items.length === 0 ? (
-        // Empty state
-        <div className="bg-muted/50 flex flex-col items-center justify-center gap-4 rounded-lg px-4 py-8 sm:py-12">
-          {finalEmptyState.icon}
-          <h3 className="text-center text-lg font-medium">{finalEmptyState.title}</h3>
-          <p className="text-muted-foreground text-center text-sm sm:text-base">
-            {finalEmptyState.description}
-          </p>
-          {finalEmptyState.action && (
-            <div className="mt-2 sm:mt-4">
-              <Button onClick={finalEmptyState.action.onClick} className="flex items-center gap-2">
-                {finalEmptyState.action.icon || <Plus className="h-4 w-4" />}
-                {finalEmptyState.action.label}
-              </Button>
-            </div>
-          )}
-        </div>
-      ) : (
-        // Items grid
-        <div className={`grid gap-4 ${gridCols}`}>
-          {items.map((item, index) => {
-            const key = (item.id || item.uid || `item-${index}`) as string;
-            return <div key={key}>{renderItem(item, index)}</div>;
-          })}
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {items.length === 0 ? (
+          // Empty state
+          <motion.div
+            key="empty-state"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="bg-muted/50 flex min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg px-4 py-8"
+          >
+            {finalEmptyState.icon}
+            <h3 className="text-center text-lg font-medium">{finalEmptyState.title}</h3>
+            <p className="text-muted-foreground text-center text-sm sm:text-base">
+              {finalEmptyState.description}
+            </p>
+            {finalEmptyState.action && (
+              <div className="mt-2 sm:mt-4">
+                <Button onClick={finalEmptyState.action.onClick} className="flex items-center gap-2">
+                  {finalEmptyState.action.icon || <Plus className="h-4 w-4" />}
+                  {finalEmptyState.action.label}
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        ) : (
+          // Items grid
+          <motion.div
+            key="items-grid"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className={`grid gap-4 ${gridCols}`}
+          >
+            {items.map((item, index) => {
+              const key = (item.id || item.uid || `item-${index}`) as string;
+              return (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                >
+                  {renderItem(item, index)}
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Summary content (category summaries, etc.) */}
-      {summaryContent && items.length > 0 && summaryContent}
+      {summaryContent && items.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          {summaryContent}
+        </motion.div>
+      )}
     </div>
   );
 }
 
-// ============================================================
-// 🔹 Utility functions for common list configurations
-// ============================================================
-
-/**
- * Create search configuration for common use cases
- */
 export function createSearchConfig(
   placeholder: string,
   value: string,
@@ -236,9 +269,7 @@ export function createSearchConfig(
   };
 }
 
-/**
- * Create filter statistics configuration
- */
+
 export function createFilterStatsConfig(
   totalCount: number,
   filteredCount: number,
@@ -257,9 +288,6 @@ export function createFilterStatsConfig(
   };
 }
 
-/**
- * Create empty state configuration for adding new items
- */
 export function createAddItemEmptyState(
   itemName: string,
   onAdd: () => void,
