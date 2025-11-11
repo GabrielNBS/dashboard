@@ -310,28 +310,28 @@ export default function FinancialChart({
 
   return (
     <div className="min-full mx-auto w-full max-w-7xl">
-      <div className="mb-6 rounded-lg bg-white p-6 shadow-sm dark:bg-gray-800">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex gap-2">
+      <div className="mb-6 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800 sm:p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-center gap-2 sm:mb-6 sm:justify-between sm:gap-4">
+          <div className="flex flex-wrap justify-center gap-2">
             {chartTypes.map(chart => (
               <button
                 key={chart.key}
                 type="button"
                 onClick={() => setChartType(chart.key)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all sm:gap-2 sm:px-4 sm:text-sm ${
                   chartType === chart.key
                     ? 'scale-105 transform bg-blue-600 text-white shadow-lg'
                     : 'bg-gray-100 text-gray-600 hover:scale-102 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
                 <span>{chart.icon}</span>
-                {chart.label}
+                <span className="hidden sm:inline">{chart.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="h-96 w-full">
+        <div className="h-64 w-full sm:h-80 md:h-96">
           {data.length === 0 ? (
             <div className="flex h-full items-center justify-center text-gray-500">
               <div className="text-center">

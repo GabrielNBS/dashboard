@@ -53,7 +53,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <Aside />
         <main
           id="main-content"
-          className="min-h-dvh w-full px-24"
+          className="min-h-dvh w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24"
           role="main"
           aria-label="Conteúdo principal"
         >

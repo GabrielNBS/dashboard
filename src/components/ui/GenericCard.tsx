@@ -258,7 +258,7 @@ export function GenericCard<T extends CardableItem>({
                     type="button"
                     onClick={() => action.onClick(item)}
                     variant={action.variant || 'ghost'}
-                    className="text-primary hover:bg-primary/20 h-7 w-7 p-0 sm:h-8 sm:w-8"
+                    className="text-primary hover:bg-primary/20 h-11 w-11 p-0 sm:h-10 sm:w-10"
                     aria-label={action.label}
                     tooltip={action.tooltip ? { tooltipContent: action.tooltip } : undefined}
                   >

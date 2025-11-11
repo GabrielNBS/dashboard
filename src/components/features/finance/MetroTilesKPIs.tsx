@@ -50,15 +50,19 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
         {/* Metro Tiles Grid - 2/3 do espaço */}
         <div className="lg:col-span-2">
           <div
-            className="grid grid-cols-4 gap-3 sm:gap-4"
-            style={{ gridTemplateRows: 'repeat(3, minmax(70px, 1fr))' }}
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
+            style={{ gridTemplateRows: 'repeat(3, minmax(80px, 1fr))' }}
           >
             {/* LARGE TILE - Lucro Líquido (Principal KPI) */}
             <CardWrapper
-              title={<span className="text-base font-semibold sm:text-lg">Lucro Líquido</span>}
+              title={
+                <span className="text-sm font-semibold sm:text-base md:text-lg">
+                  Lucro Líquido
+                </span>
+              }
               className="relative col-span-2 row-span-2 items-center justify-center"
               value={
-                <span className="text-3xl font-bold sm:text-4xl lg:text-5xl">
+                <span className="text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl">
                   {typeof netProfit === 'number' ? formatCurrency(netProfit) : netProfit}
                 </span>
               }
@@ -75,14 +79,16 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
               <CardWrapper
                 title={
                   <div className="flex w-full items-center justify-between">
-                    <span className="text-sm font-medium sm:text-base">Receita total</span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-transparent">
-                      <DollarSign className="text-primary h-4 w-4" />
+                    <span className="text-xs font-medium sm:text-sm md:text-base">
+                      Receita total
+                    </span>
+                    <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-transparent sm:h-8 sm:w-8">
+                      <DollarSign className="text-primary h-3 w-3 sm:h-4 sm:w-4" />
                     </div>
                   </div>
                 }
                 value={
-                  <span className="text-xl font-bold sm:text-2xl">
+                  <span className="text-lg font-bold sm:text-xl md:text-2xl">
                     {typeof totalRevenue === 'number' ? formatCurrency(totalRevenue) : totalRevenue}
                   </span>
                 }
@@ -109,12 +115,14 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
               <CardWrapper
                 title={
                   <div>
-                    <span className="mb-1 block text-xs font-light opacity-70">Bruto</span>
-                    <span className="text-xs font-medium">Lucro bruto</span>
+                    <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
+                      Bruto
+                    </span>
+                    <span className="text-[10px] font-medium sm:text-xs">Lucro bruto</span>
                   </div>
                 }
                 value={
-                  <span className="text-sm font-bold sm:text-base">
+                  <span className="text-xs font-bold sm:text-sm md:text-base">
                     {typeof grossProfit === 'number' ? formatCurrency(grossProfit) : grossProfit}
                   </span>
                 }
@@ -129,12 +137,14 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
               <CardWrapper
                 title={
                   <div>
-                    <span className="mb-1 block text-xs font-light opacity-70">Variável</span>
-                    <span className="text-xs font-medium">Custo Variável</span>
+                    <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
+                      Variável
+                    </span>
+                    <span className="text-[10px] font-medium sm:text-xs">Custo Variável</span>
                   </div>
                 }
                 value={
-                  <span className="text-sm font-bold sm:text-base">
+                  <span className="text-xs font-bold sm:text-sm md:text-base">
                     {typeof totalVariableCost === 'number'
                       ? formatCurrency(totalVariableCost)
                       : totalVariableCost}
@@ -152,12 +162,14 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
               <CardWrapper
                 title={
                   <div>
-                    <span className="mb-1 block text-xs font-light opacity-70">Fixo</span>
-                    <span className="text-xs font-medium">Custo fixo</span>
+                    <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
+                      Fixo
+                    </span>
+                    <span className="text-[10px] font-medium sm:text-xs">Custo fixo</span>
                   </div>
                 }
                 value={
-                  <span className="text-sm font-bold sm:text-base">
+                  <span className="text-xs font-bold sm:text-sm md:text-base">
                     {typeof totalFixedCost === 'number'
                       ? formatCurrency(totalFixedCost)
                       : totalFixedCost}
@@ -174,12 +186,14 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
               <CardWrapper
                 title={
                   <div>
-                    <span className="mb-1 block text-xs font-light opacity-70">Margem</span>
-                    <span className="text-xs font-medium">Lucro</span>
+                    <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
+                      Margem
+                    </span>
+                    <span className="text-[10px] font-medium sm:text-xs">Lucro</span>
                   </div>
                 }
                 value={
-                  <span className="text-sm font-bold sm:text-base">
+                  <span className="text-xs font-bold sm:text-sm md:text-base">
                     {typeof margin === 'number' ? formatPercent(margin) : margin}
                   </span>
                 }

@@ -89,7 +89,7 @@ function QuickFilters({
               <LordIcon src={filter.lordIconSrc} width={20} height={20} isActive={isActive} />
             </div>
 
-            <span className="relative z-10 hidden whitespace-nowrap sm:inline">{filter.label}</span>
+            <span className="relative z-10 whitespace-nowrap text-xs sm:text-sm">{filter.label}</span>
           </motion.button>
         );
       })}
