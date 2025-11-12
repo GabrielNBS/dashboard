@@ -54,7 +54,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
         ref={ref}
         layoutId={`product-card-${product.uid}`}
         onClick={() => onClick(product)}
-        className={`group relative cursor-pointer overflow-hidden bg-white shadow-md transition-shadow duration-200 hover:shadow-lg ${
+        className={`group relative cursor-pointer overflow-hidden bg-white shadow-md transition-shadow duration-200 hover:shadow-xl ${
           isExpanded ? 'invisible' : ''
         }`}
         initial={{ borderRadius: '0.75rem' }}
@@ -71,14 +71,15 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
           mass: 0.8,
         }}
       >
-        <div className="absolute top-3 right-3 z-10 flex gap-1.5 opacity-100 transition-opacity duration-200 sm:gap-2 md:opacity-0 md:group-hover:opacity-100">
+        {/* Action Buttons */}
+        <div className="absolute top-3 right-3 z-20 flex gap-1.5 opacity-100 transition-opacity duration-200 sm:gap-2 md:opacity-0 md:group-hover:opacity-100">
           <motion.button
             type="button"
             onClick={e => {
               e.stopPropagation();
               onEdit(product);
             }}
-            className="rounded-full bg-white/90 p-1.5 text-slate-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-indigo-600 sm:p-2"
+            className="rounded-full bg-white/95 p-1.5 text-slate-600 shadow-lg backdrop-blur-sm transition-colors hover:bg-white hover:text-indigo-600 sm:p-2"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -90,7 +91,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
               e.stopPropagation();
               onRemove(product.uid);
             }}
-            className="rounded-full bg-white/90 p-1.5 text-slate-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white hover:text-red-600 sm:p-2"
+            className="rounded-full bg-white/95 p-1.5 text-slate-600 shadow-lg backdrop-blur-sm transition-colors hover:bg-white hover:text-red-600 sm:p-2"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -98,32 +99,62 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
           </motion.button>
         </div>
 
-        {/* Image */}
-        {product.image && (
-          <motion.div
-            layoutId={`product-image-${product.uid}`}
-            className="relative h-40 w-full overflow-hidden sm:h-48"
-            transition={{
-              type: 'spring',
-              stiffness: 500,
-              damping: 40,
-              duration: 0.4,
-            }}
-          >
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          </motion.div>
-        )}
+        {/* Image Section */}
+        <motion.div
+          layoutId={`product-image-${product.uid}`}
+          className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 sm:h-56"
+          transition={{
+            type: 'spring',
+            stiffness: 500,
+            damping: 40,
+            duration: 0.4,
+          }}
+        >
+          {product.image ? (
+            <>
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={false}
+              />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            </>
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <Package className="h-16 w-16 text-slate-300" />
+            </div>
+          )}
+
+          {/* Profit Badge on Image */}
+          <div className="absolute bottom-3 left-3">
+            <motion.div
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 backdrop-blur-md ${
+                isProfit ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'
+              }`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              {isProfit ? (
+                <TrendingUp className="h-3.5 w-3.5" />
+              ) : (
+                <TrendingDown className="h-3.5 w-3.5" />
+              )}
+              <span className="text-sm font-bold">
+                {product.production.profitMargin.toFixed(1)}%
+              </span>
+            </motion.div>
+          </div>
+        </motion.div>
 
         {/* Header */}
         <motion.div
           layoutId={`product-header-${product.uid}`}
-          className="from-primary to-primary/90 bg-gradient-to-r px-4 py-3 sm:px-5 sm:py-4"
+          className="border-b border-slate-100 px-4 py-3 sm:px-5 sm:py-4"
           transition={{
             type: 'spring',
             stiffness: 500,
@@ -133,7 +164,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
         >
           <motion.h3
             layoutId={`product-title-${product.uid}`}
-            className="mb-2 line-clamp-1 text-base font-bold text-white sm:text-lg"
+            className="mb-2 line-clamp-1 text-lg font-bold text-slate-900 sm:text-xl"
             transition={{
               type: 'spring',
               stiffness: 500,
@@ -153,11 +184,12 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
               duration: 0.4,
             }}
           >
-            <span className="inline-flex items-center rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium text-white">
+            <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
+              <Tag className="mr-1 h-3 w-3" />
               {product.category}
             </span>
             {!isProfit && (
-              <span className="inline-flex items-center rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-medium text-white">
+              <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
                 <AlertTriangle className="mr-1 h-3 w-3" />
                 Prejuízo
               </span>
@@ -176,40 +208,6 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
             duration: 0.4,
           }}
         >
-          {/* Profit Margin */}
-          <motion.div
-            className={`mb-4 rounded-lg border-l-4 p-3 ${
-              isProfit ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
-            }`}
-            layoutId={`product-margin-${product.uid}`}
-            transition={{
-              type: 'spring',
-              stiffness: 500,
-              damping: 40,
-              duration: 0.4,
-            }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {isProfit ? (
-                  <TrendingUp className="h-4 w-4 text-green-600" />
-                ) : (
-                  <TrendingDown className="h-4 w-4 text-red-600" />
-                )}
-                <span
-                  className={`text-sm font-medium ${isProfit ? 'text-green-800' : 'text-red-800'}`}
-                >
-                  Margem
-                </span>
-              </div>
-              <div
-                className={`text-xl font-bold sm:text-2xl ${isProfit ? 'text-green-600' : 'text-red-600'}`}
-              >
-                {product.production.profitMargin.toFixed(1)}%
-              </div>
-            </div>
-          </motion.div>
-
           <motion.div
             className="grid grid-cols-2 gap-3"
             layoutId={`product-metrics-${product.uid}`}
@@ -220,28 +218,28 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
               duration: 0.4,
             }}
           >
-            <div className="rounded-lg bg-slate-50 p-3">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 transition-colors hover:bg-slate-100">
               <div className="mb-1 flex items-center gap-1.5">
                 <Calculator className="h-3.5 w-3.5 text-slate-500" />
-                <span className="text-xs text-slate-600">Custo</span>
+                <span className="text-xs font-medium text-slate-600">Custo</span>
               </div>
               <div className="text-base font-bold text-slate-900 sm:text-lg">
                 {formatCurrency(product.production.totalCost)}
               </div>
             </div>
 
-            <div className="rounded-lg bg-slate-50 p-3">
+            <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-3 transition-colors hover:bg-indigo-100">
               <div className="mb-1 flex items-center gap-1.5">
-                <DollarSign className="h-3.5 w-3.5 text-slate-500" />
-                <span className="text-xs text-slate-600">
+                <DollarSign className="h-3.5 w-3.5 text-indigo-600" />
+                <span className="text-xs font-medium text-indigo-700">
                   {product.production.mode === 'lote' ? 'Venda/Un.' : 'Venda'}
                 </span>
               </div>
-              <div className="text-base font-bold text-indigo-600 sm:text-lg">
+              <div className="text-base font-bold text-indigo-700 sm:text-lg">
                 {formatCurrency(product.production.unitSellingPrice)}
               </div>
               {product.production.mode === 'lote' && (
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-indigo-600">
                   Lote: {formatCurrency(product.production.sellingPrice)}
                 </span>
               )}
@@ -297,8 +295,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
           {/* Modal */}
           <motion.div
             layoutId={`product-card-${product.uid}`}
-            className="fixed inset-4 z-50 mx-auto flex max-w-4xl flex-col overflow-hidden bg-white shadow-2xl sm:inset-6 md:inset-8 lg:top-1/2 lg:left-1/2 lg:h-[80vh] lg:w-[90vw] lg:max-w-4xl lg:-translate-x-1/2 lg:-translate-y-1/2"
-            style={{ borderRadius: 12 }}
+            className="fixed inset-4 z-50 mx-auto flex max-w-4xl flex-col overflow-hidden bg-white shadow-2xl sm:inset-6 md:inset-8 lg:top-1/2 lg:left-1/2 lg:h-[85vh] lg:w-[90vw] lg:max-w-5xl lg:-translate-x-1/2 lg:-translate-y-1/2"
+            style={{ borderRadius: 16 }}
             transition={{
               type: 'spring',
               stiffness: 400,
@@ -307,10 +305,10 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
             }}
           >
             <div className="flex h-full flex-col">
-              {/* Header */}
+              {/* Image Header Section */}
               <motion.div
-                layoutId={`product-header-${product.uid}`}
-                className="from-primary to-primary/90 relative bg-gradient-to-r px-4 py-4 sm:px-6 sm:py-6"
+                layoutId={`product-image-${product.uid}`}
+                className="relative h-48 w-full flex-shrink-0 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 sm:h-64"
                 transition={{
                   type: 'spring',
                   stiffness: 500,
@@ -318,11 +316,30 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
                   duration: 0.4,
                 }}
               >
+                {product.image ? (
+                  <>
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 90vw"
+                      priority
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  </>
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    <Package className="h-20 w-20 text-slate-300" />
+                  </div>
+                )}
+
                 {/* Close Button */}
                 <motion.button
                   type="button"
                   onClick={onClose}
-                  className="absolute top-3 right-3 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/30 sm:top-4 sm:right-4"
+                  className="absolute top-3 right-3 z-10 rounded-full bg-white/95 p-2 text-slate-700 shadow-lg backdrop-blur-sm transition-colors hover:bg-white sm:top-4 sm:right-4"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
@@ -332,44 +349,47 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
                   <X className="h-5 w-5" />
                 </motion.button>
 
-                <motion.h2
-                  layoutId={`product-title-${product.uid}`}
-                  className="mb-3 pr-12 text-xl font-bold text-white sm:text-2xl"
-                  transition={{
-                    type: 'spring',
-                    stiffness: 500,
-                    damping: 40,
-                    duration: 0.4,
-                  }}
-                >
-                  {product.name}
-                </motion.h2>
+                {/* Title and Badges Overlay */}
+                <div className="absolute right-0 bottom-0 left-0 p-4 sm:p-6">
+                  <motion.h2
+                    layoutId={`product-title-${product.uid}`}
+                    className="mb-3 text-2xl font-bold text-white drop-shadow-lg sm:text-3xl"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 500,
+                      damping: 40,
+                      duration: 0.4,
+                    }}
+                  >
+                    {product.name}
+                  </motion.h2>
 
-                <motion.div
-                  layoutId={`product-badges-${product.uid}`}
-                  className="flex flex-wrap gap-2"
-                  transition={{
-                    type: 'spring',
-                    stiffness: 500,
-                    damping: 40,
-                    duration: 0.4,
-                  }}
-                >
-                  <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-sm font-medium text-white">
-                    <Tag className="mr-1.5 h-3.5 w-3.5" />
-                    {product.category}
-                  </span>
-                  <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-sm font-medium text-white">
-                    <Package className="mr-1.5 h-3.5 w-3.5" />
-                    {product.production.mode === 'lote' ? 'Lote' : 'Individual'}
-                  </span>
-                  {!isProfit && (
-                    <span className="inline-flex items-center rounded-full bg-red-500 px-3 py-1 text-sm font-medium text-white">
-                      <AlertTriangle className="mr-1.5 h-3.5 w-3.5" />
-                      Prejuízo
+                  <motion.div
+                    layoutId={`product-badges-${product.uid}`}
+                    className="flex flex-wrap gap-2"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 500,
+                      damping: 40,
+                      duration: 0.4,
+                    }}
+                  >
+                    <span className="inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-sm font-medium text-indigo-700 backdrop-blur-sm">
+                      <Tag className="mr-1.5 h-3.5 w-3.5" />
+                      {product.category}
                     </span>
-                  )}
-                </motion.div>
+                    <span className="inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-sm font-medium text-slate-700 backdrop-blur-sm">
+                      <Package className="mr-1.5 h-3.5 w-3.5" />
+                      {product.production.mode === 'lote' ? 'Lote' : 'Individual'}
+                    </span>
+                    {!isProfit && (
+                      <span className="inline-flex items-center rounded-full bg-red-500 px-3 py-1 text-sm font-medium text-white">
+                        <AlertTriangle className="mr-1.5 h-3.5 w-3.5" />
+                        Prejuízo
+                      </span>
+                    )}
+                  </motion.div>
+                </div>
               </motion.div>
 
               {/* Content */}
@@ -461,112 +481,128 @@ const OverviewTab: React.FC<{
   unitCost: number;
 }> = ({ product, isProfit, realProfitValue, unitCost }) => (
   <div className="space-y-4">
-    {/* Profit Margin Highlight - Compacto */}
+    {/* Profit Margin Highlight */}
     <motion.div
-      layoutId={`product-margin-${product.uid}`}
-      className={`rounded-lg border-l-4 p-3 ${
-        isProfit ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
+      className={`rounded-xl border-2 p-4 ${
+        isProfit
+          ? 'border-green-200 bg-gradient-to-br from-green-50 to-green-100/50'
+          : 'border-red-200 bg-gradient-to-br from-red-50 to-red-100/50'
       }`}
-      transition={{
-        type: 'spring',
-        stiffness: 500,
-        damping: 40,
-        duration: 0.4,
-      }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 }}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {isProfit ? (
-            <TrendingUp className="h-4 w-4 text-green-600" />
-          ) : (
-            <TrendingDown className="h-4 w-4 text-red-600" />
-          )}
-          <span className={`text-sm font-medium ${isProfit ? 'text-green-800' : 'text-red-800'}`}>
-            Margem de lucro
-          </span>
+        <div className="flex items-center gap-3">
+          <div className={`rounded-full p-2 ${isProfit ? 'bg-green-500' : 'bg-red-500'}`}>
+            {isProfit ? (
+              <TrendingUp className="h-5 w-5 text-white" />
+            ) : (
+              <TrendingDown className="h-5 w-5 text-white" />
+            )}
+          </div>
+          <div>
+            <span className={`text-sm font-medium ${isProfit ? 'text-green-800' : 'text-red-800'}`}>
+              Margem de lucro
+            </span>
+            <div className={`text-xs ${isProfit ? 'text-green-700' : 'text-red-700'}`}>
+              {isProfit ? 'Lucro de' : 'Prejuízo de'} {formatCurrency(Math.abs(realProfitValue))}
+            </div>
+          </div>
         </div>
-        <div>
-          <div className={`text-xl font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
-            {product.production.profitMargin.toFixed(1)}%
-          </div>
-          <div className={`text-right text-xs ${isProfit ? 'text-green-700' : 'text-red-700'}`}>
-            {formatCurrency(Math.abs(realProfitValue))}
-          </div>
+        <div className={`text-3xl font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
+          {product.production.profitMargin.toFixed(1)}%
         </div>
       </div>
     </motion.div>
 
-    {/* Metrics Grid - Mais compacto */}
+    {/* Metrics Grid */}
     <motion.div
       className="grid gap-3 sm:grid-cols-2"
-      layoutId={`product-metrics-${product.uid}`}
-      transition={{
-        type: 'spring',
-        stiffness: 500,
-        damping: 40,
-        duration: 0.4,
-      }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
     >
-      <div className="rounded-lg bg-slate-50 p-3">
-        <div className="mb-1 flex items-center gap-2">
-          <Calculator className="h-3.5 w-3.5 text-slate-500" />
-          <span className="text-xs text-slate-600">Custo total</span>
+      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+        <div className="mb-2 flex items-center gap-2">
+          <div className="rounded-lg bg-slate-100 p-2">
+            <Calculator className="h-4 w-4 text-slate-600" />
+          </div>
+          <span className="text-sm font-medium text-slate-600">Custo total</span>
         </div>
-        <div className="text-lg font-bold text-slate-900">
+        <div className="text-2xl font-bold text-slate-900">
           {formatCurrency(product.production.totalCost)}
         </div>
-        <span className="text-xs text-slate-500">{formatCurrency(unitCost)}/un.</span>
+        <span className="text-sm text-slate-500">{formatCurrency(unitCost)}/un.</span>
       </div>
 
-      <div className="rounded-lg bg-slate-50 p-3">
-        <div className="mb-1 flex items-center gap-2">
-          <DollarSign className="h-3.5 w-3.5 text-slate-500" />
-          <span className="text-xs text-slate-600">
+      <div className="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-100/50 p-4 shadow-sm transition-shadow hover:shadow-md">
+        <div className="mb-2 flex items-center gap-2">
+          <div className="rounded-lg bg-indigo-500 p-2">
+            <DollarSign className="h-4 w-4 text-white" />
+          </div>
+          <span className="text-sm font-medium text-indigo-900">
             {product.production.mode === 'lote' ? 'Preço unitário' : 'Preço de venda'}
           </span>
         </div>
-        <div className="text-lg font-bold text-indigo-600">
+        <div className="text-2xl font-bold text-indigo-700">
           {formatCurrency(product.production.unitSellingPrice)}
         </div>
         {product.production.mode === 'lote' && (
-          <span className="text-xs text-slate-500">
-            Lote completo: {formatCurrency(product.production.sellingPrice)}
+          <span className="text-sm text-indigo-600">
+            Lote: {formatCurrency(product.production.sellingPrice)}
           </span>
         )}
       </div>
     </motion.div>
 
-    {/* Progress Bar - Compacto */}
-    <div>
-      <div className="mb-1 flex items-center justify-between">
-        <span className="text-xs font-medium text-slate-600">Relação Custo vs Venda</span>
-        <span className="text-xs text-slate-500">
+    {/* Progress Bar */}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3 }}
+    >
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-sm font-medium text-slate-700">Relação Custo vs Venda</span>
+        <span className="text-sm font-bold text-slate-900">
           {Math.min(100, (unitCost / product.production.unitSellingPrice) * 100).toFixed(1)}%
         </span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-slate-200">
+      <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200">
         <motion.div
-          className={`h-1.5 rounded-full ${isProfit ? 'bg-green-500' : 'bg-red-500'}`}
+          className={`h-3 rounded-full ${isProfit ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'}`}
           initial={{ width: 0 }}
           animate={{
             width: `${Math.min(100, (unitCost / product.production.unitSellingPrice) * 100)}%`,
           }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
         />
       </div>
-    </div>
+    </motion.div>
 
-    {/* Production Info - Compacto */}
-    <div className="rounded-lg bg-blue-50 p-3">
-      <div className="flex items-center gap-2">
-        <Package className="h-3.5 w-3.5 text-blue-600" />
-        <span className="text-xs font-medium text-blue-900">
-          {product.production.mode === 'lote'
-            ? `Produção em lote: ${product.production.yieldQuantity} unidades`
-            : 'Produção individual: 1 unidade'}
-        </span>
+    {/* Production Info */}
+    <motion.div
+      className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50 p-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4 }}
+    >
+      <div className="flex items-center gap-3">
+        <div className="rounded-lg bg-blue-500 p-2">
+          <Package className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <div className="text-sm font-medium text-blue-900">
+            {product.production.mode === 'lote' ? 'Produção em lote' : 'Produção individual'}
+          </div>
+          <div className="text-xs text-blue-700">
+            {product.production.mode === 'lote'
+              ? `${product.production.yieldQuantity} unidades por lote`
+              : '1 unidade por produção'}
+          </div>
+        </div>
       </div>
-    </div>
+    </motion.div>
 
     {/* Production Button for Batch Products */}
     {product.production.mode === 'lote' && (

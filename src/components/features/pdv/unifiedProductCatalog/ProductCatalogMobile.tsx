@@ -72,13 +72,21 @@ export default function ProductCatalogMobile({
               inCart ? 'border-primary bg-primary/5' : 'border-border bg-card'
             } ${!canMake ? 'opacity-50' : ''}`}
           >
-            <Image
-              className="h-12 w-12 rounded-md object-cover"
-              src="https://placehold.co/150"
-              alt={product.name}
-              width={150}
-              height={150}
-            />
+            <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-slate-100 to-slate-200">
+              {product.image ? (
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  sizes="64px"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <Layers className="h-6 w-6 text-slate-300" />
+                </div>
+              )}
+            </div>
 
             <div className="min-w-0 flex-1">
               <div className="mb-1 flex items-center gap-1">

@@ -74,22 +74,29 @@ export const ProductListContext = createContext<
 
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
   // Hook com debounce de 500ms para produtos
-  const [storedProducts, setStoredProducts] = useLocalStorage<ProductState[]>('finalProducts', [], 500);
+  const [storedProducts, setStoredProducts] = useLocalStorage<ProductState[]>(
+    'finalProducts',
+    [],
+    500
+  );
   const [isHydrated, setIsHydrated] = React.useState(false);
 
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    products: isHydrated ? storedProducts : [],
+    products: [],
   });
 
-  // Garantir hidratação adequada
+  // Garantir hidratação adequada - apenas uma vez
   useEffect(() => {
-    setIsHydrated(true);
-    if (storedProducts.length > 0) {
-      dispatch({ type: 'SET_PRODUCTS', payload: storedProducts });
+    if (!isHydrated) {
+      setIsHydrated(true);
+      if (storedProducts.length > 0) {
+        dispatch({ type: 'SET_PRODUCTS', payload: storedProducts });
+      }
     }
-  }, [storedProducts]);
+  }, [isHydrated, storedProducts]);
 
+  // Sincronizar mudanças do estado com localStorage
   useEffect(() => {
     if (isHydrated) {
       setStoredProducts(state.products);

@@ -56,66 +56,84 @@ export default function ProductCatalog({
         return (
           <div
             key={product.uid}
-            className={`rounded-lg border p-4 shadow-sm transition-all hover:shadow-md ${
+            className={`group overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md ${
               inCart ? 'border-primary bg-primary/5' : 'border-border bg-card'
             } ${!canMake ? 'opacity-60' : ''}`}
           >
-            {/*HEADER*/}
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-primary truncate font-semibold">{product.name}</h2>
+            {/* Image Section */}
+            <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+              {product.image ? (
+                <>
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </>
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <Layers className="h-12 w-12 text-slate-300" />
+                </div>
+              )}
+
+              {/* Badge on Image */}
               {isBatchProduct && (
-                <BatchBadge
-                  yieldQuantity={yieldQuantity}
-                  availableQuantity={maxAvailable}
-                  variant="default"
-                />
+                <div className="absolute top-2 right-2">
+                  <BatchBadge
+                    yieldQuantity={yieldQuantity}
+                    availableQuantity={maxAvailable}
+                    variant="default"
+                  />
+                </div>
               )}
             </div>
 
-            <Image
-              src="https://placehold.co/200"
-              alt={product.name}
-              width={200}
-              height={200}
-              className="mx-auto mb-3 h-32 w-32 rounded-lg object-cover"
-            />
+            {/* Content */}
+            <div className="p-4">
+              <h2 className="text-primary mb-3 truncate font-semibold">{product.name}</h2>
 
-            <div className="mb-4 text-center">
-              <p className={`font-bold ${inCart ? 'text-primary' : 'text-foreground'}`}>
-                {formatCurrency(unitPrice)}
-              </p>
-              {isBatchProduct && (
-                <p className="text-muted-foreground text-sm">Lote: {formatCurrency(batchPrice)}</p>
-              )}
-            </div>
+              <div className="mb-3 text-center">
+                <p className={`text-lg font-bold ${inCart ? 'text-primary' : 'text-foreground'}`}>
+                  {formatCurrency(unitPrice)}
+                </p>
+                {isBatchProduct && (
+                  <p className="text-muted-foreground text-sm">
+                    Lote: {formatCurrency(batchPrice)}
+                  </p>
+                )}
+              </div>
 
-            <BatchProgress
-              yieldQuantity={yieldQuantity}
-              availableQuantity={maxAvailable}
-              soldQuantity={inCart?.quantity || 0}
-              size="sm"
-            />
+              <BatchProgress
+                yieldQuantity={yieldQuantity}
+                availableQuantity={maxAvailable}
+                soldQuantity={inCart?.quantity || 0}
+                size="sm"
+              />
 
-            <div className="mt-3 space-y-2">
-              <Button
-                className="w-full"
-                onClick={() => handleProductClick(product, 'unit')}
-                disabled={!canMake || !validation.isValid}
-                variant={inCart ? 'default' : 'outline'}
-              >
-                <Plus className="mr-2 h-4 w-4" /> Adicionar
-              </Button>
-
-              {isBatchProduct && (
+              <div className="mt-3 space-y-2">
                 <Button
                   className="w-full"
-                  onClick={() => handleProductClick(product, 'batch')}
-                  disabled={!canMake || !validation.isValid || maxAvailable < yieldQuantity}
-                  variant="outline"
+                  onClick={() => handleProductClick(product, 'unit')}
+                  disabled={!canMake || !validation.isValid}
+                  variant={inCart ? 'default' : 'outline'}
                 >
-                  <Layers className="mr-2 h-4 w-4" /> Vender Lote
+                  <Plus className="mr-2 h-4 w-4" /> Adicionar
                 </Button>
-              )}
+
+                {isBatchProduct && (
+                  <Button
+                    className="w-full"
+                    onClick={() => handleProductClick(product, 'batch')}
+                    disabled={!canMake || !validation.isValid || maxAvailable < yieldQuantity}
+                    variant="outline"
+                  >
+                    <Layers className="mr-2 h-4 w-4" /> Vender Lote
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         );
