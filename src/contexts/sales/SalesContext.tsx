@@ -71,8 +71,8 @@ export const SalesContext = createContext<SalesContextType | undefined>(undefine
  * @param children - Componentes filhos que terão acesso ao contexto
  */
 export const SalesProvider = ({ children }: { children: ReactNode }) => {
-  // Hook para persistir vendas no localStorage
-  const [storedSales, setStoredSales] = useLocalStorage<Sale[]>('sales', []);
+  // Hook para persistir vendas no localStorage com debounce de 500ms
+  const [storedSales, setStoredSales] = useLocalStorage<Sale[]>('sales', [], 500);
 
   // Estado inicial do reducer com dados do localStorage
   const [state, dispatch] = useReducer(salesReducer, {
@@ -80,7 +80,7 @@ export const SalesProvider = ({ children }: { children: ReactNode }) => {
     sales: storedSales,
   });
 
-  // Sincroniza mudanças do estado com o localStorage
+  // Sincroniza mudanças do estado com o localStorage (debounce já está no hook)
   useEffect(() => {
     setStoredSales(state.sales);
   }, [state.sales, setStoredSales]);

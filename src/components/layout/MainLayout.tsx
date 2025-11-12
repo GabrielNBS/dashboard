@@ -33,14 +33,23 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const { prefetchRelatedRoutes } = useSmartPrefetch();
   const { measureRouteChange } = usePerformanceMonitor();
 
-  // Prefetch inteligente baseado na rota atual
+  // Prefetch inteligente baseado na rota atual - otimizado
   useEffect(() => {
     const endMeasurement = measureRouteChange();
 
+    // Aumentar delay para não interferir no carregamento
     const timer = setTimeout(() => {
-      prefetchRelatedRoutes(pathname);
-      endMeasurement(); // Finaliza a medição da mudança de rota
-    }, 100); // Pequeno delay para não interferir no carregamento inicial
+      // Usar requestIdleCallback se disponível
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => {
+          prefetchRelatedRoutes(pathname);
+          endMeasurement();
+        });
+      } else {
+        prefetchRelatedRoutes(pathname);
+        endMeasurement();
+      }
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [pathname, prefetchRelatedRoutes, measureRouteChange]);

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 import {
   AppSettings,
   StoreSettings,
@@ -141,80 +142,24 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 // Provider
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  // Initialize state from localStorage on mount - ONLY ONCE
-  const [initialState] = React.useState<AppSettings>(() => {
-    if (typeof window === 'undefined') return defaultSettings;
+  // Hook com debounce de 1000ms para settings (menos frequente que outros)
+  const [storedSettings, setStoredSettings] = useLocalStorage<AppSettings>(
+    'dashboard-settings',
+    defaultSettings,
+    1000
+  );
 
-    try {
-      const stored = localStorage.getItem('dashboard-settings');
-      if (!stored) return defaultSettings;
+  const [state, dispatch] = useReducer(settingsReducer, storedSettings);
 
-      const parsed = JSON.parse(stored);
-      return {
-        ...defaultSettings,
-        ...parsed,
-        paymentFees: {
-          ...defaultSettings.paymentFees,
-          ...parsed?.paymentFees,
-        },
-      };
-    } catch {
-      return defaultSettings;
-    }
-  });
-
-  const [state, dispatch] = useReducer(settingsReducer, initialState);
-  const isInitialMount = useRef(true);
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
-  const lastSavedState = useRef<string>('');
-
-  // Save to localStorage with proper debouncing and change detection
+  // Sincroniza mudanças do estado com o localStorage (debounce já está no hook)
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      lastSavedState.current = JSON.stringify(state);
-      return;
-    }
-
-    const currentStateString = JSON.stringify(state);
-
-    // Only proceed if state actually changed
-    if (currentStateString === lastSavedState.current) {
-      return;
-    }
-
-    // Clear previous timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    // Set new timeout for saving
-    saveTimeoutRef.current = setTimeout(() => {
-      try {
-        localStorage.setItem('dashboard-settings', currentStateString);
-        lastSavedState.current = currentStateString;
-      } catch (error) {
-        console.error('Failed to save settings to localStorage:', error);
-      }
-    }, 1000); // 1 second debounce
-
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
-  }, [state]);
+    setStoredSettings(state);
+  }, [state, setStoredSettings]);
 
   // Stable functions that don't change on every render
   const saveSettings = React.useCallback(() => {
-    try {
-      const stateString = JSON.stringify(state);
-      localStorage.setItem('dashboard-settings', stateString);
-      lastSavedState.current = stateString;
-    } catch (error) {
-      console.error('Failed to save settings to localStorage:', error);
-    }
-  }, [state]);
+    setStoredSettings(state);
+  }, [state, setStoredSettings]);
 
   const resetSettings = React.useCallback(() => {
     dispatch({ type: 'RESET_SETTINGS' });

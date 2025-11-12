@@ -162,9 +162,11 @@ export const IngredientContext = createContext<IngredientContextType | undefined
  * Provider do contexto de ingredientes
  */
 export const IngredientProvider = ({ children }: { children: ReactNode }) => {
+  // Hook com debounce de 500ms para ingredientes
   const [storedIngredients, setStoredIngredients] = useLocalStorage<Ingredient[]>(
     'ingredients',
-    []
+    [],
+    500
   );
 
   const [state, dispatch] = useReducer(ingredientReducer, {
@@ -173,7 +175,7 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
     isModalOpen: false,
   });
 
-  // Sincroniza mudanças do estado com o localStorage
+  // Sincroniza mudanças do estado com o localStorage (debounce já está no hook)
   useEffect(() => {
     setStoredIngredients(state.ingredients);
   }, [state.ingredients, setStoredIngredients]);

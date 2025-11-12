@@ -2,13 +2,14 @@
 
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useDashboardMetrics } from '@/hooks/business/useDashboardMetrics';
+import { Suspense, useMemo } from 'react';
 
 import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
 import ProfitMarginCard from '@/components/dashboard/finance/cards/ProfitMarginCard';
 import RevenueCard from '@/components/dashboard/finance/cards/RevenueCard';
 import VariableCostCard from '@/components/dashboard/finance/cards/VariableCostCard';
 import TopSellingItems from '@/components/dashboard/home/TopSellingItems';
-import FinancialChart from '@/components/dashboard/home/KpiMetrics';
+import FinancialChart from '@/components/dashboard/home/FinancialChartWrapper';
 import MetricsIntegrationDemo from '@/components/dashboard/home/MetricsIntegrationDemo';
 
 import { ChartBarIcon, PercentIcon, DollarSign, ShoppingBagIcon } from 'lucide-react';
@@ -21,11 +22,11 @@ export default function DashboardContent() {
   const { summary, trending, chartData, aggregatedData } = useDashboardMetrics();
 
   const { storeName } = settings.store;
-  const title = (
+  const title = useMemo(() => (
     <>
       {getHowHours()}, <strong>{storeName}</strong>
     </>
-  );
+  ), [storeName]);
   const subtitle = 'o resumo diário do seu dia';
 
   return (
@@ -100,6 +101,18 @@ export default function DashboardContent() {
               textColor="text-secondary"
               icon={<DollarSign aria-hidden="true" />}
               trending={trending.netProfit}
+              trendingColors={{
+                positive: {
+                  text: 'text-great',
+                  icon: 'bg-great',
+                  period: 'text-secondary/70',
+                },
+                negative: {
+                  text: 'text-bad',
+                  icon: 'text-secondary',
+                  period: 'text-secondary/70',
+                },
+              }}
             />
             <RevenueCard
               summary={summary}
@@ -122,8 +135,12 @@ export default function DashboardContent() {
             <h2 id="charts-title" className="sr-only">
               Gráficos e Métricas
             </h2>
-            <FinancialChart chartData={chartData} aggregatedData={aggregatedData} />
-            <MetricsIntegrationDemo />
+            <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-gray-200" />}>
+              <FinancialChart chartData={chartData} aggregatedData={aggregatedData} />
+            </Suspense>
+            <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-gray-200" />}>
+              <MetricsIntegrationDemo />
+            </Suspense>
           </section>
         </div>
 
@@ -131,7 +148,9 @@ export default function DashboardContent() {
           <h2 id="top-selling-title" className="sr-only">
             Itens Mais Vendidos
           </h2>
-          <TopSellingItems />
+          <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-gray-200" />}>
+            <TopSellingItems />
+          </Suspense>
         </section>
       </section>
     </main>

@@ -1,17 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
- * Hook customizado para gerenciar estado no localStorage
+ * Hook customizado para gerenciar estado no localStorage com debounce
  *
  * @template T - Tipo do valor armazenado
  * @param key - Chave única para armazenar no localStorage
  * @param initialValue - Valor inicial caso não exista no localStorage
+ * @param debounceMs - Tempo de debounce em ms (padrão: 300ms)
  * @returns [storedValue, setValue] - Valor atual e função para atualizar
  *
  * @example
  * const [user, setUser] = useLocalStorage('user', { name: '', email: '' });
+ * const [sales, setSales] = useLocalStorage('sales', [], 500); // 500ms debounce
  */
-export function useLocalStorage<T>(key: string, initialValue: T) {
+export function useLocalStorage<T>(key: string, initialValue: T, debounceMs: number = 300) {
   /**
    * Função para recuperar valor do localStorage com tratamento de erros
    */
@@ -42,10 +44,13 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   }, [key, initialValue]);
 
   // Estado inicial
-  const [storedValue, setStoredValue] = useState<T>(getStoredValue);
+  const [storedValue, setStoredValue] = useState<T>(() => getStoredValue());
+
+  // Ref para debounce
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   /**
-   * Função para atualizar o valor no estado e localStorage
+   * Função para atualizar o valor no estado e localStorage (com debounce)
    */
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {
@@ -54,18 +59,29 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         setStoredValue(prevValue => {
           const valueToStore = value instanceof Function ? value(prevValue) : value;
 
-          // Atualiza o localStorage
-          if (typeof window !== 'undefined') {
-            localStorage.setItem(key, JSON.stringify(valueToStore));
+          // Limpar timeout anterior
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
           }
+
+          // Debounce para salvar no localStorage
+          timeoutRef.current = setTimeout(() => {
+            if (typeof window !== 'undefined') {
+              try {
+                localStorage.setItem(key, JSON.stringify(valueToStore));
+              } catch (error) {
+                console.error(`Erro ao salvar valor no localStorage para chave "${key}":`, error);
+              }
+            }
+          }, debounceMs);
 
           return valueToStore;
         });
       } catch (error) {
-        console.error(`Erro ao salvar valor no localStorage para chave "${key}":`, error);
+        console.error(`Erro ao processar valor para chave "${key}":`, error);
       }
     },
-    [key]
+    [key, debounceMs]
   );
 
   /**
@@ -95,6 +111,25 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       };
     }
   }, [key]);
+
+  /**
+   * Cleanup do timeout ao desmontar
+   */
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        // Salvar imediatamente ao desmontar para não perder dados
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem(key, JSON.stringify(storedValue));
+          } catch (error) {
+            console.error(`Erro ao salvar valor final no localStorage para chave "${key}":`, error);
+          }
+        }
+      }
+    };
+  }, [key, storedValue]);
 
   return [storedValue, setValue] as const;
 }

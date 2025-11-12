@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from 'react';
+'use client';
+
+import React, { useState, useMemo, memo } from 'react';
 import {
   ComposedChart,
   Bar,
@@ -84,7 +86,7 @@ const formatFullDate = (dateString: string): string => {
   }
 };
 
-const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
+const CustomTooltip = memo(({ active, payload, label }: TooltipContentProps) => {
   if (!active || !payload?.length) return null;
 
   return (
@@ -106,13 +108,15 @@ const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
       </div>
     </div>
   );
-};
+});
+
+CustomTooltip.displayName = 'CustomTooltip';
 
 interface CustomPieTooltipProps extends TooltipContentProps {
   total: number;
 }
 
-const CustomPieTooltip = ({ active, payload, total }: CustomPieTooltipProps) => {
+const CustomPieTooltip = memo(({ active, payload, total }: CustomPieTooltipProps) => {
   if (!active || !payload?.length) return null;
 
   const data = payload[0]?.payload as { name: string; value: number; color: string };
@@ -133,7 +137,9 @@ const CustomPieTooltip = ({ active, payload, total }: CustomPieTooltipProps) => 
       </div>
     </div>
   );
-};
+});
+
+CustomPieTooltip.displayName = 'CustomPieTooltip';
 
 type ChartType = 'bars' | 'pie' | 'radial';
 
@@ -143,7 +149,7 @@ const chartTypes: { key: ChartType; label: string; icon: string }[] = [
   { key: 'radial', label: 'Meia Lua', icon: '🌙' },
 ];
 
-export default function FinancialChart({
+const FinancialChart = memo(function FinancialChart({
   chartData = [],
   aggregatedData = [],
 }: FinancialChartProps) {
@@ -349,4 +355,8 @@ export default function FinancialChart({
       </div>
     </div>
   );
-}
+});
+
+FinancialChart.displayName = 'FinancialChart';
+
+export default FinancialChart;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { useDashboardMetrics } from '@/hooks/business/useDashboardMetrics';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 
@@ -6,8 +6,20 @@ import { formatCurrency } from '@/utils/formatting/formatCurrency';
  * Demo component showing how the unified business logic connects
  * Dashboard metrics with home screen charts
  */
-export default function MetricsIntegrationDemo() {
-  const { summary, chartData, aggregatedData } = useDashboardMetrics();
+const MetricsIntegrationDemo = memo(function MetricsIntegrationDemo() {
+  const { summary, chartData } = useDashboardMetrics();
+
+  const stats = useMemo(() => {
+    const avgRevenue = chartData.length > 0
+      ? chartData.reduce((sum, day) => sum + day.revenue, 0) / chartData.length
+      : 0;
+    
+    const bestDay = chartData.length > 0
+      ? Math.max(...chartData.map(day => day.revenue))
+      : 0;
+
+    return { avgRevenue, bestDay };
+  }, [chartData]);
 
   return (
     <div className="bg-background border-info rounded-lg border p-6 shadow-sm">
@@ -49,21 +61,11 @@ export default function MetricsIntegrationDemo() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Receita Média/Dia:</span>
-              <span className="font-medium">
-                {chartData.length > 0
-                  ? formatCurrency(
-                      chartData.reduce((sum, day) => sum + day.revenue, 0) / chartData.length
-                    )
-                  : formatCurrency(0)}
-              </span>
+              <span className="font-medium">{formatCurrency(stats.avgRevenue)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Melhor Dia:</span>
-              <span className="font-medium">
-                {chartData.length > 0
-                  ? formatCurrency(Math.max(...chartData.map(day => day.revenue)))
-                  : formatCurrency(0)}
-              </span>
+              <span className="font-medium">{formatCurrency(stats.bestDay)}</span>
             </div>
           </div>
         </div>
@@ -83,4 +85,8 @@ export default function MetricsIntegrationDemo() {
       </div>
     </div>
   );
-}
+});
+
+MetricsIntegrationDemo.displayName = 'MetricsIntegrationDemo';
+
+export default MetricsIntegrationDemo;

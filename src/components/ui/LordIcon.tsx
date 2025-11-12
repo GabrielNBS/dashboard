@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useImperativeHandle, forwardRef, useEffect, useState } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef, useEffect, useState, memo } from 'react';
 
 interface LordIconProps {
   src: string;
@@ -21,12 +21,12 @@ export interface LordIconRef {
   reset: () => void;
 }
 
-const LordIcon = forwardRef<LordIconRef, LordIconProps>(
+const LordIcon = memo(forwardRef<LordIconRef, LordIconProps>(
   ({ src, width = 24, height = 24, className = '', isActive = false, isHovered = false, colors: customColors }, ref) => {
     const iconRef = useRef<HTMLElement>(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
-    const [key, setKey] = useState(0); // Para forçar re-render
+    const keyRef = useRef(0);
 
     // Garantir que o componente só renderiza no cliente
     useEffect(() => {
@@ -46,7 +46,8 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
           setIsLoaded(true);
         } else {
           // Tentar novamente após um pequeno delay
-          setTimeout(checkLordIcon, 100);
+          const timeoutId = setTimeout(checkLordIcon, 100);
+          return () => clearTimeout(timeoutId);
         }
       };
 
@@ -71,19 +72,12 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
       },
     }));
 
-    // Forçar re-render quando sair do estado ativo ou cores mudarem
+    // Forçar re-render quando sair do estado ativo ou cores mudarem (otimizado)
     useEffect(() => {
       if (!isActive) {
-        setKey(prev => prev + 1);
+        keyRef.current += 1;
       }
     }, [isActive]);
-
-    // Forçar re-render quando cores customizadas mudarem
-    useEffect(() => {
-      if (customColors) {
-        setKey(prev => prev + 1);
-      }
-    }, [customColors]);
 
     // Trigger animation when hover state changes
     useEffect(() => {
@@ -160,7 +154,7 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
     };
 
     return React.createElement('lord-icon', {
-      key: key, // Força re-render completo
+      key: keyRef.current,
       ref: iconRef,
       src: src,
       trigger: getTrigger(),
@@ -174,7 +168,7 @@ const LordIcon = forwardRef<LordIconRef, LordIconProps>(
       className: className,
     });
   }
-);
+));
 
 LordIcon.displayName = 'LordIcon';
 

@@ -1,9 +1,46 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Otimizações de compilação
+
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
+  },
+
+
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@/components/ui', '@/components/dashboard', 'recharts'],
+    optimizeCss: true,
+  },
+
+  // Desabilitar source maps em produção para bundle menor
+  productionBrowserSourceMaps: false,
+
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: false,
+            vendors: false,
+            recharts: {
+              name: 'recharts',
+              test: /[\\/]node_modules[\\/](recharts|d3-.*)[\\/]/,
+              priority: 40,
+              reuseExistingChunk: true,
+            },
+            commons: {
+              name: 'commons',
+              minChunks: 2,
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      };
+    }
+    return config;
   },
 
   // Configuração de imagens

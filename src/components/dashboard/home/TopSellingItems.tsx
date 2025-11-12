@@ -3,7 +3,7 @@ import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { ThumbsDown } from 'lucide-react';
 import Image from 'next/image';
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 
 interface TopSellingItem {
   id: string;
@@ -14,39 +14,43 @@ interface TopSellingItem {
   percentualVendas: number;
 }
 
-const TopSellingItems = () => {
+const TopSellingItems = memo(() => {
   const {
     state: { sales },
   } = useSalesContext();
 
-  const topItems = sales
-    .reduce((acc: TopSellingItem[], sale) => {
-      sale.items.forEach(item => {
-        const existingItem = acc.find(i => i.nome === item.product.name);
-        if (existingItem) {
-          existingItem.quantidade += item.quantity;
-          existingItem.revenue += item.subtotal;
-        } else {
-          acc.push({
-            id: item.product.uid,
-            nome: item.product.name,
-            imagem: 'https://placehold.co/150',
-            quantidade: item.quantity,
-            revenue: item.subtotal,
-            percentualVendas: 0,
-          });
-        }
-      });
-      return acc;
-    }, [])
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 5);
+  const topItems = useMemo(() => {
+    const items = sales
+      .reduce((acc: TopSellingItem[], sale) => {
+        sale.items.forEach(item => {
+          const existingItem = acc.find(i => i.nome === item.product.name);
+          if (existingItem) {
+            existingItem.quantidade += item.quantity;
+            existingItem.revenue += item.subtotal;
+          } else {
+            acc.push({
+              id: item.product.uid,
+              nome: item.product.name,
+              imagem: 'https://placehold.co/150',
+              quantidade: item.quantity,
+              revenue: item.subtotal,
+              percentualVendas: 0,
+            });
+          }
+        });
+        return acc;
+      }, [])
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
 
-  const totalRevenue = topItems.reduce((acc, item) => acc + item.revenue, 0);
+    const totalRevenue = items.reduce((acc, item) => acc + item.revenue, 0);
 
-  topItems.forEach(item => {
-    item.percentualVendas = totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0;
-  });
+    items.forEach(item => {
+      item.percentualVendas = totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0;
+    });
+
+    return items;
+  }, [sales]);
 
   const getPercentageColor = (percentage: number) => {
     if (percentage >= 15) return 'text-green-600 bg-green-100';
@@ -112,6 +116,8 @@ const TopSellingItems = () => {
                       width={40}
                       height={40}
                       className="h-10 w-10 rounded-md border object-cover"
+                      loading={index < 2 ? 'eager' : 'lazy'}
+                      priority={index === 0}
                     />
                   </div>
 
@@ -161,6 +167,8 @@ const TopSellingItems = () => {
       </div>
     </aside>
   );
-};
+});
+
+TopSellingItems.displayName = 'TopSellingItems';
 
 export default TopSellingItems;

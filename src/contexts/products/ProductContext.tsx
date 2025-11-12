@@ -73,7 +73,8 @@ export const ProductListContext = createContext<
 >(undefined);
 
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
-  const [storedProducts, setStoredProducts] = useLocalStorage<ProductState[]>('finalProducts', []);
+  // Hook com debounce de 500ms para produtos
+  const [storedProducts, setStoredProducts] = useLocalStorage<ProductState[]>('finalProducts', [], 500);
   const [isHydrated, setIsHydrated] = React.useState(false);
 
   const [state, dispatch] = useReducer(reducer, {

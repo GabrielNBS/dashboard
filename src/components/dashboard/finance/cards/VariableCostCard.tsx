@@ -1,7 +1,8 @@
 import { WithSummary } from '@/types/WithSummary';
 import CardWrapper, { CardWrapperProps } from './CardWrapper';
+import { memo } from 'react';
 
-export default function VariableCostCard({
+const VariableCostCard = memo(function VariableCostCard({
   summary,
   ...props
 }: WithSummary<Omit<CardWrapperProps, 'value' | 'title'>>) {
@@ -13,4 +14,8 @@ export default function VariableCostCard({
       {...props}
     />
   );
-}
+});
+
+VariableCostCard.displayName = 'VariableCostCard';
+
+export default VariableCostCard;

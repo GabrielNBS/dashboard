@@ -50,6 +50,8 @@ export function useDashboardMetrics(): DashboardMetrics {
 
   // Process sales data for chart visualization
   const chartData = useMemo(() => {
+    if (salesState.sales.length === 0) return [];
+
     // Group sales by date and calculate daily metrics
     const salesByDate = salesState.sales.reduce(
       (acc, sale) => {
@@ -70,6 +72,8 @@ export function useDashboardMetrics(): DashboardMetrics {
       {} as Record<string, { sales: Sale[]; revenue: number }>
     );
 
+    const fixedCostDaily = getTotalFixedCost(settings.fixedCosts) / 30; // Daily portion
+
     // Calculate expenses for each date using business logic functions directly
     return Object.entries(salesByDate)
       .map(([date, data]) => {
@@ -83,7 +87,6 @@ export function useDashboardMetrics(): DashboardMetrics {
           dailyUnitsSold
         );
 
-        const fixedCostDaily = getTotalFixedCost(settings.fixedCosts) / 30; // Daily portion
         const expenses = variableCost + fixedCostDaily;
         const profit = dailyRevenue - expenses;
 
@@ -95,7 +98,7 @@ export function useDashboardMetrics(): DashboardMetrics {
         };
       })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [salesState.sales, settings]);
+  }, [salesState.sales, settings.variableCosts, settings.fixedCosts]);
 
   // Prepare aggregated data for pie/radial charts
   const aggregatedData = useMemo(() => {

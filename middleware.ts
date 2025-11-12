@@ -6,26 +6,19 @@ export function middleware(request: NextRequest) {
 
   // Headers de performance
   response.headers.set('X-DNS-Prefetch-Control', 'on');
-
-  // Early hints para prefetch (se suportado)
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  
+  // Cache control para assets estáticos
   const pathname = request.nextUrl.pathname;
+  
+  if (pathname.startsWith('/_next/static/')) {
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  }
 
-  // Adiciona hints de prefetch para rotas relacionadas
+  // Remover prefetch excessivo - Next.js já faz isso automaticamente
+  // Apenas adicionar para a home page
   if (pathname === '/') {
-    response.headers.set(
-      'Link',
-      '</store>; rel=prefetch, </product>; rel=prefetch, </finance>; rel=prefetch, </pdv>; rel=prefetch, </settings>; rel=prefetch'
-    );
-  } else if (pathname === '/store') {
-    response.headers.set('Link', '</product>; rel=prefetch, </finance>; rel=prefetch');
-  } else if (pathname === '/product') {
-    response.headers.set('Link', '</store>; rel=prefetch, </pdv>; rel=prefetch');
-  } else if (pathname === '/finance') {
-    response.headers.set('Link', '</store>; rel=prefetch, </product>; rel=prefetch');
-  } else if (pathname === '/pdv') {
-    response.headers.set('Link', '</product>; rel=prefetch, </store>; rel=prefetch');
-  } else if (pathname === '/settings') {
-    response.headers.set('Link', '</store>; rel=prefetch, </product>; rel=prefetch');
+    response.headers.set('Link', '</store>; rel=prefetch');
   }
 
   return response;

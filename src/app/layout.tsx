@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import '../styles/global.css';
 import MainLayout from '@/components/layout/MainLayout';
-import { IngredientProvider } from '@/contexts/Ingredients/IngredientsContext';
-import { ProductBuilderProvider } from '@/contexts/products/ProductBuilderContext';
-import { ProductProvider } from '@/contexts/products/ProductContext';
-import { SalesProvider } from '@/contexts/sales/SalesContext';
-import { SettingsProvider } from '@/contexts/settings/SettingsContext';
+import OptimizedProviders from '@/contexts/OptimizedProviders';
 import { ToastProvider, ToastGlobalRegister } from '@/components/ui/feedback/use-toast';
 import { Inter } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/feedback/tooltip';
@@ -62,14 +58,9 @@ export default function RootLayout({
       <head>
         <link rel="dns-prefetch" href="https://cdn.lordicon.com" />
         <link rel="preconnect" href="https://cdn.lordicon.com" crossOrigin="anonymous" />
-        <link rel="prefetch" href="/store" as="document" />
-        <link rel="prefetch" href="/product" as="document" />
-        <link rel="prefetch" href="/finance" as="document" />
-        <link rel="prefetch" href="/pdv" as="document" />
-        <link rel="prefetch" href="/settings" as="document" />
       </head>
       <body className={`${inter.variable} `}>
-        <Script src="https://cdn.lordicon.com/lordicon.js" strategy="beforeInteractive" />
+        <Script src="https://cdn.lordicon.com/lordicon.js" strategy="lazyOnload" />
         <div id="skip-links" className="sr-only">
           <a href="#main-content" className="skip-link">
             Pular para o conteúdo principal
@@ -81,17 +72,9 @@ export default function RootLayout({
         <ToastProvider>
           <TooltipProvider>
             <ToastGlobalRegister />
-            <IngredientProvider>
-              <ProductBuilderProvider>
-                <ProductProvider>
-                  <SalesProvider>
-                    <SettingsProvider>
-                      <MainLayout>{children}</MainLayout>
-                    </SettingsProvider>
-                  </SalesProvider>
-                </ProductProvider>
-              </ProductBuilderProvider>
-            </IngredientProvider>
+            <OptimizedProviders>
+              <MainLayout>{children}</MainLayout>
+            </OptimizedProviders>
           </TooltipProvider>
         </ToastProvider>
       </body>
