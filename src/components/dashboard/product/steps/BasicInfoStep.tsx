@@ -3,13 +3,15 @@ import { useProductBuilderContext } from '@/contexts/products/ProductBuilderCont
 import CategoryList from '@/components/ui/CategoryList';
 import Input from '@/components/ui/base/Input';
 import { Label } from '@/components/ui/base/label';
+import { ImageUpload } from '@/components/products/ImageUpload';
 
 interface BasicInfoStepProps {
   data: {
     name: string;
     category: string;
+    image?: string;
   };
-  updateData: (data: Partial<{ name: string; category: string }>) => void;
+  updateData: (data: Partial<{ name: string; category: string; image?: string }>) => void;
 }
 
 export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) {
@@ -18,6 +20,11 @@ export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) 
   const handleNameChange = (name: string) => {
     updateData({ name });
     dispatch({ type: 'SET_NAME', payload: name });
+  };
+
+  const handleImageChange = (image: string) => {
+    updateData({ image });
+    dispatch({ type: 'SET_IMAGE', payload: image });
   };
 
   // Sincronizar categoria do contexto com o data local
@@ -52,6 +59,10 @@ export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) 
             className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             required
           />
+        </div>
+
+        <div>
+          <ImageUpload value={data.image} onChange={handleImageChange} label="Imagem do Produto" />
         </div>
 
         <div>

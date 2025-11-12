@@ -150,6 +150,9 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
         // Modo edição: Popular builderState com dados existentes
         builderDispatch({ type: 'SET_NAME', payload: productToEdit.name });
         builderDispatch({ type: 'SET_CATEGORY', payload: productToEdit.category });
+        if (productToEdit.image) {
+          builderDispatch({ type: 'SET_IMAGE', payload: productToEdit.image });
+        }
         builderDispatch({ type: 'SET_PRODUCTION_MODE', payload: productToEdit.production.mode });
         builderDispatch({
           type: 'SET_YIELD_QUANTITY',
@@ -409,6 +412,9 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
       if (data.category !== undefined) {
         builderDispatch({ type: 'SET_CATEGORY', payload: data.category as string });
       }
+      if (data.image !== undefined) {
+        builderDispatch({ type: 'SET_IMAGE', payload: data.image as string });
+      }
       if (data.sellingPrice !== undefined) {
         setTempSellingPrice(data.sellingPrice as string);
       }
@@ -430,6 +436,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
       data: {
         name: builderState.name,
         category: builderState.category,
+        image: builderState.image,
         ingredientsCount: builderState.ingredients.length,
         productionMode: builderState.production.mode,
         yieldQuantity: builderState.production.yieldQuantity,
@@ -444,6 +451,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
   }, [
     builderState.name,
     builderState.category,
+    builderState.image,
     builderState.ingredients,
     builderState.production,
     tempSellingPrice,

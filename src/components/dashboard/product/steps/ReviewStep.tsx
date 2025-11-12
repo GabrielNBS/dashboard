@@ -58,35 +58,37 @@ export default function ReviewStep({ data }: ReviewStepProps) {
   return (
     <div className="space-y-4">
       <div className="mb-4 text-center">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+        <div className="bg-info mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full">
           <div className="loader bg-on-info!"></div>
         </div>
-        <h2 className="text-xl font-bold text-gray-900">Revisar produto</h2>
-        <p className="mt-1 text-sm text-gray-600">Confira todas as informações antes de salvar</p>
+        <h2 className="text-foreground text-xl font-bold">Revisar produto</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Confira todas as informações antes de salvar
+        </p>
       </div>
 
       {/* Informações Básicas */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-gray-900">
-          <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+      <div className="border-border bg-card rounded-lg border p-4">
+        <h3 className="text-foreground mb-3 flex items-center gap-2 text-base font-semibold">
+          <div className="bg-on-info h-2 w-2 rounded-full"></div>
           Informações básicas
         </h3>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div>
-            <span className="text-sm font-medium text-gray-500">Nome do Produto</span>
-            <p className="font-medium text-gray-900">{data.name || '-'}</p>
+            <span className="text-muted-foreground text-sm font-medium">Nome do Produto</span>
+            <p className="text-foreground font-medium">{data.name || '-'}</p>
           </div>
           <div>
-            <span className="text-sm font-medium text-gray-500">Categoria</span>
-            <p className="font-medium text-gray-900">{data.category || '-'}</p>
+            <span className="text-muted-foreground text-sm font-medium">Categoria</span>
+            <p className="text-foreground font-medium">{data.category || '-'}</p>
           </div>
         </div>
       </div>
 
       {/* Ingredientes */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-gray-900">
-          <div className="h-2 w-2 rounded-full bg-green-500"></div>
+      <div className="border-border bg-card rounded-lg border p-4">
+        <h3 className="text-foreground mb-3 flex items-center gap-2 text-base font-semibold">
+          <div className="bg-on-great h-2 w-2 rounded-full"></div>
           Ingredientes ({state.ingredients.length})
         </h3>
         {state.ingredients.length > 0 ? (
@@ -94,22 +96,22 @@ export default function ReviewStep({ data }: ReviewStepProps) {
             {state.ingredients.map((ingredient, index) => (
               <div
                 key={ingredient.id}
-                className="flex items-center justify-between rounded-lg bg-gray-50 p-2"
+                className="bg-muted flex items-center justify-between rounded-lg p-2"
               >
                 <div className="flex items-center gap-3">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-700">
+                  <span className="bg-great text-on-great flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium">
                     {index + 1}
                   </span>
                   <div>
-                    <p className="font-medium text-gray-900">{ingredient.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-foreground font-medium">{ingredient.name}</p>
+                    <p className="text-muted-foreground text-sm">
                       {ingredient.totalQuantity} {getBaseUnit(ingredient.unit)} × R${' '}
                       {ingredient.averageUnitPrice.toFixed(3)}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">
+                  <p className="text-foreground font-medium">
                     R$ {(ingredient.averageUnitPrice * ingredient.totalQuantity).toFixed(2)}
                   </p>
                 </div>
@@ -117,58 +119,60 @@ export default function ReviewStep({ data }: ReviewStepProps) {
             ))}
             <div className="mt-3 border-t pt-3">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-gray-900">Custo Total dos Ingredientes</span>
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-foreground font-medium">Custo Total dos Ingredientes</span>
+                <span className="text-foreground text-lg font-bold">
                   R$ {calculations.totalCost.toFixed(2)}
                 </span>
               </div>
             </div>
           </div>
         ) : (
-          <p className="text-gray-500">Nenhum ingrediente adicionado</p>
+          <p className="text-muted-foreground">Nenhum ingrediente adicionado</p>
         )}
       </div>
 
       {/* Produção */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-gray-900">
-          <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+      <div className="border-border bg-card rounded-lg border p-4">
+        <h3 className="text-foreground mb-3 flex items-center gap-2 text-base font-semibold">
+          <div className="bg-accent h-2 w-2 rounded-full"></div>
           Configuração de Produção
         </h3>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div>
-            <span className="text-sm font-medium text-gray-500">Modo de Produção</span>
-            <p className="font-medium text-gray-900">
+            <span className="text-muted-foreground text-sm font-medium">Modo de Produção</span>
+            <p className="text-foreground font-medium">
               {state.production.mode === 'individual' ? 'Individual' : 'Lote'}
             </p>
           </div>
           {state.production.mode === 'lote' && (
             <div>
-              <span className="text-sm font-medium text-gray-500">Rendimento do Lote</span>
-              <p className="font-medium text-gray-900">{state.production.yieldQuantity} unidades</p>
+              <span className="text-muted-foreground text-sm font-medium">Rendimento do Lote</span>
+              <p className="text-foreground font-medium">
+                {state.production.yieldQuantity} unidades
+              </p>
             </div>
           )}
         </div>
       </div>
 
       {/* Preços */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <h3 className="mb-3 flex items-center gap-2 text-base font-semibold text-gray-900">
-          <div className="h-2 w-2 rounded-full bg-orange-500"></div>
+      <div className="border-border bg-card rounded-lg border p-4">
+        <h3 className="text-foreground mb-3 flex items-center gap-2 text-base font-semibold">
+          <div className="bg-accent h-2 w-2 rounded-full"></div>
           Preços e Margens
         </h3>
         <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2">
           <div>
-            <span className="text-sm font-medium text-gray-500">
+            <span className="text-muted-foreground text-sm font-medium">
               {state.production.mode === 'lote' ? 'Preço por Unidade' : 'Preço de Venda'}
             </span>
-            <p className="font-medium text-gray-900">
+            <p className="text-foreground font-medium">
               R$ {parseFloat(data.sellingPrice || '0').toFixed(2)}
             </p>
           </div>
           <div>
-            <span className="text-sm font-medium text-gray-500">Margem desejada</span>
-            <p className="font-medium text-gray-900">{data.margin}%</p>
+            <span className="text-muted-foreground text-sm font-medium">Margem desejada</span>
+            <p className="text-foreground font-medium">{data.margin}%</p>
           </div>
         </div>
 
@@ -183,14 +187,14 @@ export default function ReviewStep({ data }: ReviewStepProps) {
 
       {/* Alerta se houver problemas */}
       {calculations.realProfitMargin < 0 && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+        <div className="border-destructive bg-bad rounded-lg border p-4">
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-red-100">
-              <span className="text-xs text-red-600">⚠️</span>
+            <div className="bg-destructive/20 mt-0.5 flex h-6 w-6 items-center justify-center rounded-full">
+              <span className="text-on-bad text-xs">⚠️</span>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-red-900">Atenção: Margem Negativa</h4>
-              <p className="mt-1 text-sm text-red-700">
+              <h4 className="text-on-bad text-sm font-medium">Atenção: Margem Negativa</h4>
+              <p className="text-on-bad mt-1 text-sm">
                 O preço de venda está abaixo do custo dos ingredientes. Considere ajustar o preço ou
                 revisar os ingredientes.
               </p>

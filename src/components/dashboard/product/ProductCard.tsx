@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import {
   Tag,
   AlertTriangle,
@@ -96,6 +97,28 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
             <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </motion.button>
         </div>
+
+        {/* Image */}
+        {product.image && (
+          <motion.div
+            layoutId={`product-image-${product.uid}`}
+            className="relative h-40 w-full overflow-hidden sm:h-48"
+            transition={{
+              type: 'spring',
+              stiffness: 500,
+              damping: 40,
+              duration: 0.4,
+            }}
+          >
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </motion.div>
+        )}
 
         {/* Header */}
         <motion.div

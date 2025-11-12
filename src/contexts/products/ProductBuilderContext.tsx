@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 export type ProductBuilderAction =
   | { type: 'SET_NAME'; payload: string }
   | { type: 'SET_CATEGORY'; payload: string }
+  | { type: 'SET_IMAGE'; payload: string }
   | { type: 'ADD_INGREDIENT'; payload: Ingredient }
   | { type: 'REMOVE_INGREDIENT'; payload: string }
   | { type: 'RESET_PRODUCT' }
@@ -55,6 +56,9 @@ function finalProductReducer(state: ProductState, action: ProductBuilderAction):
     case 'SET_CATEGORY':
       return { ...state, category: action.payload };
 
+    case 'SET_IMAGE':
+      return { ...state, image: action.payload };
+
     case 'ADD_INGREDIENT':
       return { ...state, ingredients: [...state.ingredients, action.payload] };
 
@@ -96,22 +100,13 @@ function finalProductReducer(state: ProductState, action: ProductBuilderAction):
   }
 }
 
-/**
- * Tipo do contexto de construção de produtos
- */
 interface ProductBuilderContextType {
   state: ProductState;
   dispatch: React.Dispatch<ProductBuilderAction>;
 }
 
-/**
- * Contexto de construção de produtos
- */
 const ProductBuilderContext = createContext<ProductBuilderContextType | undefined>(undefined);
 
-/**
- * Provider do contexto
- */
 export const ProductBuilderProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(finalProductReducer, initialState);
 
@@ -122,9 +117,6 @@ export const ProductBuilderProvider = ({ children }: { children: ReactNode }) =>
   );
 };
 
-/**
- * Hook customizado para usar o contexto
- */
 export const useProductBuilderContext = () => {
   const context = useContext(ProductBuilderContext);
   if (!context) {

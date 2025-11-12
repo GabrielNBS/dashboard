@@ -1,4 +1,5 @@
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
+import { tv } from 'tailwind-variants';
 
 interface CostPreviewsProps {
   unitCost: number;
@@ -7,61 +8,86 @@ interface CostPreviewsProps {
   mode: 'individual' | 'lote';
 }
 
+// Cria estilos com tailwind-variants
+const card = tv({
+  slots: {
+    base: 'rounded-lg border-t-4 bg-card p-4 shadow-md',
+    label: 'text-sm font-medium text-muted-foreground',
+    value: 'text-2xl text-primary font-bold',
+    description: 'mt-1 text-xs text-muted-foreground',
+  },
+  variants: {
+    type: {
+      cost: {
+        base: 'border-on-bad',
+      },
+      price: {
+        base: 'border-on-info',
+      },
+      profit: {
+        base: 'border-on-great',
+      },
+      loss: {
+        base: 'border-on-bad',
+      },
+    },
+  },
+});
+
+interface InfoCardProps {
+  label: string;
+  value: string;
+  description: string;
+  type: 'cost' | 'price' | 'profit' | 'loss';
+}
+
+const InfoCard = ({ label, value, description, type }: InfoCardProps) => {
+  const styles = card({ type });
+  return (
+    <div className={styles.base()}>
+      <div className="mb-2 flex items-center justify-between">
+        <span className={styles.label()}>{label}</span>
+      </div>
+      <div className={styles.value()}>{value}</div>
+      <p className={styles.description()}>{description}</p>
+    </div>
+  );
+};
+
 export default function CostPreviews({
   unitCost,
   suggestedPrice,
   realProfitMargin,
   mode,
 }: CostPreviewsProps) {
+  const isProfit = realProfitMargin >= 0;
+
+  const cards: InfoCardProps[] = [
+    {
+      label: mode === 'individual' ? 'Custo Total' : 'Custo por Unidade',
+      value: formatCurrency(unitCost),
+      description: 'Soma dos ingredientes',
+      type: 'cost',
+    },
+    {
+      label: mode === 'individual' ? 'Preço Sugerido' : 'Preço por Unidade',
+      value: formatCurrency(suggestedPrice),
+      description: 'Baseado na margem',
+      type: 'price',
+    },
+    {
+      label: 'Margem Real',
+      value: `${realProfitMargin.toFixed(1)}%`,
+      description: isProfit ? 'Lucro positivo' : 'Prejuízo',
+      type: isProfit ? 'profit' : 'loss',
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <div className="rounded-lg border border-red-200 bg-gradient-to-br from-red-50 to-red-100 p-4 shadow-md">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-medium text-red-700">
-            {mode === 'individual' ? 'Custo Total' : 'Custo por Unidade'}
-          </span>
-        </div>
-        <div className="text-2xl font-bold text-red-900">{formatCurrency(unitCost)}</div>
-        <p className="mt-1 text-xs text-red-600">Soma dos ingredientes</p>
-      </div>
-
-      <div className="rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 p-4 shadow-md">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-medium text-blue-700">
-            {mode === 'individual' ? 'Preço Sugerido' : 'Preço por Unidade'}
-          </span>
-        </div>
-        <div className="text-2xl font-bold text-blue-900">{formatCurrency(suggestedPrice)}</div>
-        <p className="mt-1 text-xs text-blue-600">Baseado na margem</p>
-      </div>
-
-      <div
-        className={`bg-gradient-to-br shadow-md ${
-          realProfitMargin >= 0
-            ? 'border-green-200 from-green-50 to-green-100'
-            : 'border-red-200 from-red-50 to-red-100'
-        } rounded-lg border p-4`}
-      >
-        <div className="mb-2 flex items-center justify-between">
-          <span
-            className={`text-sm font-medium ${
-              realProfitMargin >= 0 ? 'text-green-700' : 'text-red-700'
-            }`}
-          >
-            Margem Real
-          </span>
-        </div>
-        <div
-          className={`text-2xl font-bold ${
-            realProfitMargin >= 0 ? 'text-green-900' : 'text-red-900'
-          }`}
-        >
-          {realProfitMargin.toFixed(1)}%
-        </div>
-        <p className={`mt-1 text-xs ${realProfitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-          {realProfitMargin >= 0 ? 'Lucro positivo' : 'Prejuízo'}
-        </p>
-      </div>
+      {cards.map((card, i) => (
+        <InfoCard key={i} {...card} />
+      ))}
     </div>
   );
 }

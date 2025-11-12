@@ -20,6 +20,7 @@ export interface ProductState {
   uid: string;
   name: string;
   category: string;
+  image?: string; // URL ou base64 da imagem do produto
   production: ProductionModel; // tudo consolidado aqui
   ingredients: Ingredient[];
 }
