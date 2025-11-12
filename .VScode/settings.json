@@ -16,5 +16,5 @@
   },
   "cSpell.words": ["Shadcn"],
   "typescript.autoClosingTags": false,
-  "kiroAgent.configureMCP": "Disabled"
+  "kiroAgent.configureMCP": "Enabled"
 }

@@ -32,7 +32,7 @@ export interface ProgressConfig {
   value: number;
   max?: number;
   label?: string;
-  status?: string;
+  status?: 'normal' | 'critico' | 'atencao';
   showPercentage?: boolean;
 }
 
@@ -312,12 +312,7 @@ export function GenericCard<T extends CardableItem>({
                 <span>{progress.label}</span>
                 {progress.showPercentage && <span>{Math.round(progress.value)}%</span>}
               </div>
-              <Progress
-                value={progress.value}
-                className="h-2"
-                stats={progress.status}
-                max={progress.max || 100}
-              />
+              <Progress value={progress.value} className="h-2" max={progress.max || 100} />
             </div>
           )}
 

@@ -9,10 +9,11 @@ import Script from 'next/script';
 
 const inter = Inter({
   subsets: ['latin'],
-  display: 'swap', // Melhora performance de font loading
+  display: 'swap',
   preload: true,
   fallback: ['system-ui', 'arial'],
   variable: '--font-inter',
+  adjustFontFallback: true,
 });
 
 export const viewport: Viewport = {
@@ -58,6 +59,7 @@ export default function RootLayout({
       <head>
         <link rel="dns-prefetch" href="https://cdn.lordicon.com" />
         <link rel="preconnect" href="https://cdn.lordicon.com" crossOrigin="anonymous" />
+        <meta name="color-scheme" content="light dark" />
       </head>
       <body className={`${inter.variable} `}>
         <Script src="https://cdn.lordicon.com/lordicon.js" strategy="lazyOnload" />

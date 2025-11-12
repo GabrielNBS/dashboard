@@ -66,7 +66,7 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
                   ]
                 }
               </span>
-              {sale.sellingResume.fees > 0 && (
+              {sale.sellingResume.fees && sale.sellingResume.fees > 0 && (
                 <span className="text-muted-foreground text-xs">
                   (Taxa: {formatCurrency(sale.sellingResume.fees)})
                 </span>

@@ -2,7 +2,7 @@
 
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useDashboardMetrics } from '@/hooks/business/useDashboardMetrics';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState, useEffect } from 'react';
 
 import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
 import ProfitMarginCard from '@/components/dashboard/finance/cards/ProfitMarginCard';
@@ -20,20 +20,28 @@ import { Header } from '@/components/ui/Header';
 export default function DashboardContent() {
   const { state: settings } = useSettings();
   const { summary, trending, chartData, aggregatedData } = useDashboardMetrics();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const { storeName } = settings.store;
-  const title = useMemo(() => (
-    <>
-      {getHowHours()}, <strong>{storeName}</strong>
-    </>
-  ), [storeName]);
+  const title = useMemo(
+    () => (
+      <>
+        {getHowHours()}, <strong>{storeName}</strong>
+      </>
+    ),
+    [storeName]
+  );
   const subtitle = 'o resumo diário do seu dia';
 
   return (
     <main className="bg-surface flex min-h-screen flex-col gap-6 p-6">
       <Header title={title} subtitle={subtitle} />
 
-      <section aria-labelledby="kpi-title" className="grid gap-6 lresg:grid-cols-4">
+      <section aria-labelledby="kpi-title" className="lresg:grid-cols-4 grid gap-6">
         <h2 id="kpi-title" className="sr-only">
           Indicadores Chave de Performance
         </h2>
@@ -46,7 +54,7 @@ export default function DashboardContent() {
                   <div>
                     <p className="text-muted-foreground text-sm font-medium">Lucro Líquido</p>
                     <p className="text-primary text-xl font-bold">
-                      {formatCurrency(summary.netProfit)}
+                      {isClient ? formatCurrency(summary.netProfit) : '—'}
                     </p>
                   </div>
                   <div className="bg-primary flex h-12 w-12 items-center justify-center rounded-full">
@@ -60,7 +68,7 @@ export default function DashboardContent() {
                   <div>
                     <p className="text-muted-foreground text-sm font-medium">Receita Total</p>
                     <p className="text-primary text-xl font-bold">
-                      {formatCurrency(summary.totalRevenue)}
+                      {isClient ? formatCurrency(summary.totalRevenue) : '—'}
                     </p>
                   </div>
                   <div className="bg-accent flex h-12 w-12 items-center justify-center rounded-full">
@@ -78,7 +86,7 @@ export default function DashboardContent() {
                     Custo Variável
                   </p>
                   <p className="text-primary text-sm font-bold">
-                    {formatCurrency(summary.totalVariableCost)}
+                    {isClient ? formatCurrency(summary.totalVariableCost) : '—'}
                   </p>
                 </div>
 
@@ -87,7 +95,7 @@ export default function DashboardContent() {
                     Margem de Lucro
                   </p>
                   <p className="text-primary text-sm font-bold">
-                    {((summary.margin || 0) * 100).toFixed(1)}%
+                    {isClient ? `${((summary.margin || 0) * 100).toFixed(1)}%` : '—'}
                   </p>
                 </div>
               </div>

@@ -19,7 +19,7 @@ import {
 import { formatCurrency, formatPercent } from '@/utils/formatting/formatCurrency';
 import type { FinanceSummary } from '@/hooks/business/useSummaryFinance';
 import { cn } from '@/utils/utils';
-import FinancePieChart from './FinancePieChart';
+import LazyFinancePieChart from './LazyFinancePieChart';
 
 interface FinancialMetricsModalProps {
   isOpen: boolean;
@@ -134,7 +134,7 @@ export default function FinancialMetricsModal({
               {/* Header */}
               <motion.div
                 className={cn(
-                  'relative bg-gradient-to-r border-t-4 px-4 py-4 sm:px-6 sm:py-6',
+                  'relative border-t-4 bg-gradient-to-r px-4 py-4 sm:px-6 sm:py-6',
                   config.borderStatus,
                   'from-primary to-primary/90'
                 )}
@@ -171,7 +171,12 @@ export default function FinancialMetricsModal({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-sm font-medium text-white", config.background)}>
+                  <span
+                    className={cn(
+                      'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium text-white',
+                      config.background
+                    )}
+                  >
                     <StatusIcon className="mr-1.5 h-3.5 w-3.5" />
                     {config.title}
                   </span>
@@ -231,7 +236,7 @@ export default function FinancialMetricsModal({
                       <div className={cardStyles.metric}>
                         <div className="mb-2 flex items-center gap-2">
                           <TrendingUp className="text-on-great h-5 w-5" />
-                          <h2 className="text-foreground text-sm font-md">Lucro Líquido</h2>
+                          <h2 className="text-foreground font-md text-sm">Lucro Líquido</h2>
                         </div>
                         <p
                           className={cn(
@@ -313,7 +318,7 @@ export default function FinancialMetricsModal({
                       </h3>
                       <div className={cardStyles.base}>
                         <div className="h-64">
-                          <FinancePieChart financialSummary={financialSummary} />
+                          <LazyFinancePieChart financialSummary={financialSummary} />
                         </div>
                       </div>
                     </div>

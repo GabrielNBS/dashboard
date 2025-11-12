@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { FinanceSummary } from '@/hooks/business/useSummaryFinance';
 import CardWrapper from '@/components/dashboard/finance/cards/CardWrapper';
-import FinancePieChart from './FinancePieChart';
+import LazyFinancePieChart from './LazyFinancePieChart';
 import { DollarSign } from 'lucide-react';
 import { formatCurrency, formatPercent } from '@/utils/formatting/formatCurrency';
 import GoalCardWrapper from './GoalCardWrapper';
@@ -56,9 +56,7 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
             {/* LARGE TILE - Lucro Líquido (Principal KPI) */}
             <CardWrapper
               title={
-                <span className="text-sm font-semibold sm:text-base md:text-lg">
-                  Lucro Líquido
-                </span>
+                <span className="text-sm font-semibold sm:text-base md:text-lg">Lucro Líquido</span>
               }
               className="relative col-span-2 row-span-2 items-center justify-center"
               value={
@@ -213,7 +211,7 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
               Distribuição Financeira
             </h4>
             <div className="h-[calc(100%-2rem)]">
-              <FinancePieChart financialSummary={financialSummary} />
+              <LazyFinancePieChart financialSummary={financialSummary} />
             </div>
           </div>
         </div>

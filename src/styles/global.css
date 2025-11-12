@@ -1,80 +1,80 @@
 @import 'tailwindcss';
 @import './theme.css';
-@import './sheet-animations.css';
 @import './components/button.css';
 @import './components/card.css';
 @import './components/toast.css';
 
-/* Skip Links for Accessibility */
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: #000;
-    color: #fff;
-    padding: 8px;
-    text-decoration: none;
-    border-radius: 4px;
-    z-index: 9999;
-    font-weight: 600;
-    transition: top 0.3s;
-}
+@layer base {
 
-.skip-link:focus {
-    top: 6px;
-}
-
-/* Pulse animation for step indicators */
-.loader {
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background-color: #69ffa8;
-    animation: 1.5s pulse infinite ease-in-out;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 #69ffa8;
+    /* Skip Links for Accessibility */
+    .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: #000;
+        color: #fff;
+        padding: 8px;
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 9999;
+        font-weight: 600;
     }
 
-    100% {
-        box-shadow: 0 0 0 14px #69ffa800;
+    .skip-link:focus {
+        top: 6px;
+    }
+
+    /* Performance optimizations */
+    main {
+        contain: layout style;
+        content-visibility: auto;
+    }
+
+    .page-container {
+        min-height: 100vh;
     }
 }
 
-/* Performance optimizations - no animations to prevent jumps */
-main {
-    contain: layout style;
-    transform: translateZ(0);
-    /* Hardware acceleration */
-}
+@layer utilities {
 
-/* Smooth rendering without transitions */
-.page-container {
-    min-height: 100vh;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-}
+    /* Pulse animation for step indicators */
+    .loader {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background-color: #69ffa8;
+        animation: 1.5s pulse infinite ease-in-out;
+    }
 
-/* Line clamp utilities for text truncation */
-.line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-}
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 #69ffa8;
+        }
 
-.line-clamp-2 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-}
+        100% {
+            box-shadow: 0 0 0 14px #69ffa800;
+        }
+    }
 
-.line-clamp-3 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    /* Line clamp utilities for text truncation */
+    .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+    }
+
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
 }

@@ -1,16 +1,16 @@
-@import 'tailwindcss';
+@layer components {
+  .btn {
+    @apply rounded-[var(--radius-md)] px-4 py-2 font-semibold transition-all duration-300;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
 
-.btn {
-  @apply rounded-[var(--radius-md)] px-4 py-2 font-semibold transition-all duration-300;
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
+  .btn:hover {
+    opacity: 0.9;
+  }
 
-.btn:hover {
-  opacity: 0.9;
-}
-
-.btn--secondary {
-  background-color: var(--secondary);
-  color: var(--secondary-foreground);
+  .btn--secondary {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+  }
 }

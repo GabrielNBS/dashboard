@@ -10,6 +10,7 @@ export type ToastProps = {
   description?: string;
   variant?: ToastVariant;
   duration?: number;
+  icon?: React.ReactNode;
 };
 
 export type ToastContextType = {
@@ -82,7 +83,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         aria-label="Notificações"
         role="region"
       >
-        {toasts.map(({ id, title, description, variant = 'default' }) => (
+        {toasts.map(({ id, title, description, variant = 'default', icon }) => (
           <div
             key={id}
             className={`relative flex max-w-xs min-w-[260px] flex-col gap-1 rounded-lg border px-4 py-3 shadow-md ${
@@ -98,9 +99,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             aria-labelledby={`toast-title-${id}`}
             aria-describedby={description ? `toast-description-${id}` : undefined}
           >
-            <strong id={`toast-title-${id}`} className="text-base font-semibold">
-              {title}
-            </strong>
+            <div id={`toast-title-${id}`} className="flex items-center gap-2 text-base font-semibold">
+              {icon}
+              <strong>{title}</strong>
+            </div>
             {description && (
               <span id={`toast-description-${id}`} className="text-primary text-sm">
                 {description}

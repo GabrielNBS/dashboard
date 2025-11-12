@@ -47,14 +47,10 @@ export function showBatchToast({
   }
 
   toast({
-    title: (
-      <div className="flex items-center gap-2">
-        <Package className="h-4 w-4" />
-        <span>{title}</span>
-      </div>
-    ),
+    title,
     description: enhancedDescription,
     variant: variants[type],
+    icon: <Package className="h-4 w-4" />,
   });
 }
 

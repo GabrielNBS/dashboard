@@ -17,9 +17,7 @@ const OptimizedProviders = memo(function OptimizedProviders({ children }: Optimi
       <ProductBuilderProvider>
         <ProductProvider>
           <SalesProvider>
-            <SettingsProvider>
-              {children}
-            </SettingsProvider>
+            <SettingsProvider>{children}</SettingsProvider>
           </SalesProvider>
         </ProductProvider>
       </ProductBuilderProvider>

@@ -10,11 +10,12 @@ function Progress({
   value,
   stats = 'normal',
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+}: React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & {
+  stats?: 'normal' | 'critico' | 'atencao';
+}) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
-      stats={stats}
       className={cn('bg-primary/20 relative h-2 w-full overflow-hidden rounded-full', className)}
       {...props}
     >
