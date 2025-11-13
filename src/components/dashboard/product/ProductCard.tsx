@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo, useEffect, memo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useCallback, useMemo, memo } from 'react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   Tag,
@@ -9,27 +9,16 @@ import {
   TrendingUp,
   TrendingDown,
   Package,
-  Calculator,
-  DollarSign,
-  PieChart,
   ChevronRight,
-  X,
 } from 'lucide-react';
 import { ProductState } from '@/types/products';
-import { Ingredient } from '@/types/ingredients';
 
-// ✅ Instância única do formatter (fora do componente)
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL',
 });
 
 const formatCurrency = (value: number): string => currencyFormatter.format(value);
-
-// ✅ Função helper movida para fora
-const calculateUnitCost = (totalCost: number, mode: string, yieldQuantity: number): number => {
-  return mode === 'lote' ? totalCost / yieldQuantity : totalCost;
-};
 
 interface ProductCardProps {
   product: ProductState;
@@ -39,17 +28,14 @@ interface ProductCardProps {
   isExpanded?: boolean;
 }
 
-// ✅ Memoizado com React.memo
 export const ProductCard = memo(
   React.forwardRef<HTMLDivElement, ProductCardProps>(
     ({ product, onEdit, onRemove, onClick, isExpanded = false }, ref) => {
-      // ✅ Cálculos memoizados
       const isProfit = useMemo(
         () => product.production.profitMargin >= 0,
         [product.production.profitMargin]
       );
 
-      // ✅ Handlers memoizados
       const handleEdit = useCallback(
         (e: React.MouseEvent) => {
           e.stopPropagation();
@@ -73,12 +59,13 @@ export const ProductCard = memo(
       return (
         <motion.div
           ref={ref}
-          layoutId={`product-card-${product.uid}`} // ✅ Apenas no root
+          layoutId={`product-card-${product.uid}`}
           onClick={handleClick}
           className={`group relative cursor-pointer overflow-hidden bg-white shadow-md transition-shadow duration-200 hover:shadow-xl ${
             isExpanded ? 'invisible' : ''
           }`}
           initial={{ borderRadius: '0.75rem' }}
+          animate={{ borderRadius: '0.75rem' }}
           whileHover={{
             scale: 1.02,
             boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
@@ -113,7 +100,7 @@ export const ProductCard = memo(
             </motion.button>
           </div>
 
-          {/* Image Section - ✅ Sem layoutId desnecessário */}
+          {/* Image Section */}
           <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 sm:h-56">
             {product.image ? (
               <>
@@ -123,7 +110,7 @@ export const ProductCard = memo(
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  loading="lazy" // ✅ Lazy loading explícito
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               </>
@@ -133,7 +120,7 @@ export const ProductCard = memo(
               </div>
             )}
 
-            {/* Profit Badge */}
+            {/* Profit Badge on Image */}
             <div className="absolute bottom-3 left-3">
               <div
                 className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 backdrop-blur-md ${
@@ -152,7 +139,7 @@ export const ProductCard = memo(
             </div>
           </div>
 
-          {/* Header - ✅ Simplificado */}
+          {/* Header */}
           <div className="border-b border-slate-100 px-4 py-3 sm:px-5 sm:py-4">
             <h3 className="mb-2 line-clamp-1 text-lg font-bold text-slate-900 sm:text-xl">
               {product.name}
@@ -176,7 +163,6 @@ export const ProductCard = memo(
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 transition-colors hover:bg-slate-100">
                 <div className="mb-1 flex items-center gap-1.5">
-                  <Calculator className="h-3.5 w-3.5 text-slate-500" />
                   <span className="text-xs font-medium text-slate-600">Custo</span>
                 </div>
                 <div className="text-base font-bold text-slate-900 sm:text-lg">
@@ -186,7 +172,6 @@ export const ProductCard = memo(
 
               <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-3 transition-colors hover:bg-indigo-100">
                 <div className="mb-1 flex items-center gap-1.5">
-                  <DollarSign className="h-3.5 w-3.5 text-indigo-600" />
                   <span className="text-xs font-medium text-indigo-700">
                     {product.production.mode === 'lote' ? 'Venda/Un.' : 'Venda'}
                   </span>
@@ -212,69 +197,17 @@ export const ProductCard = memo(
       );
     }
   ),
-  // ✅ Comparação personalizada para evitar re-renders
   (prevProps, nextProps) => {
     return (
       prevProps.product.uid === nextProps.product.uid &&
       prevProps.isExpanded === nextProps.isExpanded &&
-      prevProps.product.production.profitMargin === nextProps.product.production.profitMargin
+      prevProps.product.production.profitMargin === nextProps.product.production.profitMargin &&
+      prevProps.product.production.totalCost === nextProps.product.production.totalCost &&
+      prevProps.product.production.unitSellingPrice === nextProps.product.production.unitSellingPrice
     );
   }
 );
 
 ProductCard.displayName = 'ProductCard';
 
-// ✅ Tab Components também memoizados
-const OverviewTab = memo<{
-  product: ProductState;
-  isProfit: boolean;
-  realProfitValue: number;
-  unitCost: number;
-}>(({ product, isProfit, realProfitValue, unitCost }) => (
-  <div className="space-y-4">
-    {/* Conteúdo mantido igual, mas sem animações excessivas */}
-    <div
-      className={`rounded-xl border-2 p-4 ${
-        isProfit
-          ? 'border-green-200 bg-gradient-to-br from-green-50 to-green-100/50'
-          : 'border-red-200 bg-gradient-to-br from-red-50 to-red-100/50'
-      }`}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`rounded-full p-2 ${isProfit ? 'bg-green-500' : 'bg-red-500'}`}>
-            {isProfit ? (
-              <TrendingUp className="h-5 w-5 text-white" />
-            ) : (
-              <TrendingDown className="h-5 w-5 text-white" />
-            )}
-          </div>
-          <div>
-            <span className={`text-sm font-medium ${isProfit ? 'text-green-800' : 'text-red-800'}`}>
-              Margem de lucro
-            </span>
-            <div className={`text-xs ${isProfit ? 'text-green-700' : 'text-red-700'}`}>
-              {isProfit ? 'Lucro de' : 'Prejuízo de'} {formatCurrency(Math.abs(realProfitValue))}
-            </div>
-          </div>
-        </div>
-        <div className={`text-3xl font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}`}>
-          {product.production.profitMargin.toFixed(1)}%
-        </div>
-      </div>
-    </div>
-    {/* Resto do conteúdo... */}
-  </div>
-));
-
-OverviewTab.displayName = 'OverviewTab';
-
-// ✅ Checklist de Otimizações Aplicadas:
-// [x] useMemo para cálculos
-// [x] useCallback para handlers
-// [x] React.memo nos componentes
-// [x] Formatter único de moeda
-// [x] Remoção de layoutId desnecessários
-// [x] Lazy loading de imagens
-// [x] Comparação customizada no memo
-// [x] Redução de animações simultâneas
+export default ProductCard;

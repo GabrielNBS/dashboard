@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { ProductState } from '@/types/products';
-import { ProductCard, ProductModal } from './ProductCard';
+import ProductCard from './ProductCard';
+import { ProductModal } from './ProductModal';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
 import { useProductFilter } from '@/hooks/ui/useUnifiedFilter';
