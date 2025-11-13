@@ -112,7 +112,7 @@ export default function DashboardContent() {
               trendingColors={{
                 positive: {
                   text: 'text-great',
-                  icon: 'bg-great',
+                  icon: 'text-secondary',
                   period: 'text-secondary/70',
                 },
                 negative: {

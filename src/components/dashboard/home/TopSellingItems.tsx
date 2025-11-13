@@ -31,7 +31,7 @@ const TopSellingItems = memo(() => {
             acc.push({
               id: item.product.uid,
               nome: item.product.name,
-              imagem: 'https://placehold.co/150',
+              imagem: item.product.image || 'https://placehold.co/150',
               quantidade: item.quantity,
               revenue: item.subtotal,
               percentualVendas: 0,
