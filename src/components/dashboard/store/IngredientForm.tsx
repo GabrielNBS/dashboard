@@ -27,7 +27,8 @@ import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContex
 import {
   ingredientSchema,
   type IngredientFormData,
-  validateQuantityByUnit,
+  UNIT_LIMITS,
+  CURRENCY_LIMITS,
 } from '@/schemas/validationSchemas';
 import { normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 import { formatCurrency } from '@/utils/UnifiedUtils';
@@ -38,14 +39,6 @@ const sanitizeInput = (value: string) =>
     .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
-
-const UNIT_LIMITS = {
-  un: { maxQuantity: 10000 },
-  kg: { maxQuantity: 1000 },
-  l: { maxQuantity: 1000 },
-  g: { maxQuantity: 1000000 },
-  ml: { maxQuantity: 1000000 },
-};
 
 export default function IngredientForm() {
   const { dispatch, state, addBatch } = useIngredientContext();
@@ -82,20 +75,8 @@ export default function IngredientForm() {
     }
   }, [toggle]);
 
-  const validateQuantity = (value: string) => {
-    if (!value) return true;
-    const numValue = parseFloat(value);
-    if (isNaN(numValue)) return true;
-
-    const unitError = validateQuantityByUnit(numValue, watchedUnit);
-    if (unitError) {
-      setError('quantity', { message: unitError });
-      return false;
-    } else {
-      clearErrors('quantity');
-      return true;
-    }
-  };
+  // Validação agora é feita apenas pelo schema via zodResolver
+  // Removida validação manual duplicada
 
   const pricePreview = useMemo(() => {
     if (!existingIngredient || !watchedQuantity || !watchedPrice) return null;
@@ -177,18 +158,9 @@ export default function IngredientForm() {
   };
 
   const onSubmit = (data: IngredientFormData) => {
-    const rawQuantity = parseFloat(data.quantity);
-
-    const unitValidationError = validateQuantityByUnit(rawQuantity, data.unit);
-    if (unitValidationError) {
-      toast({
-        title: 'Erro de validação',
-        description: unitValidationError,
-        variant: 'destructive',
-      });
-      return;
-    }
-
+    // Todas as validações são feitas pelo schema via zodResolver
+    // Não há necessidade de validações manuais adicionais
+    
     if (existingIngredient) {
       handleAddBatchToExisting(data, existingIngredient);
     } else {
@@ -301,13 +273,11 @@ export default function IngredientForm() {
                 id="quantity"
                 className={errors.quantity ? 'border-destructive' : ''}
                 unit={watchedUnit}
-                allowDecimals={watchedUnit !== 'un'}
-                maxValue={UNIT_LIMITS[watchedUnit]?.maxQuantity ?? 1000}
+                allowDecimals={UNIT_LIMITS[watchedUnit]?.decimals > 0}
+                maxValue={UNIT_LIMITS[watchedUnit]?.max ?? 1000}
+                minValue={UNIT_LIMITS[watchedUnit]?.min ?? 0}
                 value={watchedQuantity}
-                onChange={(value: string) => {
-                  setValue('quantity', value);
-                  validateQuantity(value);
-                }}
+                onChange={(value: string) => setValue('quantity', value)}
               />
               {errors.quantity && (
                 <span className="text-destructive mt-1 block text-sm">
@@ -326,7 +296,8 @@ export default function IngredientForm() {
                 aria-invalid={!!errors.buyPrice}
                 aria-describedby="error-buyPrice"
                 className={errors.buyPrice ? 'border-destructive' : ''}
-                maxValue={99999.99}
+                maxValue={CURRENCY_LIMITS.ingredient.max}
+                minValue={CURRENCY_LIMITS.ingredient.min}
                 value={watchedPrice}
                 onChange={(value: string) => setValue('buyPrice', value)}
               />

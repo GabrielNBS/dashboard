@@ -9,6 +9,7 @@ import { DollarSign, Plus, Edit, Trash2 } from 'lucide-react';
 import { getTotalFixedCost } from '@/utils/calculations/finance';
 import { CurrencyInput } from '@/components/ui/forms';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
+import { CURRENCY_LIMITS } from '@/schemas/validationSchemas';
 import { ConfirmationDialog } from '@/components/ui/feedback';
 import {
   Select,
@@ -154,7 +155,8 @@ export default function FixedCostsSection() {
                   setEditingCost({ ...editingCost, amount: parseFloat(value) || 0 })
                 }
                 placeholder="R$ 0,00"
-                maxValue={999999.99} // Limite: R$ 999.999,99 para custos fixos
+                maxValue={CURRENCY_LIMITS.fixedCost.max}
+                minValue={CURRENCY_LIMITS.fixedCost.min}
                 required
               />
             </div>

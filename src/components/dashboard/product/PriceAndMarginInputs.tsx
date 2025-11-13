@@ -6,6 +6,7 @@ import {
   calculateUnitCost,
 } from '@/utils/calculations';
 import { useMemo } from 'react';
+import { CURRENCY_LIMITS, PERCENTAGE_LIMITS } from '@/schemas/validationSchemas';
 
 interface PriceAndMarginInputsProps {
   mode: 'individual' | 'lote';
@@ -61,7 +62,8 @@ export default function PriceAndMarginInputs({
           value={sellingPrice}
           onChange={onSellingPriceChange}
           placeholder="R$ 0,00"
-          maxValue={9999.99}
+          maxValue={CURRENCY_LIMITS.product.max}
+          minValue={CURRENCY_LIMITS.product.min}
           required
           size="md"
         />
@@ -71,8 +73,8 @@ export default function PriceAndMarginInputs({
           value={margin}
           onChange={onMarginChange}
           placeholder="0%"
-          maxValue={300}
-          minValue={0}
+          maxValue={PERCENTAGE_LIMITS.margin.max}
+          minValue={PERCENTAGE_LIMITS.margin.min}
           required
           size="md"
         />

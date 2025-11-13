@@ -110,7 +110,12 @@ export default function QuantityInput({
 
       const numValue = parseInt(inputValue, 10);
       if (!isNaN(numValue)) {
-        const limitedValue = Math.min(Math.max(numValue, minValue), maxValue);
+        // Impede digitação acima do máximo
+        if (numValue > maxValue) {
+          return;
+        }
+        
+        const limitedValue = Math.max(numValue, minValue);
         const limitedStr = limitedValue.toString();
         setDisplayValue(limitedStr);
         onChange(limitedStr);
@@ -141,7 +146,12 @@ export default function QuantityInput({
 
       const numValue = parseFloat(inputValue);
       if (!isNaN(numValue)) {
-        const limitedValue = Math.min(Math.max(numValue, minValue), maxValue);
+        // Impede digitação acima do máximo
+        if (numValue > maxValue) {
+          return;
+        }
+        
+        const limitedValue = Math.max(numValue, minValue);
         const limitedStr = limitedValue.toString();
         setDisplayValue(limitedStr);
         onChange(limitedStr);

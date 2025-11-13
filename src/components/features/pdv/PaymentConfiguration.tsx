@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/forms/select';
+import { PERCENTAGE_LIMITS, CURRENCY_LIMITS } from '@/schemas/validationSchemas';
 
 interface PaymentConfigurationProps {
   payment: PaymentConfig;
@@ -116,8 +117,8 @@ export default React.memo(function PaymentConfiguration({
               }}
               className="flex-1 text-sm"
               placeholder="0%"
-              maxValue={50} // Limite: 50% desconto máximo
-              minValue={0}
+              maxValue={PERCENTAGE_LIMITS.discount.max}
+              minValue={PERCENTAGE_LIMITS.discount.min}
             />
           ) : (
             <CurrencyInput
@@ -131,7 +132,8 @@ export default React.memo(function PaymentConfiguration({
               }}
               className="flex-1 text-sm"
               placeholder="R$ 0,00"
-              maxValue={999.99} // Limite: R$ 999,99 desconto máximo
+              maxValue={CURRENCY_LIMITS.discount.max}
+              minValue={CURRENCY_LIMITS.discount.min}
             />
           )}
         </div>

@@ -94,8 +94,13 @@ export default function CurrencyInput({
     const cents = parseInt(newDigits, 10);
     const reais = cents / 100;
 
-    // Aplica limites de valor
-    const limitedReais = Math.min(Math.max(reais, minValue), maxValue);
+    // Aplica limites de valor - impede digitação acima do limite
+    if (reais > maxValue) {
+      // Não permite digitar mais se já atingiu o máximo
+      return;
+    }
+
+    const limitedReais = Math.max(reais, minValue);
     const limitedCents = Math.round(limitedReais * 100);
 
     // Atualiza os estados

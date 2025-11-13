@@ -12,6 +12,7 @@ import { Calculator, Plus, Edit, Trash2 } from 'lucide-react';
 import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
+import { CURRENCY_LIMITS, PERCENTAGE_LIMITS } from '@/schemas/validationSchemas';
 import {
   Select,
   SelectContent,
@@ -208,8 +209,8 @@ export default function VariableCostsSection() {
                   setEditingCost({ ...editingCost, percentage: parseFloat(value) || 0 })
                 }
                 placeholder="0%"
-                maxValue={50} // Limite: 50% para custos variáveis
-                minValue={0}
+                maxValue={PERCENTAGE_LIMITS.variableCost.max}
+                minValue={PERCENTAGE_LIMITS.variableCost.min}
               />
             </div>
 
@@ -223,7 +224,8 @@ export default function VariableCostsSection() {
                   setEditingCost({ ...editingCost, fixedValue: parseFloat(value) || 0 })
                 }
                 placeholder="R$ 0,00"
-                maxValue={9999.99} // Limite: R$ 9.999,99 para valores fixos
+                maxValue={CURRENCY_LIMITS.variableCost.max}
+                minValue={CURRENCY_LIMITS.variableCost.min}
               />
             </div>
 

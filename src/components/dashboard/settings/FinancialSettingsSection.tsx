@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/forms/select';
 import { Label } from '@/components/ui/base/label';
+import { PERCENTAGE_LIMITS, CURRENCY_LIMITS } from '@/schemas/validationSchemas';
 
 export default function FinancialSettingsSection() {
   const { state, dispatch } = useSettings();
@@ -64,8 +65,8 @@ export default function FinancialSettingsSection() {
                   handleFinancialChange('defaultProfitMargin', parseFloat(value) || 0)
                 }
                 placeholder="30%"
-                maxValue={500} // Limite: 500% margem máxima
-                minValue={0}
+                maxValue={PERCENTAGE_LIMITS.margin.max}
+                minValue={PERCENTAGE_LIMITS.margin.min}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Percentual padrão de lucro para novos produtos
@@ -92,7 +93,7 @@ export default function FinancialSettingsSection() {
                   handleFinancialChange('emergencyReservePercentage', parseFloat(value) || 0)
                 }
                 placeholder="10%"
-                maxValue={50} // Limite: 50% reserva máxima
+                maxValue={50}
                 minValue={0}
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -120,7 +121,8 @@ export default function FinancialSettingsSection() {
                   handleFinancialChange('monthlySalesGoal', parseFloat(value) || 0)
                 }
                 placeholder="R$ 50.000,00"
-                maxValue={9999999.99} // Limite: R$ 9.999.999,99 meta mensal
+                maxValue={9999999.99}
+                minValue={0}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Meta de vendas mensal para acompanhamento

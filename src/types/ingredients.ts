@@ -1,4 +1,4 @@
-export type UnitType = 'kg' | 'l' | 'un';
+export type UnitType = 'kg' | 'l' | 'un' | 'g' | 'ml';
 
 export type PurchaseBatch = {
   id: string;

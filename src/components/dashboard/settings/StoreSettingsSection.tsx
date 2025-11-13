@@ -9,6 +9,8 @@ import { useSettings } from '@/contexts/settings/SettingsContext';
 import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
 import { Store, Upload, Edit3, Save, X, MapPin, Phone, Mail, Building2, Tag } from 'lucide-react';
+import { PhoneInput, EmailInput } from '@/components/ui/forms';
+import { cnpjMask } from '@/utils/masks';
 
 export default function StoreSettingsSection() {
   const { state, dispatch } = useSettings();
@@ -161,9 +163,10 @@ export default function StoreSettingsSection() {
                 <Input
                   value={formData.cnpj}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleInputChange('cnpj', e.target.value)
+                    handleInputChange('cnpj', cnpjMask(e.target.value))
                   }
                   placeholder="00.000.000/0000-00"
+                  maxLength={18}
                 />
               </div>
             </div>
@@ -191,28 +194,19 @@ export default function StoreSettingsSection() {
               </div>
 
               <div>
-                <label className="text-muted-foreground mb-1 block text-sm font-medium">
-                  Telefone
-                </label>
-                <Input
+                <PhoneInput
+                  label="Telefone"
                   value={formData.phone}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleInputChange('phone', e.target.value)
-                  }
+                  onChange={(value: string) => handleInputChange('phone', value)}
                   placeholder="(11) 99999-9999"
                 />
               </div>
 
               <div>
-                <label className="text-muted-foreground mb-1 block text-sm font-medium">
-                  Email
-                </label>
-                <Input
-                  type="email"
+                <EmailInput
+                  label="Email"
                   value={formData.email}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleInputChange('email', e.target.value)
-                  }
+                  onChange={(value: string) => handleInputChange('email', value)}
                   placeholder="contato@sualoja.com"
                 />
               </div>
