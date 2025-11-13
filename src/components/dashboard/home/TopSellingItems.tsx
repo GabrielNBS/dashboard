@@ -83,8 +83,8 @@ const TopSellingItems = memo(() => {
   return (
     <aside className="w-full" aria-labelledby="top-products-title">
       <div className="bg-card overflow-hidden rounded-lg shadow-sm">
-        <header className="from-primary to-secondary-foreground bg-gradient-to-r px-4 py-3">
-          <h3 id="top-products-title" className="text-primary-foreground text-sm font-semibold">
+        <header className="bg-muted px-4 py-3">
+          <h3 id="top-products-title" className="text-primary text-sm font-bold">
             Top produtos
           </h3>
         </header>

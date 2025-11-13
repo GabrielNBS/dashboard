@@ -143,22 +143,28 @@ export default function DashboardContent() {
             <h2 id="charts-title" className="sr-only">
               Gráficos e Métricas
             </h2>
-            <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-gray-200" />}>
-              <FinancialChart chartData={chartData} aggregatedData={aggregatedData} />
-            </Suspense>
+            <div className="flex flex-col gap-6 lg:flex-row">
+              <div className="w-full lg:w-3/4">
+                <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-gray-200" />}>
+                  <FinancialChart chartData={chartData} aggregatedData={aggregatedData} />
+                </Suspense>
+              </div>
+              <div className="w-full lg:w-1/4">
+                <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-gray-200" />}>
+                  <TopSellingItems />
+                </Suspense>
+              </div>
+            </div>
             <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-gray-200" />}>
               <MetricsIntegrationDemo />
             </Suspense>
           </section>
         </div>
 
-        <section aria-labelledby="top-selling-title">
+        <section aria-labelledby="top-selling-title" className="hidden">
           <h2 id="top-selling-title" className="sr-only">
             Itens Mais Vendidos
           </h2>
-          <Suspense fallback={<div className="h-96 animate-pulse rounded-lg bg-gray-200" />}>
-            <TopSellingItems />
-          </Suspense>
         </section>
       </section>
     </main>

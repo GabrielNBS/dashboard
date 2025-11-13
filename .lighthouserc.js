@@ -1,4 +1,4 @@
-module.exports = {
+pagmodule.exports = {
   ci: {
     collect: {
       startServerCommand: 'npm run build && npm run start',
