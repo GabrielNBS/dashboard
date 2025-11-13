@@ -124,41 +124,92 @@ export default function IngredientCardList() {
 
   return (
     <div className="w-full space-y-6">
-      <section
-        aria-labelledby="ingredient-summary"
-        className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4"
-      >
+      <section aria-labelledby="ingredient-summary">
         <h2 id="ingredient-summary" className="sr-only">
           Resumo dos ingredientes
         </h2>
-        <CardWrapper
-          title="Ingredientes"
-          value={summary.total}
-          icon={<Package aria-hidden="true" />}
-          subtitle="cadastrados"
-          className="hover:border-primary border-t-4"
-        />
-        <CardWrapper
-          title="Estoque crítico"
-          value={summary.critico}
-          icon={<AlertOctagon aria-hidden="true" />}
-          subtitle="atenção imediata"
-          className="hover:border-primary border-t-4"
-        />
-        <CardWrapper
-          title="Estoque em alerta"
-          value={summary.atencao}
-          icon={<AlertTriangle aria-hidden="true" />}
-          subtitle="precisam de reposição"
-          className="hover:border-primary border-t-4"
-        />
-        <CardWrapper
-          title="Valor total"
-          value={formatCurrency(summary.ingredientsTotalValue)}
-          icon={<BadgeDollarSign aria-hidden="true" />}
-          subtitle="em estoque"
-          className="hover:border-primary border-t-4"
-        />
+
+        {/* Mobile Layout */}
+        <div className="space-y-4 lg:hidden">
+          <div className="grid grid-cols-1 gap-3">
+            <div className="bg-background rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-muted-foreground text-sm font-medium">Ingredientes</p>
+                  <p className="text-primary text-xl font-bold">{summary.total}</p>
+                </div>
+                <div className="bg-primary flex h-12 w-12 items-center justify-center rounded-full">
+                  <Package className="text-background h-6 w-6" aria-hidden="true" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-background rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-muted-foreground text-sm font-medium">Valor Total</p>
+                  <p className="text-primary text-xl font-bold">
+                    {formatCurrency(summary.ingredientsTotalValue)}
+                  </p>
+                </div>
+                <div className="bg-accent flex h-12 w-12 items-center justify-center rounded-full">
+                  <BadgeDollarSign className="text-background h-6 w-6" aria-hidden="true" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-muted rounded-lg p-3">
+            <h3 className="text-accent-foreground mb-3 text-sm font-medium">Alertas de Estoque</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-background rounded-md p-3">
+                <p className="text-muted-foreground truncate text-xs font-medium">
+                  Estoque Crítico
+                </p>
+                <p className="text-primary text-sm font-bold">{summary.critico}</p>
+              </div>
+
+              <div className="bg-background rounded-md p-3">
+                <p className="text-muted-foreground truncate text-xs font-medium">
+                  Estoque em Alerta
+                </p>
+                <p className="text-primary text-sm font-bold">{summary.atencao}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden grid-cols-4 gap-6 lg:grid">
+          <CardWrapper
+            title="Ingredientes"
+            value={summary.total}
+            icon={<Package aria-hidden="true" />}
+            subtitle="cadastrados"
+            className="hover:border-primary border-t-4"
+          />
+          <CardWrapper
+            title="Estoque crítico"
+            value={summary.critico}
+            icon={<AlertOctagon aria-hidden="true" />}
+            subtitle="atenção imediata"
+            className="hover:border-primary border-t-4"
+          />
+          <CardWrapper
+            title="Estoque em alerta"
+            value={summary.atencao}
+            icon={<AlertTriangle aria-hidden="true" />}
+            subtitle="precisam de reposição"
+            className="hover:border-primary border-t-4"
+          />
+          <CardWrapper
+            title="Valor total"
+            value={formatCurrency(summary.ingredientsTotalValue)}
+            icon={<BadgeDollarSign aria-hidden="true" />}
+            subtitle="em estoque"
+            className="hover:border-primary border-t-4"
+          />
+        </div>
       </section>
 
       <section aria-labelledby="ingredient-list-title">

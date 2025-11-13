@@ -68,7 +68,7 @@ function QuickFilters({
   );
 
   return (
-    <div className="flex flex-wrap gap-2 sm:gap-3">
+    <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
       {FILTERS.map(filter => {
         const isActive = activeFilter === filter.id;
 
@@ -83,13 +83,13 @@ function QuickFilters({
               borderRadius: 'var(--radius-lg)',
               border: `1px solid ${isActive ? filter.activeColor : 'transparent'}`,
             }}
-            className="group relative flex items-center gap-2 px-4 py-2 text-sm font-medium shadow-md transition-colors duration-200 ease-in-out hover:brightness-105"
+            className="group relative flex min-w-[calc(50%-0.25rem)] flex-1 items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium shadow-md transition-colors duration-200 ease-in-out hover:brightness-105 sm:min-w-0 sm:flex-none sm:gap-2 sm:px-4"
           >
             <div className="relative z-10 flex-shrink-0">
-              <LordIcon src={filter.lordIconSrc} width={20} height={20} isActive={isActive} />
+              <LordIcon src={filter.lordIconSrc} width={18} height={18} isActive={isActive} />
             </div>
 
-            <span className="relative z-10 whitespace-nowrap text-xs sm:text-sm">{filter.label}</span>
+            <span className="relative z-10 truncate text-xs sm:text-sm">{filter.label}</span>
           </motion.button>
         );
       })}
