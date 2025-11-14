@@ -4,7 +4,7 @@ import { Header } from '@/components/ui/Header';
 export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6">
-        <Header title="Financeiro" subtitle="Acompanhe suas vendas e métricas financeiras" />
+      <Header title="Financeiro" subtitle="Acompanhe suas vendas e métricas financeiras" />
       <main role="main" aria-label="Dados financeiros">
         <FinanceTemplate />
       </main>

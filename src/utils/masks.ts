@@ -9,7 +9,7 @@
  */
 export function phoneMask(value: string): string {
   const numbers = value.replace(/\D/g, '');
-  
+
   if (numbers.length <= 10) {
     // Telefone fixo: (11) 3888-8888
     return numbers
@@ -17,7 +17,7 @@ export function phoneMask(value: string): string {
       .replace(/(\d{4})(\d)/, '$1-$2')
       .substring(0, 14);
   }
-  
+
   // Celular: (11) 98888-8888
   return numbers
     .replace(/^(\d{2})(\d)/, '($1) $2')
@@ -42,7 +42,7 @@ export function emailMask(value: string): string {
  */
 export function cpfMask(value: string): string {
   const numbers = value.replace(/\D/g, '');
-  
+
   return numbers
     .replace(/(\d{3})(\d)/, '$1.$2')
     .replace(/(\d{3})(\d)/, '$1.$2')
@@ -56,7 +56,7 @@ export function cpfMask(value: string): string {
  */
 export function cnpjMask(value: string): string {
   const numbers = value.replace(/\D/g, '');
-  
+
   return numbers
     .replace(/^(\d{2})(\d)/, '$1.$2')
     .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
@@ -71,10 +71,8 @@ export function cnpjMask(value: string): string {
  */
 export function cepMask(value: string): string {
   const numbers = value.replace(/\D/g, '');
-  
-  return numbers
-    .replace(/(\d{5})(\d)/, '$1-$2')
-    .substring(0, 9);
+
+  return numbers.replace(/(\d{5})(\d)/, '$1-$2').substring(0, 9);
 }
 
 /**
@@ -83,9 +81,9 @@ export function cepMask(value: string): string {
  */
 export function currencyMask(value: string | number): string {
   const numValue = typeof value === 'string' ? parseFloat(value) : value;
-  
+
   if (isNaN(numValue)) return 'R$ 0,00';
-  
+
   return numValue.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -133,10 +131,10 @@ export function isValidEmail(email: string): boolean {
  */
 export function isValidCPF(cpf: string): boolean {
   const numbers = cpf.replace(/\D/g, '');
-  
+
   if (numbers.length !== 11) return false;
   if (/^(\d)\1+$/.test(numbers)) return false;
-  
+
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += parseInt(numbers.charAt(i)) * (10 - i);
@@ -144,7 +142,7 @@ export function isValidCPF(cpf: string): boolean {
   let digit = 11 - (sum % 11);
   if (digit >= 10) digit = 0;
   if (digit !== parseInt(numbers.charAt(9))) return false;
-  
+
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(numbers.charAt(i)) * (11 - i);
@@ -152,7 +150,7 @@ export function isValidCPF(cpf: string): boolean {
   digit = 11 - (sum % 11);
   if (digit >= 10) digit = 0;
   if (digit !== parseInt(numbers.charAt(10))) return false;
-  
+
   return true;
 }
 
@@ -161,37 +159,37 @@ export function isValidCPF(cpf: string): boolean {
  */
 export function isValidCNPJ(cnpj: string): boolean {
   const numbers = cnpj.replace(/\D/g, '');
-  
+
   if (numbers.length !== 14) return false;
   if (/^(\d)\1+$/.test(numbers)) return false;
-  
+
   let size = numbers.length - 2;
   let nums = numbers.substring(0, size);
   const digits = numbers.substring(size);
   let sum = 0;
   let pos = size - 7;
-  
+
   for (let i = size; i >= 1; i--) {
     sum += parseInt(nums.charAt(size - i)) * pos--;
     if (pos < 2) pos = 9;
   }
-  
+
   let result = sum % 11 < 2 ? 0 : 11 - (sum % 11);
   if (result !== parseInt(digits.charAt(0))) return false;
-  
+
   size = size + 1;
   nums = numbers.substring(0, size);
   sum = 0;
   pos = size - 7;
-  
+
   for (let i = size; i >= 1; i--) {
     sum += parseInt(nums.charAt(size - i)) * pos--;
     if (pos < 2) pos = 9;
   }
-  
+
   result = sum % 11 < 2 ? 0 : 11 - (sum % 11);
   if (result !== parseInt(digits.charAt(1))) return false;
-  
+
   return true;
 }
 

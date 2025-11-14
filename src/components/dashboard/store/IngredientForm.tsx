@@ -160,7 +160,7 @@ export default function IngredientForm() {
   const onSubmit = (data: IngredientFormData) => {
     // Todas as validações são feitas pelo schema via zodResolver
     // Não há necessidade de validações manuais adicionais
-    
+
     if (existingIngredient) {
       handleAddBatchToExisting(data, existingIngredient);
     } else {

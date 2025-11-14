@@ -69,10 +69,10 @@ const CardWrapper = memo(function CardWrapper({
   const getIconColor = useMemo(() => {
     return (colorValue: string | undefined, defaultColor: string): string => {
       if (!colorValue) return defaultColor;
-      
+
       // Se já é hex, retorna direto
       if (colorValue.startsWith('#')) return colorValue;
-      
+
       // Mapeamento de classes Tailwind comuns para hex
       const colorMap: Record<string, string> = {
         'bg-bad': '#730a0a',
@@ -88,7 +88,7 @@ const CardWrapper = memo(function CardWrapper({
         'text-on-bad': '#730a0a',
         'text-on-great': '#0a5c2e',
       };
-      
+
       return colorMap[colorValue] || defaultColor;
     };
   }, []);
@@ -134,7 +134,9 @@ const CardWrapper = memo(function CardWrapper({
             aria-live="polite"
           >
             {typeof trending === 'boolean' ? (
-              <div className={`items-center gap-2 ${trendingColors.positive?.text || 'text-on-great'}`}>
+              <div
+                className={`items-center gap-2 ${trendingColors.positive?.text || 'text-on-great'}`}
+              >
                 <strong className="flex items-center gap-1">
                   <LordIcon
                     src="https://cdn.lordicon.com/erxuunyq.json"
@@ -183,7 +185,9 @@ const CardWrapper = memo(function CardWrapper({
                     {trending.percentage.toFixed(1)}%
                   </span>
                 </strong>
-                <span className={`ml-1 text-xs ${trending.isPositive ? trendingColors.positive?.period || 'text-muted-foreground' : trendingColors.negative?.period || 'text-muted-foreground'}`}>
+                <span
+                  className={`ml-1 text-xs ${trending.isPositive ? trendingColors.positive?.period || 'text-muted-foreground' : trendingColors.negative?.period || 'text-muted-foreground'}`}
+                >
                   {trending.period}
                 </span>
               </div>

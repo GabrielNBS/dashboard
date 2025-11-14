@@ -18,7 +18,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
   const maxQuantity = ingredient.maxQuantity;
   const status = getStockStatus(ingredient.totalQuantity, maxQuantity);
   const stockPercentage = maxQuantity > 0 ? (ingredient.totalQuantity / maxQuantity) * 100 : 0;
-  
+
   // Verifica se o ingrediente está em estado crítico (ativou o alerta)
   const isCriticalAlert = status === 'critico' || (status === 'atencao' && stockPercentage <= 20);
 
@@ -140,7 +140,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
     <div className="relative">
       {/* Indicador de alerta pulsante */}
       {isCriticalAlert && (
-        <div 
+        <div
           className="group/alert absolute top-2 right-2 z-10 cursor-help"
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
@@ -149,7 +149,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
             {/* Pulso animado */}
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
             {/* Círculo sólido */}
-            <span className="relative inline-flex h-4 w-4 rounded-full bg-red-600 ring-2 ring-background transition-all duration-200 group-hover/alert:ring-4">
+            <span className="ring-background relative inline-flex h-4 w-4 rounded-full bg-red-600 ring-2 transition-all duration-200 group-hover/alert:ring-4">
               <span className="absolute inset-0 flex items-center justify-center">
                 <AlertOctagon className="h-2.5 w-2.5 text-white transition-transform duration-200 group-hover/alert:rotate-12" />
               </span>
@@ -158,16 +158,16 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
 
           {/* Tooltip */}
           {isTooltipMounted && (
-            <div 
+            <div
               className={`absolute top-full right-0 mt-2 w-64 transition-all duration-200 ease-out ${
-                isExiting 
-                  ? 'opacity-0 scale-95 -translate-y-1' 
-                  : 'opacity-100 scale-100 translate-y-0'
+                isExiting
+                  ? '-translate-y-1 scale-95 opacity-0'
+                  : 'translate-y-0 scale-100 opacity-100'
               }`}
             >
-              <div className="bg-red-600 text-white rounded-lg px-3 py-2 text-sm shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.02]">
+              <div className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-xl">
                 <div className="flex items-start gap-2">
-                  <AlertOctagon className="h-4 w-4 flex-shrink-0 mt-0.5 animate-pulse" />
+                  <AlertOctagon className="mt-0.5 h-4 w-4 flex-shrink-0 animate-pulse" />
                   <p className="leading-snug">{getTooltipMessage()}</p>
                 </div>
                 {/* Seta do tooltip */}
@@ -177,7 +177,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
           )}
         </div>
       )}
-      
+
       <GenericCard
         item={ingredient}
         badges={badges}

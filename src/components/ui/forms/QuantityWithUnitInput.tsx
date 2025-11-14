@@ -78,7 +78,7 @@ const QuantityWithUnitInput = ({
     if (!allowDecimals) {
       // Remove tudo que não é dígito
       inputValue = inputValue.replace(/\D/g, '');
-      
+
       if (!inputValue) {
         setDisplayValue('');
         setValue('quantity', '', { shouldValidate: true });
@@ -95,7 +95,7 @@ const QuantityWithUnitInput = ({
     } else {
       // Remove tudo que não é dígito, vírgula ou ponto
       inputValue = inputValue.replace(/[^\d.,]/g, '');
-      
+
       // Substitui vírgula por ponto para cálculos
       inputValue = inputValue.replace(',', '.');
 

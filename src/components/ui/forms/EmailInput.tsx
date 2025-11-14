@@ -42,12 +42,12 @@ export default function EmailInput({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    
+
     // Aplica máscara (remove caracteres inválidos)
     const masked = emailMask(inputValue);
     setDisplayValue(masked);
     onChange(masked);
-    
+
     // Limpa erro de validação ao digitar
     if (validationError) {
       setValidationError('');
@@ -86,9 +86,7 @@ export default function EmailInput({
       />
 
       {(error || validationError) && (
-        <span className="text-destructive text-sm font-medium">
-          {error || validationError}
-        </span>
+        <span className="text-destructive text-sm font-medium">{error || validationError}</span>
       )}
     </div>
   );

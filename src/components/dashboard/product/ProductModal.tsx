@@ -388,10 +388,10 @@ const IngredientsTab = memo<{ product: ProductState }>(({ product }) => {
             className="flex items-center justify-between rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100"
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ 
+            transition={{
               duration: 0.2,
               delay: index * 0.03,
-              ease: 'easeOut'
+              ease: 'easeOut',
             }}
           >
             <div className="flex items-center gap-3">

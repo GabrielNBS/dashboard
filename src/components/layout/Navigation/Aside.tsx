@@ -22,7 +22,15 @@ interface MenuItemProps {
   badgeAlert?: boolean;
 }
 
-function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded, badgeAlert }: MenuItemProps) {
+function MenuItem({
+  label,
+  href,
+  icon,
+  lordIconSrc,
+  isActive,
+  isExpanded,
+  badgeAlert,
+}: MenuItemProps) {
   const [isHovered, setIsHovered] = React.useState(false);
   const iconRef = React.useRef<LordIconRef>(null);
 
@@ -78,13 +86,13 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded, badgeA
                 );
               })()
             )}
-            
+
             {/* Badge de alerta */}
             {badgeAlert && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-card"
+                className="ring-card absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2"
                 aria-label="Alerta de estoque crítico"
               />
             )}

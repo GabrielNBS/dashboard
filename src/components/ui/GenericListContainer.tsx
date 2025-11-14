@@ -153,7 +153,8 @@ export function GenericListContainer<T extends FilterableItem>({
             <div className="bg-accent/50 flex flex-col gap-2 rounded-lg p-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-0">
               <span className="text-primary">
                 Mostrando <strong>{filterStats?.filteredCount || 0}</strong> de{' '}
-                <strong>{filterStats?.totalCount || 0}</strong> {filterStats?.itemNamePlural || 'itens'}
+                <strong>{filterStats?.totalCount || 0}</strong>{' '}
+                {filterStats?.itemNamePlural || 'itens'}
               </span>
               {filterStats?.onClearFilters && (
                 <Button
@@ -207,7 +208,10 @@ export function GenericListContainer<T extends FilterableItem>({
             </p>
             {finalEmptyState.action && (
               <div className="mt-2 sm:mt-4">
-                <Button onClick={finalEmptyState.action.onClick} className="flex items-center gap-2">
+                <Button
+                  onClick={finalEmptyState.action.onClick}
+                  className="flex items-center gap-2"
+                >
                   {finalEmptyState.action.icon || <Plus className="h-4 w-4" />}
                   {finalEmptyState.action.label}
                 </Button>
@@ -268,7 +272,6 @@ export function createSearchConfig(
     className,
   };
 }
-
 
 export function createFilterStatsConfig(
   totalCount: number,

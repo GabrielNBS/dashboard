@@ -39,7 +39,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
  */
 export default function Input({ label, error, size = 'md', className, id, ...props }: InputProps) {
   const generatedId = useId();
-  
+
   const sizeClasses = {
     sm: 'px-3 py-2 text-sm',
     md: 'px-4 py-3 text-sm',

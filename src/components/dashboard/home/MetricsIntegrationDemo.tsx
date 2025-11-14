@@ -10,13 +10,12 @@ const MetricsIntegrationDemo = memo(function MetricsIntegrationDemo() {
   const { summary, chartData } = useDashboardMetrics();
 
   const stats = useMemo(() => {
-    const avgRevenue = chartData.length > 0
-      ? chartData.reduce((sum, day) => sum + day.revenue, 0) / chartData.length
-      : 0;
-    
-    const bestDay = chartData.length > 0
-      ? Math.max(...chartData.map(day => day.revenue))
-      : 0;
+    const avgRevenue =
+      chartData.length > 0
+        ? chartData.reduce((sum, day) => sum + day.revenue, 0) / chartData.length
+        : 0;
+
+    const bestDay = chartData.length > 0 ? Math.max(...chartData.map(day => day.revenue)) : 0;
 
     return { avgRevenue, bestDay };
   }, [chartData]);

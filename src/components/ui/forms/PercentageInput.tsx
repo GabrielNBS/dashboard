@@ -86,7 +86,7 @@ export default function PercentageInput({
 
     // Remove tudo que não é dígito ou vírgula/ponto
     inputValue = inputValue.replace(/[^\d.,]/g, '');
-    
+
     // Substitui vírgula por ponto para cálculos
     inputValue = inputValue.replace(',', '.');
 
@@ -105,7 +105,7 @@ export default function PercentageInput({
       parts[1] = parts[1].substring(0, 2); // Máximo 2 casas decimais
       inputValue = parts.join('.');
     }
-    
+
     // Aplica limites de valor
     const numValue = parseFloat(inputValue);
     if (!isNaN(numValue)) {
@@ -113,7 +113,7 @@ export default function PercentageInput({
       if (numValue > maxValue) {
         return;
       }
-      
+
       const limitedValue = Math.max(numValue, minValue);
       const limitedStr = limitedValue.toString();
       setDisplayValue(limitedStr);

@@ -7,11 +7,11 @@ export default function DashboardLoading() {
         <div className="h-4 w-48 animate-pulse rounded-lg bg-gray-200" />
       </div>
 
-      <section className="grid gap-6 lresg:grid-cols-4">
+      <section className="lresg:grid-cols-4 grid gap-6">
         <div className="lg:col-span-3">
           {/* Cards Skeleton */}
           <div className="hidden grid-cols-4 gap-6 lg:grid">
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2, 3, 4].map(i => (
               <div key={i} className="h-32 animate-pulse rounded-lg bg-gray-200" />
             ))}
           </div>

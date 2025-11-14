@@ -203,7 +203,8 @@ export const ProductCard = memo(
       prevProps.isExpanded === nextProps.isExpanded &&
       prevProps.product.production.profitMargin === nextProps.product.production.profitMargin &&
       prevProps.product.production.totalCost === nextProps.product.production.totalCost &&
-      prevProps.product.production.unitSellingPrice === nextProps.product.production.unitSellingPrice
+      prevProps.product.production.unitSellingPrice ===
+        nextProps.product.production.unitSellingPrice
     );
   }
 );

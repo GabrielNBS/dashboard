@@ -37,68 +37,81 @@ export const PERCENTAGE_LIMITS = {
  * Schema para validação de ingredientes
  * Todas as validações são feitas via schema, sem validações manuais
  */
-export const ingredientSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Nome é obrigatório')
-    .min(2, 'Nome deve ter pelo menos 2 caracteres')
-    .max(50, 'Nome deve ter no máximo 50 caracteres')
-    .trim()
-    .transform(val => val.replace(/[<>]/g, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')),
+export const ingredientSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, 'Nome é obrigatório')
+      .min(2, 'Nome deve ter pelo menos 2 caracteres')
+      .max(50, 'Nome deve ter no máximo 50 caracteres')
+      .trim()
+      .transform(val =>
+        val
+          .replace(/[<>]/g, '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+      ),
 
-  quantity: z
-    .string()
-    .min(1, 'Quantidade é obrigatória')
-    .refine(val => {
-      const num = parseFloat(val);
-      return !isNaN(num) && num > 0;
-    }, 'Quantidade deve ser um número maior que zero'),
+    quantity: z
+      .string()
+      .min(1, 'Quantidade é obrigatória')
+      .refine(val => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num > 0;
+      }, 'Quantidade deve ser um número maior que zero'),
 
-  unit: z.enum(['kg', 'l', 'un', 'g', 'ml']),
+    unit: z.enum(['kg', 'l', 'un', 'g', 'ml']),
 
-  buyPrice: z
-    .string()
-    .min(1, 'Preço de compra é obrigatório')
-    .refine(val => {
-      const num = parseFloat(val);
-      return !isNaN(num) && num >= CURRENCY_LIMITS.ingredient.min;
-    }, `Preço deve ser no mínimo R$ ${CURRENCY_LIMITS.ingredient.min.toFixed(2)}`)
-    .refine(val => {
-      const num = parseFloat(val);
-      return num <= CURRENCY_LIMITS.ingredient.max;
-    }, `Preço não pode ser maior que R$ ${CURRENCY_LIMITS.ingredient.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`),
-}).superRefine((data, ctx) => {
-  // Validação dinâmica da quantidade baseada na unidade
-  const num = parseFloat(data.quantity);
-  const limits = UNIT_LIMITS[data.unit as keyof typeof UNIT_LIMITS];
-  
-  if (limits) {
-    if (num < limits.min) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['quantity'],
-        message: `Quantidade mínima: ${limits.min} ${data.unit}`,
-      });
+    buyPrice: z
+      .string()
+      .min(1, 'Preço de compra é obrigatório')
+      .refine(
+        val => {
+          const num = parseFloat(val);
+          return !isNaN(num) && num >= CURRENCY_LIMITS.ingredient.min;
+        },
+        `Preço deve ser no mínimo R$ ${CURRENCY_LIMITS.ingredient.min.toFixed(2)}`
+      )
+      .refine(
+        val => {
+          const num = parseFloat(val);
+          return num <= CURRENCY_LIMITS.ingredient.max;
+        },
+        `Preço não pode ser maior que R$ ${CURRENCY_LIMITS.ingredient.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+      ),
+  })
+  .superRefine((data, ctx) => {
+    // Validação dinâmica da quantidade baseada na unidade
+    const num = parseFloat(data.quantity);
+    const limits = UNIT_LIMITS[data.unit as keyof typeof UNIT_LIMITS];
+
+    if (limits) {
+      if (num < limits.min) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['quantity'],
+          message: `Quantidade mínima: ${limits.min} ${data.unit}`,
+        });
+      }
+
+      if (num > limits.max) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['quantity'],
+          message: `Quantidade máxima: ${limits.max} ${data.unit}`,
+        });
+      }
+
+      // Validar decimais para unidades inteiras
+      if (limits.decimals === 0 && !Number.isInteger(num)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['quantity'],
+          message: `${data.unit} deve ser um número inteiro`,
+        });
+      }
     }
-    
-    if (num > limits.max) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['quantity'],
-        message: `Quantidade máxima: ${limits.max} ${data.unit}`,
-      });
-    }
-    
-    // Validar decimais para unidades inteiras
-    if (limits.decimals === 0 && !Number.isInteger(num)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['quantity'],
-        message: `${data.unit} deve ser um número inteiro`,
-      });
-    }
-  }
-});
+  });
 
 /**
  * Schema para validação de produtos finais
@@ -110,7 +123,12 @@ export const finalProductSchema = z.object({
     .min(2, 'Nome deve ter pelo menos 2 caracteres')
     .max(100, 'Nome deve ter no máximo 100 caracteres')
     .trim()
-    .transform(val => val.replace(/[<>]/g, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')),
+    .transform(val =>
+      val
+        .replace(/[<>]/g, '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+    ),
 
   category: z
     .string()
@@ -131,14 +149,20 @@ export const finalProductSchema = z.object({
   sellingPrice: z
     .string()
     .min(1, 'Preço de venda é obrigatório')
-    .refine(val => {
-      const num = parseFloat(val);
-      return !isNaN(num) && num >= CURRENCY_LIMITS.product.min;
-    }, `Preço deve ser no mínimo R$ ${CURRENCY_LIMITS.product.min.toFixed(2)}`)
-    .refine(val => {
-      const num = parseFloat(val);
-      return num <= CURRENCY_LIMITS.product.max;
-    }, `Preço não pode ser maior que R$ ${CURRENCY_LIMITS.product.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`),
+    .refine(
+      val => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num >= CURRENCY_LIMITS.product.min;
+      },
+      `Preço deve ser no mínimo R$ ${CURRENCY_LIMITS.product.min.toFixed(2)}`
+    )
+    .refine(
+      val => {
+        const num = parseFloat(val);
+        return num <= CURRENCY_LIMITS.product.max;
+      },
+      `Preço não pode ser maior que R$ ${CURRENCY_LIMITS.product.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    ),
 
   profitMargin: z
     .string()
@@ -162,9 +186,7 @@ export const paymentSchema = z.object({
 
   discount: z.object({
     type: z.enum(['percentage', 'fixed']),
-    value: z
-      .number()
-      .min(0, 'Desconto não pode ser negativo'),
+    value: z.number().min(0, 'Desconto não pode ser negativo'),
   }),
 });
 
@@ -184,10 +206,13 @@ export const fixedCostSchema = z.object({
       const num = parseFloat(val);
       return !isNaN(num) && num >= 0;
     }, 'Valor deve ser maior ou igual a zero')
-    .refine(val => {
-      const num = parseFloat(val);
-      return num <= CURRENCY_LIMITS.fixedCost.max;
-    }, `Valor não pode ser maior que R$ ${CURRENCY_LIMITS.fixedCost.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`),
+    .refine(
+      val => {
+        const num = parseFloat(val);
+        return num <= CURRENCY_LIMITS.fixedCost.max;
+      },
+      `Valor não pode ser maior que R$ ${CURRENCY_LIMITS.fixedCost.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    ),
 
   recurrence: z.enum(['diario', 'semanal', 'mensal', 'anual']),
   category: z.enum(['aluguel', 'energia', 'agua', 'internet', 'funcionarios', 'outros']),
@@ -220,10 +245,13 @@ export const variableCostSchema = z.object({
       const num = parseFloat(val);
       return !isNaN(num) && num >= 0;
     }, 'Valor não pode ser negativo')
-    .refine(val => {
-      const num = parseFloat(val);
-      return num <= CURRENCY_LIMITS.variableCost.max;
-    }, `Valor não pode ser maior que R$ ${CURRENCY_LIMITS.variableCost.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`),
+    .refine(
+      val => {
+        const num = parseFloat(val);
+        return num <= CURRENCY_LIMITS.variableCost.max;
+      },
+      `Valor não pode ser maior que R$ ${CURRENCY_LIMITS.variableCost.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    ),
 });
 
 /**
@@ -233,22 +261,34 @@ export const paymentFeeSchema = z.object({
   cash: z
     .number()
     .min(0, 'Taxa não pode ser negativa')
-    .max(PERCENTAGE_LIMITS.paymentFee.max, `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`),
+    .max(
+      PERCENTAGE_LIMITS.paymentFee.max,
+      `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`
+    ),
 
   debit: z
     .number()
     .min(0, 'Taxa não pode ser negativa')
-    .max(PERCENTAGE_LIMITS.paymentFee.max, `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`),
+    .max(
+      PERCENTAGE_LIMITS.paymentFee.max,
+      `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`
+    ),
 
   credit: z
     .number()
     .min(0, 'Taxa não pode ser negativa')
-    .max(PERCENTAGE_LIMITS.paymentFee.max, `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`),
+    .max(
+      PERCENTAGE_LIMITS.paymentFee.max,
+      `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`
+    ),
 
   ifood: z
     .number()
     .min(0, 'Taxa não pode ser negativa')
-    .max(PERCENTAGE_LIMITS.paymentFee.max, `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`),
+    .max(
+      PERCENTAGE_LIMITS.paymentFee.max,
+      `Taxa não pode ser maior que ${PERCENTAGE_LIMITS.paymentFee.max}%`
+    ),
 });
 
 /**
@@ -267,20 +307,20 @@ export type PaymentFeeFormData = z.infer<typeof paymentFeeSchema>;
  */
 export function validateQuantityByUnit(quantity: number, unit: UnitType): string | null {
   const limits = UNIT_LIMITS[unit as keyof typeof UNIT_LIMITS];
-  
+
   if (!limits) return 'Unidade inválida';
-  
+
   if (quantity < limits.min) {
     return `Quantidade mínima: ${limits.min} ${unit}`;
   }
-  
+
   if (quantity > limits.max) {
     return `Quantidade máxima: ${limits.max} ${unit}`;
   }
-  
+
   if (limits.decimals === 0 && !Number.isInteger(quantity)) {
     return `${unit} deve ser um número inteiro`;
   }
-  
+
   return null;
 }

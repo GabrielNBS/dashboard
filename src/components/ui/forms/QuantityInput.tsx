@@ -101,7 +101,7 @@ export default function QuantityInput({
     if (!allowDecimals) {
       // Remove tudo que não é dígito
       inputValue = inputValue.replace(/\D/g, '');
-      
+
       if (!inputValue) {
         setDisplayValue('');
         onChange('');
@@ -114,7 +114,7 @@ export default function QuantityInput({
         if (numValue > maxValue) {
           return;
         }
-        
+
         const limitedValue = Math.max(numValue, minValue);
         const limitedStr = limitedValue.toString();
         setDisplayValue(limitedStr);
@@ -123,7 +123,7 @@ export default function QuantityInput({
     } else {
       // Remove tudo que não é dígito, vírgula ou ponto
       inputValue = inputValue.replace(/[^\d.,]/g, '');
-      
+
       // Substitui vírgula por ponto para cálculos
       inputValue = inputValue.replace(',', '.');
 
@@ -150,7 +150,7 @@ export default function QuantityInput({
         if (numValue > maxValue) {
           return;
         }
-        
+
         const limitedValue = Math.max(numValue, minValue);
         const limitedStr = limitedValue.toString();
         setDisplayValue(limitedStr);

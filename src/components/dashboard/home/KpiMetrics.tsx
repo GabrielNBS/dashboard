@@ -316,7 +316,7 @@ const FinancialChart = memo(function FinancialChart({
 
   return (
     <div className="min-full mx-auto w-full max-w-7xl">
-      <div className="mb-6 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800 sm:p-6">
+      <div className="mb-6 rounded-lg bg-white p-4 shadow-sm sm:p-6 dark:bg-gray-800">
         <div className="mb-4 flex flex-wrap items-center justify-center gap-2 sm:mb-6 sm:justify-between sm:gap-4">
           <div className="flex flex-wrap justify-center gap-2">
             {chartTypes.map(chart => (

@@ -99,7 +99,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             aria-labelledby={`toast-title-${id}`}
             aria-describedby={description ? `toast-description-${id}` : undefined}
           >
-            <div id={`toast-title-${id}`} className="flex items-center gap-2 text-base font-semibold">
+            <div
+              id={`toast-title-${id}`}
+              className="flex items-center gap-2 text-base font-semibold"
+            >
               {icon}
               <strong>{title}</strong>
             </div>

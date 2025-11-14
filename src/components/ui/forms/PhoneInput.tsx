@@ -47,15 +47,15 @@ export default function PhoneInput({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    
+
     // Aplica máscara
     const masked = phoneMask(inputValue);
     setDisplayValue(masked);
-    
+
     // Remove máscara para passar valor limpo
     const unmasked = unmaskPhone(masked);
     onChange(unmasked);
-    
+
     // Limpa erro de validação ao digitar
     if (validationError) {
       setValidationError('');
@@ -95,9 +95,7 @@ export default function PhoneInput({
       />
 
       {(error || validationError) && (
-        <span className="text-destructive text-sm font-medium">
-          {error || validationError}
-        </span>
+        <span className="text-destructive text-sm font-medium">{error || validationError}</span>
       )}
     </div>
   );
