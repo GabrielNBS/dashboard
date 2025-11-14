@@ -142,11 +142,10 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 // Provider
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  // Hook com debounce de 1000ms para settings (menos frequente que outros)
+  // Hook para gerenciar settings no localStorage
   const [storedSettings, setStoredSettings] = useLocalStorage<AppSettings>(
     'dashboard-settings',
-    defaultSettings,
-    1000
+    defaultSettings
   );
 
   const [state, dispatch] = useReducer(settingsReducer, storedSettings);
