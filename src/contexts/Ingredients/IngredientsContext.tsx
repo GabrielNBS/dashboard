@@ -162,11 +162,10 @@ export const IngredientContext = createContext<IngredientContextType | undefined
  * Provider do contexto de ingredientes
  */
 export const IngredientProvider = ({ children }: { children: ReactNode }) => {
-  // Hook com debounce de 500ms para ingredientes
+  // Hook para gerenciar ingredientes no localStorage
   const [storedIngredients, setStoredIngredients] = useLocalStorage<Ingredient[]>(
     'ingredients',
-    [],
-    500
+    []
   );
 
   const [state, dispatch] = useReducer(ingredientReducer, {
