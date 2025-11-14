@@ -10,6 +10,7 @@ import { useSidebar } from '../MainLayout';
 import { LogOut } from 'lucide-react';
 import LordIcon, { LordIconRef } from '@/components/ui/LordIcon';
 import { useSettings } from '@/contexts/settings/SettingsContext';
+import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 
 interface MenuItemProps {
   label: string;
@@ -18,9 +19,10 @@ interface MenuItemProps {
   lordIconSrc?: string;
   isActive: boolean;
   isExpanded: boolean;
+  badgeAlert?: boolean;
 }
 
-function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: MenuItemProps) {
+function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded, badgeAlert }: MenuItemProps) {
   const [isHovered, setIsHovered] = React.useState(false);
   const iconRef = React.useRef<LordIconRef>(null);
 
@@ -50,31 +52,43 @@ function MenuItem({ label, href, icon, lordIconSrc, isActive, isExpanded }: Menu
           onMouseLeave={handleMouseLeave}
           className="flex w-full items-center"
         >
-          {icon === 'lordicon' && lordIconSrc ? (
-            <LordIcon
-              ref={iconRef}
-              src={lordIconSrc}
-              width={20}
-              height={20}
-              className="flex-shrink-0"
-              isActive={isActive}
-              isHovered={isHovered}
-            />
-          ) : (
-            typeof icon !== 'string' &&
-            (() => {
-              const IconComponent = icon as React.ComponentType<{ className?: string }>;
-              return (
-                <IconComponent
-                  className={`h-5 w-5 flex-shrink-0 transition-colors ${
-                    isActive
-                      ? 'text-primary-foreground'
-                      : 'text-muted-foreground group-hover/item:text-foreground'
-                  }`}
-                />
-              );
-            })()
-          )}
+          <div className="relative">
+            {icon === 'lordicon' && lordIconSrc ? (
+              <LordIcon
+                ref={iconRef}
+                src={lordIconSrc}
+                width={20}
+                height={20}
+                className="flex-shrink-0"
+                isActive={isActive}
+                isHovered={isHovered}
+              />
+            ) : (
+              typeof icon !== 'string' &&
+              (() => {
+                const IconComponent = icon as React.ComponentType<{ className?: string }>;
+                return (
+                  <IconComponent
+                    className={`h-5 w-5 flex-shrink-0 transition-colors ${
+                      isActive
+                        ? 'text-primary-foreground'
+                        : 'text-muted-foreground group-hover/item:text-foreground'
+                    }`}
+                  />
+                );
+              })()
+            )}
+            
+            {/* Badge de alerta */}
+            {badgeAlert && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-card"
+                aria-label="Alerta de estoque crítico"
+              />
+            )}
+          </div>
 
           <motion.span
             initial={false}
@@ -154,6 +168,7 @@ export default function Aside() {
   const pathname = usePathname();
   const { isExpanded, setIsExpanded } = useSidebar();
   const { state } = useSettings();
+  const { state: ingredientState } = useIngredientContext();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -162,6 +177,18 @@ export default function Aside() {
 
   // Evita problemas de hidratação usando um fallback consistente
   const logoSrc = mounted && state.store.logo ? state.store.logo : 'https://placehold.co/150';
+
+  // Verifica se há ingredientes com estoque crítico (zerado ou abaixo de 20% do máximo)
+  // O badge só aparece quando NÃO estiver na página de estoque
+  const hasCriticalStock = React.useMemo(() => {
+    const isOnStorePage = pathname === '/store';
+    if (isOnStorePage) return false;
+
+    return ingredientState.ingredients.some(ingredient => {
+      const criticalThreshold = ingredient.maxQuantity * 0.2;
+      return ingredient.totalQuantity === 0 || ingredient.totalQuantity <= criticalThreshold;
+    });
+  }, [ingredientState.ingredients, pathname]);
 
   return (
     <motion.aside
@@ -199,6 +226,7 @@ export default function Aside() {
       {/* Separador */}
       <div className="border-border mx-4 border-t" />
 
+      {/* Menu Itens */}
       <nav className="flex-1 overflow-hidden px-2 py-4" aria-label="Menu principal">
         <ul className="space-y-2" role="list">
           {menuItems.map(item => {
@@ -214,6 +242,7 @@ export default function Aside() {
                 lordIconSrc={lordIconSrc}
                 isActive={isActive}
                 isExpanded={isExpanded}
+                badgeAlert={label === 'Estoque' && hasCriticalStock}
               />
             );
           })}
