@@ -3,6 +3,7 @@
 import React from 'react';
 import { Flag, TrendingUp, ChevronRight } from 'lucide-react';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
+import { Button } from '@/components/ui/base';
 
 interface GoalCardWrapperProps {
   title: string;
@@ -52,7 +53,7 @@ export default function GoalCardWrapper({
       <div className="w-full">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
-          <h3 className={`flex ${textColor} items-center gap-2 text-xs font-light sm:text-sm`}>
+          <h3 className={`flex ${textColor} items-center gap-2 text-xs font-normal sm:text-sm`}>
             <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
             {title}
           </h3>
@@ -73,7 +74,7 @@ export default function GoalCardWrapper({
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-2">
+        <div className="mb-6">
           <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
             <div
               className={`h-full rounded-full transition-all duration-500 ease-out ${getProgressColor(percentage)}`}
@@ -84,7 +85,7 @@ export default function GoalCardWrapper({
 
         {/* Status */}
         <div className="flex items-center justify-between">
-          <p className="text-muted-foreground text-xs sm:text-sm">
+          <p className="text-primary/80 text-xs sm:text-sm">
             {isInfinite
               ? 'Negócio não é viável com custos atuais'
               : isInvalid
@@ -94,7 +95,17 @@ export default function GoalCardWrapper({
                   : 'Meta alcançada 🎉'}
           </p>
           {onClick && (
-            <ChevronRight className="text-muted-foreground h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <Button
+              type="button"
+              className="group/btn"
+              onClick={e => {
+                e.stopPropagation();
+                onClick();
+              }}
+            >
+              Ver detalhes
+              <ChevronRight className="h-4 w-4 animate-[pulse_2s_ease-in-out_infinite] transition-transform group-hover/btn:translate-x-1 group-hover/btn:animate-none" />
+            </Button>
           )}
         </div>
       </div>

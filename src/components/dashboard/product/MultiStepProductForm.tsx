@@ -463,23 +463,23 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
   return (
     <div className="flex h-full max-h-[calc(100dvh-8rem)] flex-col overflow-hidden">
       {/* Header com progresso - altura fixa */}
-      <div className="flex-shrink-0 border-b border-gray-200 pb-4">
-        <div className="mb-3 flex items-center justify-end">
+      <div className="flex-shrink-0 border-b border-gray-200 pb-2 sm:pb-4">
+        <div className="mb-2 flex items-center justify-end sm:mb-3">
           <div>
-            <div className="text-xs text-gray-500">Progresso</div>
-            <div className="text-sm font-semibold text-gray-900">
+            <div className="text-[10px] text-gray-500 sm:text-xs">Progresso</div>
+            <div className="text-xs font-semibold text-gray-900 sm:text-sm">
               {currentStep + 1}/{STEPS.length}
             </div>
           </div>
         </div>
 
         {/* Indicador de steps - compacto */}
-        <div className="mb-3 flex justify-between">
+        <div className="mb-2 flex justify-between sm:mb-3">
           {STEPS.map((step, index) => (
             <div key={index} className="flex flex-1 items-center">
               <div className="flex flex-1 flex-col items-center">
                 <div
-                  className={`mb-1 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
+                  className={`mb-0.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 sm:mb-1 sm:h-8 sm:w-8 ${
                     index === currentStep
                       ? 'bg-primary text-secondary shadow-lg'
                       : index < currentStep
@@ -488,21 +488,21 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
                   }`}
                 >
                   {index < currentStep ? (
-                    <span className="text-sm">
-                      <Check />
+                    <span className="text-xs sm:text-sm">
+                      <Check className="h-3 w-3 sm:h-4 sm:w-4" />
                     </span>
                   ) : (
                     <LordIcon
                       src={step.icon}
-                      width={16}
-                      height={16}
+                      width={12}
+                      height={12}
                       isActive={index === currentStep}
                       isHovered={index === currentStep}
                     />
                   )}
                 </div>
                 <span
-                  className={`text-center text-xs font-medium ${
+                  className={`text-center text-[10px] font-medium sm:text-xs ${
                     index === currentStep
                       ? 'text-primary'
                       : index < currentStep
@@ -515,7 +515,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
               </div>
               {index < STEPS.length - 1 && (
                 <div
-                  className={`mx-2 h-0.5 flex-1 transition-all duration-300 ${
+                  className={`mx-1 h-0.5 flex-1 transition-all duration-300 sm:mx-2 ${
                     index < currentStep ? 'bg-green-600' : 'bg-gray-200'
                   }`}
                 />
@@ -534,20 +534,20 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
       </div>
 
       {/* Conteúdo do step atual - área flexível com scroll controlado */}
-      <div className="flex-1 overflow-y-auto py-4">
+      <div className="flex-1 overflow-y-auto py-2 sm:py-4">
         <div className="h-full">
           <CurrentStepComponent {...stepProps} />
         </div>
       </div>
 
       {/* Botões de navegação - altura fixa */}
-      <div className="flex-shrink-0 border-t border-gray-200 pt-4">
-        <div className="flex justify-between">
+      <div className="flex-shrink-0 border-t border-gray-200 pt-2 sm:pt-4">
+        <div className="flex justify-between gap-2">
           <Button
             type="button"
             onClick={prevStep}
             disabled={currentStep === 0}
-            className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
           >
             Voltar
           </Button>
@@ -557,19 +557,21 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50 sm:gap-2 sm:px-6 sm:py-2 sm:text-sm"
             >
               {isSubmitting ? (
                 <>
                   <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Salvando...
+                  <span className="hidden sm:inline">Salvando...</span>
+                  <span className="sm:hidden">...</span>
                 </>
               ) : (
                 <>
-                  <span>
-                    <CheckCheck />
+                  <CheckCheck className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">
+                    {isEditMode ? 'Atualizar Produto' : 'Criar Produto'}
                   </span>
-                  {isEditMode ? 'Atualizar Produto' : 'Criar Produto'}
+                  <span className="sm:hidden">{isEditMode ? 'Atualizar' : 'Criar'}</span>
                 </>
               )}
             </Button>
@@ -577,10 +579,11 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
             <Button
               type="button"
               onClick={nextStep}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+              className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700 sm:gap-2 sm:px-4 sm:py-2 sm:text-sm"
             >
-              Próximo
-              <span>→</span>
+              <span className="hidden sm:inline">Próximo</span>
+              <span className="sm:hidden">→</span>
+              <span className="hidden sm:inline">→</span>
             </Button>
           )}
         </div>

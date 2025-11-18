@@ -1,5 +1,4 @@
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
-import { tv } from 'tailwind-variants';
 
 interface CostPreviewsProps {
   unitCost: number;
@@ -8,51 +7,13 @@ interface CostPreviewsProps {
   mode: 'individual' | 'lote';
 }
 
-// Cria estilos com tailwind-variants
-const card = tv({
-  slots: {
-    base: 'rounded-lg border-t-4 bg-card p-4 shadow-md',
-    label: 'text-sm font-medium text-muted-foreground',
-    value: 'text-2xl text-primary font-bold',
-    description: 'mt-1 text-xs text-muted-foreground',
-  },
-  variants: {
-    type: {
-      cost: {
-        base: 'border-on-bad',
-      },
-      price: {
-        base: 'border-on-info',
-      },
-      profit: {
-        base: 'border-on-great',
-      },
-      loss: {
-        base: 'border-on-bad',
-      },
-    },
-  },
-});
-
-interface InfoCardProps {
+interface CardData {
   label: string;
   value: string;
   description: string;
-  type: 'cost' | 'price' | 'profit' | 'loss';
+  borderColor: string;
+  background: string;
 }
-
-const InfoCard = ({ label, value, description, type }: InfoCardProps) => {
-  const styles = card({ type });
-  return (
-    <div className={styles.base()}>
-      <div className="mb-2 flex items-center justify-between">
-        <span className={styles.label()}>{label}</span>
-      </div>
-      <div className={styles.value()}>{value}</div>
-      <p className={styles.description()}>{description}</p>
-    </div>
-  );
-};
 
 export default function CostPreviews({
   unitCost,
@@ -62,31 +23,41 @@ export default function CostPreviews({
 }: CostPreviewsProps) {
   const isProfit = realProfitMargin >= 0;
 
-  const cards: InfoCardProps[] = [
+  const cards: CardData[] = [
     {
       label: mode === 'individual' ? 'Custo Total' : 'Custo por Unidade',
       value: formatCurrency(unitCost),
       description: 'Soma dos ingredientes',
-      type: 'cost',
+      borderColor: 'border-primary',
+      background: 'bg-card',
     },
     {
       label: mode === 'individual' ? 'Preço Sugerido' : 'Preço por Unidade',
       value: formatCurrency(suggestedPrice),
       description: 'Baseado na margem',
-      type: 'price',
+      borderColor: 'border-primary',
+      background: 'bg-card',
     },
     {
       label: 'Margem Real',
       value: `${realProfitMargin.toFixed(1)}%`,
       description: isProfit ? 'Lucro positivo' : 'Prejuízo',
-      type: isProfit ? 'profit' : 'loss',
+      borderColor: isProfit ? 'border-green-500' : 'border-destructive',
+      background: isProfit ? 'bg-green-500/10' : 'bg-destructive/10',
     },
   ];
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {cards.map((card, i) => (
-        <InfoCard key={i} {...card} />
+      {cards.map((card, index) => (
+        <div
+          key={index}
+          className={`rounded-lg border-t-4 ${card.borderColor} ${card.background} p-4 shadow-sm transition-shadow hover:shadow-md`}
+        >
+          <span className="text-muted-foreground text-sm font-medium">{card.label}</span>
+          <div className="text-foreground mt-2 text-2xl font-bold">{card.value}</div>
+          <p className="text-muted-foreground mt-1 text-xs">{card.description}</p>
+        </div>
       ))}
     </div>
   );

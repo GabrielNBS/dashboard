@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Button from '@/components/ui/base/Button';
 import { PackagePlus, Plus } from 'lucide-react';
 import ProductsList from '@/components/dashboard/product/ProductsList';
@@ -19,6 +21,12 @@ export default function Product() {
   const { state, dispatch } = useProductContext();
   const { dispatch: builderDispatch } = useProductBuilderContext();
   const { products } = state;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   const handleToggleForm = () => {
     dispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
@@ -32,18 +40,22 @@ export default function Product() {
         title="Produtos"
         subtitle="Gerencie seus produtos e produza lotes quando necessário"
       />
-      {products.length > 0 && (
-        <Button
-          type="button"
-          size="md"
-          className="fixed right-15 bottom-4 z-10"
-          onClick={handleToggleForm}
-          aria-label="Criar novo produto"
-        >
-          <Plus className="mr-1" aria-hidden="true" />
-          Novo Produto
-        </Button>
-      )}
+      {products.length > 0 &&
+        mounted &&
+        createPortal(
+          <Button
+            type="button"
+            size="md"
+            className="fixed right-4 bottom-4 z-20 shadow-lg sm:right-6 sm:bottom-6"
+            onClick={handleToggleForm}
+            aria-label="Criar novo produto"
+          >
+            <Plus className="mr-1" aria-hidden="true" />
+            <span className="hidden sm:inline">Novo Produto</span>
+            <span className="sm:hidden">Criar produto</span>
+          </Button>,
+          document.body
+        )}
 
       {products.length === 0 ? (
         <section

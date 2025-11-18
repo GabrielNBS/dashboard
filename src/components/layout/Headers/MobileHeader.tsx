@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/base/Button';
+import Image from 'next/image';
 import {
   Home,
   Package,
@@ -17,6 +18,7 @@ import {
   X,
   User,
 } from 'lucide-react';
+import { useSettings } from '@/contexts/settings/SettingsContext';
 
 const menuItems = [
   { label: 'Dashboard', href: '/', icon: Home },
@@ -30,6 +32,7 @@ const menuItems = [
 
 export default function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { state } = useSettings();
   const pathname = usePathname();
 
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
@@ -37,7 +40,7 @@ export default function MobileHeader() {
 
   // Encontrar a página atual para mostrar no header
   const currentPage = menuItems.find(item => item.href === pathname);
-  const pageTitle = currentPage?.label || 'Kiro';
+  const pageTitle = currentPage?.label || 'Regula';
 
   return (
     <>
@@ -103,10 +106,10 @@ export default function MobileHeader() {
             <div className="border-border flex items-center justify-between border-b p-4">
               <div className="flex items-center gap-3">
                 <div className="from-primary to-primary/80 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm">
-                  <span className="text-primary-foreground text-lg font-bold">K</span>
+                  <span className="text-primary-foreground text-lg font-bold">R</span>
                 </div>
                 <div>
-                  <h2 className="text-foreground text-lg font-bold">Kiro</h2>
+                  <h2 className="text-foreground text-lg font-bold">Regula</h2>
                   <p className="text-muted-foreground text-xs">Sistema de Gestão</p>
                 </div>
               </div>
@@ -159,12 +162,18 @@ export default function MobileHeader() {
             {/* Footer do menu */}
             <div className="border-border border-t p-4">
               <div className="bg-muted flex items-center gap-3 rounded-xl px-3 py-3">
-                <div className="bg-muted-foreground/20 flex h-8 w-8 items-center justify-center rounded-full">
-                  <User className="text-muted-foreground h-4 w-4" />
-                </div>
+                <Image
+                  src={state.store.logo || 'https://via.placeholder.com/150'}
+                  alt="User Avatar"
+                  width={32}
+                  height={32}
+                />
+
                 <div className="min-w-0 flex-1">
                   <p className="text-foreground truncate text-sm font-medium">Usuário</p>
-                  <p className="text-muted-foreground truncate text-xs">user@example.com</p>
+                  <p className="text-muted-foreground truncate text-xs">
+                    {state.store.email || 'email@example.com'}
+                  </p>
                 </div>
               </div>
             </div>

@@ -150,16 +150,16 @@ export default function IngredientSelector() {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div>
-        <label className="text-card-foreground mb-2 block text-sm font-medium">
+        <label className="text-card-foreground mb-1.5 block text-xs font-medium sm:mb-2 sm:text-sm">
           Buscar ingrediente
         </label>
         <SearchableInput<Ingredient>
           items={ingredientsWithStock}
           onSelectItem={handleSelectIngredient}
           displayAttribute="name"
-          placeholder="Digite o nome do ingrediente..."
+          placeholder="Digite o nome..."
           inputValue={inputValue}
           onInputChange={setInputValue}
           className="bg-surface rounded-md"
@@ -167,87 +167,95 @@ export default function IngredientSelector() {
       </div>
 
       {selectedIngredient && (
-        <div className="border-border bg-card space-y-4 rounded-lg border p-4">
+        <div className="border-border bg-card space-y-3 rounded-lg border p-3 sm:space-y-4 sm:p-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-card-foreground font-medium">{selectedIngredient.name}</h4>
-            <span className="bg-muted text-muted-foreground rounded-full px-2 py-1 text-xs">
+            <h4 className="text-card-foreground text-sm font-medium sm:text-base">
+              {selectedIngredient.name}
+            </h4>
+            <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[10px] sm:px-2 sm:py-1 sm:text-xs">
               {selectedIngredient.unit}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="rounded-lg bg-[var(--color-info)] p-3">
-              <p className="font-medium text-[var(--color-on-info)]">Preço médio</p>
-              <p className="font-semibold text-[var(--color-on-info)]">
+          <div className="grid grid-cols-2 gap-2 text-xs sm:gap-4 sm:text-sm">
+            <div className="rounded-lg bg-[var(--color-info)] p-2 sm:p-3">
+              <p className="text-[10px] font-medium text-[var(--color-on-info)] sm:text-xs">
+                Preço médio
+              </p>
+              <p className="text-xs font-semibold text-[var(--color-on-info)] sm:text-sm">
                 {selectedIngredient.unit === 'un'
                   ? `R$ ${selectedIngredient.averageUnitPrice.toFixed(2)}`
                   : ` R$ ${selectedIngredient.averageUnitPrice.toFixed(3)}`}
                 /{getBaseUnit(selectedIngredient.unit)}
               </p>
             </div>
-            <div className="rounded-lg bg-[var(--color-great)] p-3">
-              <p className="font-medium text-[var(--color-on-great)]">Estoque disponível</p>
-              <p className="font-semibold text-[var(--color-on-great)]">
+            <div className="rounded-lg bg-[var(--color-great)] p-2 sm:p-3">
+              <p className="text-[10px] font-medium text-[var(--color-on-great)] sm:text-xs">
+                Estoque disponível
+              </p>
+              <p className="text-xs font-semibold text-[var(--color-on-great)] sm:text-sm">
                 {selectedIngredient.totalQuantity} {getBaseUnit(selectedIngredient.unit)}
               </p>
             </div>
           </div>
 
-          <div className="flex items-end gap-4">
-            <div className="flex-1">
-              <label className="text-card-foreground mb-1 block text-sm font-medium">
-                Quantidade necessária
-                {(selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l') && (
-                  <span className="text-muted-foreground ml-1 text-xs">
-                    (em {selectedIngredient.unit === 'kg' ? 'gramas' : 'mililitros'})
-                  </span>
-                )}
-              </label>
-              <QuantityInput
-                value={displayQuantity}
-                onChange={value => {
-                  setDisplayQuantity(value);
-                  const realValue = convertDisplayToReal(value, selectedIngredient.unit);
-                  setQuantity(realValue.toString());
-                }}
-                placeholder="0"
-                className="w-full"
-                unit={
-                  selectedIngredient.unit === 'kg'
-                    ? 'g'
-                    : selectedIngredient.unit === 'l'
-                      ? 'ml'
-                      : getBaseUnit(selectedIngredient.unit)
-                }
-                maxValue={
-                  selectedIngredient.unit === 'un'
-                    ? 1000
-                    : selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l'
-                      ? 100000
-                      : 100
-                }
-              />
-            </div>
-            <div className="flex-1">
-              <label className="text-card-foreground mb-1 block text-sm font-medium">
-                Custo total
-              </label>
-              <div className="border-border bg-muted rounded-lg border px-3 py-2 text-sm font-medium">
-                {getTotalPrice(displayQuantity, selectedIngredient)}
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex-1">
+                <label className="text-card-foreground mb-1 block text-xs font-medium sm:text-sm">
+                  Quantidade necessária
+                  {(selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l') && (
+                    <span className="text-muted-foreground ml-1 text-[10px] sm:text-xs">
+                      (em {selectedIngredient.unit === 'kg' ? 'gramas' : 'mililitros'})
+                    </span>
+                  )}
+                </label>
+                <QuantityInput
+                  value={displayQuantity}
+                  onChange={value => {
+                    setDisplayQuantity(value);
+                    const realValue = convertDisplayToReal(value, selectedIngredient.unit);
+                    setQuantity(realValue.toString());
+                  }}
+                  placeholder="0"
+                  className="w-full"
+                  unit={
+                    selectedIngredient.unit === 'kg'
+                      ? 'g'
+                      : selectedIngredient.unit === 'l'
+                        ? 'ml'
+                        : getBaseUnit(selectedIngredient.unit)
+                  }
+                  maxValue={
+                    selectedIngredient.unit === 'un'
+                      ? 1000
+                      : selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l'
+                        ? 100000
+                        : 100
+                  }
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-card-foreground mb-1 block text-xs font-medium sm:text-sm">
+                  Custo total
+                </label>
+                <div className="border-border bg-muted rounded-lg border px-2 py-2 text-xs font-medium sm:px-3 sm:text-sm">
+                  {getTotalPrice(displayQuantity, selectedIngredient)}
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
               <Button
                 type="button"
                 onClick={handleCancelSelection}
-                className="rounded-lg bg-[var(--color-danger)] px-4 py-2 text-sm font-medium text-[var(--color-on-danger)] transition-colors hover:bg-[var(--color-danger)]/80"
+                className="flex-1 rounded-lg bg-[var(--color-danger)] px-3 py-1.5 text-xs font-medium text-[var(--color-on-danger)] transition-colors hover:bg-[var(--color-danger)]/80 sm:flex-none sm:px-4 sm:py-2 sm:text-sm"
               >
                 Cancelar
               </Button>
               <Button
                 type="button"
                 onClick={handleAddIngredient}
-                className="disabled:bg-muted rounded-lg bg-[var(--color-great)] px-4 py-2 text-sm font-medium text-[var(--color-on-great)] transition-colors hover:bg-[var(--color-great)]/80 disabled:cursor-not-allowed"
+                className="disabled:bg-muted flex-1 rounded-lg bg-[var(--color-great)] px-3 py-1.5 text-xs font-medium text-[var(--color-on-great)] transition-colors hover:bg-[var(--color-great)]/80 disabled:cursor-not-allowed sm:flex-none sm:px-4 sm:py-2 sm:text-sm"
                 disabled={!hasEnoughStock(selectedIngredient, displayQuantity)}
               >
                 Adicionar
@@ -255,7 +263,7 @@ export default function IngredientSelector() {
             </div>
           </div>
 
-          <div className="bg-muted text-muted-foreground rounded p-2 text-xs">
+          <div className="bg-muted text-muted-foreground rounded p-2 text-[10px] sm:text-xs">
             <p>
               <strong>Quantidade na receita:</strong>{' '}
               {(() => {
@@ -280,15 +288,15 @@ export default function IngredientSelector() {
 
           {/* Mostrar informações dos batches disponíveis */}
           {selectedIngredient.batches.length > 0 && (
-            <details className="text-xs">
+            <details className="text-[10px] sm:text-xs">
               <summary className="text-muted-foreground hover:text-card-foreground cursor-pointer font-medium">
                 Ver lotes em estoque ({selectedIngredient.batches.length})
               </summary>
-              <div className="bg-muted mt-2 space-y-2 rounded p-3">
+              <div className="bg-muted mt-2 space-y-1.5 rounded p-2 sm:space-y-2 sm:p-3">
                 {selectedIngredient.batches.map(batch => (
                   <div
                     key={batch.id}
-                    className="text-muted-foreground flex items-center justify-between"
+                    className="text-muted-foreground flex flex-col gap-1 text-[10px] sm:flex-row sm:items-center sm:justify-between sm:text-xs"
                   >
                     <span>{new Date(batch.purchaseDate).toLocaleDateString()}</span>
                     <span className="font-medium">

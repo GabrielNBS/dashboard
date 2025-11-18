@@ -140,10 +140,12 @@ const QuantityWithUnitInput = ({
   const hasError = quantityError || unitError;
 
   return (
-    <div className="flex w-full flex-col gap-1">
+    <div className="flex w-full flex-col gap-2">
       {/* Label do campo */}
       {label && (
-        <label className="text-primary block text-center text-base font-medium">{label}</label>
+        <label className="text-primary block text-left text-base font-medium sm:text-center">
+          {label}
+        </label>
       )}
 
       <div className="flex w-full flex-col gap-2">
@@ -165,7 +167,7 @@ const QuantityWithUnitInput = ({
               onChange={handleQuantityChange}
               placeholder={placeholder}
               className={cn(
-                'flex-1 border-0 bg-transparent px-4 text-center text-lg font-medium outline-none',
+                'flex-1 border-0 bg-transparent px-4 text-center text-base font-medium outline-none sm:text-lg',
                 'placeholder:text-muted-foreground',
                 'focus:ring-0 focus:outline-none'
               )}
@@ -178,7 +180,7 @@ const QuantityWithUnitInput = ({
             <select
               {...register('unit')}
               className={cn(
-                'min-w-[100px] border-0 bg-transparent px-3 py-2 text-sm font-medium outline-none',
+                'min-w-[100px] border-0 bg-transparent px-3 py-2 text-base font-medium outline-none sm:text-sm',
                 'focus:ring-0 focus:outline-none',
                 !unitValue && 'text-muted-foreground'
               )}
@@ -193,7 +195,7 @@ const QuantityWithUnitInput = ({
         </div>
 
         {/* Botões de incremento rápido */}
-        <div className="flex flex-wrap justify-center gap-2">
+        <div className="mt-1 flex flex-wrap justify-center gap-2">
           {quickIncrements.map(inc => (
             <React.Fragment key={inc}>
               <Button
@@ -201,18 +203,18 @@ const QuantityWithUnitInput = ({
                 variant="outline"
                 size="sm"
                 onClick={() => adjustValue(-inc)}
-                className="h-8 px-3 text-xs font-medium"
+                className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
               >
-                <ChevronDown className="mr-1 h-3 w-3" />-{inc}
+                <ChevronDown className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />-{inc}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => adjustValue(inc)}
-                className="h-8 px-3 text-xs font-medium"
+                className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
               >
-                <ChevronUp className="mr-1 h-3 w-3" />+{inc}
+                <ChevronUp className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />+{inc}
               </Button>
             </React.Fragment>
           ))}

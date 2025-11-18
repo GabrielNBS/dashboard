@@ -36,10 +36,13 @@ const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
   };
 
   return (
-    <div className="flex w-full gap-4">
+    <div className="flex w-full flex-col gap-4">
       {/* Nome */}
-      <div className="flex w-full flex-col">
-        <label htmlFor="name" className="text-primary block text-center text-base font-medium">
+      <div className="flex w-full flex-col gap-2">
+        <label
+          htmlFor="name"
+          className="text-primary block text-left text-base font-medium sm:text-center"
+        >
           Nome do ingrediente
         </label>
         <Input
@@ -47,7 +50,7 @@ const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
           id="name"
           placeholder="Digite o nome do ingrediente"
           className={clsx(
-            'focus:border-primary focus:ring-primary h-14 rounded-xl border-2 px-4 text-lg transition-all focus:ring-2',
+            'focus:border-primary focus:ring-primary h-14 rounded-xl border-2 px-4 text-base transition-all focus:ring-2 sm:h-14 sm:text-lg',
             errors.name && 'border-on-critical focus:border-on-critical focus:ring-on-critical'
           )}
         />

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sale, PaymentMethod, PAYMENT_METHODS } from '@/types/sale';
+import { Sale, PaymentMethod } from '@/types/sale';
 import Button from '@/components/ui/base/Button';
 
 import { DollarSign, CreditCard } from 'lucide-react';
@@ -18,9 +18,9 @@ interface SalesTableProps {
 export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
   // Mapa de ícones por método de pagamento
   const PAYMENT_ICONS: Record<PaymentMethod, JSX.Element> = {
-    dinheiro: <DollarSign className="text-accent h-5 w-5" />,
+    dinheiro: <DollarSign className="text-primary h-5 w-5" />,
     débito: <CreditCard className="text-primary h-5 w-5" />,
-    crédito: <CreditCard className="text-secondary h-5 w-5" />,
+    crédito: <CreditCard className="text-primary h-5 w-5" />,
     Ifood: <SiIfood className="text-destructive h-5 w-5" />,
   };
 
@@ -59,13 +59,7 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
 
             <div className="mb-3 flex items-center gap-2 text-sm">
               {getPaymentIcon(sale.sellingResume.paymentMethod)}
-              <span className="font-medium">
-                {
-                  PAYMENT_METHODS[
-                    sale.sellingResume.paymentMethod.toUpperCase() as keyof typeof PAYMENT_METHODS
-                  ]
-                }
-              </span>
+              <span className="font-medium">{sale.sellingResume.paymentMethod}</span>
               {sale.sellingResume.fees && sale.sellingResume.fees > 0 && (
                 <span className="text-muted-foreground text-xs">
                   (Taxa: {formatCurrency(sale.sellingResume.fees)})
@@ -136,13 +130,7 @@ export default function SalesTable({ sales, onRemoveSale }: SalesTableProps) {
                   <td className="p-3 text-center">{item.quantity}</td>
                   <td className="flex items-center gap-2 p-3">
                     {getPaymentIcon(sale.sellingResume.paymentMethod)}
-                    <span>
-                      {
-                        PAYMENT_METHODS[
-                          sale.sellingResume.paymentMethod.toUpperCase() as keyof typeof PAYMENT_METHODS
-                        ]
-                      }
-                    </span>
+                    <span>{sale.sellingResume.paymentMethod}</span>
                   </td>
                   <td className="text-on-critical p-3">
                     - {formatCurrency(sale.sellingResume.fees ?? 0)}

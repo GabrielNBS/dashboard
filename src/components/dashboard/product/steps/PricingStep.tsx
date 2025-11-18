@@ -1,6 +1,7 @@
 import React from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import PriceAndMarginInputs from '@/components/dashboard/product/PriceAndMarginInputs';
+import { InfoButton } from '@/components/ui/InfoButton';
 
 interface PricingStepProps {
   data: {
@@ -24,25 +25,36 @@ export default function PricingStep({ data, updateData }: PricingStepProps) {
   const isComplete = data.sellingPrice && parseFloat(data.sellingPrice) > 0 && data.margin;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div className="text-center">
-        <div className="bg-warning mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full shadow-md">
+        <div className="bg-warning mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full shadow-md sm:mb-3 sm:h-12 sm:w-12">
           <div className="loader bg-on-warning!"></div>
         </div>
-        <h2 className="text-on-surface text-xl font-bold">Preços e Margens</h2>
-        <p className="text-on-surface-variant mt-1 text-sm">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+          <h2 className="text-on-surface text-base font-bold sm:text-xl">Preços e Margens</h2>
+          <InfoButton
+            info="A margem de lucro é calculada sobre o custo dos ingredientes. Por exemplo, se o custo é R$ 10,00 e a margem é 50%, o preço de venda será R$ 15,00."
+            position="bottom"
+          />
+        </div>
+        <p className="text-on-surface-variant mt-1 text-xs sm:text-sm">
           Defina o preço de venda e margem de lucro desejada
         </p>
 
         <div
-          className={`bg-warning text-on-warning invisible mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm ${isComplete && 'visible'}`}
+          className={`bg-warning text-on-warning invisible mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs sm:mt-3 sm:gap-2 sm:px-3 sm:text-sm ${isComplete && 'visible'}`}
         >
-          <span className="bg-warning h-2 w-2 rounded-full"></span>
-          Preço: R$ {parseFloat(data.sellingPrice).toFixed(2)} | Margem: {data.margin}%
+          <span className="bg-warning h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2"></span>
+          <span className="hidden sm:inline">
+            Preço: R$ {parseFloat(data.sellingPrice).toFixed(2)} | Margem: {data.margin}%
+          </span>
+          <span className="sm:hidden">
+            R$ {parseFloat(data.sellingPrice).toFixed(2)} | {data.margin}%
+          </span>
         </div>
       </div>
 
-      <div className="bg-warning rounded-lg p-4">
+      <div className="bg-muted rounded-lg p-3 sm:p-4">
         <PriceAndMarginInputs
           mode={state.production.mode}
           sellingPrice={data.sellingPrice}
@@ -50,38 +62,6 @@ export default function PricingStep({ data, updateData }: PricingStepProps) {
           margin={data.margin}
           onMarginChange={handleMarginChange}
         />
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        <div className="border-warning bg-warning rounded-lg border p-3 shadow-md">
-          <div className="flex items-start gap-2">
-            <div className="bg-warning mt-0.5 flex h-5 w-5 items-center justify-center rounded-full">
-              <span className="text-on-warning text-xs">💰</span>
-            </div>
-            <div>
-              <h4 className="text-on-warning text-sm font-medium">Preço de Venda</h4>
-              <p className="text-on-warning mt-1 text-xs">
-                {state.production.mode === 'lote'
-                  ? `Valor de CADA unidade (lote completo: R$ ${(parseFloat(data.sellingPrice) * state.production.yieldQuantity).toFixed(2)})`
-                  : 'Valor total do produto'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-warning bg-warning rounded-lg border p-3 shadow-md">
-          <div className="flex items-start gap-2">
-            <div className="bg-tertiary mt-0.5 flex h-5 w-5 items-center justify-center rounded-full">
-              <span className="text-on-tertiary text-xs">📈</span>
-            </div>
-            <div>
-              <h4 className="text-on-warning text-sm font-medium">Margem de Lucro</h4>
-              <p className="text-on-warning mt-1 text-xs">
-                Percentual de lucro desejado sobre o custo dos ingredientes
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -20,25 +20,25 @@ export default function IngredientsStep({ data, updateData }: IngredientsStepPro
   }, [state.ingredients.length, data.ingredientsCount, updateData]);
 
   return (
-    <div className="space-y-6">
-      <div className="mb-8 text-center">
-        <div className="bg-warning mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="mb-4 text-center sm:mb-8">
+        <div className="bg-warning mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full sm:mb-4 sm:h-16 sm:w-16">
           <div className="loader bg-on-warning!"></div>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Ingredientes</h2>
-        <p className="mt-2 text-gray-600">
+        <h2 className="text-lg font-bold text-gray-900 sm:text-2xl">Ingredientes</h2>
+        <p className="mt-1 text-xs text-gray-600 sm:mt-2 sm:text-sm">
           Adicione os ingredientes necessários para o seu produto
         </p>
         {state.ingredients.length > 0 && (
-          <div className="bg-warning text-on-warning mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm">
-            <span className="bg-on-warning h-2 w-2 rounded-full"></span>
+          <div className="bg-warning text-on-warning mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs sm:mt-4 sm:gap-2 sm:px-4 sm:py-2 sm:text-sm">
+            <span className="bg-on-warning h-1.5 w-1.5 rounded-full sm:h-2 sm:w-2"></span>
             {state.ingredients.length} ingrediente{state.ingredients.length !== 1 ? 's' : ''}{' '}
             adicionado{state.ingredients.length !== 1 ? 's' : ''}
           </div>
         )}
       </div>
 
-      <div className="bg-muted rounded-lg p-6">
+      <div className="bg-muted rounded-lg p-3 sm:p-6">
         <IngredientSelector />
       </div>
     </div>

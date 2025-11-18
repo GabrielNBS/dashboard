@@ -69,13 +69,13 @@ export default function BatchStatusBar({
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {/* Produtos Regulares */}
         <div className="text-center">
-          <div className="text-2xl font-bold text-blue-600">{regularProducts.length}</div>
+          <div className="text-primary text-2xl font-bold">{regularProducts.length}</div>
           <div className="text-xs text-gray-600">Produtos Regulares</div>
         </div>
 
         {/* Produtos em Lote */}
         <div className="text-center">
-          <div className="text-2xl font-bold text-purple-600">{batchProducts.length}</div>
+          <div className="text-primary text-2xl font-bold">{batchProducts.length}</div>
           <div className="text-xs text-gray-600">Produtos em Lote</div>
         </div>
 
@@ -99,7 +99,7 @@ export default function BatchStatusBar({
 
         {/* Itens no Carrinho */}
         <div className="text-center">
-          <div className="text-2xl font-bold text-indigo-600">{cartItemsCount}</div>
+          <div className="text-primary text-2xl font-bold">{cartItemsCount}</div>
           <div className="text-xs text-gray-600">No Carrinho</div>
         </div>
       </div>

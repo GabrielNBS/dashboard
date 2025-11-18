@@ -9,11 +9,7 @@ interface ImageUploadProps {
   label?: string;
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({
-  value,
-  onChange,
-  label = 'Imagem do Produto',
-}) => {
+export const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange, label = '' }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | undefined>(value);
 
@@ -53,17 +49,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-foreground block text-sm font-medium">{label}</label>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col items-center gap-4">
         {preview ? (
-          <div className="relative h-32 w-32 overflow-hidden rounded-lg border-2 border-gray-200">
+          <div className="border-border relative h-32 w-32 overflow-hidden rounded-lg border-2">
             <Image src={preview} alt="Preview do produto" fill className="object-cover" />
           </div>
         ) : (
-          <div className="flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
+          <div className="border-border bg-muted flex h-32 w-32 items-center justify-center rounded-lg border-2 border-dashed">
             <svg
-              className="h-12 w-12 text-gray-400"
+              className="text-muted-foreground h-12 w-12"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -90,7 +86,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 
           <label
             htmlFor="product-image-upload"
-            className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-blue-700"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer rounded-md px-4 py-2 text-center text-sm font-medium"
           >
             {preview ? 'Alterar Imagem' : 'Selecionar Imagem'}
           </label>
@@ -99,7 +95,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <button
               type="button"
               onClick={handleRemove}
-              className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              className="bg-destructive text-primary-foreground hover:bg-destructive/90 rounded-md px-4 py-2 text-sm font-medium"
             >
               Remover Imagem
             </button>
@@ -107,7 +103,9 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         </div>
       </div>
 
-      <p className="text-xs text-gray-500">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB</p>
+      <p className="text-muted-foreground text-center text-xs">
+        Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB
+      </p>
     </div>
   );
 };

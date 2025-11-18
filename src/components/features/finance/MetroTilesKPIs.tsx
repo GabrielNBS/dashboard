@@ -103,7 +103,7 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
                 title="Ponto de equilíbrio"
                 goalValue={breakEven || 0}
                 currentValue={totalRevenue || 0}
-                className="bg-great text-primary h-full"
+                className="bg-accent/30 text-primary h-full"
                 onClick={() => setIsModalOpen(true)}
               />
             </div>
@@ -114,13 +114,12 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
                 title={
                   <div>
                     <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
-                      Bruto
+                      lucro bruto
                     </span>
-                    <span className="text-[10px] font-medium sm:text-xs">Lucro bruto</span>
                   </div>
                 }
                 value={
-                  <span className="text-xs font-bold sm:text-sm md:text-base">
+                  <span className="text-lg font-bold">
                     {typeof grossProfit === 'number' ? formatCurrency(grossProfit) : grossProfit}
                   </span>
                 }
@@ -136,21 +135,20 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
                 title={
                   <div>
                     <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
-                      Variável
+                      Custo variável
                     </span>
-                    <span className="text-[10px] font-medium sm:text-xs">Custo Variável</span>
                   </div>
                 }
                 value={
-                  <span className="text-xs font-bold sm:text-sm md:text-base">
+                  <span className="text-lg font-bold">
                     {typeof totalVariableCost === 'number'
                       ? formatCurrency(totalVariableCost)
                       : totalVariableCost}
                   </span>
                 }
                 type="custom"
-                bgColor="bg-warning"
-                textColor="text-on-warning"
+                bgColor="bg-muted"
+                textColor="text-primary"
                 layout="vertical"
                 className="h-full"
               />
@@ -161,20 +159,19 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
                 title={
                   <div>
                     <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
-                      Fixo
+                      Custo fixo
                     </span>
-                    <span className="text-[10px] font-medium sm:text-xs">Custo fixo</span>
                   </div>
                 }
                 value={
-                  <span className="text-xs font-bold sm:text-sm md:text-base">
+                  <span className="text-lg font-bold">
                     {typeof totalFixedCost === 'number'
                       ? formatCurrency(totalFixedCost)
                       : totalFixedCost}
                   </span>
                 }
                 type="custom"
-                bgColor="bg-muted"
+                bgColor="bg-warning"
                 layout="vertical"
                 className="h-full"
               />
@@ -185,13 +182,12 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
                 title={
                   <div>
                     <span className="mb-0.5 block text-[10px] font-light opacity-70 sm:text-xs">
-                      Margem
+                      Margem de lucro
                     </span>
-                    <span className="text-[10px] font-medium sm:text-xs">Lucro</span>
                   </div>
                 }
                 value={
-                  <span className="text-xs font-bold sm:text-sm md:text-base">
+                  <span className="text-lg font-bold">
                     {typeof margin === 'number' ? formatPercent(margin) : margin}
                   </span>
                 }
@@ -206,7 +202,7 @@ export default function MetroTilesKPIs({ financialSummary, sales }: MetroTilesKP
 
         {/* Gráfico de Pizza - 1/3 do espaço */}
         <div className="lg:col-span-1">
-          <div className="bg-card h-full rounded-lg p-4 shadow-sm" style={{ minHeight: '280px' }}>
+          <div className="bg-card h-full rounded-lg p-4 shadow-sm" style={{ minHeight: '320px' }}>
             <h4 className="text-card-foreground mb-3 text-sm font-medium">
               Distribuição Financeira
             </h4>

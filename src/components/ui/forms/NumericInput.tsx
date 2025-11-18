@@ -35,16 +35,16 @@ const NumericInput = ({
   };
 
   return (
-    <div className="flex w-full flex-col gap-1">
+    <div className="flex w-full flex-col gap-2">
       {/* Label do campo */}
       {label && (
-        <label className="text-foreground mb-1 block text-center text-sm font-medium">
+        <label className="text-primary block text-left text-base font-medium sm:text-center">
           {label}
         </label>
       )}
 
       <div className="flex w-full flex-col gap-2">
-        <div className="relative w-full max-w-[400px]">
+        <div className="relative w-full">
           <Input
             {...register(name)}
             {...props}
@@ -56,13 +56,13 @@ const NumericInput = ({
               ...props.style,
             }}
             className={cn(
-              'text-center text-lg font-medium',
+              'h-14 text-center text-base font-medium sm:text-lg',
               '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
               props.className
             )}
           />
 
-          <div className="mt-2 flex flex-wrap justify-center gap-2">
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
             {quickIncrements.map(inc => (
               <React.Fragment key={inc}>
                 <Button
@@ -70,25 +70,25 @@ const NumericInput = ({
                   variant="outline"
                   size="sm"
                   onClick={() => adjustValue(-inc)}
-                  className="h-8 px-3 text-xs font-medium"
+                  className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
                 >
-                  <ChevronDown className="mr-1 h-3 w-3" />-{inc}
+                  <ChevronDown className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />-{inc}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => adjustValue(inc)}
-                  className="h-8 px-3 text-xs font-medium"
+                  className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
                 >
-                  <ChevronUp className="mr-1 h-3 w-3" />+{inc}
+                  <ChevronUp className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />+{inc}
                 </Button>
               </React.Fragment>
             ))}
           </div>
 
           {name === 'buyPrice' && (
-            <span className="text-muted-foreground absolute top-1/2 right-4 -translate-y-[120%] text-lg font-medium">
+            <span className="text-muted-foreground absolute top-1/2 right-4 -translate-y-[120%] text-base font-medium sm:text-lg">
               R$
             </span>
           )}

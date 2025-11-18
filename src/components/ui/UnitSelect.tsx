@@ -6,9 +6,10 @@ interface UnitSelectProps {
   register: UseFormRegister<IngredientFormData>;
   errors: FieldErrors<IngredientFormData>;
   className?: string;
+  disabled?: boolean;
 }
 
-const UnitSelect = ({ register, errors, className }: UnitSelectProps) => {
+const UnitSelect = ({ register, errors, className, disabled }: UnitSelectProps) => {
   return (
     <select
       {...register('unit')}
@@ -19,6 +20,7 @@ const UnitSelect = ({ register, errors, className }: UnitSelectProps) => {
         className
       )}
       aria-label="Selecione a unidade de medida"
+      disabled={disabled}
     >
       <option value="">Selecione a unidade</option>
       <option value="kg">Quilograma (kg)</option>

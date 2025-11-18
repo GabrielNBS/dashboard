@@ -1,148 +1,91 @@
 'use client';
 
 import * as React from 'react';
-import * as SheetPrimitive from '@radix-ui/react-dialog';
+import { Drawer } from 'vaul';
 import { XIcon } from 'lucide-react';
+import { cn } from '@/utils/utils'; // Assumindo que 'cn' é importado daqui
 
-import { cn } from '@/utils/utils';
-
-function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
+// 1. Definição do Componente Sheet (Drawer.Root)
+interface SheetProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
 }
 
-function SheetTrigger({ ...props }: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
-}
-
-function SheetClose({ ...props }: React.ComponentProps<typeof SheetPrimitive.Close>) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
-}
-
-function SheetPortal({ ...props }: React.ComponentProps<typeof SheetPrimitive.Portal>) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
-}
-
-function SheetOverlay({
-  className,
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Overlay>) {
+function Sheet({ open, onOpenChange, children }: SheetProps) {
   return (
-    <SheetPrimitive.Overlay
-      data-slot="sheet-overlay"
-      className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/60 backdrop-blur-sm duration-300',
-        className
-      )}
-      {...props}
-    />
+    <Drawer.Root open={open} onOpenChange={onOpenChange} direction="right">
+      {children}
+    </Drawer.Root>
   );
 }
 
-function SheetContent({
-  className,
-  children,
-  side = 'right',
-  ...props
-}: React.ComponentProps<typeof SheetPrimitive.Content> & {
-  side?: 'top' | 'right' | 'bottom' | 'left';
-}) {
-  const sideVariants = {
-    right: {
-      base: 'inset-y-0 right-0 h-full w-full max-w-[90vw]',
-      animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right duration-300',
-    },
-    left: {
-      base: 'inset-y-0 left-0 h-full w-full max-w-[90vw] md:max-w-md lg:max-w-lg xl:max-w-xl',
-      animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left duration-300',
-    },
-    top: {
-      base: 'inset-x-0 top-0 h-auto max-h-[85vh] w-full',
-      animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top duration-300',
-    },
-    bottom: {
-      base: 'inset-x-0 bottom-0 h-auto max-h-[85vh] w-full',
-      animation:
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom duration-300',
-    },
-  };
+// 2. Componentes de Controle
+function SheetTrigger({ className, ...props }: React.ComponentProps<typeof Drawer.Trigger>) {
+  return <Drawer.Trigger className={className} {...props} />;
+}
 
-  const variant = sideVariants[side];
+function SheetClose({ className, ...props }: React.ComponentProps<typeof Drawer.Close>) {
+  return <Drawer.Close className={className} {...props} />;
+}
 
+// 4. Componente de Conteúdo (agora sem o Drawer.Portal interno)
+interface SheetContentProps extends React.ComponentProps<typeof Drawer.Content> {
+  side?: 'top' | 'right' | 'bottom' | 'left'; // Embora vaul use 'direction', mantemos 'side'
+  className?: string;
+  children?: React.ReactNode;
+}
+
+function SheetContent({ className, children, side = 'right', ...props }: SheetContentProps) {
+  // O Drawer.Overlay é mantido aqui para garantir que o fundo escuro seja renderizado
   return (
-    <SheetPortal>
-      <SheetOverlay />
-      <SheetPrimitive.Content
-        data-slot="sheet-content"
+    <>
+      <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+      <Drawer.Content
         className={cn(
-          // Base styles
-          'border-border bg-card fixed z-[60] flex flex-col overflow-hidden border-l shadow-2xl',
-          // Position and size
-          variant.base,
-          // Animation classes
-          variant.animation,
+          'bg-card border-border fixed z-[60] flex flex-col shadow-2xl',
+          side === 'right' &&
+            'inset-y-0 right-0 h-full w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-xl',
+          side === 'left' &&
+            'inset-y-0 left-0 h-full w-full max-w-[90vw] border-r md:max-w-md lg:max-w-lg xl:max-w-xl',
+          side === 'top' && 'inset-x-0 top-0 h-auto max-h-[85vh] w-full border-b',
+          side === 'bottom' && 'inset-x-0 bottom-0 h-auto max-h-[85vh] w-full border-t',
           className
         )}
         {...props}
       >
-        {/* Add hidden title for accessibility - Radix requires DialogTitle */}
-        <SheetPrimitive.Title className="sr-only">Dialog</SheetPrimitive.Title>
-
-        <div className="flex-1 overflow-y-auto">
-          <div className="md:p-6 lg:p-6 xl:p-6">{children}</div>
-        </div>
-
-        <SheetPrimitive.Close className="text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-accent absolute top-4 right-4 rounded-full p-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none">
+        <Drawer.Title className="sr-only">Dialog</Drawer.Title>=
+        <div className="h-full w-full overflow-scroll p-6">{children}</div>
+        <Drawer.Close className="text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-accent absolute top-4 right-4 rounded-full p-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none">
           <XIcon className="h-5 w-5" />
           <span className="sr-only">Fechar</span>
-        </SheetPrimitive.Close>
-      </SheetPrimitive.Content>
-    </SheetPortal>
+        </Drawer.Close>
+      </Drawer.Content>
+    </>
   );
 }
 
+// 5. Componentes de Título, Descrição, etc.
 function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="sheet-header"
-      className={cn('flex flex-col gap-1.5 p-4', className)}
-      {...props}
-    />
-  );
+  return <div className={cn('flex flex-col gap-1.5 p-4', className)} {...props} />;
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="sheet-footer"
-      className={cn('mt-auto flex flex-col gap-2 p-4', className)}
-      {...props}
-    />
-  );
+  return <div className={cn('mt-auto flex flex-col gap-2 p-4', className)} {...props} />;
 }
 
-function SheetTitle({ className, ...props }: React.ComponentProps<typeof SheetPrimitive.Title>) {
+function SheetTitle({ className, ...props }: React.ComponentProps<typeof Drawer.Title>) {
   return (
-    <SheetPrimitive.Title
-      data-slot="sheet-title"
-      className={cn('text-foreground text-lg font-semibold', className)}
-      {...props}
-    />
+    <Drawer.Title className={cn('text-foreground text-lg font-semibold', className)} {...props} />
   );
 }
 
 function SheetDescription({
   className,
   ...props
-}: React.ComponentProps<typeof SheetPrimitive.Description>) {
+}: React.ComponentProps<typeof Drawer.Description>) {
   return (
-    <SheetPrimitive.Description
-      data-slot="sheet-description"
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
+    <Drawer.Description className={cn('text-muted-foreground text-sm', className)} {...props} />
   );
 }
 

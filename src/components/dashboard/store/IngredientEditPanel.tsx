@@ -92,18 +92,18 @@ export default function IngredientEditPanel() {
 
   return (
     <Drawer open={isModalOpen} onOpenChange={handleClose}>
-      <div className="mx-auto flex w-full max-w-[480px] flex-col">
-        <DrawerContent className="max-h-[95vh]">
-          <DrawerHeader className="px-6 pt-6 text-center">
-            <DrawerTitle className="text-primary text-2xl font-bold">
+      <DrawerContent className="max-h-[95vh] sm:max-h-[90vh]">
+        <div className="mx-auto flex w-full max-w-[480px] flex-col">
+          <DrawerHeader className="px-4 pt-4 text-center sm:px-6 sm:pt-6">
+            <DrawerTitle className="text-primary text-xl font-bold sm:text-2xl">
               Editar Ingrediente
             </DrawerTitle>
-            <DrawerDescription className="text-muted-foreground text-base">
+            <DrawerDescription className="text-muted-foreground text-sm sm:text-base">
               Atualize as informações do ingrediente
             </DrawerDescription>
           </DrawerHeader>
 
-          <div className="flex-1 overflow-y-auto px-6 pb-4">
+          <div className="flex-1 overflow-y-auto px-4 pb-4 sm:px-6">
             <FormProvider {...methods}>
               <form
                 id="ingredient-edit-form"
@@ -115,11 +115,11 @@ export default function IngredientEditPanel() {
             </FormProvider>
           </div>
 
-          <DrawerFooter className="bg-muted flex flex-row justify-center gap-3 px-6 pt-4 pb-6">
+          <DrawerFooter className="bg-muted flex flex-row justify-center gap-2 px-4 pt-3 pb-4 sm:gap-3 sm:px-6 sm:pt-4 sm:pb-6">
             <Button
               type="button"
               variant="destructive"
-              className="flex h-12 max-w-[150px] gap-1 rounded-xl text-base font-bold"
+              className="flex h-11 w-full max-w-[140px] gap-1 rounded-xl text-sm font-bold sm:h-12 sm:max-w-[150px] sm:text-base"
               onClick={handleClose}
             >
               <CircleX className="h-4 w-4" />
@@ -130,21 +130,21 @@ export default function IngredientEditPanel() {
               type="submit"
               form="ingredient-edit-form"
               variant="accept"
-              className="flex h-12 max-w-[150px] gap-1 rounded-xl text-base font-bold"
+              className="flex h-11 w-full max-w-[140px] gap-1 rounded-xl text-sm font-bold sm:h-12 sm:max-w-[150px] sm:text-base"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
                 'Salvando...'
               ) : (
                 <>
-                  <CheckCheck />
+                  <CheckCheck className="h-4 w-4" />
                   Salvar
                 </>
               )}
             </Button>
           </DrawerFooter>
-        </DrawerContent>
-      </div>
+        </div>
+      </DrawerContent>
     </Drawer>
   );
 }

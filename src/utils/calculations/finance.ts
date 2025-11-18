@@ -423,9 +423,7 @@ export function getFinancialHealthIndicators(
   // 1. Análise de Prejuízo
   if (netProfit < 0) {
     status = 'critical';
-    alerts.push(
-      `⚠️ PREJUÍZO: Negócio operando com prejuízo de R$ ${Math.abs(netProfit).toFixed(2)}`
-    );
+    alerts.push(`PREJUÍZO: Negócio operando com prejuízo de R$ ${Math.abs(netProfit).toFixed(2)}`);
     recommendations.push('Revise urgentemente seus custos fixos e variáveis');
     recommendations.push('Considere aumentar preços ou reduzir despesas operacionais');
   }
@@ -436,7 +434,7 @@ export function getFinancialHealthIndicators(
     const deficit = currentBreakEven - totalRevenue;
     const percentageToBreakEven = totalRevenue > 0 ? (totalRevenue / currentBreakEven) * 100 : 0;
     alerts.push(
-      `📊 Abaixo do ponto de equilíbrio: faltam R$ ${deficit.toFixed(2)} (${(100 - percentageToBreakEven).toFixed(1)}%)`
+      `Abaixo do ponto de equilíbrio: faltam R$ ${deficit.toFixed(2)} (${(100 - percentageToBreakEven).toFixed(1)}%)`
     );
     recommendations.push(
       `Você precisa aumentar as vendas em ${(100 - percentageToBreakEven).toFixed(1)}% para empatar`
@@ -448,13 +446,13 @@ export function getFinancialHealthIndicators(
     const netMargin = (netProfit / totalRevenue) * 100;
     if (netMargin > 0 && netMargin < 10) {
       status = status === 'critical' ? 'critical' : 'warning';
-      alerts.push(`💰 Margem de lucro baixa: ${netMargin.toFixed(2)}% (recomendado: acima de 10%)`);
+      alerts.push(` Margem de lucro baixa: ${netMargin.toFixed(2)}% (recomendado: acima de 10%)`);
       recommendations.push('Considere revisar sua precificação');
       recommendations.push('Analise quais produtos têm melhor margem de contribuição');
     } else if (netMargin >= 10 && netMargin < 20) {
-      alerts.push(`💵 Margem de lucro moderada: ${netMargin.toFixed(2)}%`);
+      alerts.push(` Margem de lucro moderada: ${netMargin.toFixed(2)}%`);
     } else if (netMargin >= 20) {
-      alerts.push(`✅ Margem de lucro saudável: ${netMargin.toFixed(2)}%`);
+      alerts.push(` Margem de lucro saudável: ${netMargin.toFixed(2)}%`);
     }
   }
 
@@ -463,7 +461,7 @@ export function getFinancialHealthIndicators(
     const contributionMargin = (grossProfit / totalRevenue) * 100;
     if (contributionMargin < 30) {
       status = status === 'critical' ? 'critical' : 'warning';
-      alerts.push(`📉 Margem de contribuição baixa: ${contributionMargin.toFixed(2)}%`);
+      alerts.push(` Margem de contribuição baixa: ${contributionMargin.toFixed(2)}%`);
       recommendations.push('Custos variáveis estão muito altos em relação à receita');
       recommendations.push('Negocie melhores preços com fornecedores ou reduza comissões');
     }
@@ -474,7 +472,7 @@ export function getFinancialHealthIndicators(
     const fixedCostPercentage = (fixedCosts / totalRevenue) * 100;
     if (fixedCostPercentage > 40) {
       status = status === 'critical' ? 'critical' : 'warning';
-      alerts.push(`🏢 Custos fixos representam ${fixedCostPercentage.toFixed(1)}% da receita`);
+      alerts.push(` Custos fixos representam ${fixedCostPercentage.toFixed(1)}% da receita`);
       recommendations.push(
         'Custos fixos muito altos. Considere renegociar aluguel, salários ou outros custos recorrentes'
       );
@@ -483,7 +481,7 @@ export function getFinancialHealthIndicators(
 
   // 6. Sinais Positivos
   if (status === 'healthy') {
-    alerts.push('✅ Negócio operando de forma saudável');
+    alerts.push(' Negócio operando de forma saudável');
     recommendations.push('Continue monitorando seus indicadores mensalmente');
     recommendations.push('Considere reservar parte do lucro para crescimento ou emergências');
   }

@@ -3,6 +3,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { FinanceSummary } from '@/hooks/business/useSummaryFinance';
+import { formatCurrency } from '@/utils/UnifiedUtils';
 
 interface FinancePieChartProps {
   financialSummary: FinanceSummary;
@@ -10,13 +11,13 @@ interface FinancePieChartProps {
 
 const COLORS = {
   revenue: 'hsl(var(--primary))',
-  variableCost: 'hsl(var(--accent))',
+  variableCost: 'hsl(var(--destructive))',
   fixedCost: 'hsl(var(--muted-foreground))',
-  profit: 'hsl(var(--accent))',
+  profit: 'hsl(33, 100%, 49%)',
 };
 
 export default function FinancePieChart({ financialSummary }: FinancePieChartProps) {
-  const { totalRevenue, totalVariableCost, totalFixedCost, netProfit } = financialSummary;
+  const { totalVariableCost, totalFixedCost, netProfit } = financialSummary;
 
   // Preparar dados para o gráfico
   const data = [
@@ -38,18 +39,19 @@ export default function FinancePieChart({ financialSummary }: FinancePieChartPro
   ].filter(item => item.value > 0);
 
   // Custom tooltip para mostrar valores formatados
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: Array<{ name: string; value: number }>;
+  }) => {
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
         <div className="bg-popover rounded-lg border p-3 shadow-lg">
-          <p className="text-popover-foreground font-medium">{data.name}</p>
-          <p className="text-muted-foreground text-sm">
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            }).format(data.value)}
-          </p>
+          <p className="text-muted-foreground">{data.name}</p>
+          <p className="text-primary text-sm font-bold">{formatCurrency(data.value)}</p>
         </div>
       );
     }
@@ -57,9 +59,9 @@ export default function FinancePieChart({ financialSummary }: FinancePieChartPro
   };
 
   // Custom label para mostrar percentuais
-  const renderLabel = (entry: any) => {
+  const renderLabel = (entry: { value?: number }) => {
     const total = data.reduce((sum, item) => sum + item.value, 0);
-    const percent = total > 0 ? ((entry.value / total) * 100).toFixed(1) : '0';
+    const percent = total > 0 && entry.value ? ((entry.value / total) * 100).toFixed(1) : '0';
     return `${percent}%`;
   };
 
@@ -93,7 +95,7 @@ export default function FinancePieChart({ financialSummary }: FinancePieChartPro
           <Legend
             verticalAlign="bottom"
             height={36}
-            formatter={value => <span className="text-muted-foreground text-xs">{value}</span>}
+            formatter={value => <span className="text-primary text-xs">{value}</span>}
           />
         </PieChart>
       </ResponsiveContainer>

@@ -53,9 +53,6 @@ export default function CategoryList() {
           </Button>
         ))}
       </div>
-      {!state.category && (
-        <p className="text-muted-foreground mt-2 text-xs">Selecione uma categoria para o produto</p>
-      )}
     </div>
   );
 }
