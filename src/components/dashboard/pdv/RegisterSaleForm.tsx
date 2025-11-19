@@ -37,6 +37,10 @@ export default function RegisterSaleForm() {
     return () => setMounted(false);
   }, []);
 
+  if (!mounted) {
+    return null;
+  }
+
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (

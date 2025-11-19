@@ -162,7 +162,6 @@ export default function IngredientForm() {
     return state.ingredients.find(ing => normalizeForComparison(ing.name) === normalizedName);
   }, [name, state.ingredients]);
 
-  // Auto-focus no campo nome quando o sheet abre
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
@@ -172,12 +171,11 @@ export default function IngredientForm() {
     }
   }, [isOpen]);
 
-  // Controle de montagem para portal
   useEffect(() => {
     setMounted(true);
+    return () => setMounted(false);
   }, []);
 
-  // Cálculo do preview de preço
   const pricePreview = useMemo(() => {
     if (!existingIngredient || !quantity || !buyPrice) return null;
 
@@ -323,6 +321,10 @@ export default function IngredientForm() {
     },
     [isDirty, reset]
   );
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>

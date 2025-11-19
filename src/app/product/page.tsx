@@ -28,6 +28,10 @@ export default function Product() {
     return () => setMounted(false);
   }, []);
 
+  if (!mounted) {
+    return null;
+  }
+
   const handleToggleForm = () => {
     dispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
     builderDispatch({ type: 'RESET_PRODUCT' });
