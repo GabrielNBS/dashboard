@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/forms/select';
 import { Label } from '@/components/ui/base/label';
-import { PERCENTAGE_LIMITS, CURRENCY_LIMITS } from '@/schemas/validationSchemas';
+import { PERCENTAGE_LIMITS } from '@/schemas/validationSchemas';
 
 export default function FinancialSettingsSection() {
   const { state, dispatch } = useSettings();
@@ -185,7 +185,7 @@ export default function FinancialSettingsSection() {
       </div>
 
       {/* Resumo das Configurações */}
-      <div className="rounded-lg bg-gradient-to-r from-blue-50 to-green-50 p-6">
+      <div className="hidden rounded-lg bg-gradient-to-r from-blue-50 to-green-50 p-6 lg:flex">
         <h3 className="mb-4 text-lg font-medium text-gray-900">
           Resumo das configurações financeiras
         </h3>
@@ -231,7 +231,7 @@ export default function FinancialSettingsSection() {
       </div>
 
       {/* Informações Adicionais */}
-      <div className="rounded-lg bg-yellow-50 p-4">
+      <div className="hidden rounded-lg bg-yellow-50 p-4 lg:flex">
         <h4 className="mb-2 text-sm font-medium text-yellow-900">💡 Dicas de configuração</h4>
         <ul className="space-y-1 text-sm text-yellow-800">
           <li>

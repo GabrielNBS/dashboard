@@ -13,7 +13,6 @@ import {
   ShoppingCart,
   BadgeDollarSign,
   Settings,
-  LogOut,
   Menu,
   X,
   User,
@@ -27,8 +26,13 @@ const menuItems = [
   { label: 'PDV', href: '/pdv', icon: ShoppingCart },
   { label: 'Financeiro', href: '/finance', icon: BadgeDollarSign },
   { label: 'Configurações', href: '/settings', icon: Settings },
-  { label: 'Logout', href: '/logout', icon: LogOut },
 ];
+
+{
+  /* Nao implementado 
+    { label: 'Logout', href: '/logout', icon: LogOut },
+  */
+}
 
 export default function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

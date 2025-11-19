@@ -98,13 +98,13 @@ export default function VariableCostsSection() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Calculator className="text-primary h-6 w-6" />
           <h2 className="text-xl font-semibold">Custos variáveis</h2>
         </div>
-        <Button onClick={handleAddCost} className="flex items-center gap-2">
+        <Button onClick={handleAddCost} className="hidden items-center gap-2 lg:flex">
           <Plus className="h-4 w-4" />
-          Adicionar Custo
+          Adicionar
         </Button>
       </div>
 
@@ -256,14 +256,25 @@ export default function VariableCostsSection() {
 
       {/* Lista de Custos Variáveis */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Custos Variáveis Configurados</h3>
+        {state.variableCosts.length >= 1 && (
+          <h3 className="text-lg font-medium">Custos Variáveis Configurados</h3>
+        )}
 
         {state.variableCosts.length === 0 ? (
-          <div className="text-muted-foreground py-8 text-center">
-            <Calculator className="text-muted-foreground/50 mx-auto mb-4 h-12 w-12" />
-            <p>Nenhum custo variável configurado.</p>
-            <p className="text-sm">Clique em &apos;Adicionar Custo&apos; para começar.</p>
-          </div>
+          <>
+            <div className="text-muted-foreground py-8 text-center">
+              <Calculator className="text-muted-foreground/50 mx-auto mb-4 h-12 w-12" />
+              <p>Nenhum custo variável configurado.</p>
+              <p className="text-sm">Clique em &apos;Adicionar Custo&apos; para começar.</p>
+            </div>
+            <Button
+              onClick={handleAddCost}
+              className="flex gap-2 justify-self-center md:hidden lg:hidden"
+            >
+              <Plus className="h-4 w-4" />
+              Adicionar
+            </Button>
+          </>
         ) : (
           <div className="space-y-3">
             {state.variableCosts.map(cost => (

@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, Lock } from 'lucide-react';
 import Input from '@/components/ui/base/Input';
-import Button from '@/components/ui/base/Button';
-import { Label } from '@/components/ui/base/label';
 
 export default function LoginCadastro() {
   const router = useRouter();

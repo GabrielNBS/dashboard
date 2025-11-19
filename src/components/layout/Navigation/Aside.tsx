@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { useSidebar } from '../MainLayout';
 
-import { LogOut } from 'lucide-react';
 import LordIcon, { LordIconRef } from '@/components/ui/LordIcon';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
@@ -165,12 +164,18 @@ const menuItems = [
     icon: 'lordicon',
     lordIconSrc: 'https://cdn.lordicon.com/umuwriak.json',
   },
-  {
+];
+
+{
+  /* Nao implementado
+{
     label: 'Logout',
     href: '/logout',
     icon: LogOut,
   },
-];
+
+ */
+}
 
 export default function Aside() {
   const pathname = usePathname();
@@ -230,7 +235,7 @@ export default function Aside() {
             height={48}
             className="h-full w-full object-cover"
             priority={false}
-            unoptimized
+            unoptimized={true}
             onError={() => setImgError(true)}
           />
         </motion.div>
@@ -256,6 +261,8 @@ export default function Aside() {
                 isActive={isActive}
                 isExpanded={isExpanded}
                 badgeAlert={label === 'Estoque' && hasCriticalStock}
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={`Navegar para ${label}`}
               />
             );
           })}

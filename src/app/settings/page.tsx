@@ -87,21 +87,17 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <header className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Header title="Configurações" subtitle="Gerencie os dados da sua loja" />
         </div>
 
-        <div
-          className="flex flex-col gap-2 sm:flex-row"
-          role="group"
-          aria-label="Ações das configurações"
-        >
+        <div className="flex gap-2 sm:flex-row" role="group" aria-label="Ações das configurações">
           <Button
             type="button"
             variant="outline"
             onClick={handleReset}
-            className="flex items-center justify-center gap-2"
+            className="flex gap-2"
             aria-label="Resetar todas as configurações"
           >
             <RotateCcw className="h-4 w-4" aria-hidden="true" />
@@ -110,8 +106,9 @@ export default function SettingsPage() {
           <Button
             type="button"
             onClick={handleSave}
+            variant="link"
             disabled={isSaving}
-            className="flex items-center justify-center gap-2"
+            className="flex gap-2"
             aria-label={isSaving ? 'Salvando configurações...' : 'Salvar configurações'}
           >
             <Save className="h-4 w-4" aria-hidden="true" />
