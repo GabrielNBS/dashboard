@@ -21,6 +21,7 @@ export default function Product() {
   const { state, dispatch } = useProductContext();
   const { dispatch: builderDispatch } = useProductBuilderContext();
   const { products } = state;
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -28,15 +29,13 @@ export default function Product() {
     return () => setMounted(false);
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
-
   const handleToggleForm = () => {
     dispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
     builderDispatch({ type: 'RESET_PRODUCT' });
     dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
   };
+
+  if (!mounted) return null;
 
   return (
     <div className="w-full rounded-lg p-6">
@@ -44,14 +43,14 @@ export default function Product() {
         title="Produtos"
         subtitle="Gerencie seus produtos e produza lotes quando necessário"
       />
-      {products.length > 0 &&
-        mounted &&
-        createPortal(
-          <>
+
+      {createPortal(
+        <>
+          {products.length > 0 && (
             <Button
               type="button"
               size="md"
-              className="fixed right-4 bottom-4 z-10 shadow-lg sm:right-6 sm:bottom-6"
+              className="fixed right-4 bottom-4 z-50 shadow-lg sm:right-6 sm:bottom-6"
               onClick={handleToggleForm}
               aria-label="Criar novo produto"
             >
@@ -59,50 +58,51 @@ export default function Product() {
               <span className="hidden sm:inline">Novo Produto</span>
               <span className="sm:hidden">Criar produto</span>
             </Button>
-            <Sheet
-              open={state.isFormVisible}
-              onOpenChange={() => dispatch({ type: 'TOGGLE_FORM_VISIBILITY' })}
-            >
-              <SheetContent
-                side="right"
-                className="max-w-3xl overflow-hidden p-0"
-                aria-labelledby="product-form-title"
-                aria-describedby="product-form-description"
-              >
-                <div className="flex h-full flex-col">
-                  <SheetHeader className="border-border flex-shrink-0 border-b p-6">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                        <PackagePlus className="text-primary h-5 w-5" aria-hidden="true" />
-                      </div>
-                      <div className="text-left">
-                        <SheetTitle
-                          id="product-form-title"
-                          className="text-foreground text-lg font-semibold"
-                        >
-                          {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
-                        </SheetTitle>
-                        <SheetDescription
-                          id="product-form-description"
-                          className="text-muted-foreground text-sm"
-                        >
-                          {state.isEditMode
-                            ? 'Atualize as informações do produto existente'
-                            : 'Preencha as informações para criar um novo produto'}
-                        </SheetDescription>
-                      </div>
-                    </div>
-                  </SheetHeader>
-                  <div className="flex-1 overflow-hidden p-6">
-                    <ProductForm />
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </>,
-          document.body
-        )}
+          )}
 
+          <Sheet open={state.isFormVisible} onOpenChange={handleToggleForm}>
+            <SheetContent
+              side="right"
+              className="max-w-3xl overflow-hidden p-0"
+              aria-labelledby="product-form-title"
+              aria-describedby="product-form-description"
+            >
+              <div className="flex h-full flex-col">
+                <SheetHeader className="border-border flex-shrink-0 border-b p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                      <PackagePlus className="text-primary h-5 w-5" aria-hidden="true" />
+                    </div>
+                    <div className="text-left">
+                      <SheetTitle
+                        id="product-form-title"
+                        className="text-foreground text-lg font-semibold"
+                      >
+                        {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
+                      </SheetTitle>
+                      <SheetDescription
+                        id="product-form-description"
+                        className="text-muted-foreground text-sm"
+                      >
+                        {state.isEditMode
+                          ? 'Atualize as informações do produto existente'
+                          : 'Preencha as informações para criar um novo produto'}
+                      </SheetDescription>
+                    </div>
+                  </div>
+                </SheetHeader>
+
+                <div className="flex-1 overflow-hidden p-6">
+                  <ProductForm />
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </>,
+        document.body
+      )}
+
+      {/* EMPTY STATE */}
       {products.length === 0 ? (
         <section
           className="bg-muted rounded-lg py-12 text-center"
