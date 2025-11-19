@@ -3,7 +3,7 @@ import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { ThumbsDown } from 'lucide-react';
 import Image from 'next/image';
-import React, { useMemo, memo } from 'react';
+import React, { useMemo, memo, useState } from 'react';
 
 interface TopSellingItem {
   id: string;
@@ -60,13 +60,12 @@ const TopSellingItems = memo(() => {
   };
 
   const getRankBadge = (index: number) => {
-    const colors = ['bg-yellow-500', 'bg-gray-400', 'bg-orange-600'];
     const medals = ['🥇', '🥈', '🥉'];
 
     if (index < 3) {
       return (
         <div
-          className={`h-6 w-6 ${colors[index]} flex items-center justify-center rounded-full text-xs font-bold text-white`}
+          className={`bg-muted flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white`}
         >
           {medals[index]}
         </div>
@@ -79,6 +78,9 @@ const TopSellingItems = memo(() => {
       </div>
     );
   };
+
+  const [imgError, setImgError] = useState(false);
+  const fallbackSrc = 'https://placehold.co/150';
 
   return (
     <aside className="w-full" aria-labelledby="top-products-title">
@@ -111,13 +113,14 @@ const TopSellingItems = memo(() => {
 
                   <div className="h-10 w-10 flex-shrink-0">
                     <Image
-                      src={item.imagem}
-                      alt={`Imagem do produto ${item.nome}`}
-                      width={40}
-                      height={40}
-                      className="h-10 w-10 rounded-md border object-cover"
-                      loading={index < 2 ? 'eager' : 'lazy'}
-                      priority={index === 0}
+                      src={imgError ? fallbackSrc : item.imagem || fallbackSrc}
+                      alt={`imagem do produto ${item.nome}`}
+                      width={48}
+                      height={48}
+                      className="h-full w-full object-cover"
+                      priority={false}
+                      unoptimized
+                      onError={() => setImgError(true)}
                     />
                   </div>
 

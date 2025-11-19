@@ -42,6 +42,9 @@ export default function MobileHeader() {
   const currentPage = menuItems.find(item => item.href === pathname);
   const pageTitle = currentPage?.label || 'Regula';
 
+  const [imgError, setImgError] = useState(false);
+  const fallbackSrc = 'https://placehold.co/150';
+
   return (
     <>
       {/* Header fixo no topo */}
@@ -162,15 +165,23 @@ export default function MobileHeader() {
             {/* Footer do menu */}
             <div className="border-border border-t p-4">
               <div className="bg-muted flex items-center gap-3 rounded-xl px-3 py-3">
-                <Image
-                  src={state.store.logo || 'https://via.placeholder.com/150'}
-                  alt="User Avatar"
-                  width={32}
-                  height={32}
-                />
+                <div className="h-12 w-12 overflow-hidden rounded-full">
+                  <Image
+                    src={imgError ? fallbackSrc : state.store.logo || fallbackSrc}
+                    alt="Logo da empresa"
+                    width={48}
+                    height={48}
+                    className="h-full w-full object-cover"
+                    priority={false}
+                    unoptimized // 🔑 Necessário para imagens externas não configuradas
+                    onError={() => setImgError(true)}
+                  />
+                </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-foreground truncate text-sm font-medium">Usuário</p>
+                  <p className="text-foreground truncate text-sm font-medium">
+                    {state.store.storeName || 'Usuário'}
+                  </p>
                   <p className="text-muted-foreground truncate text-xs">
                     {state.store.email || 'email@example.com'}
                   </p>

@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  
+
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
@@ -23,10 +23,17 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'placehold.co',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'source.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        pathname: '/**',
       },
     ],
   },

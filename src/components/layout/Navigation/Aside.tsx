@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import PrefetchLink from '@/components/ui/PrefetchLink';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -198,6 +198,9 @@ export default function Aside() {
     });
   }, [ingredientState.ingredients, pathname]);
 
+  const [imgError, setImgError] = useState(false);
+  const fallbackSrc = 'https://placehold.co/150';
+
   return (
     <motion.aside
       initial={false}
@@ -218,15 +221,17 @@ export default function Aside() {
             height: isExpanded ? 48 : 40,
           }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-          className="bg-accent overflow-hidden rounded-full"
+          className="overflow-hidden rounded-full"
         >
           <Image
-            src={logoSrc}
+            src={imgError ? fallbackSrc : logoSrc || fallbackSrc}
             alt="Logo da empresa"
             width={48}
             height={48}
             className="h-full w-full object-cover"
             priority={false}
+            unoptimized
+            onError={() => setImgError(true)}
           />
         </motion.div>
       </div>

@@ -45,16 +45,16 @@ function SheetContent({ className, children, side = 'right', ...props }: SheetCo
         className={cn(
           'bg-card border-border fixed z-[60] flex flex-col shadow-2xl',
           side === 'right' &&
-            'inset-y-0 right-0 h-full w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-xl',
+            'inset-y-0 right-0 h-dvh w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-xl',
           side === 'left' &&
-            'inset-y-0 left-0 h-full w-full max-w-[90vw] border-r md:max-w-md lg:max-w-lg xl:max-w-xl',
+            'inset-y-0 left-0 h-dvh w-full max-w-[90vw] border-r md:max-w-md lg:max-w-lg xl:max-w-xl',
           side === 'top' && 'inset-x-0 top-0 h-auto max-h-[85vh] w-full border-b',
           side === 'bottom' && 'inset-x-0 bottom-0 h-auto max-h-[85vh] w-full border-t',
           className
         )}
         {...props}
       >
-        <Drawer.Title className="sr-only">Dialog</Drawer.Title>=
+        <Drawer.Title className="sr-only">Dialog</Drawer.Title>
         <div className="h-full w-full overflow-scroll p-6">{children}</div>
         <Drawer.Close className="text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-accent absolute top-4 right-4 rounded-full p-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none">
           <XIcon className="h-5 w-5" />
