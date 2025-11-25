@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { Button } from '../base';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 export type ToastProps = {
@@ -25,7 +25,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
  *
  * @example
  * const { toast } = useToast();
- * toast({ title: 'Sucesso!', variant: 'accept' });
+ * toast({ title: 'Sucesso!', type: 'success' });
  */
 export function useToast() {
   const ctx = useContext(ToastContext);
@@ -81,35 +81,45 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         aria-label="Notificações"
         role="region"
       >
-        {toasts.map((data) => {
-          const { id, title, description, type = 'info' } = data;
-          const handleClose = () => removeToast(id);
+        <AnimatePresence mode="popLayout">
+          {toasts.map((data) => {
+            const { id, title, description, type = 'info' } = data;
+            const handleClose = () => removeToast(id);
 
-          // Mapa de cores para evitar muitos if/else
-          const colors = {
-            success: { bg: 'bg-green-50', border: 'border-green-500', text: 'text-green-800', icon: <CheckCircle className="text-green-500" /> },
-            error: { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-800', icon: <XCircle className="text-red-500" /> },
-            warning: { bg: 'bg-yellow-50', border: 'border-yellow-500', text: 'text-yellow-800', icon: <AlertTriangle className="text-yellow-500" /> },
-            info: { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-800', icon: <Info className="text-blue-500" /> }
-          };
+            // Mapa de cores para evitar muitos if/else
+            const colors = {
+              success: { bg: 'bg-green-50', border: 'border-green-500', text: 'text-green-800', icon: <CheckCircle className="text-green-500" /> },
+              error: { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-800', icon: <XCircle className="text-red-500" /> },
+              warning: { bg: 'bg-yellow-50', border: 'border-yellow-500', text: 'text-yellow-800', icon: <AlertTriangle className="text-yellow-500" /> },
+              info: { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-800', icon: <Info className="text-blue-500" /> }
+            };
 
-          const theme = colors[type];
+            const theme = colors[type];
 
-          return (
-            <div key={id} className={`flex w-full max-w-md bg-white rounded-lg shadow-lg border-l-4 ${theme.border} overflow-hidden mb-3 ml-auto animate-in slide-in-from-right-full`}>
-              <div className={`flex items-center justify-center w-12 flex-shrink-0 ${theme.bg}`}>
-                {theme.icon}
-              </div>
-              <div className="px-4 py-3 flex-1">
-                <p className={`text-sm font-bold ${theme.text}`}>{title}</p>
-                {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
-              </div>
-              <button onClick={handleClose} className="pr-3 text-gray-400 hover:text-gray-600">
-                <X size={18} />
-              </button>
-            </div>
-          );
-        })}
+            return (
+              <motion.div
+                key={id}
+                layout
+                initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                className={`flex w-full max-w-md bg-white rounded-lg shadow-lg border-l-4 ${theme.border} overflow-hidden mb-3 ml-auto`}
+              >
+                <div className={`flex items-center justify-center w-12 flex-shrink-0 ${theme.bg}`}>
+                  {theme.icon}
+                </div>
+                <div className="px-4 py-3 flex-1">
+                  <p className={`text-sm font-bold ${theme.text}`}>{title}</p>
+                  {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
+                </div>
+                <button onClick={handleClose} className="pr-3 text-gray-400 hover:text-gray-600">
+                  <X size={18} />
+                </button>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </div>
     </ToastContext.Provider>
   );
@@ -130,7 +140,7 @@ let toastFn: ((props: ToastProps) => void) | null = null;
  *
  * @example
  * import { toast } from '@/components/ui/use-toast';
- * toast({ title: 'Erro!', variant: 'destructive' });
+ * toast({ title: 'Erro!', type: 'error' });
  */
 export function toast(props: ToastProps) {
   if (toastFn) toastFn(props);
