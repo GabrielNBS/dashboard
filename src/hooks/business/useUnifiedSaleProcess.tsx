@@ -172,7 +172,7 @@ export function useUnifiedSaleProcess() {
       toast({
         title: 'Carrinho vazio',
         description: 'Adicione itens ao carrinho.',
-        variant: 'destructive',
+        type: 'error',
       });
       return;
     }
@@ -282,7 +282,7 @@ export function useUnifiedSaleProcess() {
       toast({
         title: 'Venda registrada com sucesso! 🎉',
         description,
-        variant: 'accept',
+        type: 'success',
       });
     }
 

@@ -319,7 +319,7 @@ export function validateFormData(
 export function showValidationToast(message: ValidationMessage) {
   toast({
     ...message,
-    variant: 'destructive',
+    type: 'error',
   });
 }
 
@@ -332,7 +332,7 @@ export function showValidationToast(message: ValidationMessage) {
 export function showSuccessToast(message: ValidationMessage) {
   toast({
     ...message,
-    variant: 'accept',
+    type: 'success',
   });
 }
 

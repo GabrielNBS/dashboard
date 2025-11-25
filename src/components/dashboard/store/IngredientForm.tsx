@@ -14,6 +14,7 @@ import CurrencyInputField from '@/components/ui/forms/CurrencyInputField';
 import QuantityInputField from '@/components/ui/forms/QuantityInputField';
 import UnitSelect from '@/components/ui/UnitSelect';
 import { useToast } from '@/components/ui/feedback/use-toast';
+import LordIcon from '@/components/ui/LordIcon';
 
 import {
   Sheet,
@@ -54,29 +55,38 @@ const normalizeForComparison = (value: string): string => sanitizeInput(value.to
 =========================================================== */
 
 const ExistingStockInfo = ({ ingredient }: { ingredient: Ingredient }) => (
-  <div className="border-primary/20 bg-primary/5 hover:border-primary/30 mb-4 rounded-lg border p-4 transition-all duration-200">
+  <div className=" bg-great/50  mb-4 rounded-lg  p-4 transition-all duration-200 shadow-md">
     <div className="flex items-start gap-3">
       <div className="bg-primary/10 rounded-full p-2">
-        <Package className="text-primary h-4 w-4" />
+        <LordIcon
+          src="https://cdn.lordicon.com/uomkwtjh.json"
+          width={16}
+          height={16}
+          isActive={true}
+          colors={{
+            primary: 'hsl(var(--primary))',
+            secondary: 'hsl(var(--primary))',
+          }}
+        />
       </div>
       <div className="flex-1">
-        <h4 className="text-on-info mb-2 font-semibold">Reabastecimento detectado</h4>
-        <div className="text-on-info/80 space-y-1 text-sm">
-          <p className="flex justify-between">
+        <h4 className="text-primary mb-2 font-bold">Reabastecimento detectado</h4>
+        <ul className="text-primary space-y-1 text-sm">
+          <li className="flex justify-between">
             <span>Estoque atual:</span>
             <span className="font-medium">
               {ingredient.totalQuantity} {ingredient.unit}
             </span>
-          </p>
-          <p className="flex justify-between">
+          </li>
+          <li className="flex justify-between">
             <span>Preço médio atual:</span>
             <span className="font-medium">{formatCurrency(ingredient.averageUnitPrice)}</span>
-          </p>
-          <p className="flex justify-between">
+          </li>
+          <li className="flex justify-between">
             <span>Lotes ativos:</span>
             <span className="font-medium">{ingredient.batches.length}</span>
-          </p>
-        </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -262,7 +272,7 @@ export default function IngredientForm() {
         toast({
           title: 'Unidade incompatível',
           description: `O ingrediente "${ingredient.name}" já está cadastrado como "${ingredient.unit}". Use a mesma unidade.`,
-          variant: 'destructive',
+          type: 'error',
         });
         return false;
       }
@@ -286,7 +296,7 @@ export default function IngredientForm() {
       toast({
         title: 'Lote adicionado',
         description: `Novo lote de "${ingredient.name}" foi registrado.`,
-        variant: 'accept',
+        type: 'success',
       });
 
       return true;
@@ -311,7 +321,7 @@ export default function IngredientForm() {
           toast({
             title: 'Ingrediente cadastrado',
             description: `"${data.name}" foi adicionado com sucesso.`,
-            variant: 'accept',
+            type: 'success',
           });
         }
 
@@ -322,7 +332,7 @@ export default function IngredientForm() {
         toast({
           title: 'Erro ao salvar',
           description: 'Algo deu errado ao salvar o ingrediente.',
-          variant: 'destructive',
+          type: 'error',
         });
       }
     },

@@ -36,12 +36,12 @@ const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
   };
 
   return (
-    <div className="flex w-full flex-col gap-4">
+    <div className="flex w-full flex-col gap-4 md:flex-row md:items-start md:gap-6">
       {/* Nome */}
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2 md:flex-1">
         <label
           htmlFor="name"
-          className="text-primary block text-left text-base font-medium sm:text-center"
+          className="text-primary block text-left text-base font-medium sm:text-center md:text-left"
         >
           Nome do ingrediente
         </label>
@@ -58,25 +58,29 @@ const EditFormFields = ({ watchedUnit }: { watchedUnit: UnitType }) => {
       </div>
 
       {/* Quantidade com Unidade */}
-      <QuantityWithUnitInput
-        label="Quantidade"
-        min={quantityConfig.min}
-        placeholder={quantityConfig.placeholder}
-        quantityError={errors.quantity?.message}
-        unitError={errors.unit?.message}
-        quickIncrements={getQuickIncrements('quantity', quantityValue)}
-      />
+      <div className="w-full md:w-[200px]">
+        <QuantityWithUnitInput
+          label="Quantidade"
+          min={quantityConfig.min}
+          placeholder={quantityConfig.placeholder}
+          quantityError={errors.quantity?.message}
+          unitError={errors.unit?.message}
+          quickIncrements={getQuickIncrements('quantity', quantityValue)}
+        />
+      </div>
 
       {/* Preço de compra */}
-      <NumericInput
-        name="buyPrice"
-        label="Preço de compra"
-        step={0.001}
-        min={0}
-        placeholder="0,00"
-        error={errors.buyPrice?.message}
-        quickIncrements={getQuickIncrements('buyPrice', parseFloat(watch('buyPrice') || '0'))}
-      />
+      <div className="w-full md:w-[200px]">
+        <NumericInput
+          name="buyPrice"
+          label="Preço de compra"
+          step={0.001}
+          min={0}
+          placeholder="0,00"
+          error={errors.buyPrice?.message}
+          quickIncrements={getQuickIncrements('buyPrice', parseFloat(watch('buyPrice') || '0'))}
+        />
+      </div>
     </div>
   );
 };

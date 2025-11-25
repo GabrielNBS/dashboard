@@ -97,7 +97,7 @@ export function useSaleProcess() {
       toast({
         title: 'Carrinho vazio',
         description: 'Adicione itens ao carrinho.',
-        variant: 'destructive',
+        type: 'error',
       });
       return;
     }
@@ -110,7 +110,7 @@ export function useSaleProcess() {
         toast({
           title: 'store insuficiente',
           description: `Não há ingredientes suficientes para "${product?.name}". Faltam: ${validation.missingIngredients.join(', ')}`,
-          variant: 'destructive',
+          type: 'error',
         });
         return;
       }
@@ -178,7 +178,7 @@ export function useSaleProcess() {
     toast({
       title: 'Venda registrada com sucesso! 🎉',
       description: `Total: R$ ${sellingResume.totalValue.toFixed(2)} (${saleItems.length} itens)`,
-      variant: 'accept',
+      type: 'success',
     });
 
     setCart([]);

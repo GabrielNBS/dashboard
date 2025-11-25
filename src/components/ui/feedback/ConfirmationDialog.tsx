@@ -199,7 +199,7 @@ export default function ConfirmationDialog({
           </Button>
           <Button
             type="button"
-            variant={isConfirmEnabled ? 'accept' : 'outline'}
+            variant={isConfirmEnabled ? 'destructive' : 'outline'}
             onClick={handleConfirm}
             disabled={!isConfirmEnabled}
             aria-label={

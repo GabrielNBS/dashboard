@@ -30,7 +30,7 @@ export function useProductionProcess() {
         toast({
           title: 'Erro',
           description: 'Produto não encontrado',
-          variant: 'destructive',
+          type: 'error',
         });
         return false;
       }
@@ -39,7 +39,7 @@ export function useProductionProcess() {
         toast({
           title: 'Erro',
           description: 'Este produto não é produzido em lote',
-          variant: 'destructive',
+          type: 'error',
         });
         return false;
       }
@@ -48,7 +48,7 @@ export function useProductionProcess() {
         toast({
           title: 'Erro',
           description: 'Quantidade de lotes deve ser maior que zero',
-          variant: 'destructive',
+          type: 'error',
         });
         return false;
       }
@@ -60,7 +60,7 @@ export function useProductionProcess() {
         toast({
           title: 'Ingredientes insuficientes',
           description: `Faltam: ${validation.missingIngredients.join(', ')}`,
-          variant: 'destructive',
+          type: 'error',
         });
         return false;
       }
@@ -101,7 +101,7 @@ export function useProductionProcess() {
       toast({
         title: 'Produção concluída! 🎉',
         description: `${producedUnits} unidades de ${product.name} produzidas (${batchCount} lote${batchCount > 1 ? 's' : ''})`,
-        variant: 'accept',
+        type: 'success',
       });
 
       return true;

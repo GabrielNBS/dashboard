@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import FormError from './FormError';
 import Button from '../base/Button';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
+
+
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
 import { cn } from '@/utils/utils';
@@ -143,7 +145,7 @@ const QuantityWithUnitInput = ({
     <div className="flex w-full flex-col gap-2">
       {/* Label do campo */}
       {label && (
-        <label className="text-primary block text-left text-base font-medium sm:text-center">
+        <label className="text-primary block text-left text-base font-medium sm:text-center md:text-left">
           {label}
         </label>
       )}
@@ -167,7 +169,7 @@ const QuantityWithUnitInput = ({
               onChange={handleQuantityChange}
               placeholder={placeholder}
               className={cn(
-                'flex-1 border-0 bg-transparent px-4 text-center text-base font-medium outline-none sm:text-lg',
+                'flex-1 border-0 bg-transparent px-4 text-center text-base font-medium outline-none sm:text-lg md:text-left',
                 'placeholder:text-muted-foreground',
                 'focus:ring-0 focus:outline-none'
               )}
@@ -195,28 +197,34 @@ const QuantityWithUnitInput = ({
         </div>
 
         {/* Botões de incremento rápido */}
-        <div className="mt-1 flex flex-wrap justify-center gap-2">
+        <div className="mt-1 flex flex-wrap lg:flex-nowrap md:flex-nowrap justify-center gap-2 md:justify-start">
           {quickIncrements.map(inc => (
-            <React.Fragment key={inc}>
+            <div
+              key={inc}
+              className="border-input bg-background flex items-center rounded-md border"
+            >
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => adjustValue(-inc)}
-                className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
+                className="h-8 w-8 rounded-none rounded-l-md p-0"
               >
-                <ChevronDown className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />-{inc}
+                <Minus className="h-3 w-3" />
               </Button>
+              <span className="min-w-[2rem] px-2 text-center text-xs font-medium">
+                {inc}
+              </span>
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => adjustValue(inc)}
-                className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
+                className="h-8 w-8 rounded-none rounded-r-md p-0"
               >
-                <ChevronUp className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />+{inc}
+                <Plus className="h-3 w-3" />
               </Button>
-            </React.Fragment>
+            </div>
           ))}
         </div>
       </div>

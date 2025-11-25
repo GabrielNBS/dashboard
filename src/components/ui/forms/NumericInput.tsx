@@ -1,7 +1,9 @@
 import React from 'react';
 import FormError from './FormError';
 import Button from '../base/Button';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
+
+
 import Input from '../base/Input';
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
@@ -38,7 +40,7 @@ const NumericInput = ({
     <div className="flex w-full flex-col gap-2">
       {/* Label do campo */}
       {label && (
-        <label className="text-primary block text-left text-base font-medium sm:text-center">
+        <label className="text-primary block text-left text-base font-medium sm:text-center md:text-left">
           {label}
         </label>
       )}
@@ -56,34 +58,40 @@ const NumericInput = ({
               ...props.style,
             }}
             className={cn(
-              'h-14 text-center text-base font-medium sm:text-lg',
+              'h-14 text-center text-base font-medium sm:text-lg md:text-left',
               '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
               props.className
             )}
           />
 
-          <div className="mt-3 flex flex-wrap justify-center gap-2">
+          <div className="mt-3 flex flex-wrap lg:flex-nowrap md:flex-nowrap justify-center gap-2 md:justify-start">
             {quickIncrements.map(inc => (
-              <React.Fragment key={inc}>
+              <div
+                key={inc}
+                className="border-input bg-background flex items-center rounded-md border"
+              >
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => adjustValue(-inc)}
-                  className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
+                  className="h-8 w-8 rounded-none rounded-l-md p-0"
                 >
-                  <ChevronDown className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />-{inc}
+                  <Minus className="h-3 w-3" />
                 </Button>
+                <span className="min-w-[2rem] px-2 text-center text-xs font-medium">
+                  {inc}
+                </span>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   onClick={() => adjustValue(inc)}
-                  className="h-10 min-w-[70px] px-3 text-sm font-medium sm:h-8 sm:text-xs"
+                  className="h-8 w-8 rounded-none rounded-r-md p-0"
                 >
-                  <ChevronUp className="mr-1 h-4 w-4 sm:h-3 sm:w-3" />+{inc}
+                  <Plus className="h-3 w-3" />
                 </Button>
-              </React.Fragment>
+              </div>
             ))}
           </div>
 

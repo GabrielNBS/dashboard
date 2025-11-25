@@ -81,7 +81,7 @@ export default function IngredientCardList() {
         title: 'Excluir Ingrediente',
         description: (
           <span>
-            Tem certeza que deseja excluir <strong>&quot;{ingredientName}&quot;</strong>? Esta ação
+            Tem certeza que deseja excluir <strong className='text-on-bad'>&quot;{ingredientName}&quot;</strong>? Esta ação
             não pode ser desfeita.
           </span>
         ),
@@ -93,7 +93,7 @@ export default function IngredientCardList() {
           title: 'Ingrediente excluído',
           description: `O ingrediente ${ingredientName} foi excluído com sucesso.`,
           duration: 5000,
-          variant: 'destructive',
+          type: 'error',
         });
       }
     );

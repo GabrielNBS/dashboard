@@ -1,283 +1,175 @@
 # 🛍️ Dashboard de Gestão Empresarial
 
-[![Next.js](https://img.shields.io/badge/Next.js-000?logo=next.js&logoColor=white)](https://nextjs.org/)  
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![React Hook Form](https://img.shields.io/badge/React_Hook_Form-EC5990?logo=react-hook-form&logoColor=white)](https://react-hook-form.com/)
-[![Zod](https://img.shields.io/badge/Zod-3E63DD?logo=zod&logoColor=white)](https://zod.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.0-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.0-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![React Hook Form](https://img.shields.io/badge/React_Hook_Form-7.0-EC5990?logo=react-hook-form&logoColor=white)](https://react-hook-form.com/)
+[![Zod](https://img.shields.io/badge/Zod-3.0-3E63DD?logo=zod&logoColor=white)](https://zod.dev/)
 
 ---
 
 ## ✨ Sobre o Projeto
 
-Sistema completo de gestão empresarial com foco em controle financeiro, gestão de produtos e vendas. Desenvolvido com **Next.js 15**, **TypeScript**, **Tailwind CSS** e **React Hook Form** com validação Zod. Arquitetura modular e escalável com Context API para gerenciamento de estado global.
+Sistema completo de gestão empresarial focado em pequenos negócios de alimentação e varejo. O dashboard oferece controle total sobre vendas, estoque de ingredientes, produção de produtos e análise financeira em tempo real.
+
+Desenvolvido com uma arquitetura **Frontend-First**, utilizando **Next.js 15** e **Context API** para gerenciamento de estado, garantindo uma experiência fluida e reativa sem dependência inicial de backend complexo.
 
 ---
 
-## 🚀 Tecnologias e Ferramentas
+## 🚀 Tecnologias e Arquitetura
 
-### Core
+### Stack Tecnológico
 
-- **Next.js 15** - Framework React com App Router
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Framework CSS utilitário
-- **React Hook Form** - Gerenciamento de formulários
-- **Zod** - Validação de schemas
+- **Core:** Next.js 15 (App Router), React 18, TypeScript
+- **Estilização:** Tailwind CSS, Tailwind Variants, Lucide React (Ícones)
+- **Gerenciamento de Estado:** React Context API (Modularizado por domínio)
+- **Formulários & Validação:** React Hook Form + Zod
+- **Persistência:** LocalStorage (com Custom Hooks para sincronização)
+- **Animações:** Framer Motion, LordIcon
 
-### UI/UX
+### Decisões de Arquitetura
 
-- **Lucide React** - Ícones
-- **Framer Motion** - Animações
-- **Tailwind Variants** - Sistema de variantes
-- **Chart.js** - Gráficos
+1.  **Modularização por Domínio:**
+    O código é organizado em módulos de negócio (`sales`, `products`, `ingredients`, `finance`), facilitando a manutenção e escalabilidade. Cada módulo possui seus próprios contextos, hooks e tipos.
 
-### Desenvolvimento
+2.  **Business Hooks Pattern:**
+    A lógica de negócios complexa é extraída para hooks customizados (ex: `useUnifiedSaleProcess`, `useProductionProcess`). Isso separa a lógica da UI, tornando os componentes mais limpos e a lógica testável.
 
-- **ESLint + Prettier** - Linting e formatação
-- **pnpm** - Gerenciador de pacotes
+3.  **Unified State Management:**
+    O estado global é gerenciado através de múltiplos Context Providers (`OptimizedProviders`), evitando "Prop Drilling" e garantindo que dados como estoque e vendas estejam disponíveis em toda a aplicação.
+
+4.  **Design System Próprio:**
+    Componentes de UI reutilizáveis (`components/ui`) construídos sobre Tailwind CSS garantem consistência visual e agilidade no desenvolvimento.
+
+---
+
+## 🧠 Regras de Negócio
+
+### 1. Gestão de Produtos e Produção
+
+O sistema suporta dois modos de produção distintos, fundamentais para negócios de alimentação:
+
+*   **Produção sob Demanda (Unitária):**
+    *   Ideal para itens feitos na hora (ex: sucos, sanduíches).
+    *   **Fluxo:** A venda do produto desconta *imediatamente* os ingredientes do estoque.
+    *   Não requer estoque prévio do produto final.
+
+*   **Produção em Lote (Batch):**
+    *   Ideal para itens pré-produzidos (ex: bolos, salgados congelados).
+    *   **Fluxo de Produção:** O usuário registra a produção de X lotes -> Ingredientes são descontados -> Estoque do produto aumenta.
+    *   **Fluxo de Venda:** A venda desconta do *estoque do produto*, não dos ingredientes.
+
+### 2. Controle de Estoque Inteligente
+
+*   **Ingredientes:** Controle preciso com suporte a múltiplas unidades (kg, g, l, ml, un). O sistema normaliza automaticamente as quantidades para cálculos de custo.
+*   **Alertas:** Monitoramento automático de níveis de estoque (Crítico, Atenção, Normal) baseado em limites configuráveis.
+*   **Custo Médio:** Cálculo dinâmico do custo dos produtos baseado no preço médio de aquisição dos ingredientes.
+
+### 3. Processo de Vendas (PDV)
+
+*   **Carrinho Unificado:** Suporta venda simultânea de produtos unitários e em lote.
+*   **Validação em Tempo Real:** Impede a venda se não houver estoque suficiente (de ingredientes para unitários ou de produto para lotes).
+*   **Gestão de Taxas:** Cálculo automático de taxas de pagamento (Crédito, Débito, Apps de Entrega) para projeção real de lucro líquido.
+
+### 4. Gestão Financeira
+
+*   **DRE em Tempo Real:** Demonstração do Resultado do Exercício calculada instantaneamente.
+*   **Margem de Contribuição:** Análise detalhada de lucro por produto e por venda.
+*   **Custos Fixos vs Variáveis:** Separação clara para cálculo de ponto de equilíbrio.
 
 ---
 
 ## 📦 Estrutura do Projeto
 
-```
+```bash
 src/
-├── app/                    # Páginas e rotas (Next.js App Router)
-│   ├── layout.tsx         # Layout principal
-│   ├── page.tsx           # Página inicial
-│   ├── finance/           # Módulo financeiro
-│   ├── product/           # Módulo de produtos
-│   ├── pdv/              # Módulo de vendas
-│   ├── store/            # Módulo de estoque
-│   └── logout/           # Autenticação
-├── components/            # Componentes React
-│   ├── ui/               # Componentes base (Button, Input, etc.)
-│   ├── dashboard/        # Componentes específicos do dashboard
-│   └── mobile/          # Componentes mobile
-├── contexts/             # Context API para estado global
-│   ├── sales/           # Contexto de vendas
-│   ├── products/        # Contexto de produtos
-│   └── Ingredients/     # Contexto de ingredientes
-├── hooks/               # Custom hooks
-│   ├── useLocalStorage.tsx
-│   ├── useSummaryFinance.tsx
-│   └── useHydrated.tsx
-├── utils/               # Funções utilitárias
-│   ├── finance.ts       # Cálculos financeiros
-│   ├── normalizeQuantity.ts # Normalização de unidades
-│   ├── formatCurrency.ts # Formatação monetária
-│   └── ingredientUtils.ts # Utilitários de ingredientes
-├── types/               # Definições TypeScript
-├── schemas/             # Schemas de validação Zod
-└── styles/              # Estilos globais
+├── app/                    # Rotas e Páginas (Next.js App Router)
+├── components/
+│   ├── dashboard/          # Componentes de Negócio (Cards, Gráficos, Listas)
+│   ├── ui/                 # Design System (Botões, Inputs, Modais)
+│   └── ...
+├── contexts/               # Estado Global (Sales, Products, Ingredients)
+├── hooks/
+│   ├── business/           # Lógica de Negócio (Regras cruciais aqui)
+│   └── ui/                 # Lógica de Interface
+├── types/                  # Definições de Tipos TypeScript
+├── utils/                  # Helpers e Cálculos Puros
+└── schemas/                # Validações Zod
 ```
 
 ---
 
 ## 🎯 Funcionalidades Principais
 
-### 💰 Gestão Financeira
+### 📊 Dashboard
+- Visão geral de faturamento, lucro e margem.
+- Gráficos de tendência de receita.
+- Resumo de estoque crítico.
 
-- **Cálculo automático** de receita, custos e lucros
-- **Análise de margem** de lucro em tempo real
-- **Controle de custos fixos** e variáveis
-- **Relatórios financeiros** com gráficos
+### 🛍️ Produtos
+- Cadastro completo com ficha técnica (ingredientes).
+- Definição de modo de produção (Lote vs Unitário).
+- Precificação inteligente (Sugestão de preço baseada em custos).
 
-### 🛍️ Gestão de Produtos
+### 🧪 Ingredientes
+- Gestão de compras e estoque.
+- Histórico de preços.
+- Conversão automática de unidades.
 
-- **Cadastro de produtos** com ingredientes
-- **Cálculo de custos** baseado em ingredientes
-- **Controle de estoque** com alertas
-- **Categorização** de produtos
-
-### 📊 PDV (Ponto de Venda)
-
-- **Registro de vendas** em tempo real
-- **Controle de estoque** automático
-- **Histórico de transações**
-- **Relatórios de vendas**
-
-### 🧪 Gestão de Ingredientes
-
-- **Cadastro de ingredientes** com unidades variadas
-- **Normalização automática** de unidades (kg→g, l→ml)
-- **Cálculo de custos** por unidade
-- **Controle de estoque** por ingrediente
-
-### 🔧 Sistema de Validação
-
-- **Validação robusta** com Zod
-- **Feedback em tempo real** para o usuário
-- **Validação específica** por tipo de unidade
-- **Tratamento de erros** elegante
+### 💰 Vendas (PDV)
+- Interface ágil para registro de vendas.
+- Seleção de método de pagamento.
+- Feedback visual de sucesso/erro (Toast Notifications).
 
 ---
 
-## 🛠️ Como Usar
+## �️ Instalação e Uso
 
 ### Pré-requisitos
-
 - Node.js 18+
-- pnpm (recomendado) ou npm
+- pnpm (recomendado)
 
-### Instalação
+### Passo a Passo
 
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/dashboard.git
-cd dashboard
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/seu-usuario/dashboard.git
+    cd dashboard
+    ```
 
-# Instale as dependências
-pnpm install
+2.  **Instale as dependências:**
+    ```bash
+    pnpm install
+    ```
 
-# Inicie o servidor de desenvolvimento
-pnpm dev
-```
+3.  **Inicie o servidor de desenvolvimento:**
+    ```bash
+    pnpm dev
+    ```
 
-### Scripts Disponíveis
-
-```bash
-pnpm dev          # Servidor de desenvolvimento
-pnpm build        # Build de produção
-pnpm start        # Servidor de produção
-pnpm lint         # Verificação de código
-```
+4.  **Acesse:** Abra `http://localhost:3000` no seu navegador.
 
 ---
 
-## 📋 Exemplos de Uso
+## 🤝 Contribuição
 
-### Gestão Financeira
+Contribuições são bem-vindas! Por favor, leia as regras de negócio acima antes de propor mudanças estruturais na lógica de estoque ou vendas.
 
-```tsx
-import { useFinanceSummary } from '@/hooks/useSummaryFinance';
-
-const { totalRevenue, netProfit, margin } = useFinanceSummary(sales, fixedCosts);
-```
-
-### Validação de Formulários
-
-```tsx
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ingredientSchema } from '@/schemas/validationSchemas';
-
-const form = useForm({
-  resolver: zodResolver(ingredientSchema),
-});
-```
-
-### Normalização de Unidades
-
-```tsx
-import { normalizeQuantity, formatQuantity } from '@/utils/normalizeQuantity';
-
-const normalized = normalizeQuantity(1.5, 'kg'); // 1500g
-const formatted = formatQuantity(1500, 'g'); // "1.50 kg"
-```
-
----
-
-## 🎨 Sistema de Design
-
-### Componentes Base
-
-- **Button** - Botões com variantes (accept, edit, destructive, etc.)
-- **Input** - Campos de entrada com validação
-- **CardFinance** - Cards para métricas financeiras
-- **Toast** - Sistema de notificações
-
-### Contextos
-
-- **SalesContext** - Gerenciamento de vendas
-- **ProductBuilderContext** - Construção de produtos
-- **IngredientsContext** - Gestão de ingredientes
-
-### Hooks Customizados
-
-- **useLocalStorage** - Persistência local com sincronização
-- **useSummaryFinance** - Cálculos financeiros
-- **useToast** - Sistema de notificações
-
----
-
-## 🔧 Configuração
-
-### ESLint + Prettier
-
-O projeto usa configuração customizada para garantir qualidade de código:
-
-- Regras do Next.js
-- Integração com Prettier
-- Suporte a TypeScript
-
-### Tailwind CSS
-
-Configurado com:
-
-- Sistema de cores customizado
-- Variantes responsivas
-- Classes utilitárias otimizadas
-
----
-
-## 📊 Métricas e Performance
-
-### Funcionalidades Implementadas
-
-- ✅ Sistema de validação robusto
-- ✅ Gestão financeira completa
-- ✅ Controle de produtos e ingredientes
-- ✅ Sistema de toast notifications
-- ✅ Persistência local com localStorage
-- ✅ Componentes reutilizáveis
-- ✅ Tipagem TypeScript completa
-- ✅ Documentação JSDoc
-
-### Próximas Funcionalidades
-
-- [ ] Autenticação e autorização
-- [ ] Integração com backend
-- [ ] Testes automatizados
-- [ ] Deploy com Vercel
-- [ ] PWA (Progressive Web App)
-- [ ] Relatórios avançados
-- [ ] Backup e sincronização
-
----
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-### Padrões de Código
-
-- Use TypeScript para tipagem
-- Documente funções com JSDoc
-- Siga as convenções do ESLint
-- Teste suas mudanças
+1.  Fork o projeto.
+2.  Crie sua Feature Branch (`git checkout -b feature/NovaFeature`).
+3.  Commit suas mudanças (`git commit -m 'Add: Nova Feature'`).
+4.  Push para a Branch (`git push origin feature/NovaFeature`).
+5.  Abra um Pull Request.
 
 ---
 
 ## 📝 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está sob a licença MIT.
 
 ---
 
 ## 👨‍💻 Autor
 
-**Gabriel N.** — Desenvolvedor Full Stack  
+**Gabriel N.** — Desenvolvedor Full Stack
 [LinkedIn](https://www.linkedin.com/in/gabrielnascimento-dev/) | [Portfólio](https://personal-portfolio-flax-gamma.vercel.app/)
-
----
-
-## 🙏 Agradecimentos
-
-- Next.js Team pelo framework incrível
-- Tailwind CSS pela biblioteca de utilidades
-- Comunidade React pela documentação e suporte

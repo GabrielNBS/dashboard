@@ -2,15 +2,13 @@
 
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { Button } from '../base';
-
-export type ToastVariant = 'default' | 'accept' | 'edit' | 'destructive';
+import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 export type ToastProps = {
   title: string;
   description?: string;
-  variant?: ToastVariant;
   duration?: number;
-  icon?: React.ReactNode;
+  type?: 'success' | 'error' | 'warning' | 'info';
 };
 
 export type ToastContextType = {
@@ -83,45 +81,35 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         aria-label="Notificações"
         role="region"
       >
-        {toasts.map(({ id, title, description, variant = 'default', icon }) => (
-          <div
-            key={id}
-            className={`relative flex max-w-xs min-w-[260px] flex-col gap-1 rounded-lg border px-4 py-3 shadow-md ${
-              variant === 'accept'
-                ? 'bg-great'
-                : variant === 'edit'
-                  ? 'bg-warning'
-                  : variant === 'destructive'
-                    ? 'bg-bad'
-                    : 'bg-muted'
-            } `}
-            role="alert"
-            aria-labelledby={`toast-title-${id}`}
-            aria-describedby={description ? `toast-description-${id}` : undefined}
-          >
-            <div
-              id={`toast-title-${id}`}
-              className="flex items-center gap-2 text-base font-semibold"
-            >
-              {icon}
-              <strong>{title}</strong>
-            </div>
-            {description && (
-              <span id={`toast-description-${id}`} className="text-primary text-sm">
-                {description}
-              </span>
-            )}
+        {toasts.map((data) => {
+          const { id, title, description, type = 'info' } = data;
+          const handleClose = () => removeToast(id);
 
-            <Button
-              type="button"
-              className="text-surface hover:bg-muted-foreground absolute top-2 right-2"
-              onClick={() => removeToast(id)}
-              aria-label={`Fechar notificação: ${title}`}
-            >
-              <span aria-hidden="true">×</span>
-            </Button>
-          </div>
-        ))}
+          // Mapa de cores para evitar muitos if/else
+          const colors = {
+            success: { bg: 'bg-green-50', border: 'border-green-500', text: 'text-green-800', icon: <CheckCircle className="text-green-500" /> },
+            error: { bg: 'bg-red-50', border: 'border-red-500', text: 'text-red-800', icon: <XCircle className="text-red-500" /> },
+            warning: { bg: 'bg-yellow-50', border: 'border-yellow-500', text: 'text-yellow-800', icon: <AlertTriangle className="text-yellow-500" /> },
+            info: { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-800', icon: <Info className="text-blue-500" /> }
+          };
+
+          const theme = colors[type];
+
+          return (
+            <div key={id} className={`flex w-full max-w-md bg-white rounded-lg shadow-lg border-l-4 ${theme.border} overflow-hidden mb-3 ml-auto animate-in slide-in-from-right-full`}>
+              <div className={`flex items-center justify-center w-12 flex-shrink-0 ${theme.bg}`}>
+                {theme.icon}
+              </div>
+              <div className="px-4 py-3 flex-1">
+                <p className={`text-sm font-bold ${theme.text}`}>{title}</p>
+                {description && <p className="text-sm text-gray-600 mt-1">{description}</p>}
+              </div>
+              <button onClick={handleClose} className="pr-3 text-gray-400 hover:text-gray-600">
+                <X size={18} />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );

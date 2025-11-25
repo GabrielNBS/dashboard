@@ -84,7 +84,7 @@ export default function IngredientEditPanel() {
     toast({
       title: 'Ingrediente atualizado!',
       description: `"${data.name}" foi atualizado com sucesso.`,
-      variant: 'accept',
+      type: 'success',
     });
   };
 
@@ -93,7 +93,7 @@ export default function IngredientEditPanel() {
   return (
     <Drawer open={isModalOpen} onOpenChange={handleClose}>
       <DrawerContent className="max-h-[95vh] sm:max-h-[90vh]">
-        <div className="mx-auto flex w-full max-w-[480px] flex-col">
+        <div className="mx-auto flex w-full max-w-[480px] flex-col md:max-w-[800px]">
           <DrawerHeader className="px-4 pt-4 text-center sm:px-6 sm:pt-6">
             <DrawerTitle className="text-primary text-xl font-bold sm:text-2xl">
               Editar Ingrediente
