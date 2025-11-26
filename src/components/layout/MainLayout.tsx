@@ -11,6 +11,8 @@ import { usePerformanceMonitor } from '@/hooks/ui/usePerformanceMonitor';
 interface SidebarContextType {
   isExpanded: boolean;
   setIsExpanded: (expanded: boolean) => void;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -29,6 +31,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { prefetchRelatedRoutes } = useSmartPrefetch();
   const { measureRouteChange } = usePerformanceMonitor();
@@ -55,7 +58,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   }, [pathname, prefetchRelatedRoutes, measureRouteChange]);
 
   return (
-    <SidebarContext.Provider value={{ isExpanded, setIsExpanded }}>
+    <SidebarContext.Provider value={{ isExpanded, setIsExpanded, isMobileMenuOpen, setIsMobileMenuOpen }}>
       <ResourcePreloader />
       <div className="bg-muted/30 min-h-dvh antialiased">
         <MobileHeader />

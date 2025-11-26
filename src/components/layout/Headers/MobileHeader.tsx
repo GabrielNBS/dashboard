@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import DeveloperTag from '../Navigation/DeveloperTag';
+import { useSidebar } from '../MainLayout';
 
 const menuItems = [
   { label: 'Dashboard', href: '/', icon: Home },
@@ -36,11 +37,11 @@ const menuItems = [
 }
 
 export default function MobileHeader() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isMobileMenuOpen: isMenuOpen, setIsMobileMenuOpen: setIsMenuOpen } = useSidebar();
   const { state } = useSettings();
   const pathname = usePathname();
 
-  const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
   // Encontrar a página atual para mostrar no header
@@ -142,7 +143,6 @@ export default function MobileHeader() {
                     <li key={href}>
                       <Link
                         href={href}
-                        onClick={closeMenu}
                         className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all ${
                           isActive
                             ? 'bg-primary text-primary-foreground shadow-sm'

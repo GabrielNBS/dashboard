@@ -29,8 +29,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'Sistema de Gestão',
-    template: '%s | Sistema de Gestão',
+    default: 'Regula - Sistema de Gestão',
+    template: '%s | Regula - Sistema de Gestão',
   },
   description: 'Sistema completo de gestão para seu negócio',
   metadataBase: new URL('https://localhost:3000'),
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Sistema de Gestão',
+    title: 'Regula - Sistema de Gestão',
   },
   // Open Graph
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'Sistema de Gestão',
+    siteName: 'Regula - Sistema de Gestão',
   },
 };
 
