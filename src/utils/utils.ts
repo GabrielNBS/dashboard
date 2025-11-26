@@ -5,9 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const date = new Date();
-
 export const getHowHours = () => {
+  const date = new Date();
   const hours = date.getHours();
 
   if (hours >= 6 && hours < 12) {

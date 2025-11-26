@@ -18,6 +18,7 @@ import {
   User,
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
+import DeveloperTag from '../Navigation/DeveloperTag';
 
 const menuItems = [
   { label: 'Dashboard', href: '/', icon: Home },
@@ -52,7 +53,7 @@ export default function MobileHeader() {
   return (
     <>
       {/* Header fixo no topo */}
-      <header className="border-border bg-background/95 fixed top-0 right-0 left-0 z-50 border-b backdrop-blur-sm sm:hidden">
+      <header className="border-border bg-background/95 fixed top-0 right-0 left-0 z-50 border-b backdrop-blur-sm lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <Button
@@ -89,7 +90,7 @@ export default function MobileHeader() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/50 sm:hidden"
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
             onClick={closeMenu}
             aria-hidden="true"
           />
@@ -104,7 +105,7 @@ export default function MobileHeader() {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="bg-card fixed top-0 left-0 z-50 h-full w-72 shadow-2xl sm:hidden"
+            className="bg-card fixed top-0 left-0 z-50 h-full w-72 shadow-2xl lg:hidden flex flex-col"
             id="mobile-navigation"
             role="navigation"
             aria-label="Navegação móvel"
@@ -164,10 +165,9 @@ export default function MobileHeader() {
                   );
                 })}
               </ul>
-            </div>
-
-            {/* Footer do menu */}
-            <div className="border-border border-t p-4">
+            
+            {/* User Info - Moved from footer */}
+            <div className="px-3 pb-4">
               <div className="bg-muted flex items-center gap-3 rounded-xl px-3 py-3">
                 <div className="h-12 w-12 overflow-hidden rounded-full">
                   <Image
@@ -177,7 +177,7 @@ export default function MobileHeader() {
                     height={48}
                     className="h-full w-full object-cover"
                     priority={false}
-                    unoptimized // 🔑 Necessário para imagens externas não configuradas
+                    unoptimized 
                     onError={() => setImgError(true)}
                   />
                 </div>
@@ -192,12 +192,19 @@ export default function MobileHeader() {
                 </div>
               </div>
             </div>
+            </div>
+
+            {/* Footer do menu */}
+            <div className="border-border border-t p-4">
+
+              <DeveloperTag isExpanded={true} />
+            </div>
           </motion.nav>
         )}
       </AnimatePresence>
 
       {/* Spacer para compensar o header fixo */}
-      <div className="h-14 sm:hidden" />
+      <div className="h-14 lg:hidden" />
     </>
   );
 }

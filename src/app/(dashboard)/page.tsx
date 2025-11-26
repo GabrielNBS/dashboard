@@ -30,10 +30,10 @@ export default function DashboardContent() {
   const title = useMemo(
     () => (
       <>
-        {getHowHours()}, <strong>{storeName}</strong>
+        {isClient ? getHowHours() : 'Olá'}, <strong>{storeName}</strong>
       </>
     ),
-    [storeName]
+    [storeName, isClient]
   );
   const subtitle = 'o resumo diário do seu dia';
 

@@ -10,6 +10,7 @@ import { useSidebar } from '../MainLayout';
 import LordIcon, { LordIconRef } from '@/components/ui/LordIcon';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
+import DeveloperTag from './DeveloperTag';
 
 interface MenuItemProps {
   label: string;
@@ -188,7 +189,7 @@ export default function Aside() {
     setMounted(true);
   }, []);
 
-  // Evita problemas de hidratação usando um fallback consistente
+  // fallback para evitar hydratation
   const logoSrc = mounted && state.store.logo ? state.store.logo : 'https://placehold.co/150';
 
   // Verifica se há ingredientes com estoque crítico (zerado ou abaixo de 20% do máximo)
@@ -213,7 +214,7 @@ export default function Aside() {
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
-      className="bg-card fixed top-0 left-0 z-50 hidden h-dvh flex-col shadow-lg sm:flex"
+      className="bg-card fixed top-0 left-0 z-50 hidden h-dvh flex-col shadow-lg lg:flex"
       role="navigation"
       aria-label="Navegação principal"
       id="main-navigation"
@@ -268,6 +269,11 @@ export default function Aside() {
           })}
         </ul>
       </nav>
+
+      {/* Developer Tag */}
+      <div className="px-2 pb-2">
+        <DeveloperTag isExpanded={isExpanded} />
+      </div>
 
       {/* Indicador visual de expansão */}
       <div className="flex h-12 items-center justify-center">

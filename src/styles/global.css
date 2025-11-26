@@ -5,7 +5,6 @@
 @import './components/toast.css';
 
 @layer base {
-
     /* Skip Links for Accessibility */
     .skip-link {
         position: absolute;
@@ -36,7 +35,6 @@
 }
 
 @layer utilities {
-
     /* Pulse animation for step indicators */
     .loader {
         height: 20px;
@@ -50,9 +48,22 @@
         0% {
             box-shadow: 0 0 0 0 #69ffa8;
         }
-
         100% {
             box-shadow: 0 0 0 14px #69ffa800;
+        }
+    }
+
+    /* Shimmer animation */
+    .animate-shimmer {
+        animation: shimmer 2s linear infinite;
+    }
+
+    @keyframes shimmer {
+        from {
+            background-position: 0 0;
+        }
+        to {
+            background-position: -200% 0;
         }
     }
 
@@ -61,7 +72,6 @@
         from {
             transform: translateX(100%);
         }
-
         to {
             transform: translateX(0);
         }
@@ -71,7 +81,6 @@
         from {
             transform: translateX(0);
         }
-
         to {
             transform: translateX(100%);
         }
@@ -81,7 +90,6 @@
         from {
             transform: translateX(-100%);
         }
-
         to {
             transform: translateX(0);
         }
@@ -91,7 +99,6 @@
         from {
             transform: translateX(0);
         }
-
         to {
             transform: translateX(-100%);
         }
@@ -101,7 +108,6 @@
         from {
             transform: translateY(-100%);
         }
-
         to {
             transform: translateY(0);
         }
@@ -111,7 +117,6 @@
         from {
             transform: translateY(0);
         }
-
         to {
             transform: translateY(-100%);
         }
@@ -121,7 +126,6 @@
         from {
             transform: translateY(100%);
         }
-
         to {
             transform: translateY(0);
         }
@@ -131,7 +135,6 @@
         from {
             transform: translateY(0);
         }
-
         to {
             transform: translateY(100%);
         }
@@ -141,7 +144,6 @@
         from {
             opacity: 0;
         }
-
         to {
             opacity: 1;
         }
@@ -151,7 +153,6 @@
         from {
             opacity: 1;
         }
-
         to {
             opacity: 0;
         }
