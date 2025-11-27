@@ -62,6 +62,24 @@ export const ingredientSchema = z
 
     unit: z.enum(['kg', 'l', 'un', 'g', 'ml']),
 
+    minQuantity: z
+      .string()
+      .optional()
+      .refine(val => {
+        if (!val) return true;
+        const num = parseFloat(val);
+        return !isNaN(num) && num >= 0;
+      }, 'Quantidade mínima deve ser maior ou igual a zero'),
+
+    maxQuantity: z
+      .string()
+      .optional()
+      .refine(val => {
+        if (!val) return true;
+        const num = parseFloat(val);
+        return !isNaN(num) && num > 0;
+      }, 'Quantidade máxima deve ser maior que zero'),
+
     buyPrice: z
       .string()
       .min(1, 'Preço de compra é obrigatório')
@@ -108,6 +126,20 @@ export const ingredientSchema = z
           code: z.ZodIssueCode.custom,
           path: ['quantity'],
           message: `${data.unit} deve ser um número inteiro`,
+        });
+      }
+    }
+
+    // Validação Min < Max
+    if (data.minQuantity && data.maxQuantity) {
+      const min = parseFloat(data.minQuantity);
+      const max = parseFloat(data.maxQuantity);
+
+      if (!isNaN(min) && !isNaN(max) && min >= max) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['minQuantity'],
+          message: 'Mínimo deve ser menor que o máximo',
         });
       }
     }

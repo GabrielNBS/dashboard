@@ -37,7 +37,7 @@ export default function IngredientCardList() {
   const ingredientsWithStatus: IngredientWithStatus[] = useMemo(() => {
     return ingredients.map(ingredient => ({
       ...ingredient,
-      status: getStockStatus(ingredient.totalQuantity, ingredient.maxQuantity),
+      status: getStockStatus(ingredient.totalQuantity, ingredient.maxQuantity, ingredient.minQuantity),
     }));
   }, [ingredients]);
 

@@ -20,37 +20,35 @@ import { Check, CheckCheck } from 'lucide-react';
 import LordIcon from '@/components/ui/LordIcon';
 import { Button } from '@/components/ui/base';
 
-// Configuração dos steps com ícones LordIcon
-// Os ícones mantêm animação ativa (loop) quando estão na seção atual
 const STEPS = [
   {
     component: BasicInfoStep,
     label: 'Básico',
-    icon: 'https://cdn.lordicon.com/jgnvfzqg.json', // Document/form icon
+    icon: 'https://cdn.lordicon.com/jgnvfzqg.json',
     description: 'Nome e categoria',
   },
   {
     component: IngredientsStep,
     label: 'Ingredientes',
-    icon: 'https://cdn.lordicon.com/fmsilsqx.json', // Food/ingredients icon
+    icon: 'https://cdn.lordicon.com/fmsilsqx.json',
     description: 'Adicionar ingredientes',
   },
   {
     component: ProductionStep,
     label: 'Produção',
-    icon: 'https://cdn.lordicon.com/fspidoxv.json', // Settings/gear icon
+    icon: 'https://cdn.lordicon.com/fspidoxv.json',
     description: 'Modo de produção',
   },
   {
     component: PricingStep,
     label: 'Preços',
-    icon: 'https://cdn.lordicon.com/bgfqzjey.json', // Money/dollar icon
+    icon: 'https://cdn.lordicon.com/bgfqzjey.json',
     description: 'Preços e margens',
   },
   {
     component: ReviewStep,
     label: 'Revisar',
-    icon: 'https://cdn.lordicon.com/zdfcfvwu.json', // Check/review icon
+    icon: 'https://cdn.lordicon.com/zdfcfvwu.json',
     description: 'Confirmar dados',
   },
 ];
@@ -147,7 +145,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
   useEffect(() => {
     if (!isInitializedRef.current) {
       if (productToEdit) {
-        // Modo edição: Popular builderState com dados existentes
+        // Modo edição
         builderDispatch({ type: 'SET_NAME', payload: productToEdit.name });
         builderDispatch({ type: 'SET_CATEGORY', payload: productToEdit.category });
         if (productToEdit.image) {
@@ -172,7 +170,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
       isInitializedRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Array vazio intencional - roda apenas na montagem
+  }, []);
 
   /**
    * DECISÃO: Cleanup simplificado sem dependências

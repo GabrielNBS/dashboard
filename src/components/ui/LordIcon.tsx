@@ -38,7 +38,8 @@ const LordIcon = memo(
       const iconRef = useRef<HTMLElement>(null);
       const [isLoaded, setIsLoaded] = useState(false);
       const [isMounted, setIsMounted] = useState(false);
-      const keyRef = useRef(0);
+      const [internalHover, setInternalHover] = useState(false);
+      const [renderKey, setRenderKey] = useState(0);
 
       // Garantir que o componente só renderiza no cliente
       useEffect(() => {
@@ -87,25 +88,38 @@ const LordIcon = memo(
       // Resetar animação quando sair do estado ativo
       useEffect(() => {
         if (!isActive && iconRef.current) {
+          const icon = iconRef.current as any;
           // Pausar a animação
-          if ('pause' in iconRef.current) {
-            (iconRef.current as { pause: () => void }).pause();
-          }
+          if (icon.pause) icon.pause();
+          if (icon.stop) icon.stop();
+
           // Resetar para o frame inicial
-          if ('reset' in iconRef.current) {
-            (iconRef.current as { reset: () => void }).reset();
-          }
+          if (icon.goToFrame) icon.goToFrame(0);
+          else if (icon.reset) icon.reset();
+
           // Forçar re-render para garantir que volta ao estado inicial
-          keyRef.current += 1;
+          setRenderKey(prev => prev + 1);
         }
       }, [isActive]);
 
       // Trigger animation when hover state changes
+      const shouldPlay = isHovered || internalHover;
+
       useEffect(() => {
-        if (isHovered && iconRef.current && 'play' in iconRef.current) {
-          (iconRef.current as { play: () => void }).play();
+        if (isActive) return; // Se estiver ativo, o loop é controlado pelo trigger ou pelo outro effect
+
+        if (iconRef.current) {
+          const icon = iconRef.current as any;
+
+          if (shouldPlay) {
+            if (icon.play) icon.play();
+          } else {
+            // Quando o hover termina, para e volta ao início
+            if (icon.stop) icon.stop();
+            if (icon.goToFrame) icon.goToFrame(0);
+          }
         }
-      }, [isHovered]);
+      }, [shouldPlay, isActive]);
 
       // Determine colors based on state
       const getColors = () => {
@@ -119,7 +133,7 @@ const LordIcon = memo(
             primary: '#ffffff',
             secondary: '#ffffff',
           };
-        } else if (isHovered) {
+        } else if (shouldPlay) {
           return {
             primary: 'hsl(var(--foreground))',
             secondary: 'hsl(var(--foreground))',
@@ -170,12 +184,12 @@ const LordIcon = memo(
         if (isActive) {
           return 'loop'; // Animação contínua quando ativo
         } else {
-          return 'hover'; // Animação no hover (detecta hover do elemento pai)
+          return undefined; // Desativa trigger nativo para controle manual
         }
       };
 
       return React.createElement('lord-icon', {
-        key: keyRef.current,
+        key: renderKey,
         ref: iconRef,
         src: src,
         trigger: getTrigger(),
@@ -184,9 +198,12 @@ const LordIcon = memo(
           width: `${width}px`,
           height: `${height}px`,
           display: 'block',
-          pointerEvents: 'none',
+          pointerEvents: 'auto', // Permitir eventos de mouse
+          cursor: 'pointer',
         },
         className: className,
+        onMouseEnter: () => setInternalHover(true),
+        onMouseLeave: () => setInternalHover(false),
       });
     }
   )

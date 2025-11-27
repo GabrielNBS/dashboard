@@ -23,8 +23,8 @@ const UnitSelect = ({ register, errors, className, disabled }: UnitSelectProps) 
       disabled={disabled}
     >
       <option value="">Selecione a unidade</option>
-      <option value="kg">Quilograma (kg)</option>
-      <option value="l">Litro (l)</option>
+      <option value="kg">Peso</option>
+      <option value="l">Litro</option>
       <option value="un">Unidade (un)</option>
     </select>
   );

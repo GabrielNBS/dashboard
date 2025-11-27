@@ -4,6 +4,7 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 import { usePathname } from 'next/navigation';
 import Aside from './Navigation/Aside';
 import MobileHeader from './Headers/MobileHeader';
+import DesktopHeader from './Headers/DesktopHeader';
 import { useSmartPrefetch } from '@/hooks/ui/usePrefetch';
 import ResourcePreloader from '@/components/ui/ResourcePreloader';
 import { usePerformanceMonitor } from '@/hooks/ui/usePerformanceMonitor';
@@ -58,7 +59,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
   }, [pathname, prefetchRelatedRoutes, measureRouteChange]);
 
   return (
-    <SidebarContext.Provider value={{ isExpanded, setIsExpanded, isMobileMenuOpen, setIsMobileMenuOpen }}>
+    <SidebarContext.Provider
+      value={{ isExpanded, setIsExpanded, isMobileMenuOpen, setIsMobileMenuOpen }}
+    >
       <ResourcePreloader />
       <div className="bg-muted/30 min-h-dvh antialiased">
         <MobileHeader />
@@ -69,6 +72,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           role="main"
           aria-label="Conteúdo principal"
         >
+          <DesktopHeader />
           <div className="mx-auto max-w-none">{children}</div>
         </main>
       </div>

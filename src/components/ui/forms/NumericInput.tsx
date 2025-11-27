@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import FormError from './FormError';
 import Button from '../base/Button';
 import { Minus, Plus } from 'lucide-react';
@@ -9,6 +9,7 @@ import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
 import { NumericInputProps } from '@/types/components';
 import { cn } from '@/utils/utils';
+import { useRTLMask } from '@/hooks/ui/useRTLMask';
 
 interface ExtendedNumericInputProps extends Omit<NumericInputProps, 'size'> {
   size?: 'sm' | 'md' | 'lg';
@@ -30,11 +31,18 @@ const NumericInput = ({
   }
   const value = watch(name);
 
-  const adjustValue = (delta: number) => {
-    const current = parseFloat(value || '0') || 0;
-    const newValue = Math.max(current + delta, props.min ? +props.min : 0);
-    setValue(name, newValue.toString(), { shouldValidate: true });
-  };
+  // Determina decimais baseado no step ou nome
+  const decimals = useMemo(() => {
+    if (props.step && parseFloat(props.step.toString()) < 1) return 3;
+    if (name === 'buyPrice') return 2;
+    return 0;
+  }, [props.step, name]);
+
+  const { displayValue, handleChange } = useRTLMask({
+    initialValue: value || '',
+    onChange: (val) => setValue(name, val, { shouldValidate: true }),
+    decimals,
+  });
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -48,10 +56,12 @@ const NumericInput = ({
       <div className="flex w-full flex-col gap-2">
         <div className="relative w-full">
           <Input
-            {...register(name)}
             {...props}
             size={size}
             error={error}
+            value={displayValue}
+            onChange={handleChange}
+            inputMode={decimals > 0 ? 'decimal' : 'numeric'}
             style={{
               MozAppearance: 'textfield',
               WebkitAppearance: 'none',
@@ -63,40 +73,9 @@ const NumericInput = ({
               props.className
             )}
           />
-
-          <div className="mt-3 flex flex-wrap lg:flex-nowrap md:flex-nowrap justify-center gap-2 md:justify-start">
-            {quickIncrements.map(inc => (
-              <div
-                key={inc}
-                className="border-input bg-background flex items-center rounded-md border"
-              >
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => adjustValue(-inc)}
-                  className="h-8 w-8 rounded-none rounded-l-md p-0"
-                >
-                  <Minus className="h-3 w-3" />
-                </Button>
-                <span className="min-w-[2rem] px-2 text-center text-xs font-medium">
-                  {inc}
-                </span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => adjustValue(inc)}
-                  className="h-8 w-8 rounded-none rounded-r-md p-0"
-                >
-                  <Plus className="h-3 w-3" />
-                </Button>
-              </div>
-            ))}
-          </div>
-
+          
           {name === 'buyPrice' && (
-            <span className="text-muted-foreground absolute top-1/2 right-4 -translate-y-[120%] text-base font-medium sm:text-lg">
+            <span className="text-muted-foreground absolute top-1/2 right-4 -translate-y-[50%] text-base font-medium sm:text-lg">
               R$
             </span>
           )}

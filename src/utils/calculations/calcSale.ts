@@ -19,7 +19,6 @@ function getFeesKey(paymentMethod: PaymentMethod): keyof PaymentFees {
 /** Calcula o total proporcional do ingrediente */
 export function calculateIngredientTotalByUnitPrice(
   quantityUsed: number,
-  unit: UnitType,
   unitPrice: number
 ) {
   const normalizedQty = normalizeQuantity(quantityUsed, unit);
@@ -146,10 +145,21 @@ export function calculateSellingResume(
 }
 
 /** Verifica status de estoque */
-export function getStockStatus(quantity: number, maxQuantity: number) {
+export function getStockStatus(quantity: number, maxQuantity: number, minQuantity?: number) {
+  // Se tiver minQuantity definido, usa ele como base principal para crítico
+  if (minQuantity !== undefined && minQuantity >= 0) {
+    if (quantity <= minQuantity) return 'critico';
+    if (quantity <= minQuantity * 1.2) return 'atencao'; // 20% de margem sobre o mínimo
+  }
+
+  // Fallback para porcentagem se não tiver minQuantity ou como regra secundária
   if (!maxQuantity || maxQuantity <= 0) return 'normal';
+  
   const percentage = (quantity / maxQuantity) * 100;
+  
+  // Se já foi definido como crítico pelo minQuantity, mantém. Caso contrário, verifica %
   if (percentage < 15) return 'critico';
   if (percentage < 30) return 'atencao';
+  
   return 'normal';
 }

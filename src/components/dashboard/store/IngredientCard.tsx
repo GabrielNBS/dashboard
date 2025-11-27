@@ -13,16 +13,15 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
   const [autoShowTooltip, setAutoShowTooltip] = React.useState(false);
   const [isTooltipMounted, setIsTooltipMounted] = React.useState(false);
   const [isExiting, setIsExiting] = React.useState(false);
+  const tooltipTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Calculate stock metrics
   const maxQuantity = ingredient.maxQuantity;
-  const status = getStockStatus(ingredient.totalQuantity, maxQuantity);
+  const status = getStockStatus(ingredient.totalQuantity, maxQuantity, ingredient.minQuantity);
   const stockPercentage = maxQuantity > 0 ? (ingredient.totalQuantity / maxQuantity) * 100 : 0;
 
-  // Verifica se o ingrediente está em estado crítico (ativou o alerta)
   const isCriticalAlert = status === 'critico' || (status === 'atencao' && stockPercentage <= 20);
 
-  // Mostra o tooltip automaticamente por 3 segundos ao montar o componente (se for crítico)
   React.useEffect(() => {
     if (isCriticalAlert) {
       setAutoShowTooltip(true);
@@ -137,13 +136,23 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
   ];
 
   return (
-    <div className="relative">
+    <div className="relative" id={`ingredient-${ingredient.id}`}>
       {/* Indicador de alerta pulsante */}
       {isCriticalAlert && (
         <div
-          className="group/alert absolute top-2 right-2 z-10 cursor-help"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
+          className="group/alert absolute top-2 right-2 z-10 cursor-pointer"
+          onClick={e => {
+            e.stopPropagation();
+            setShowTooltip(true);
+
+            if (tooltipTimerRef.current) {
+              clearTimeout(tooltipTimerRef.current);
+            }
+
+            tooltipTimerRef.current = setTimeout(() => {
+              setShowTooltip(false);
+            }, 5000);
+          }}
         >
           <div className="relative flex h-6 w-6 items-center justify-center transition-transform duration-200 ease-out group-hover/alert:scale-110">
             {/* Pulso animado */}

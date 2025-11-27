@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PrefetchLink from '@/components/ui/PrefetchLink';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -31,8 +31,13 @@ function MenuItem({
   isExpanded,
   badgeAlert,
 }: MenuItemProps) {
-  const [isHovered, setIsHovered] = React.useState(false);
-  const iconRef = React.useRef<LordIconRef>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const iconRef = useRef<LordIconRef>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -41,6 +46,8 @@ function MenuItem({
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
+  if (!hydrated) return null;
 
   return (
     <li className="relative">

@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { v4 as uuidv4 } from 'uuid';
-import { CheckCheck, Plus, Package, Loader2, PackagePlus, AlertCircle } from 'lucide-react';
+import { CheckCheck, Plus, Package, Loader2, PackagePlus, AlertCircle, Pencil } from 'lucide-react';
 
 import Button from '@/components/ui/base/Button';
 import Input from '@/components/ui/base/Input';
@@ -24,7 +24,7 @@ import {
   SheetTitle,
 } from '@/components/ui/feedback/sheet';
 
-import { Ingredient, PurchaseBatch } from '@/types/ingredients';
+import { Ingredient, PurchaseBatch, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 
 import {
@@ -34,7 +34,7 @@ import {
   CURRENCY_LIMITS,
 } from '@/schemas/validationSchemas';
 
-import { normalizeQuantity } from '@/utils/helpers/normalizeQuantity';
+import { normalizeQuantity, denormalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 import { formatCurrency } from '@/utils/UnifiedUtils';
 
 /* ===========================================================
@@ -55,7 +55,7 @@ const normalizeForComparison = (value: string): string => sanitizeInput(value.to
 =========================================================== */
 
 const ExistingStockInfo = ({ ingredient }: { ingredient: Ingredient }) => (
-  <div className=" bg-great/50  mb-4 rounded-lg  p-4 transition-all duration-200 shadow-md">
+  <div className="bg-great/50 mb-4 rounded-lg p-4 shadow-md transition-all duration-200">
     <div className="flex items-start gap-3">
       <div className="bg-primary/10 rounded-full p-2">
         <LordIcon
@@ -159,7 +159,11 @@ export default function IngredientForm() {
   const { toast } = useToast();
 
   const [mounted, setMounted] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [localIsOpen, setLocalIsOpen] = useState(false);
+
+  // Determina se estamos em modo de edição baseado no contexto
+  const isEditMode = state.isModalOpen && !!state.ingredientToEdit;
+  const isOpen = localIsOpen || state.isModalOpen;
 
   /* ------------------------------
      FORM
@@ -179,20 +183,54 @@ export default function IngredientForm() {
       quantity: '',
       unit: 'kg',
       buyPrice: '',
+      minQuantity: '',
+      maxQuantity: '',
     },
   });
 
   const [name, unit, quantity, buyPrice] = watch(['name', 'unit', 'quantity', 'buyPrice']);
 
   /* ------------------------------
-     EXISTING INGREDIENT
+     POPULATE FORM ON EDIT
+  ------------------------------ */
+  useEffect(() => {
+    if (isEditMode && state.ingredientToEdit) {
+      const ing = state.ingredientToEdit;
+      reset({
+        name: ing.name,
+        quantity: denormalizeQuantity(ing.totalQuantity, ing.unit).toString(),
+        unit: ing.unit as UnitType,
+        buyPrice: ing.averageUnitPrice?.toString() || '',
+        minQuantity: ing.minQuantity
+          ? denormalizeQuantity(ing.minQuantity, ing.unit).toString()
+          : '',
+        maxQuantity: ing.maxQuantity
+          ? denormalizeQuantity(ing.maxQuantity, ing.unit).toString()
+          : '',
+      });
+    } else if (!isOpen) {
+      // Limpa o formulário quando fecha
+      reset({
+        name: '',
+        quantity: '',
+        unit: 'kg',
+        buyPrice: '',
+        minQuantity: '',
+        maxQuantity: '',
+      });
+    }
+  }, [isEditMode, state.ingredientToEdit, isOpen, reset]);
+
+  /* ------------------------------
+     EXISTING INGREDIENT (RESTOCK LOGIC)
   ------------------------------ */
 
   const existingIngredient = useMemo(() => {
-    if (!name) return null;
+    // Se estamos editando, não queremos lógica de "reabastecimento" baseada em nome
+    if (isEditMode || !name) return null;
     const normalizedName = normalizeForComparison(name);
     return state.ingredients.find(ing => normalizeForComparison(ing.name) === normalizedName);
-  }, [name, state.ingredients]);
+  }, [name, state.ingredients, isEditMode]);
 
   /* ------------------------------
      PRICE PREVIEW
@@ -258,7 +296,12 @@ export default function IngredientForm() {
       totalQuantity: normalizedQuantity,
       averageUnitPrice: unitPrice,
       batches: [batch],
-      maxQuantity: normalizeQuantity(10, data.unit),
+      maxQuantity: data.maxQuantity
+        ? normalizeQuantity(parseFloat(data.maxQuantity), data.unit)
+        : normalizeQuantity(10, data.unit),
+      minQuantity: data.minQuantity
+        ? normalizeQuantity(parseFloat(data.minQuantity), data.unit)
+        : 0,
     };
   }, []);
 
@@ -305,13 +348,51 @@ export default function IngredientForm() {
   );
 
   /* ------------------------------
+     EDIT EXISTING INGREDIENT
+  ------------------------------ */
+  const handleEditIngredient = useCallback(
+    (data: IngredientFormData) => {
+      if (!state.ingredientToEdit) return;
+
+      const rawQuantity = parseFloat(data.quantity);
+      const rawPrice = data.buyPrice ? parseFloat(data.buyPrice) : 0;
+      const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
+
+      const updatedIngredient: Ingredient = {
+        ...state.ingredientToEdit,
+        name: data.name.trim(),
+        totalQuantity: normalizedQuantity,
+        unit: data.unit,
+        averageUnitPrice: rawPrice,
+        minQuantity: data.minQuantity
+          ? normalizeQuantity(parseFloat(data.minQuantity), data.unit)
+          : 0,
+        maxQuantity: data.maxQuantity
+          ? normalizeQuantity(parseFloat(data.maxQuantity), data.unit)
+          : normalizeQuantity(10, data.unit),
+      };
+
+      dispatch({ type: 'EDIT_INGREDIENT', payload: updatedIngredient });
+
+      toast({
+        title: 'Ingrediente atualizado!',
+        description: `"${data.name}" foi atualizado com sucesso.`,
+        type: 'success',
+      });
+    },
+    [state.ingredientToEdit, dispatch, toast]
+  );
+
+  /* ------------------------------
      FORM SUBMIT
   ------------------------------ */
 
   const onSubmit = useCallback(
     async (data: IngredientFormData) => {
       try {
-        if (existingIngredient) {
+        if (isEditMode) {
+          handleEditIngredient(data);
+        } else if (existingIngredient) {
           const success = handleAddBatchToExisting(data, existingIngredient);
           if (!success) return;
         } else {
@@ -325,8 +406,12 @@ export default function IngredientForm() {
           });
         }
 
+        // Fecha o modal apropriado
+        if (state.isModalOpen) {
+          dispatch({ type: 'CLOSE_EDIT_MODAL' });
+        }
+        setLocalIsOpen(false);
         reset();
-        setIsOpen(false);
       } catch (error) {
         console.error('Erro ao salvar:', error);
         toast({
@@ -336,12 +421,21 @@ export default function IngredientForm() {
         });
       }
     },
-    [existingIngredient, handleAddBatchToExisting, createNewIngredient, dispatch, toast, reset]
+    [
+      isEditMode,
+      existingIngredient,
+      handleEditIngredient,
+      handleAddBatchToExisting,
+      createNewIngredient,
+      dispatch,
+      toast,
+      reset,
+      state.isModalOpen,
+    ]
   );
 
   /* ------------------------------
      CANCEL / CLOSE HANDLER SEGURO
-     (não mexe no onOpenChange interno)
   ------------------------------ */
 
   const handleCancel = useCallback(() => {
@@ -351,14 +445,16 @@ export default function IngredientForm() {
       );
       if (!confirmed) return;
     }
+
+    if (state.isModalOpen) {
+      dispatch({ type: 'CLOSE_EDIT_MODAL' });
+    }
+    setLocalIsOpen(false);
     reset();
-    setIsOpen(false);
-  }, [isDirty, reset]);
+  }, [isDirty, reset, state.isModalOpen, dispatch]);
 
   /* ------------------------------
      onOpenChange FINAL
-     - Não executa window.confirm direto
-     - Respeita o estado interno do Sheet
   ------------------------------ */
 
   const handleSheetOpenChange = useCallback(
@@ -370,18 +466,24 @@ export default function IngredientForm() {
 
         if (!confirmed) {
           // Força o modal permanecer aberto
-          setIsOpen(true);
+          // Se estava aberto via context, não faz nada (pois não fechamos)
+          // Se estava aberto via local, setLocalIsOpen(true)
+          if (!state.isModalOpen) setLocalIsOpen(true);
           return;
         }
       }
 
-      setIsOpen(open);
-
       if (!open) {
+        if (state.isModalOpen) {
+          dispatch({ type: 'CLOSE_EDIT_MODAL' });
+        }
+        setLocalIsOpen(false);
         reset();
+      } else {
+        setLocalIsOpen(true);
       }
     },
-    [isDirty, reset]
+    [isDirty, reset, state.isModalOpen, dispatch]
   );
 
   /* ===========================================================
@@ -394,172 +496,257 @@ export default function IngredientForm() {
     <>
       {createPortal(
         <>
-          {/* BOTÃO FIXO */}
-          <Button
-            className="fixed right-4 bottom-4 z-50 shadow-lg transition-all duration-200 hover:scale-105 sm:right-6 sm:bottom-6"
-            type="button"
-            onClick={() => setIsOpen(true)}
-            size="md"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Adicionar ingrediente</span>
-            <span className="sm:hidden">Adicionar</span>
-          </Button>
+          {/* BOTÃO FIXO (Apenas mostra se não estiver em modo de edição) */}
+          {!isEditMode && (
+            <Button
+              className="fixed right-4 bottom-4 z-50 shadow-lg transition-all duration-200 hover:scale-105 sm:right-6 sm:bottom-6"
+              type="button"
+              onClick={() => setLocalIsOpen(true)}
+              size="md"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Adicionar ingrediente</span>
+              <span className="sm:hidden">Adicionar</span>
+            </Button>
+          )}
 
-          {/* MODAL SHEET */}
-          <Sheet open={isOpen} onOpenChange={handleSheetOpenChange}>
-            <SheetContent className="flex max-h-screen flex-col overflow-hidden sm:max-w-2xl">
-              <SheetHeader className="mb-4 flex-shrink-0">
-                <SheetTitle className="flex items-center gap-2">
-                  {existingIngredient ? (
-                    <Package className="h-5 w-5" />
-                  ) : (
-                    <PackagePlus className="h-5 w-5" />
-                  )}
-                  {existingIngredient ? 'Reabastecer ingrediente' : 'Novo ingrediente'}
-                </SheetTitle>
-
-                <SheetDescription>
-                  {existingIngredient
-                    ? `Adicionar novo lote ao ingrediente "${existingIngredient.name}"`
-                    : 'Cadastre um novo ingrediente no sistema'}
-                </SheetDescription>
-              </SheetHeader>
-
-              <div className="-mr-2 flex-1 overflow-y-auto pr-2">
-                {existingIngredient && <ExistingStockInfo ingredient={existingIngredient} />}
-
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                  {/* Nome + Unidade */}
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Nome do ingrediente</Label>
-                      <Input
-                        type="text"
-                        placeholder="Ex: Farinha de trigo"
-                        {...register('name')}
-                        id="name"
-                        autoComplete="off"
-                        disabled={!!existingIngredient}
-                        className={errors.name ? 'border-destructive' : ''}
-                      />
-                      {errors.name && (
-                        <p className="text-destructive flex items-center gap-1 text-xs">
-                          <AlertCircle className="h-3 w-3" />
-                          {errors.name.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="unit">Unidade de medida</Label>
-                      <UnitSelect
-                        register={register}
-                        errors={errors}
-                        disabled={!!existingIngredient}
-                      />
-                      {errors.unit && (
-                        <p className="text-destructive flex items-center gap-1 text-xs">
-                          <AlertCircle className="h-3 w-3" />
-                          {errors.unit.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Quantidade + Preço */}
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="quantity">Quantidade{existingIngredient && ' do lote'}</Label>
-
-                      <QuantityInputField
-                        placeholder={`Ex: 1 ${unit}`}
-                        id="quantity"
-                        unit={unit}
-                        value={quantity}
-                        allowDecimals={UNIT_LIMITS[unit]?.decimals > 0}
-                        maxValue={UNIT_LIMITS[unit]?.max}
-                        minValue={UNIT_LIMITS[unit]?.min}
-                        onChange={v => setValue('quantity', v, { shouldValidate: true })}
-                        className={errors.quantity ? 'border-destructive' : ''}
-                      />
-
-                      {errors.quantity && (
-                        <p className="text-destructive flex items-center gap-1 text-xs">
-                          <AlertCircle className="h-3 w-3" />
-                          {errors.quantity.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="buyPrice">
-                        Preço de compra{existingIngredient && ' do lote'}
-                      </Label>
-
-                      <CurrencyInputField
-                        id="buyPrice"
-                        value={buyPrice}
-                        placeholder="R$ 0,00"
-                        maxValue={CURRENCY_LIMITS.ingredient.max}
-                        minValue={CURRENCY_LIMITS.ingredient.min}
-                        onChange={v => setValue('buyPrice', v, { shouldValidate: true })}
-                        className={errors.buyPrice ? 'border-destructive' : ''}
-                      />
-
-                      {errors.buyPrice && (
-                        <p className="text-destructive flex items-center gap-1 text-xs">
-                          <AlertCircle className="h-3 w-3" />
-                          {errors.buyPrice.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* PREVIEW DE PREÇO */}
-                  {pricePreview && existingIngredient && (
-                    <PricePreview
-                      currentPrice={existingIngredient.averageUnitPrice}
-                      newUnitPrice={pricePreview.newUnitPrice}
-                      newAveragePrice={pricePreview.newAveragePrice}
-                      combinedQuantity={pricePreview.combinedQuantity}
-                      unit={unit}
-                    />
-                  )}
-
-                  {/* BOTÕES */}
-                  <div className="flex justify-end gap-3 border-t pt-4">
-                    <Button variant="outline" type="button" onClick={handleCancel}>
-                      Cancelar
-                    </Button>
-
-                    <Button
-                      variant="accept"
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="min-w-[140px]"
-                    >
-                      {isSubmitting ? (
-                        <span className="flex items-center gap-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Salvando...
-                        </span>
+          {createPortal(
+            <Sheet open={isOpen} onOpenChange={handleSheetOpenChange}>
+              <SheetContent
+                className="max-w-3xl overflow-hidden p-0"
+                aria-labelledby="ingredient-form-title"
+                aria-describedby="ingredient-form-description"
+              >
+                <SheetHeader className="border-border mb-6 flex-shrink-0 border-b p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                      {isEditMode ? (
+                        <Pencil className="text-primary h-5 w-5" />
+                      ) : existingIngredient ? (
+                        <Package className="text-primary h-5 w-5" />
                       ) : (
-                        <span className="flex items-center gap-2">
-                          {existingIngredient ? (
-                            <Package className="h-4 w-4" />
-                          ) : (
-                            <CheckCheck className="h-4 w-4" />
-                          )}
-                          {existingIngredient ? 'Reabastecer' : 'Adicionar'}
-                        </span>
+                        <PackagePlus className="text-primary h-5 w-5" />
                       )}
-                    </Button>
+                    </div>
+                    <div className="text-left">
+                      <SheetTitle className="text-foreground text-lg font-semibold">
+                        {isEditMode
+                          ? 'Editar Ingrediente'
+                          : existingIngredient
+                            ? 'Reabastecer ingrediente'
+                            : 'Novo ingrediente'}
+                      </SheetTitle>
+
+                      <SheetDescription className="text-muted-foreground text-sm">
+                        {isEditMode
+                          ? 'Atualize as informações do ingrediente'
+                          : existingIngredient
+                            ? `Adicionar novo lote ao ingrediente "${existingIngredient.name}"`
+                            : 'Cadastre um novo ingrediente no sistema'}
+                      </SheetDescription>
+                    </div>
                   </div>
-                </form>
-              </div>
-            </SheetContent>
-          </Sheet>
+                </SheetHeader>
+
+                <div className="-mr-2 flex-1 overflow-y-auto pr-2">
+                  {existingIngredient && !isEditMode && (
+                    <ExistingStockInfo ingredient={existingIngredient} />
+                  )}
+
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    {/* Nome + Unidade */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Nome do ingrediente</Label>
+                        <Input
+                          type="text"
+                          placeholder="Ex: Farinha de trigo"
+                          {...register('name')}
+                          id="name"
+                          autoComplete="off"
+                          disabled={!!existingIngredient && !isEditMode} // Desabilita apenas se for reabastecimento
+                          className={errors.name ? 'border-destructive' : ''}
+                        />
+                        {errors.name && (
+                          <p className="text-destructive flex items-center gap-1 text-xs">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.name.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="unit">Unidade de medida</Label>
+                        <UnitSelect
+                          register={register}
+                          errors={errors}
+                          disabled={!!existingIngredient && !isEditMode} // Desabilita apenas se for reabastecimento
+                        />
+                        {errors.unit && (
+                          <p className="text-destructive flex items-center gap-1 text-xs">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.unit.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Quantidade + Preço */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="quantity">
+                          Quantidade{existingIngredient && !isEditMode && ' do lote'}
+                        </Label>
+
+                        <QuantityInputField
+                          placeholder="0,000"
+                          id="quantity"
+                          unit={unit}
+                          value={quantity}
+                          allowDecimals={UNIT_LIMITS[unit]?.decimals > 0}
+                          maxValue={UNIT_LIMITS[unit]?.max}
+                          minValue={UNIT_LIMITS[unit]?.min}
+                          onChange={(v: string) =>
+                            setValue('quantity', v, { shouldValidate: true })
+                          }
+                          className={errors.quantity ? 'border-destructive' : ''}
+                        />
+
+                        {errors.quantity && (
+                          <p className="text-destructive flex items-center gap-1 text-xs">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.quantity.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="buyPrice">
+                          Preço de compra{existingIngredient && !isEditMode && ' do lote'}
+                        </Label>
+
+                        <CurrencyInputField
+                          id="buyPrice"
+                          value={buyPrice}
+                          placeholder="R$ 0,00"
+                          maxValue={CURRENCY_LIMITS.ingredient.max}
+                          minValue={CURRENCY_LIMITS.ingredient.min}
+                          onChange={(v: string) =>
+                            setValue('buyPrice', v, { shouldValidate: true })
+                          }
+                          className={errors.buyPrice ? 'border-destructive' : ''}
+                        />
+
+                        {errors.buyPrice && (
+                          <p className="text-destructive flex items-center gap-1 text-xs">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.buyPrice.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Min/Max Quantity */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="minQuantity">Quantidade Mínima (Alerta Crítico)</Label>
+                        <QuantityInputField
+                          placeholder="0,000"
+                          id="minQuantity"
+                          unit={unit}
+                          value={watch('minQuantity') || ''}
+                          allowDecimals={UNIT_LIMITS[unit]?.decimals > 0}
+                          maxValue={UNIT_LIMITS[unit]?.max}
+                          minValue={0}
+                          onChange={(v: string) =>
+                            setValue('minQuantity', v, { shouldValidate: true })
+                          }
+                          className={errors.minQuantity ? 'border-destructive' : ''}
+                        />
+                        {errors.minQuantity && (
+                          <p className="text-destructive flex items-center gap-1 text-xs">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.minQuantity.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="maxQuantity">Quantidade Máxima (Capacidade)</Label>
+                        <QuantityInputField
+                          placeholder="0,000"
+                          id="maxQuantity"
+                          unit={unit}
+                          value={watch('maxQuantity') || ''}
+                          allowDecimals={UNIT_LIMITS[unit]?.decimals > 0}
+                          maxValue={UNIT_LIMITS[unit]?.max}
+                          minValue={0}
+                          onChange={(v: string) =>
+                            setValue('maxQuantity', v, { shouldValidate: true })
+                          }
+                          className={errors.maxQuantity ? 'border-destructive' : ''}
+                        />
+                        {errors.maxQuantity && (
+                          <p className="text-destructive flex items-center gap-1 text-xs">
+                            <AlertCircle className="h-3 w-3" />
+                            {errors.maxQuantity.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* PREVIEW DE PREÇO - Apenas se não for edição */}
+                    {pricePreview && existingIngredient && !isEditMode && (
+                      <PricePreview
+                        currentPrice={existingIngredient.averageUnitPrice}
+                        newUnitPrice={pricePreview.newUnitPrice}
+                        newAveragePrice={pricePreview.newAveragePrice}
+                        combinedQuantity={pricePreview.combinedQuantity}
+                        unit={unit}
+                      />
+                    )}
+
+                    {/* BOTÕES */}
+                    <div className="flex justify-end gap-3 border-t pt-4">
+                      <Button variant="outline" type="button" onClick={handleCancel}>
+                        Cancelar
+                      </Button>
+
+                      <Button
+                        variant="accept"
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="min-w-[140px]"
+                      >
+                        {isSubmitting ? (
+                          <span className="flex items-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Salvando...
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            {isEditMode ? (
+                              <CheckCheck className="h-4 w-4" />
+                            ) : existingIngredient ? (
+                              <Package className="h-4 w-4" />
+                            ) : (
+                              <CheckCheck className="h-4 w-4" />
+                            )}
+                            {isEditMode
+                              ? 'Salvar'
+                              : existingIngredient
+                                ? 'Reabastecer'
+                                : 'Adicionar'}
+                          </span>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </SheetContent>
+            </Sheet>,
+            document.body
+          )}
         </>,
         document.body
       )}

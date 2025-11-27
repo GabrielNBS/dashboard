@@ -49,6 +49,12 @@
   --color-bad: hsl(0, 80%, 90%);
   --color-info: oklch(97% 0.014 254.604);
 
+  /* Cores de status hover */
+  --color-great-hover: hsl(130, 100%, 80%);
+  --color-warning-hover: hsl(35, 100%, 80%);
+  --color-bad-hover: hsl(0, 100%, 80%);
+  --color-info-hover: oklch(87% 0.014 254.604);
+
   /* Tipografia contrastante para status */
   --color-on-great: hsl(140, 80%, 20%);
   --color-on-warning: hsl(35, 100%, 25%);
@@ -77,24 +83,28 @@
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
 
-  /* Configurações de raio */
+  /* Configurações de raio (Globais) */
   --radius: 0.625rem;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Sombras para efeito neumórfico */
+  /* Sombras (Globais) */
   --shadow-light: 10px 10px 10px hsla(0, 0%, 100%, 0.7);
   --shadow-dark: 10px 10px 0 hsla(0, 0%, 0%, 1);
 
-  /* Cores de status utilizadas nos componentes */
+  /* Cores de status (Globais) */
   --color-great: hsl(140, 80%, 90%);
   --color-warning: hsl(35, 100%, 90%);
   --color-bad: hsl(0, 80%, 90%);
   --color-info: oklch(97% 0.014 254.604);
 
-  /* Tipografia contrastante para status */
+  --color-great-hover: hsl(130, 100%, 80%);
+  --color-warning-hover: hsl(35, 100%, 80%);
+  --color-bad-hover: hsl(0, 100%, 80%);
+  --color-info-hover: oklch(87% 0.014 254.604);
+
   --color-on-great: hsl(140, 80%, 20%);
   --color-on-warning: hsl(35, 100%, 25%);
   --color-on-bad: hsl(0, 80%, 25%);
@@ -121,29 +131,6 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
-
-  /* Configurações de raio */
-  --radius: 0.625rem;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-
-  /* Sombras para efeito neumórfico */
-  --shadow-light: 10px 10px 10px hsla(0, 0%, 100%, 0.7);
-  --shadow-dark: 10px 10px 0 hsla(0, 0%, 0%, 1);
-
-  /* Cores de status utilizadas nos componentes */
-  --color-great: hsl(140, 80%, 90%);
-  --color-warning: hsl(35, 100%, 90%);
-  --color-bad: hsl(0, 80%, 90%);
-  --color-info: oklch(97% 0.014 254.604);
-
-  /* Tipografia contrastante para status */
-  --color-on-great: hsl(140, 80%, 20%);
-  --color-on-warning: hsl(35, 100%, 25%);
-  --color-on-bad: hsl(0, 80%, 25%);
-  --color-on-info: oklch(62.3% 0.214 259.815);
 }
 
 @layer base {

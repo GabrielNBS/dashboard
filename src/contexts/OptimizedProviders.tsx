@@ -6,6 +6,7 @@ import { ProductBuilderProvider } from '@/contexts/products/ProductBuilderContex
 import { ProductProvider } from '@/contexts/products/ProductContext';
 import { SalesProvider } from '@/contexts/sales/SalesContext';
 import { SettingsProvider } from '@/contexts/settings/SettingsContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
 
 interface OptimizedProvidersProps {
   children: ReactNode;
@@ -14,13 +15,15 @@ interface OptimizedProvidersProps {
 const OptimizedProviders = memo(function OptimizedProviders({ children }: OptimizedProvidersProps) {
   return (
     <IngredientProvider>
-      <ProductBuilderProvider>
-        <ProductProvider>
-          <SalesProvider>
-            <SettingsProvider>{children}</SettingsProvider>
-          </SalesProvider>
-        </ProductProvider>
-      </ProductBuilderProvider>
+      <NotificationProvider>
+        <ProductBuilderProvider>
+          <ProductProvider>
+            <SalesProvider>
+              <SettingsProvider>{children}</SettingsProvider>
+            </SalesProvider>
+          </ProductProvider>
+        </ProductBuilderProvider>
+      </NotificationProvider>
     </IngredientProvider>
   );
 });

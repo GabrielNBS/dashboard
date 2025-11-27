@@ -22,6 +22,7 @@
 /.mcp
 .gemini
 .idea
+-p
 
 # misc
 .DS_Store

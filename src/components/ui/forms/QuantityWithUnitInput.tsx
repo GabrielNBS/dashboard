@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import FormError from './FormError';
 import Button from '../base/Button';
 import { Minus, Plus } from 'lucide-react';
 
-
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
 import { cn } from '@/utils/utils';
+import { useRTLMask } from '@/hooks/ui/useRTLMask';
 
 interface QuantityWithUnitInputProps {
   label?: string;
@@ -32,110 +32,42 @@ const QuantityWithUnitInput = ({
 
   const quantityValue = watch('quantity');
   const unitValue = watch('unit');
-  const [displayValue, setDisplayValue] = useState('');
 
-  // Sincroniza o valor de exibição com o valor do formulário
-  useEffect(() => {
-    if (quantityValue !== undefined && quantityValue !== null) {
-      setDisplayValue(quantityValue === '0' ? '' : quantityValue);
+  // Determina o número de casas decimais
+  const decimals = useMemo(() => {
+    if (unitValue === 'kg' || unitValue === 'l') return 3;
+    return 0;
+  }, [unitValue]);
+
+  // Determina se deve usar formatação de unidade pequena (ex: g ao invés de kg)
+  const isSmallUnit = useMemo(() => {
+    if (decimals === 0 || !quantityValue) return false;
+    const numValue = parseFloat(quantityValue);
+    return !isNaN(numValue) && numValue < 1 && numValue > 0;
+  }, [decimals, quantityValue]);
+
+  // Unidade a ser exibida (badge)
+  const displayUnitBadge = useMemo(() => {
+    if (!unitValue) return '';
+    if (isSmallUnit) {
+      if (unitValue === 'kg') return 'g';
+      if (unitValue === 'l') return 'ml';
     }
-  }, [quantityValue]);
+    return ''; // Se não for pequena, a unidade já está no select
+  }, [unitValue, isSmallUnit]);
 
-  const formatQuantity = (val: string): string => {
-    const allowDecimals = unitValue !== 'un';
-
-    if (!allowDecimals) {
-      const numbers = val.replace(/\D/g, '');
-      return numbers;
-    }
-
-    let numbers = val.replace(/[^\d.,]/g, '');
-    numbers = numbers.replace(',', '.');
-
-    const parts = numbers.split('.');
-    if (parts.length > 2) {
-      numbers = parts[0] + '.' + parts.slice(1).join('');
-    }
-
-    if (parts.length > 1) {
-      const maxDecimals = unitValue === 'kg' || unitValue === 'l' ? 3 : 2;
-      parts[1] = parts[1].substring(0, maxDecimals);
-      numbers = parts.join('.');
-    }
-
-    return numbers;
-  };
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let inputValue = e.target.value;
-
-    if (!inputValue) {
-      setDisplayValue('');
-      setValue('quantity', '', { shouldValidate: true });
-      return;
-    }
-
-    const allowDecimals = unitValue !== 'un';
-
-    if (!allowDecimals) {
-      // Remove tudo que não é dígito
-      inputValue = inputValue.replace(/\D/g, '');
-
-      if (!inputValue) {
-        setDisplayValue('');
-        setValue('quantity', '', { shouldValidate: true });
-        return;
-      }
-
-      const numValue = parseInt(inputValue, 10);
-      if (!isNaN(numValue)) {
-        const limitedValue = Math.max(numValue, min);
-        const limitedStr = limitedValue.toString();
-        setDisplayValue(limitedStr);
-        setValue('quantity', limitedStr, { shouldValidate: true });
-      }
-    } else {
-      // Remove tudo que não é dígito, vírgula ou ponto
-      inputValue = inputValue.replace(/[^\d.,]/g, '');
-
-      // Substitui vírgula por ponto para cálculos
-      inputValue = inputValue.replace(',', '.');
-
-      if (!inputValue) {
-        setDisplayValue('');
-        setValue('quantity', '', { shouldValidate: true });
-        return;
-      }
-
-      // Garante apenas um ponto decimal
-      const parts = inputValue.split('.');
-      if (parts.length > 2) {
-        inputValue = parts[0] + '.' + parts.slice(1).join('');
-      } else if (parts.length === 2) {
-        const maxDecimals = unitValue === 'kg' || unitValue === 'l' ? 3 : 2;
-        parts[1] = parts[1].substring(0, maxDecimals);
-        inputValue = parts.join('.');
-      }
-
-      const numValue = parseFloat(inputValue);
-      if (!isNaN(numValue)) {
-        const limitedValue = Math.max(numValue, min);
-        const limitedStr = limitedValue.toString();
-        setDisplayValue(limitedStr);
-        setValue('quantity', limitedStr, { shouldValidate: true });
-      } else {
-        // Permite valores parciais como "5." durante digitação
-        setDisplayValue(inputValue);
-        setValue('quantity', inputValue, { shouldValidate: true });
-      }
-    }
-  };
+  const { displayValue, handleChange } = useRTLMask({
+    initialValue: quantityValue || '',
+    onChange: (val) => setValue('quantity', val, { shouldValidate: true }),
+    decimals,
+    autoAdjustSmallValues: ['kg', 'l'].includes(unitValue),
+    maxValue: unitValue === 'kg' || unitValue === 'l' ? 1000 : undefined,
+  });
 
   const adjustValue = (delta: number) => {
     const current = parseFloat(quantityValue || '0') || 0;
     const newValue = Math.max(current + delta, min);
     const formatted = newValue.toString();
-    setDisplayValue(formatted);
     setValue('quantity', formatted, { shouldValidate: true });
   };
 
@@ -165,8 +97,9 @@ const QuantityWithUnitInput = ({
             {/* Input da quantidade */}
             <input
               type="text"
+              inputMode={decimals > 0 ? 'decimal' : 'numeric'}
               value={displayValue}
-              onChange={handleQuantityChange}
+              onChange={handleChange}
               placeholder={placeholder}
               className={cn(
                 'flex-1 border-0 bg-transparent px-4 text-center text-base font-medium outline-none sm:text-lg md:text-left',
@@ -174,6 +107,13 @@ const QuantityWithUnitInput = ({
                 'focus:ring-0 focus:outline-none'
               )}
             />
+
+
+            {displayUnitBadge && (
+               <span className="text-muted-foreground pointer-events-none flex items-center pr-2 text-sm">
+                 {displayUnitBadge}
+               </span>
+            )}
 
             {/* Divisor visual */}
             <div className="bg-border w-px" />
@@ -189,43 +129,11 @@ const QuantityWithUnitInput = ({
               aria-label="Selecione a unidade de medida"
             >
               <option value="">Unidade</option>
-              <option value="kg">kg</option>
-              <option value="l">l</option>
-              <option value="un">un</option>
+              <option value="kg">Peso</option>
+              <option value="l">Litro</option>
+              <option value="un">Unidade (un)</option>
             </select>
           </div>
-        </div>
-
-        {/* Botões de incremento rápido */}
-        <div className="mt-1 flex flex-wrap lg:flex-nowrap md:flex-nowrap justify-center gap-2 md:justify-start">
-          {quickIncrements.map(inc => (
-            <div
-              key={inc}
-              className="border-input bg-background flex items-center rounded-md border"
-            >
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => adjustValue(-inc)}
-                className="h-8 w-8 rounded-none rounded-l-md p-0"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="min-w-[2rem] px-2 text-center text-xs font-medium">
-                {inc}
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => adjustValue(inc)}
-                className="h-8 w-8 rounded-none rounded-r-md p-0"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-          ))}
         </div>
       </div>
 

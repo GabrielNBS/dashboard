@@ -18,6 +18,7 @@ export type Ingredient = {
   averageUnitPrice: number; // Preço médio ponderado atual
   batches: PurchaseBatch[]; // Histórico de compras (batches)
   maxQuantity: number;
+  minQuantity?: number;
 };
 
 export type IngredientTableProps = {

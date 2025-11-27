@@ -117,7 +117,21 @@ export function GenericCard<T extends CardableItem>({
   variant = 'default',
 }: GenericCardProps<T>) {
   const [activeTab, setActiveTab] = useState(tabs.length > 0 ? tabs[0].key : '');
+  const [isMobile, setIsMobile] = useState(false);
   const cardTitle = title || item.name;
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      // Verifica se é um dispositivo de toque ou tela pequena (tablet/mobile)
+      const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      const isSmallScreen = window.matchMedia('(max-width: 1024px)').matches;
+      setIsMobile(isTouch || isSmallScreen);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Modern variant with tabs
   if (variant === 'modern' && tabs.length > 0) {
@@ -171,6 +185,9 @@ export function GenericCard<T extends CardableItem>({
                         : 'text-muted-foreground hover:text-accent'
                     }`}
                     aria-label={action.label}
+                    tooltip={
+                      !isMobile && action.tooltip ? { tooltipContent: action.tooltip } : undefined
+                    }
                   >
                     {action.icon}
                   </Button>
@@ -260,7 +277,9 @@ export function GenericCard<T extends CardableItem>({
                     variant={action.variant || 'ghost'}
                     className="text-primary hover:bg-primary/20 h-11 w-11 p-0 sm:h-10 sm:w-10"
                     aria-label={action.label}
-                    tooltip={action.tooltip ? { tooltipContent: action.tooltip } : undefined}
+                    tooltip={
+                      !isMobile && action.tooltip ? { tooltipContent: action.tooltip } : undefined
+                    }
                   >
                     {action.icon}
                   </Button>

@@ -1,9 +1,9 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import ProductForm from '@/components/dashboard/store/IngredientForm';
-import ProductEditModal from '@/components/dashboard/store/IngredientEditPanel';
 import ProductTable from '@/components/dashboard/store/IngredientList';
 import { Header } from '@/components/ui/Header';
 
@@ -32,6 +32,28 @@ function ProductTableSkeleton() {
 }
 
 export default function Store() {
+  const searchParams = useSearchParams();
+  const focusId = searchParams.get('focus');
+
+  useEffect(() => {
+    if (focusId) {
+      // Small delay to ensure content is loaded/rendered
+      const timer = setTimeout(() => {
+        const element = document.getElementById(`ingredient-${focusId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('ring-4', 'ring-primary', 'transition-all', 'duration-500');
+
+          setTimeout(() => {
+            element.classList.remove('ring-4', 'ring-primary');
+          }, 3000);
+        }
+      }, 500); // 500ms delay to wait for Suspense/Rendering
+
+      return () => clearTimeout(timer);
+    }
+  }, [focusId]);
+
   return (
     <div className="relative p-4 sm:p-6">
       <Header title="Estoque" subtitle="Gerencie os produtos da loja" className="mb-4 sm:mb-6" />
@@ -43,7 +65,6 @@ export default function Store() {
         Lista de produtos em estoque
       </h2>{' '}
       <AsyncProductTable />
-      <ProductEditModal />
     </div>
   );
 }

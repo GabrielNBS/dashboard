@@ -15,11 +15,11 @@ import {
   Settings,
   Menu,
   X,
-  User,
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import DeveloperTag from '../Navigation/DeveloperTag';
 import { useSidebar } from '../MainLayout';
+import NotificationDropdown from '@/components/ui/NotificationDropdown';
 
 const menuItems = [
   { label: 'Dashboard', href: '/', icon: Home },
@@ -72,14 +72,7 @@ export default function MobileHeader() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hover:bg-muted rounded-lg p-1.5 transition-colors"
-              aria-label="Menu do usuário"
-            >
-              <User className="text-muted-foreground h-5 w-5" aria-hidden="true" />
-            </Button>
+            <NotificationDropdown />
           </div>
         </div>
       </header>
@@ -106,7 +99,7 @@ export default function MobileHeader() {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="bg-card fixed top-0 left-0 z-50 h-full w-72 shadow-2xl lg:hidden flex flex-col"
+            className="bg-card fixed top-0 left-0 z-50 flex h-full w-72 flex-col shadow-2xl lg:hidden"
             id="mobile-navigation"
             role="navigation"
             aria-label="Navegação móvel"
@@ -165,38 +158,37 @@ export default function MobileHeader() {
                   );
                 })}
               </ul>
-            
-            {/* User Info - Moved from footer */}
-            <div className="px-3 pb-4">
-              <div className="bg-muted flex items-center gap-3 rounded-xl px-3 py-3">
-                <div className="h-12 w-12 overflow-hidden rounded-full">
-                  <Image
-                    src={imgError ? fallbackSrc : state.store.logo || fallbackSrc}
-                    alt="Logo da empresa"
-                    width={48}
-                    height={48}
-                    className="h-full w-full object-cover"
-                    priority={false}
-                    unoptimized 
-                    onError={() => setImgError(true)}
-                  />
-                </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="text-foreground truncate text-sm font-medium">
-                    {state.store.storeName || 'Usuário'}
-                  </p>
-                  <p className="text-muted-foreground truncate text-xs">
-                    {state.store.email || 'email@example.com'}
-                  </p>
+              {/* User Info - Moved from footer */}
+              <div className="px-3 pb-4">
+                <div className="bg-muted flex items-center gap-3 rounded-xl px-3 py-3">
+                  <div className="h-12 w-12 overflow-hidden rounded-full">
+                    <Image
+                      src={imgError ? fallbackSrc : state.store.logo || fallbackSrc}
+                      alt="Logo da empresa"
+                      width={48}
+                      height={48}
+                      className="h-full w-full object-cover"
+                      priority={false}
+                      unoptimized
+                      onError={() => setImgError(true)}
+                    />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="text-foreground truncate text-sm font-medium">
+                      {state.store.storeName || 'Usuário'}
+                    </p>
+                    <p className="text-muted-foreground truncate text-xs">
+                      {state.store.email || 'email@example.com'}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
 
             {/* Footer do menu */}
             <div className="border-border border-t p-4">
-
               <DeveloperTag isExpanded={true} />
             </div>
           </motion.nav>
