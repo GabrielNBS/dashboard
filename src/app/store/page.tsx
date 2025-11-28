@@ -55,8 +55,8 @@ export default function Store() {
   }, [focusId]);
 
   return (
-    <div className="relative p-4 sm:p-6">
-      <Header title="Estoque" subtitle="Gerencie os produtos da loja" className="mb-4 sm:mb-6" />
+    <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6">
+      <Header title="Estoque" subtitle="Gerencie os produtos da loja" />
       <h2 id="product-form-title" className="sr-only">
         Formulário de produtos
       </h2>

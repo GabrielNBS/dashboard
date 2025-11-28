@@ -4,18 +4,11 @@ import React from 'react';
 
 function PDV() {
   return (
-    <div className="min-h-dvh w-full overflow-hidden p-2 sm:p-4 md:p-6">
-      <div className="mx-auto w-full max-w-7xl">
-        <header className="mb-3 sm:mb-4 md:mb-6">
-          <Header
-            title="PDV Unificado"
-            subtitle="Vendas individuais e em lote com desconto dinâmico"
-          />
-        </header>
-        <main role="main" aria-label="Formulário de registro de vendas">
-          <RegisterSaleForm />
-        </main>
-      </div>
+    <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6">
+      <Header title="PDV Unificado" subtitle="Vendas individuais e em lote com desconto dinâmico" />
+      <main role="main" aria-label="Formulário de registro de vendas">
+        <RegisterSaleForm />
+      </main>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function Product() {
   if (!mounted) return null;
 
   return (
-    <div className="w-full rounded-lg p-6">
+    <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6">
       <Header
         title="Produtos"
         subtitle="Gerencie seus produtos e produza lotes quando necessário"

@@ -1,14 +1,13 @@
-// src/app/settings/page.tsx
-// Página de configurações do sistema
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { Store, DollarSign, Calculator, CreditCard, Cog, Save, RotateCcw } from 'lucide-react';
+import { Store, DollarSign, Calculator, CreditCard, Cog, RotateCcw } from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
+import { Header } from '@/components/ui/Header';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Componentes das seções
 import StoreSettingsSection from '@/components/dashboard/settings/StoreSettingsSection';
@@ -16,39 +15,47 @@ import FixedCostsSection from '@/components/dashboard/settings/FixedCostsSection
 import VariableCostsSection from '@/components/dashboard/settings/VariableCostsSection';
 import FinancialSettingsSection from '@/components/dashboard/settings/FinancialSettingsSection';
 import PaymentFeesSection from '@/components/dashboard/settings/PaymentFeesSection';
-import SystemSettingsSection from '@/components/dashboard/settings/SystemSettingsSection';
-import { Header } from '@/components/ui/Header';
 
 export default function SettingsPage() {
-  const { saveSettings, resetSettings } = useSettings();
+  const [mounted, setMounted] = useState(false);
+  const { resetSettings } = useSettings();
   const [activeSection, setActiveSection] = useState('store');
-  const [isSaving, setIsSaving] = useState(false);
   const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
     useConfirmation();
 
   const sections = [
-    { id: 'store', label: 'Dados da loja', icon: Store },
-    { id: 'fixed-costs', label: 'Custos fixos', icon: DollarSign },
-    { id: 'variable-costs', label: 'Custos variáveis', icon: Calculator },
-    { id: 'financial', label: 'Configurações Financeiras', icon: DollarSign },
-    { id: 'payment-fees', label: 'Taxas de Pagamento', icon: CreditCard },
-    { id: 'system', label: 'Sistema', icon: Cog },
+    {
+      id: 'store',
+      label: 'Dados da Loja',
+      icon: Store,
+      description: 'Gerencie informações básicas e contato',
+    },
+    {
+      id: 'fixed-costs',
+      label: 'Custos Fixos',
+      icon: DollarSign,
+      description: 'Aluguel, salários e despesas recorrentes',
+    },
+    {
+      id: 'variable-costs',
+      label: 'Custos Variáveis',
+      icon: Calculator,
+      description: 'Comissões e gastos flutuantes',
+    },
+    {
+      id: 'financial',
+      label: 'Financeiro',
+      icon: DollarSign,
+      description: 'Metas e margens de lucro',
+    },
+    {
+      id: 'payment-fees',
+      label: 'Taxas',
+      icon: CreditCard,
+      description: 'Taxas de cartão e delivery',
+    },
+    { id: 'system', label: 'Sistema', icon: Cog, description: 'Preferências e backup' },
   ];
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      saveSettings();
-      // Simular delay para feedback visual
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Aqui você pode adicionar uma notificação de sucesso
-    } catch (error) {
-      console.error('Erro ao salvar configurações:', error);
-      // Aqui você pode adicionar uma notificação de erro
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   const handleReset = () => {
     showConfirmation(
@@ -57,7 +64,7 @@ export default function SettingsPage() {
         description:
           'Tem certeza que deseja resetar todas as configurações? Esta ação não pode ser desfeita e todas as suas configurações personalizadas serão perdidas.',
         variant: 'destructive',
-        confirmText: 'resetar configurações',
+        confirmText: 'Resetar Configurações',
         confirmButtonText: 'Resetar Tudo',
       },
       () => {
@@ -79,85 +86,100 @@ export default function SettingsPage() {
       case 'payment-fees':
         return <PaymentFeesSection />;
       case 'system':
-        return <SystemSettingsSection />;
+        return (
+          <div className="bg-card border-border flex flex-col items-center justify-center rounded-xl border py-16 text-center shadow-sm">
+            <div className="bg-primary/10 mb-4 rounded-full p-4">
+              <Cog className="text-primary h-10 w-10 animate-[spin_3s_linear_infinite]" />
+            </div>
+            <h3 className="text-foreground text-xl font-semibold">Em Desenvolvimento</h3>
+            <p className="text-muted-foreground mt-2 max-w-md">
+              Estamos trabalhando nas configurações avançadas do sistema.
+              <br />
+              Em breve você terá controle total sobre backups e preferências.
+            </p>
+          </div>
+        );
       default:
         return <StoreSettingsSection />;
     }
   };
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <header className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Header title="Configurações" subtitle="Gerencie os dados da sua loja" />
-        </div>
+    <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6">
+      {/* Header Principal */}
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <Header
+          title="Configurações"
+          subtitle="Gerencie todos os aspectos do seu negócio em um só lugar"
+        />
 
-        <div className="flex gap-2 sm:flex-row" role="group" aria-label="Ações das configurações">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleReset}
-            className="flex gap-2"
-            aria-label="Resetar todas as configurações"
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Resetar</span>
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSave}
-            variant="link"
-            disabled={isSaving}
-            className="flex gap-2"
-            aria-label={isSaving ? 'Salvando configurações...' : 'Salvar configurações'}
-          >
-            <Save className="h-4 w-4" aria-hidden="true" />
-            <span>{isSaving ? 'Salvando...' : 'Salvar'}</span>
-          </Button>
-        </div>
-      </header>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleReset}
+          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 self-start border-dashed sm:self-auto"
+        >
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Resetar Padrões
+        </Button>
+      </div>
 
-      <section aria-labelledby="settings-navigation">
-        <h2 id="settings-navigation" className="sr-only">
-          Navegação das configurações
-        </h2>
-        <div className="border-border border-b">
-          <nav
-            className="flex space-x-1 overflow-x-auto pb-0"
-            role="tablist"
-            aria-label="Seções de configurações"
-          >
-            {sections.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveSection(id)}
-                className={`flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all ${
-                  activeSection === id
-                    ? 'border-primary text-primary bg-primary/5'
-                    : 'text-muted-foreground hover:border-border hover:text-foreground border-transparent'
-                }`}
-                role="tab"
-                aria-selected={activeSection === id}
-                aria-controls={`panel-${id}`}
-                id={`tab-${id}`}
-              >
-                <Icon className="h-4 w-4" aria-hidden="true" />
-                <span className="hidden sm:inline">{label}</span>
-              </button>
-            ))}
-          </nav>
-        </div>
-      </section>
+      <div className="mt-4 grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        {/* Sidebar de Navegação */}
+        <nav className="sticky top-6 z-10 flex flex-col gap-2 lg:col-span-3">
+          <div className="bg-card border-border grid grid-cols-6 gap-1 rounded-xl border p-1.5 shadow-sm lg:flex lg:flex-col">
+            {sections.map(({ id, label, icon: Icon }) => {
+              const isActive = activeSection === id;
+              return (
+                <button
+                  key={id}
+                  onClick={() => setActiveSection(id)}
+                  title={label}
+                  className={`flex items-center justify-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-all duration-200 lg:w-full lg:justify-start lg:px-4 ${
+                    isActive
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  }`}
+                >
+                  <Icon
+                    className={`h-5 w-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+                  />
+                  <span className="hidden lg:inline">{label}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="bg-primary ml-auto hidden h-1.5 w-1.5 rounded-full lg:block"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </nav>
 
-      <section
-        className="min-h-[600px]"
-        role="tabpanel"
-        id={`panel-${activeSection}`}
-        aria-labelledby={`tab-${activeSection}`}
-      >
-        {renderSection()}
-      </section>
+        {/* Área de Conteúdo */}
+        <main className="min-h-[500px] lg:col-span-9">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderSection()}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </div>
 
       {/* Dialog de confirmação */}
       {confirmationState && (
