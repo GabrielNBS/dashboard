@@ -5,7 +5,7 @@ import PrefetchLink from '@/components/ui/PrefetchLink';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { useSidebar } from '../MainLayout';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 import LordIcon, { LordIconRef } from '@/components/ui/LordIcon';
 import { useSettings } from '@/contexts/settings/SettingsContext';

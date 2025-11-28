@@ -51,70 +51,68 @@ export default function Product() {
         subtitle="Gerencie seus produtos e produza lotes quando necessário"
       />
 
+      {products.length > 0 && (
+        <Button
+          type="button"
+          size="md"
+          className="fixed right-4 bottom-4 z-50 shadow-lg sm:right-6 sm:bottom-6"
+          onClick={handleToggleForm}
+          aria-label="Criar novo produto"
+        >
+          <Plus className="mr-1" aria-hidden="true" />
+          <span className="hidden sm:inline">Novo Produto</span>
+          <span className="sm:hidden">Criar produto</span>
+        </Button>
+      )}
+
       {createPortal(
-        <>
-          {products.length > 0 && (
-            <Button
-              type="button"
-              size="md"
-              className="fixed right-4 bottom-4 z-50 shadow-lg sm:right-6 sm:bottom-6"
-              onClick={handleToggleForm}
-              aria-label="Criar novo produto"
-            >
-              <Plus className="mr-1" aria-hidden="true" />
-              <span className="hidden sm:inline">Novo Produto</span>
-              <span className="sm:hidden">Criar produto</span>
-            </Button>
-          )}
-
-          <Sheet open={state.isFormVisible} onOpenChange={handleToggleForm}>
-            <SheetContent
-              side="right"
-              className="max-w-3xl overflow-hidden p-0"
-              aria-labelledby="product-form-title"
-              aria-describedby="product-form-description"
-            >
-              <ProductForm.Root key={state.productToEdit?.uid || 'new'} onClose={handleCloseForm}>
-                <div className="flex h-full flex-col">
-                  <SheetHeader className="border-border shrink-0 border-b ">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                        <PackagePlus className="text-primary h-5 w-5" aria-hidden="true" />
-                      </div>
-                      <div className="text-left">
-                        <SheetTitle
-                          id="product-form-title"
-                          className="text-foreground text-lg font-semibold"
-                        >
-                          {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
-                        </SheetTitle>
-                        <SheetDescription
-                          id="product-form-description"
-                          className="text-muted-foreground text-sm"
-                        >
-                          {state.isEditMode
-                            ? 'Atualize as informações do produto existente'
-                            : 'Preencha as informações para criar um novo produto'}
-                        </SheetDescription>
-                      </div>
+        <Sheet open={state.isFormVisible} onOpenChange={handleToggleForm}>
+          <SheetContent
+            side="right"
+            className="z-100 w-full max-w-3xl p-0"
+            aria-labelledby="product-form-title"
+            aria-describedby="product-form-description"
+          >
+            <ProductForm.Root onClose={handleCloseForm}>
+              <div className="flex h-full flex-col">
+                <SheetHeader className="border-border shrink-0 border-b">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                      <PackagePlus className="text-primary h-5 w-5" aria-hidden="true" />
                     </div>
-                    <div className="mt-6">
-                      <ProductForm.Header />
+                    <div className="text-left">
+                      <SheetTitle
+                        id="product-form-title"
+                        className="text-foreground text-lg font-semibold"
+                      >
+                        {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
+                      </SheetTitle>
+                      <SheetDescription
+                        id="product-form-description"
+                        className="text-muted-foreground text-sm"
+                      >
+                        {state.isEditMode
+                          ? 'Atualize as informações do produto existente'
+                          : 'Preencha as informações para criar um novo produto'}
+                      </SheetDescription>
                     </div>
-                  </SheetHeader>
-
-                  <div className="flex-1 overflow-scroll scrollbar-hide ">
-                    <ProductForm.Content />
                   </div>
+                  <div className="mt-6">
+                    <ProductForm.Header />
+                  </div>
+                </SheetHeader>
 
-                  <SheetFooter className="border-border shrink-0 border-t ">
-                    <ProductForm.Footer />
-                  </SheetFooter>
+                <div className="scrollbar-hide flex-1 overflow-scroll">
+                  <ProductForm.Content />
                 </div>
-              </ProductForm.Root>
-            </SheetContent>
-          </Sheet>
-        </>,
+
+                <SheetFooter className="border-border shrink-0 border-t">
+                  <ProductForm.Footer />
+                </SheetFooter>
+              </div>
+            </ProductForm.Root>
+          </SheetContent>
+        </Sheet>,
         document.body
       )}
 

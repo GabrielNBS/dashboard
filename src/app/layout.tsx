@@ -2,10 +2,12 @@ import type { Metadata, Viewport } from 'next';
 import '../styles/global.css';
 import MainLayout from '@/components/layout/MainLayout';
 import OptimizedProviders from '@/contexts/OptimizedProviders';
-import { ToastProvider, ToastGlobalRegister } from '@/components/ui/feedback/use-toast';
 import { Inter } from 'next/font/google';
-import { TooltipProvider } from '@/components/ui/feedback/tooltip';
 import Script from 'next/script';
+
+const APP_NAME = 'Regula - Sistema de Gestão';
+const APP_DESCRIPTION = 'Sistema completo de gestão para seu negócio';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,23 +31,23 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'Regula - Sistema de Gestão',
-    template: '%s | Regula - Sistema de Gestão',
+    default: APP_NAME,
+    template: `%s | ${APP_NAME}`,
   },
-  description: 'Sistema completo de gestão para seu negócio',
-  metadataBase: new URL('https://localhost:3000'),
+  description: APP_DESCRIPTION,
+  metadataBase: new URL(APP_URL),
   // PWA e performance
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Regula - Sistema de Gestão',
+    title: APP_NAME,
   },
   // Open Graph
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'Regula - Sistema de Gestão',
+    siteName: APP_NAME,
   },
   icons: {
     icon: '/icon.svg',
@@ -66,8 +68,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://cdn.lordicon.com" crossOrigin="anonymous" />
         <meta name="color-scheme" content="light dark" />
       </head>
-      <body className={`${inter.variable} `}>
+      <body className={inter.variable}>
         <Script src="https://cdn.lordicon.com/lordicon.js" strategy="lazyOnload" />
+
         <div id="skip-links" className="sr-only">
           <a href="#main-content" className="skip-link">
             Pular para o conteúdo principal
@@ -76,14 +79,10 @@ export default function RootLayout({
             Pular para a navegação
           </a>
         </div>
-        <ToastProvider>
-          <TooltipProvider>
-            <ToastGlobalRegister />
-            <OptimizedProviders>
-              <MainLayout>{children}</MainLayout>
-            </OptimizedProviders>
-          </TooltipProvider>
-        </ToastProvider>
+
+        <OptimizedProviders>
+          <MainLayout>{children}</MainLayout>
+        </OptimizedProviders>
       </body>
     </html>
   );

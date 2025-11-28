@@ -11,7 +11,8 @@ interface PricingStepProps {
   updateData: (data: Partial<{ sellingPrice: string; margin: string }>) => void;
 }
 
-export default function PricingStep({ data, updateData }: PricingStepProps) {
+// ✅ FASE 2.1: Memoizado para performance
+const PricingStep = React.memo(function PricingStep({ data, updateData }: PricingStepProps) {
   const { state } = useProductBuilderContext();
 
   const handleSellingPriceChange = (price: string) => {
@@ -65,4 +66,6 @@ export default function PricingStep({ data, updateData }: PricingStepProps) {
       </div>
     </div>
   );
-}
+});
+
+export default PricingStep;

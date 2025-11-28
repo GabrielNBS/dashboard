@@ -17,7 +17,8 @@ interface ReviewStepProps {
   };
 }
 
-export default function ReviewStep({ data }: ReviewStepProps) {
+// ✅ FASE 2.1: Memoizado - ReviewStep pesado com cálculos, crucial qué não re-renderize
+const ReviewStep = React.memo(function ReviewStep({ data }: ReviewStepProps) {
   const { state } = useProductBuilderContext();
 
   // Cálculos finais
@@ -69,9 +70,10 @@ export default function ReviewStep({ data }: ReviewStepProps) {
 
       {/* Informações Básicas */}
       <div className="border-border bg-card rounded-lg border p-3 sm:p-4">
-        <h3 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
+        {/* ✅ FASE 4.1: Corrigida hierarquia de headings para acessibilidade */}
+        <h2 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
           Informações básicas
-        </h3>
+        </h2>
         <div className="grid grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2">
           <div>
             <span className="text-muted-foreground text-xs font-medium sm:text-sm">
@@ -90,9 +92,9 @@ export default function ReviewStep({ data }: ReviewStepProps) {
 
       {/* Ingredientes */}
       <div className="border-border bg-card rounded-lg border p-3 sm:p-4">
-        <h3 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
+        <h2 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
           Ingredientes ({state.ingredients.length})
-        </h3>
+        </h2>
         {state.ingredients.length > 0 ? (
           <div className="space-y-1.5 sm:space-y-2">
             {state.ingredients.map((ingredient, index) => (
@@ -139,9 +141,9 @@ export default function ReviewStep({ data }: ReviewStepProps) {
 
       {/* Produção */}
       <div className="border-border bg-card rounded-lg border p-3 sm:p-4">
-        <h3 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
+        <h2 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
           Configuração de Produção
-        </h3>
+        </h2>
         <div className="grid grid-cols-1 gap-2 sm:gap-3 md:grid-cols-2">
           <div>
             <span className="text-muted-foreground text-xs font-medium sm:text-sm">
@@ -166,9 +168,9 @@ export default function ReviewStep({ data }: ReviewStepProps) {
 
       {/* Preços */}
       <div className="border-border bg-card rounded-lg border p-3 sm:p-4">
-        <h3 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
+        <h2 className="text-foreground mb-2 flex items-center gap-1.5 text-sm font-semibold sm:mb-3 sm:gap-2 sm:text-base">
           Preços e Margens
-        </h3>
+        </h2>
         <div className="mb-3 grid grid-cols-1 gap-2 sm:mb-4 sm:gap-3 md:grid-cols-2">
           <div>
             <span className="text-muted-foreground text-xs font-medium sm:text-sm">
@@ -216,4 +218,6 @@ export default function ReviewStep({ data }: ReviewStepProps) {
       )}
     </div>
   );
-}
+});
+
+export default ReviewStep;

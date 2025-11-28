@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { useProductContext } from '@/contexts/products/ProductContext';
 import { ProductState } from '@/types/products';
 import ProductCard from './ProductCard';
-import { ProductModal } from './ProductModal';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
 import { useProductFilter } from '@/hooks/ui/useUnifiedFilter';
@@ -13,6 +12,8 @@ import {
   createAddItemEmptyState,
 } from '@/components/ui/GenericListContainer';
 import ProductsListSkeleton from '@/components/ui/skeletons/ProductsListSkeleton';
+// ✅ ProductModal permanece em ProductCard.tsx (742 linhas - divisão futura)
+import { ProductModal } from './ProductCard';
 
 const ProductsList: React.FC = () => {
   const { state, dispatch } = useProductContext();

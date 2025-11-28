@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Aside from './Navigation/Aside';
 import MobileHeader from './Headers/MobileHeader';
@@ -9,30 +9,11 @@ import { useSmartPrefetch } from '@/hooks/ui/usePrefetch';
 import ResourcePreloader from '@/components/ui/ResourcePreloader';
 import { usePerformanceMonitor } from '@/hooks/ui/usePerformanceMonitor';
 
-interface SidebarContextType {
-  isExpanded: boolean;
-  setIsExpanded: (expanded: boolean) => void;
-  isMobileMenuOpen: boolean;
-  setIsMobileMenuOpen: (open: boolean) => void;
-}
-
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
-
-export const useSidebar = () => {
-  const context = useContext(SidebarContext);
-  if (!context) {
-    throw new Error('useSidebar must be used within a SidebarProvider');
-  }
-  return context;
-};
-
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { prefetchRelatedRoutes } = useSmartPrefetch();
   const { measureRouteChange } = usePerformanceMonitor();
@@ -59,9 +40,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   }, [pathname, prefetchRelatedRoutes, measureRouteChange]);
 
   return (
-    <SidebarContext.Provider
-      value={{ isExpanded, setIsExpanded, isMobileMenuOpen, setIsMobileMenuOpen }}
-    >
+    <>
       <ResourcePreloader />
       <div className="bg-muted/30 min-h-dvh antialiased">
         <MobileHeader />
@@ -76,6 +55,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <div className="mx-auto max-w-none">{children}</div>
         </main>
       </div>
-    </SidebarContext.Provider>
+    </>
   );
 }

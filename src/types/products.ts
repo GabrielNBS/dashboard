@@ -1,5 +1,8 @@
 import { Ingredient } from './ingredients';
 
+// Wizard step type for multi-step product form
+export type WizardStep = 0 | 1 | 2 | 3 | 4;
+
 export type ProductionMode = 'individual' | 'lote';
 
 export interface ProductionModel {

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import DeveloperTag from '../Navigation/DeveloperTag';
-import { useSidebar } from '../MainLayout';
+import { useSidebar } from '@/contexts/SidebarContext';
 import NotificationDropdown from '@/components/ui/NotificationDropdown';
 import LordIcon from '@/components/ui/LordIcon';
 

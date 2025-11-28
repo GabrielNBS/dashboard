@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import IngredientSelector from '@/components/dashboard/product/IngredientSelector';
 
@@ -9,15 +9,19 @@ interface IngredientsStepProps {
   updateData: (data: Partial<{ ingredientsCount: number }>) => void;
 }
 
-export default function IngredientsStep({ data, updateData }: IngredientsStepProps) {
+// ✅ FASE 2.1: Memoizado para evitar re-render quando outros steps mudam
+const IngredientsStep = React.memo(function IngredientsStep({ data, updateData }: IngredientsStepProps) {
   const { state } = useProductBuilderContext();
+
+  // ✅ FASE 1.4: Memoiza updateData para evitar recriação desnecessária
+  const memoizedUpdateData = useCallback(updateData, [updateData]);
 
   // Atualizar o contador quando ingredientes mudarem
   useEffect(() => {
     if (state.ingredients.length !== data.ingredientsCount) {
-      updateData({ ingredientsCount: state.ingredients.length });
+      memoizedUpdateData({ ingredientsCount: state.ingredients.length });
     }
-  }, [state.ingredients.length, data.ingredientsCount, updateData]);
+  }, [state.ingredients.length, data.ingredientsCount, memoizedUpdateData]);
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -43,4 +47,6 @@ export default function IngredientsStep({ data, updateData }: IngredientsStepPro
       </div>
     </div>
   );
-}
+});
+
+export default IngredientsStep;

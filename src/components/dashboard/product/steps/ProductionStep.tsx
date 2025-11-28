@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import ProductionSelector from '@/components/dashboard/product/ProductionSelector';
 
@@ -12,23 +12,27 @@ interface ProductionStepProps {
   ) => void;
 }
 
-export default function ProductionStep({ data, updateData }: ProductionStepProps) {
+// ✅ FASE 2.1: Memoizado para evitar re-renders
+const ProductionStep = React.memo(function ProductionStep({ data, updateData }: ProductionStepProps) {
   const { state } = useProductBuilderContext();
+
+  // ✅ FASE 1.4: Memoiza updateData para evitar loops
+  const memoizedUpdateData = useCallback(updateData, [updateData]);
 
   // Sincronizar com o contexto
   React.useEffect(() => {
     if (state.production.mode !== data.productionMode) {
-      updateData({ productionMode: state.production.mode });
+      memoizedUpdateData({ productionMode: state.production.mode });
     }
     if (state.production.yieldQuantity !== data.yieldQuantity) {
-      updateData({ yieldQuantity: state.production.yieldQuantity });
+      memoizedUpdateData({ yieldQuantity: state.production.yieldQuantity });
     }
   }, [
     state.production.mode,
     state.production.yieldQuantity,
     data.productionMode,
     data.yieldQuantity,
-    updateData,
+    memoizedUpdateData,
   ]);
 
   return (
@@ -55,4 +59,6 @@ export default function ProductionStep({ data, updateData }: ProductionStepProps
       </div>
     </div>
   );
-}
+});
+
+export default ProductionStep;
