@@ -55,7 +55,7 @@ export default function Product() {
         <Button
           type="button"
           size="md"
-          className="fixed right-4 bottom-4 z-50 shadow-lg sm:right-6 sm:bottom-6"
+          className="fixed right-4 bottom-4 z-20 shadow-lg sm:right-6 sm:bottom-6"
           onClick={handleToggleForm}
           aria-label="Criar novo produto"
         >

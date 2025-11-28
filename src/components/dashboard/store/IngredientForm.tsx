@@ -181,7 +181,7 @@ export default function IngredientForm() {
     defaultValues: {
       name: '',
       quantity: '',
-      unit: 'kg',
+      unit: 'un',
       buyPrice: '',
       minQuantity: '',
       maxQuantity: '',
@@ -213,7 +213,7 @@ export default function IngredientForm() {
       reset({
         name: '',
         quantity: '',
-        unit: 'kg',
+        unit: 'un',
         buyPrice: '',
         minQuantity: '',
         maxQuantity: '',
@@ -599,7 +599,7 @@ export default function IngredientForm() {
                         </Label>
 
                         <QuantityInputField
-                          placeholder="0,000"
+                          placeholder={unit === 'un' ? '0' : '0,000'}
                           id="quantity"
                           unit={unit}
                           value={quantity}
@@ -650,7 +650,7 @@ export default function IngredientForm() {
                       <div className="space-y-2">
                         <Label htmlFor="minQuantity">Quantidade Mínima (Alerta Crítico)</Label>
                         <QuantityInputField
-                          placeholder="0,000"
+                          placeholder={unit === 'un' ? '0' : '0,000'}
                           id="minQuantity"
                           unit={unit}
                           value={watch('minQuantity') || ''}
@@ -673,7 +673,7 @@ export default function IngredientForm() {
                       <div className="space-y-2">
                         <Label htmlFor="maxQuantity">Quantidade Máxima (Capacidade)</Label>
                         <QuantityInputField
-                          placeholder="0,000"
+                          placeholder={unit === 'un' ? '0' : '0,000'}
                           id="maxQuantity"
                           unit={unit}
                           value={watch('maxQuantity') || ''}

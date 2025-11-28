@@ -163,7 +163,7 @@ export function MultiStepHeader() {
                   index === currentStep
                     ? 'bg-primary text-primary-foreground shadow-lg'
                     : index < currentStep
-                      ? 'bg-success text-success-foreground shadow-md'
+                      ? 'bg-great text-on-great-foreground shadow-md'
                       : 'bg-muted text-muted-foreground'
                 }`}
               >
@@ -186,7 +186,7 @@ export function MultiStepHeader() {
                   index === currentStep
                     ? 'text-primary'
                     : index < currentStep
-                      ? 'text-success'
+                      ? 'text-on-great'
                       : 'text-muted-foreground'
                 }`}
               >
@@ -196,7 +196,7 @@ export function MultiStepHeader() {
             {index < steps.length - 1 && (
               <div
                 className={`mx-1 h-0.5 flex-1 transition-all duration-300 sm:mx-2 ${
-                  index < currentStep ? 'bg-success' : 'bg-border'
+                  index < currentStep ? 'bg-great' : 'bg-primary/20'
                 }`}
               />
             )}
@@ -206,7 +206,7 @@ export function MultiStepHeader() {
 
       <div className="h-1 w-full rounded-full bg-muted">
         <div
-          className="h-1 rounded-full bg-primary-to-r from-primary to-success transition-all duration-700 ease-in-out"
+          className="h-1 rounded-full bg-linear-to-r from-muted to-primary transition-all duration-700 ease-in-out"
           style={{ width: `${progress}%` }}
         />
       </div>

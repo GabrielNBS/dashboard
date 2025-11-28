@@ -2,7 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { Store, DollarSign, Calculator, CreditCard, Cog, RotateCcw } from 'lucide-react';
+import {
+  Store,
+  DollarSign,
+  Calculator,
+  CreditCard,
+  Cog,
+  RotateCcw,
+  ClipboardPlus,
+} from 'lucide-react';
 import Button from '@/components/ui/base/Button';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { ConfirmationDialog } from '@/components/ui/feedback';
@@ -45,7 +53,7 @@ export default function SettingsPage() {
     {
       id: 'financial',
       label: 'Financeiro',
-      icon: DollarSign,
+      icon: ClipboardPlus,
       description: 'Metas e margens de lucro',
     },
     {

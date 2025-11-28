@@ -39,7 +39,7 @@ interface SheetContentProps extends React.ComponentProps<typeof Drawer.Content> 
 function SheetContent({ className, children, side = 'right', ...props }: SheetContentProps) {
   // O Drawer.Overlay é mantido aqui para garantir que o fundo escuro seja renderizado
   return (
-    <>
+    <Drawer.Portal>
       <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
       <Drawer.Content
         className={cn(
@@ -61,7 +61,7 @@ function SheetContent({ className, children, side = 'right', ...props }: SheetCo
           <span className="sr-only">Fechar</span>
         </Drawer.Close>
       </Drawer.Content>
-    </>
+    </Drawer.Portal>
   );
 }
 

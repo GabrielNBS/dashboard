@@ -41,8 +41,7 @@ export default function QuantityInput({
   size = 'md',
 }: QuantityInputProps) {
   const getDecimals = () => {
-    if (!allowDecimals) return 0;
-    if (unit === 'un') return 2;
+    if (!allowDecimals || unit === 'un') return 0;
     return 3;
   };
 

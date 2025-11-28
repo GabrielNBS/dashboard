@@ -1,4 +1,3 @@
-// src/components/dashboard/settings/PaymentFeesSection.tsx
 'use client';
 
 import React from 'react';
@@ -50,48 +49,56 @@ export default function PaymentFeesSection() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="mb-10 flex items-center justify-center gap-3">
         <DollarSign className="text-primary h-6 w-6" />
-        <div>
-          <h2 className="text-xl font-semibold">Taxas de Pagamento</h2>
-          <p className="text-muted-foreground text-sm">
-            Configure as taxas aplicadas para cada método de pagamento
-          </p>
-        </div>
+        <h2 className="text-lg font-bold lg:text-xl">Taxas de Pagamento</h2>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {paymentMethods.map(({ key, label, icon: Icon, description }) => (
-          <div key={key} className="bg-surface rounded-lg p-4 shadow-md">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="bg-primary/10 text-primary rounded-lg p-2">
-                <Icon className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="font-medium">{label}</h3>
-                <p className="text-muted-foreground text-sm">{description}</p>
-              </div>
+          <div key={key} className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Icon className="text-primary h-5 w-5" />
+              <h3 className="text-lg font-medium text-gray-900">{label}</h3>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Taxa (%)</label>
-              <PercentageInput
-                value={paymentFees[key]?.toString() ?? ''}
-                onChange={value => handleFeeChange(key, value)}
-                placeholder="0%"
-                className="w-full"
-                maxValue={PERCENTAGE_LIMITS.paymentFee.max}
-                minValue={PERCENTAGE_LIMITS.paymentFee.min}
-              />
-              <p className="text-muted-foreground text-xs">Taxa atual: {paymentFees[key] ?? 0}%</p>
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Taxa (%)</label>
+                <PercentageInput
+                  value={paymentFees[key]?.toString() ?? ''}
+                  onChange={value => handleFeeChange(key, value)}
+                  placeholder="0%"
+                  maxValue={PERCENTAGE_LIMITS.paymentFee.max}
+                  minValue={PERCENTAGE_LIMITS.paymentFee.min}
+                />
+                <p className="mt-1 text-xs text-gray-500">{description}</p>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="bg-info rounded-lg p-4 shadow-md">
-        <h4 className="text-primary mb-2 font-medium">💡 Dica</h4>
-        <p className="text-primary text-sm">
+      {/* Resumo das Taxas */}
+      <div className="from-primary to-primary/80 hidden flex-col rounded-lg bg-gradient-to-r p-6 lg:flex">
+        <h3 className="text-secondary mb-4 text-lg font-medium">Resumo das taxas configuradas</h3>
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          {paymentMethods.map(({ key, label, icon: Icon }) => (
+            <div key={key} className="rounded-lg bg-white p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <Icon className="h-4 w-4 text-gray-600" />
+                <span className="font-medium text-gray-700">{label}</span>
+              </div>
+              <span className="text-2xl font-bold text-gray-800">{paymentFees[key] ?? 0}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Dicas */}
+      <div className="hidden rounded-lg bg-yellow-50 p-4 lg:flex">
+        <h4 className="mb-2 text-sm font-medium text-yellow-900">💡 Dica</h4>
+        <p className="text-sm text-yellow-800">
           As taxas são aplicadas sobre o subtotal da venda. Por exemplo, uma taxa de 2,5% em uma
           venda de R$ 100,00 resultará em R$ 2,50 de desconto no valor final.
         </p>

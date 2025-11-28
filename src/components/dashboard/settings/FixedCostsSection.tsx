@@ -5,12 +5,20 @@ import { useSettings } from '@/contexts/settings/SettingsContext';
 import { FixedCostSettings } from '@/types/settings';
 import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
-import { DollarSign, Plus, Edit, Trash2 } from 'lucide-react';
+import { DollarSign, Plus, Edit, Trash2, Calendar, FileText, Tag } from 'lucide-react';
 import { getTotalFixedCost } from '@/utils/calculations/finance';
 import { CurrencyInput } from '@/components/ui/forms';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { CURRENCY_LIMITS } from '@/schemas/validationSchemas';
-import { ConfirmationDialog } from '@/components/ui/feedback';
+import {
+  ConfirmationDialog,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/feedback';
 import {
   Select,
   SelectContent,
@@ -23,7 +31,7 @@ import { Label } from '@/components/ui/base/label';
 export default function FixedCostsSection() {
   const { state, dispatch } = useSettings();
   const [editingCost, setEditingCost] = useState<FixedCostSettings | null>(null);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
     useConfirmation();
 
@@ -54,23 +62,24 @@ export default function FixedCostsSection() {
       notes: '',
     };
     setEditingCost(newCost);
-    setIsAdding(true);
+    setIsSheetOpen(true);
   };
 
   const handleEditCost = (cost: FixedCostSettings) => {
-    setEditingCost(cost);
-    setIsAdding(false);
+    setEditingCost({ ...cost });
+    setIsSheetOpen(true);
   };
 
   const handleSaveCost = () => {
     if (editingCost && editingCost.name.trim()) {
-      if (isAdding) {
+      const isNew = !state.fixedCosts.find(c => c.id === editingCost.id);
+      if (isNew) {
         dispatch({ type: 'ADD_FIXED_COST', payload: editingCost });
       } else {
         dispatch({ type: 'UPDATE_FIXED_COST', payload: editingCost });
       }
       setEditingCost(null);
-      setIsAdding(false);
+      setIsSheetOpen(false);
     }
   };
 
@@ -90,215 +99,53 @@ export default function FixedCostsSection() {
     );
   };
 
-  const handleCancel = () => {
-    setEditingCost(null);
-    setIsAdding(false);
-  };
-
   const totalFixedCosts = getTotalFixedCost(state.fixedCosts);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <DollarSign className="text-primary h-6 w-6" />
-          <h2 className="text-xl font-semibold">Custos fixos</h2>
-        </div>
-        <Button onClick={handleAddCost} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Adicionar custo
-        </Button>
+      <div className="mb-10 flex items-center justify-center gap-3">
+        <DollarSign className="text-primary h-6 w-6" />
+        <h2 className="text-lg font-bold lg:text-xl">Custos Fixos</h2>
       </div>
-
-      {/* Resumo */}
-      <div className="bg-primary/10 rounded-lg p-4">
-        <h3 className="text-primary mb-2 text-lg font-medium">Resumo dos custos fixos</h3>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-primary">Total de custos:</span>
-            <span className="text-foreground ml-2 font-bold">R$ {totalFixedCosts.toFixed(2)}</span>
-          </div>
-          <div>
-            <span className="text-primary">Quantidade:</span>
-            <span className="text-foreground ml-2 font-bold">
-              {state.fixedCosts.length} custo(s)
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Formulário de Edição */}
-      {editingCost && (
-        <div className="bg-muted space-y-4 rounded-lg p-4">
-          <h3 className="text-lg font-medium">
-            {isAdding ? 'Adicionar novo custo fixo' : 'Editar custo fixo'}
-          </h3>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Nome do custo *
-              </label>
-              <Input
-                value={editingCost.name}
-                onChange={e => setEditingCost({ ...editingCost, name: e.target.value })}
-                placeholder="Ex: Aluguel, Energia, Internet"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Valor *</label>
-              <CurrencyInput
-                value={editingCost.amount?.toString() || ''}
-                onChange={value =>
-                  setEditingCost({ ...editingCost, amount: parseFloat(value) || 0 })
-                }
-                placeholder="R$ 0,00"
-                maxValue={CURRENCY_LIMITS.fixedCost.max}
-                required
-              />
-            </div>
-
-            <div>
-              <Label className="mb-1 block text-sm font-medium text-gray-700">Categoria</Label>
-              <Select
-                value={editingCost.category}
-                onValueChange={(value: typeof editingCost.category) =>
-                  setEditingCost({
-                    ...editingCost,
-                    category: value,
-                  })
-                }
-              >
-                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
-                  <SelectValue placeholder="Selecionar categoria do custo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="mb-1 block text-sm font-medium text-gray-700">Recorrência</Label>
-              <Select
-                value={editingCost.recurrence}
-                onValueChange={(value: typeof editingCost.recurrence) =>
-                  setEditingCost({
-                    ...editingCost,
-                    recurrence: value,
-                  })
-                }
-              >
-                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
-                  <SelectValue placeholder="Selecionar recorrência do custo" />
-                </SelectTrigger>
-                <SelectContent>
-                  {recurrences.map(recurrence => (
-                    <SelectItem key={recurrence.value} value={recurrence.value}>
-                      {recurrence.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Data de vencimento
-              </label>
-              <Input
-                type="date"
-                value={editingCost.dueDate}
-                onChange={e => setEditingCost({ ...editingCost, dueDate: e.target.value })}
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-gray-700">Observações</label>
-              <textarea
-                value={editingCost.notes}
-                onChange={e => setEditingCost({ ...editingCost, notes: e.target.value })}
-                placeholder="Observações adicionais sobre este custo..."
-                className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
-                rows={3}
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <Button onClick={handleSaveCost} disabled={!editingCost.name.trim()}>
-              {isAdding ? 'Adicionar' : 'Salvar'}
-            </Button>
-            <Button variant="outline" onClick={handleCancel}>
-              Cancelar
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* Lista de Custos Fixos */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Custos fixos configurados</h3>
-
         {state.fixedCosts.length === 0 ? (
-          <div className="py-8 text-center text-gray-500">
+          <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 py-12 text-center text-gray-500">
             <DollarSign className="mx-auto mb-4 h-12 w-12 text-gray-300" />
-            <p>Nenhum custo fixo configurado.</p>
-            <p className="text-sm">Clique em &quot;Adicionar custo&quot; para começar.</p>
+            <p className="text-lg font-medium text-gray-900">Nenhum custo fixo configurado</p>
+            <p className="text-sm">
+              Adicione seus custos recorrentes para ter um controle financeiro preciso.
+            </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {state.fixedCosts.map(cost => (
               <div
                 key={cost.id}
-                className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
+                className="group hover:border-primary/20 relative overflow-hidden rounded-lg border border-gray-200 bg-white p-5 transition-all hover:shadow-md"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <h4 className="font-medium text-gray-900">{cost.name}</h4>
-                      <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold text-gray-900">{cost.name}</h4>
+                      <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize">
                         {cost.category}
                       </span>
                     </div>
-                    <div className="mt-2 grid grid-cols-2 gap-4 text-sm text-gray-600">
-                      <div>
-                        <span className="font-medium">Valor:</span>
-                        <span className="ml-1">R$ {cost.amount.toFixed(2)}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium">Recorrência:</span>
-                        <span className="ml-1 capitalize">{cost.recurrence}</span>
-                      </div>
-                      {cost.dueDate && (
-                        <div>
-                          <span className="font-medium">Vencimento:</span>
-                          <span className="ml-1">
-                            {new Date(cost.dueDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      )}
-                      {cost.notes && (
-                        <div className="col-span-2">
-                          <span className="font-medium">Observações:</span>
-                          <span className="ml-1">{cost.notes}</span>
-                        </div>
-                      )}
-                    </div>
+                    <p className="text-2xl font-bold text-gray-900">
+                      R$ {cost.amount.toFixed(2)}
+                      <span className="ml-1 text-sm font-normal text-gray-500">
+                        /{cost.recurrence}
+                      </span>
+                    </p>
                   </div>
-
-                  <div className="ml-4 flex gap-2">
+                  <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditCost(cost)}
-                      className="text-blue-600 hover:text-blue-700"
+                      className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -306,16 +153,193 @@ export default function FixedCostsSection() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteCost(cost.id)}
-                      className="text-red-600 hover:text-red-700"
+                      className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
+
+                <div className="mt-4 flex flex-wrap gap-3 text-sm text-gray-500">
+                  {cost.dueDate && (
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>Vence dia {new Date(cost.dueDate).getDate()}</span>
+                    </div>
+                  )}
+                  {cost.notes && (
+                    <div className="flex w-full items-center gap-1.5">
+                      <FileText className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{cost.notes}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         )}
+      </div>
+
+      {/* Resumo */}
+      <div className="from-primary to-primary/80 hidden flex-col rounded-lg bg-gradient-to-r p-6 lg:flex">
+        <h3 className="text-secondary mb-4 text-lg font-medium">Resumo dos custos fixos</h3>
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="rounded-lg bg-white p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-red-600" />
+              <span className="font-medium text-gray-700">Total Mensal</span>
+            </div>
+            <span className="text-2xl font-bold text-red-600">R$ {totalFixedCosts.toFixed(2)}</span>
+          </div>
+
+          <div className="rounded-lg bg-white p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <Tag className="h-4 w-4 text-blue-600" />
+              <span className="font-medium text-gray-700">Quantidade</span>
+            </div>
+            <span className="text-2xl font-bold text-blue-600">{state.fixedCosts.length}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Sheet de Edição/Adição */}
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>
+              {editingCost?.id && state.fixedCosts.find(c => c.id === editingCost.id)
+                ? 'Editar Custo Fixo'
+                : 'Adicionar Custo Fixo'}
+            </SheetTitle>
+            <SheetDescription>Preencha as informações do custo fixo abaixo.</SheetDescription>
+          </SheetHeader>
+
+          {editingCost && (
+            <div className="max-h-[80vh] space-y-4 overflow-y-auto p-4">
+              <div className="space-y-3">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Nome do custo *
+                  </label>
+                  <Input
+                    value={editingCost.name}
+                    onChange={e => setEditingCost({ ...editingCost, name: e.target.value })}
+                    placeholder="Ex: Aluguel, Energia, Internet"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">Valor *</label>
+                    <CurrencyInput
+                      value={editingCost.amount?.toString() || ''}
+                      onChange={value =>
+                        setEditingCost({ ...editingCost, amount: parseFloat(value) || 0 })
+                      }
+                      placeholder="R$ 0,00"
+                      maxValue={CURRENCY_LIMITS.fixedCost.max}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-1 block text-sm font-medium text-gray-700">
+                      Categoria
+                    </Label>
+                    <Select
+                      value={editingCost.category}
+                      onValueChange={(value: typeof editingCost.category) =>
+                        setEditingCost({
+                          ...editingCost,
+                          category: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                        <SelectValue placeholder="Categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem key={category.value} value={category.value}>
+                            {category.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="mb-1 block text-sm font-medium text-gray-700">
+                      Recorrência
+                    </Label>
+                    <Select
+                      value={editingCost.recurrence}
+                      onValueChange={(value: typeof editingCost.recurrence) =>
+                        setEditingCost({
+                          ...editingCost,
+                          recurrence: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                        <SelectValue placeholder="Recorrência" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {recurrences.map(recurrence => (
+                          <SelectItem key={recurrence.value} value={recurrence.value}>
+                            {recurrence.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                      Vencimento
+                    </label>
+                    <Input
+                      type="date"
+                      value={editingCost.dueDate}
+                      onChange={e => setEditingCost({ ...editingCost, dueDate: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Observações
+                  </label>
+                  <textarea
+                    value={editingCost.notes}
+                    onChange={e => setEditingCost({ ...editingCost, notes: e.target.value })}
+                    placeholder="Observações adicionais..."
+                    className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <SheetFooter>
+            <Button variant="outline" onClick={() => setIsSheetOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveCost} disabled={!editingCost?.name.trim()}>
+              Salvar
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      <div className="flex justify-center">
+        <Button onClick={handleAddCost} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Adicionar Custo
+        </Button>
       </div>
 
       {/* Dialog de confirmação */}

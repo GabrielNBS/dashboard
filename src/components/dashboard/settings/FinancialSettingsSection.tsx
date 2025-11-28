@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { DollarSign, Target, Shield, TrendingUp } from 'lucide-react';
+import { DollarSign, Target, Shield, TrendingUp, ClipboardPlus } from 'lucide-react';
 import { CurrencyInput, PercentageInput } from '@/components/ui/forms';
 import {
   Select,
@@ -35,9 +35,9 @@ export default function FinancialSettingsSection() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <DollarSign className="text-primary h-6 w-6" />
-        <h2 className="text-xl font-semibold">Configurações financeiras</h2>
+      <div className="mb-10 flex items-center justify-center gap-3">
+        <ClipboardPlus className="text-primary h-6 w-6" />
+        <h2 className="text-lg font-bold lg:text-xl">Configurações financeiras</h2>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
