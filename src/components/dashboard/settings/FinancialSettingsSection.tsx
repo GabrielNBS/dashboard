@@ -33,12 +33,6 @@ export default function FinancialSettingsSection() {
     { value: 'EUR', label: 'Euro (€)' },
   ];
 
-  const currencyFormats = [
-    { value: 'symbol', label: 'Símbolo (R$ 1.234,56)' },
-    { value: 'code', label: 'Código (BRL 1.234,56)' },
-    { value: 'name', label: 'Nome (Real 1.234,56)' },
-  ];
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -50,7 +44,7 @@ export default function FinancialSettingsSection() {
         {/* Margem de Lucro */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-green-600" />
+            <TrendingUp className="text-primary h-5 w-5" />
             <h3 className="text-lg font-medium text-gray-900">Margem de lucro</h3>
           </div>
 
@@ -78,7 +72,7 @@ export default function FinancialSettingsSection() {
         {/* Reserva de Emergência */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-blue-600" />
+            <Shield className="text-primary h-5 w-5" />
             <h3 className="text-lg font-medium text-gray-900">Reserva de emergência</h3>
           </div>
 
@@ -106,7 +100,7 @@ export default function FinancialSettingsSection() {
         {/* Meta de Vendas */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-orange-600" />
+            <Target className="text-primary h-5 w-5" />
             <h3 className="text-lg font-medium text-gray-900">Meta de vendas</h3>
           </div>
 
@@ -134,7 +128,7 @@ export default function FinancialSettingsSection() {
         {/* Configurações de Moeda */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-purple-600" />
+            <DollarSign className="text-primary h-5 w-5" />
             <h3 className="text-lg font-medium text-gray-900">Configurações de moeda</h3>
           </div>
 
@@ -147,7 +141,7 @@ export default function FinancialSettingsSection() {
                 value={state.financial.currency}
                 onValueChange={(value: string) => handleFinancialChange('currency', value)}
               >
-                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
+                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm transition-colors focus:border-transparent focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50">
                   <SelectValue placeholder="Selecionar moeda principal" />
                 </SelectTrigger>
                 <SelectContent>
@@ -159,34 +153,13 @@ export default function FinancialSettingsSection() {
                 </SelectContent>
               </Select>
             </div>
-
-            <div>
-              <Label className="mb-1 block text-sm font-medium text-gray-700">
-                Formato de exibição
-              </Label>
-              <Select
-                value={state.financial.currencyFormat}
-                onValueChange={(value: string) => handleFinancialChange('currencyFormat', value)}
-              >
-                <SelectTrigger className="focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:outline-none">
-                  <SelectValue placeholder="Selecionar formato de exibição da moeda" />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencyFormats.map(format => (
-                    <SelectItem key={format.value} value={format.value}>
-                      {format.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Resumo das Configurações */}
-      <div className="hidden rounded-lg bg-gradient-to-r from-blue-50 to-green-50 p-6 lg:flex">
-        <h3 className="mb-4 text-lg font-medium text-gray-900">
+      <div className="from-primary to-primary/80 hidden flex-col rounded-lg bg-gradient-to-r p-6 lg:flex">
+        <h3 className="text-secondary mb-4 text-lg font-medium">
           Resumo das configurações financeiras
         </h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
@@ -212,20 +185,20 @@ export default function FinancialSettingsSection() {
 
           <div className="rounded-lg bg-white p-3">
             <div className="mb-2 flex items-center gap-2">
-              <Target className="h-4 w-4 text-orange-600" />
-              <span className="font-medium text-gray-700">Meta mensal</span>
+              <Target className="text-primary h-4 w-4" />
+              <span className="text-primary font-medium">Meta mensal</span>
             </div>
-            <span className="text-2xl font-bold text-orange-600">
+            <span className="text-primary text-2xl font-bold">
               R$ {state.financial.monthlySalesGoal.toLocaleString()}
             </span>
           </div>
 
           <div className="rounded-lg bg-white p-3">
             <div className="mb-2 flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-purple-600" />
-              <span className="font-medium text-gray-700">Moeda</span>
+              <DollarSign className="text-on-great h-4 w-4" />
+              <span className="text-on-great font-medium">Moeda</span>
             </div>
-            <span className="text-2xl font-bold text-purple-600">{state.financial.currency}</span>
+            <span className="text-on-great text-2xl font-bold">{state.financial.currency}</span>
           </div>
         </div>
       </div>

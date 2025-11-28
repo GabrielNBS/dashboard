@@ -47,6 +47,11 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     siteName: 'Regula - Sistema de Gestão',
   },
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({

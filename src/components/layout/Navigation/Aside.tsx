@@ -72,8 +72,8 @@ function MenuItem({
               <LordIcon
                 ref={iconRef}
                 src={lordIconSrc}
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 className="flex-shrink-0"
                 isActive={isActive}
                 isHovered={isHovered}
@@ -197,7 +197,7 @@ export default function Aside() {
   }, []);
 
   // fallback para evitar hydratation
-  const logoSrc = mounted && state.store.logo ? state.store.logo : 'https://placehold.co/150';
+  const logoSrc = mounted && state.store.logo ? state.store.logo : '/icon.svg';
 
   // Verifica se há ingredientes com estoque crítico (zerado ou abaixo de 20% do máximo)
   // O badge só aparece quando NÃO estiver na página de estoque
@@ -212,7 +212,7 @@ export default function Aside() {
   }, [ingredientState.ingredients, pathname]);
 
   const [imgError, setImgError] = useState(false);
-  const fallbackSrc = 'https://placehold.co/150';
+  const fallbackSrc = '/icon.svg';
 
   return (
     <motion.aside
@@ -234,7 +234,7 @@ export default function Aside() {
             height: isExpanded ? 48 : 40,
           }}
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-          className="overflow-hidden rounded-full"
+          className="bg-muted overflow-hidden rounded-full"
         >
           <Image
             src={imgError ? fallbackSrc : logoSrc || fallbackSrc}
@@ -243,8 +243,8 @@ export default function Aside() {
             height={48}
             className="h-full w-full object-cover"
             priority={false}
-            unoptimized={true}
             onError={() => setImgError(true)}
+            quality={100}
           />
         </motion.div>
       </div>

@@ -49,7 +49,7 @@ export default function MobileHeader() {
   const pageTitle = currentPage?.label || 'Regula';
 
   const [imgError, setImgError] = useState(false);
-  const fallbackSrc = 'https://placehold.co/150';
+  const fallbackSrc = '/chef-avatar.svg';
 
   return (
     <>
@@ -162,7 +162,7 @@ export default function MobileHeader() {
               {/* User Info - Moved from footer */}
               <div className="px-3 pb-4">
                 <div className="bg-muted flex items-center gap-3 rounded-xl px-3 py-3">
-                  <div className="h-12 w-12 overflow-hidden rounded-full">
+                  <div className="bg-muted h-12 w-12 overflow-hidden rounded-full">
                     <Image
                       src={imgError ? fallbackSrc : state.store.logo || fallbackSrc}
                       alt="Logo da empresa"
