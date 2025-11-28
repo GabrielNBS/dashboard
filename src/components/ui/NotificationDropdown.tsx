@@ -42,9 +42,9 @@ export default function NotificationDropdown() {
       case 'critical':
         return <AlertOctagon className="text-destructive h-5 w-5" />;
       case 'warning':
-        return <AlertTriangle className="text-warning h-5 w-5" />;
+        return <AlertTriangle className="text-on-warning h-5 w-5" />;
       default:
-        return <Info className="text-info h-5 w-5" />;
+        return <Info className="text-on-info h-5 w-5" />;
     }
   };
 

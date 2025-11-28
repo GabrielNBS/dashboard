@@ -36,7 +36,20 @@ export default function ProductionSelector() {
 
           <button
             type="button"
-            onClick={() => dispatch({ type: 'SET_PRODUCTION_MODE', payload: 'lote' })}
+            onClick={() => {
+              dispatch({ type: 'SET_PRODUCTION_MODE', payload: 'lote' });
+              // Pequeno delay para permitir que o input seja renderizado
+              setTimeout(() => {
+                const yieldInput = document.querySelector('input[placeholder="Ex: 12 unidades"]');
+                if (yieldInput) {
+                  (yieldInput as HTMLElement).focus();
+                  (yieldInput as HTMLElement).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                  });
+                }
+              }, 100);
+            }}
             className={`relative rounded-lg border-2 px-4 py-3 text-sm font-medium transition-all duration-200 ${
               production.mode === 'lote'
                 ? 'border-purple-500 bg-purple-50 text-purple-700 shadow-sm'

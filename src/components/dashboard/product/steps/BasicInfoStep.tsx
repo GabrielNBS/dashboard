@@ -35,24 +35,24 @@ export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) 
   }, [state.category, data.category, updateData]);
 
   return (
-    <div className="space-y-4 p-2 sm:space-y-6 sm:p-4">
-      <div className="mb-4 text-center sm:mb-8">
-        <div className="bg-great mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full sm:mb-4 sm:h-16 sm:w-16">
+    <div className="space-y-3 p-1 sm:space-y-4 sm:p-2">
+      <div className="mb-2 text-center sm:mb-4">
+        <div className="bg-great mx-auto mb-1 flex h-10 w-10 items-center justify-center rounded-full sm:mb-2 sm:h-12 sm:w-12">
           <div className="loader"></div>
         </div>
-        <h2 className="text-primary text-lg font-bold sm:text-2xl">Informações básicas</h2>
-        <p className="text-muted-foreground mt-1 text-xs sm:mt-2 sm:text-sm">
+        <h2 className="text-primary text-base font-bold sm:text-xl">Informações básicas</h2>
+        <p className="text-muted-foreground mt-0.5 text-[10px] sm:mt-1 sm:text-xs">
           Vamos começar com o nome e categoria do seu produto
         </p>
       </div>
 
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-3 sm:space-y-4">
         <div>
           <ImageUpload value={data.image} onChange={handleImageChange} />
         </div>
 
         <div>
-          <Label className="text-muted-foreground mb-2 block text-xs font-medium sm:mb-3 sm:text-sm">
+          <Label className="text-muted-foreground mb-1 block text-xs font-medium sm:mb-2 sm:text-sm">
             Nome do produto <span className="text-on-bad">*</span>
           </Label>
           <Input
@@ -60,7 +60,21 @@ export default function BasicInfoStep({ data, updateData }: BasicInfoStepProps) 
             placeholder="Ex: Bolo de Chocolate..."
             value={data.name}
             onChange={e => handleNameChange(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 sm:px-4 sm:py-3 sm:text-sm"
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                // Focar no primeiro botão de categoria
+                const categoryButtons = document.querySelectorAll('[data-category-button]');
+                if (categoryButtons.length > 0) {
+                  (categoryButtons[0] as HTMLElement).focus();
+                  (categoryButtons[0] as HTMLElement).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                  });
+                }
+              }
+            }}
+            className="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-xs transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 sm:px-3 sm:py-2 sm:text-sm"
             required
           />
         </div>

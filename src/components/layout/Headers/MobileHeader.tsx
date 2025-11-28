@@ -20,6 +20,7 @@ import { useSettings } from '@/contexts/settings/SettingsContext';
 import DeveloperTag from '../Navigation/DeveloperTag';
 import { useSidebar } from '../MainLayout';
 import NotificationDropdown from '@/components/ui/NotificationDropdown';
+import LordIcon from '@/components/ui/LordIcon';
 
 const menuItems = [
   { label: 'Dashboard', href: '/', icon: Home },
@@ -49,7 +50,7 @@ export default function MobileHeader() {
   const pageTitle = currentPage?.label || 'Regula';
 
   const [imgError, setImgError] = useState(false);
-  const fallbackSrc = '/chef-avatar.svg';
+  const fallbackSrc = 'https://cdn.lordicon.com/spzqjmbt.json';
 
   return (
     <>
@@ -163,16 +164,33 @@ export default function MobileHeader() {
               <div className="px-3 pb-4">
                 <div className="bg-muted flex items-center gap-3 rounded-xl px-3 py-3">
                   <div className="bg-muted h-12 w-12 overflow-hidden rounded-full">
-                    <Image
-                      src={imgError ? fallbackSrc : state.store.logo || fallbackSrc}
-                      alt="Logo da empresa"
-                      width={48}
-                      height={48}
-                      className="h-full w-full object-cover"
-                      priority={false}
-                      unoptimized
-                      onError={() => setImgError(true)}
-                    />
+                    {imgError ||
+                    !state.store.logo ||
+                    state.store.logo.endsWith('.json') ||
+                    fallbackSrc.endsWith('.json') ? (
+                      <div className="flex h-full w-full items-center justify-center p-1">
+                        <LordIcon
+                          src={fallbackSrc}
+                          width={48}
+                          height={48}
+                          colors={{
+                            primary: 'hsl(var(--primary))',
+                            secondary: 'hsl(var(--muted-foreground))',
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <Image
+                        src={state.store.logo}
+                        alt="Logo da empresa"
+                        width={48}
+                        height={48}
+                        className="h-full w-full object-cover"
+                        priority={false}
+                        unoptimized
+                        onError={() => setImgError(true)}
+                      />
+                    )}
                   </div>
 
                   <div className="min-w-0 flex-1">

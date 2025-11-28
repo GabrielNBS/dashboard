@@ -43,6 +43,7 @@ export default function CategoryList() {
             onClick={() => handleSelect(category)}
             variant={state.category === category ? 'default' : 'outline'}
             size="md"
+            data-category-button
             className={`relative rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
               state.category === category
                 ? 'text-secondary bg-primary shadow-md'

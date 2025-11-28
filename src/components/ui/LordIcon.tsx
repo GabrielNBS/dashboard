@@ -37,9 +37,8 @@ const LordIcon = memo(
     ) => {
       const iconRef = useRef<HTMLElement>(null);
       const [isLoaded, setIsLoaded] = useState(false);
-      const [isMounted, setIsMounted] = useState(false);
       const [internalHover, setInternalHover] = useState(false);
-      const [renderKey, setRenderKey] = useState(0);
+      const [isMounted, setIsMounted] = useState(false);
 
       // Garantir que o componente só renderiza no cliente
       useEffect(() => {
@@ -85,28 +84,11 @@ const LordIcon = memo(
         },
       }));
 
-      // Resetar animação quando sair do estado ativo
-      useEffect(() => {
-        if (!isActive && iconRef.current) {
-          const icon = iconRef.current as any;
-          // Pausar a animação
-          if (icon.pause) icon.pause();
-          if (icon.stop) icon.stop();
-
-          // Resetar para o frame inicial
-          if (icon.goToFrame) icon.goToFrame(0);
-          else if (icon.reset) icon.reset();
-
-          // Forçar re-render para garantir que volta ao estado inicial
-          setRenderKey(prev => prev + 1);
-        }
-      }, [isActive]);
-
       // Trigger animation when hover state changes
       const shouldPlay = isHovered || internalHover;
 
       useEffect(() => {
-        if (isActive) return; // Se estiver ativo, o loop é controlado pelo trigger ou pelo outro effect
+        if (isActive) return; // Se estiver ativo, o loop é controlado pelo trigger nativo
 
         if (iconRef.current) {
           const icon = iconRef.current as any;
@@ -184,12 +166,11 @@ const LordIcon = memo(
         if (isActive) {
           return 'loop'; // Animação contínua quando ativo
         } else {
-          return undefined; // Desativa trigger nativo para controle manual
+          return undefined; // Desativa trigger nativo para controle manual via hover
         }
       };
 
       return React.createElement('lord-icon', {
-        key: renderKey,
         ref: iconRef,
         src: src,
         trigger: getTrigger(),

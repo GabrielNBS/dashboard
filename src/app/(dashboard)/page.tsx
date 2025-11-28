@@ -35,7 +35,7 @@ export default function DashboardContent() {
     ),
     [storeName, isClient]
   );
-  const subtitle = 'o resumo diário do seu dia';
+  const subtitle = 'Acompanhe seus dados em tempo real';
 
   return (
     <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6">

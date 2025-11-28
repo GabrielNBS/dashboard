@@ -41,7 +41,7 @@ const defaultSettings: AppSettings = {
   fixedCosts: [],
   variableCosts: [],
   financial: {
-    defaultProfitMargin: 0,
+    defaultProfitMargin: 33,
     emergencyReservePercentage: 0,
     monthlySalesGoal: 0,
     currency: 'BRL',

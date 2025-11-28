@@ -17,10 +17,12 @@ export default function SearchableInput<T>({
   label,
   error,
   size = 'md',
+  dropUp,
 }: SearchableInputProps<T> & {
   label?: string;
   error?: string;
   size?: 'sm' | 'md' | 'lg';
+  dropUp?: boolean;
 }) {
   const [localValue, setLocalValue] = useState(inputValue);
   const [isOpen, setIsOpen] = useState(false);
@@ -32,8 +34,13 @@ export default function SearchableInput<T>({
     setLocalValue(inputValue);
   }, [inputValue]);
 
-  const filteredItems = items.filter(item =>
-    String(item[displayAttribute]).toLowerCase().includes(localValue.toLowerCase())
+  const safeItems = Array.isArray(items) ? items : [];
+  const safeLocalValue = localValue || '';
+
+  const filteredItems = safeItems.filter(item =>
+    item && item[displayAttribute]
+      ? String(item[displayAttribute]).toLowerCase().includes(safeLocalValue.toLowerCase())
+      : false
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +118,10 @@ export default function SearchableInput<T>({
         {isOpen && localValue && (
           <ul
             id={listboxId}
-            className="bg-popover border-border absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border shadow-lg"
+            className={cn(
+              'bg-popover border-border absolute z-10 w-full overflow-y-auto rounded-lg border shadow-lg',
+              dropUp ? 'bottom-full mb-1 max-h-48' : 'mt-1 max-h-60'
+            )}
             role="listbox"
             aria-label="Opções de busca"
           >

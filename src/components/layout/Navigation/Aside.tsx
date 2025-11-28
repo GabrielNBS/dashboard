@@ -18,6 +18,7 @@ interface MenuItemProps {
   icon: string | React.ComponentType<{ className?: string }>;
   lordIconSrc?: string;
   isActive: boolean;
+  isHovered: boolean;
   isExpanded: boolean;
   badgeAlert?: boolean;
 }
@@ -28,24 +29,16 @@ function MenuItem({
   icon,
   lordIconSrc,
   isActive,
+  isHovered,
   isExpanded,
   badgeAlert,
 }: MenuItemProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const iconRef = useRef<LordIconRef>(null);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
   }, []);
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
 
   if (!hydrated) return null;
 
@@ -62,11 +55,7 @@ function MenuItem({
         aria-current={isActive ? 'page' : undefined}
         aria-label={`Navegar para ${label}`}
       >
-        <div
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          className="flex w-full items-center"
-        >
+        <div className="flex w-full items-center">
           <div className="relative">
             {icon === 'lordicon' && lordIconSrc ? (
               <LordIcon
@@ -212,7 +201,7 @@ export default function Aside() {
   }, [ingredientState.ingredients, pathname]);
 
   const [imgError, setImgError] = useState(false);
-  const fallbackSrc = '/icon.svg';
+  const fallbackSrc = 'https://cdn.lordicon.com/spzqjmbt.json';
 
   return (
     <motion.aside
@@ -236,16 +225,29 @@ export default function Aside() {
           transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           className="bg-muted overflow-hidden rounded-full"
         >
-          <Image
-            src={imgError ? fallbackSrc : logoSrc || fallbackSrc}
-            alt="Logo da empresa"
-            width={48}
-            height={48}
-            className="h-full w-full object-cover"
-            priority={false}
-            onError={() => setImgError(true)}
-            quality={100}
-          />
+          {imgError || !logoSrc || logoSrc.endsWith('.json') || fallbackSrc.endsWith('.json') ? (
+            <div className="flex h-full w-full items-center justify-center p-1">
+              <LordIcon
+                src={fallbackSrc}
+                width={48}
+                height={48}
+                colors={{
+                  primary: 'hsl(var(--primary))',
+                  secondary: 'hsl(var(--muted-foreground))',
+                }}
+              />
+            </div>
+          ) : (
+            <Image
+              src={logoSrc}
+              alt="Logo da empresa"
+              width={48}
+              height={48}
+              className="h-full w-full object-cover"
+              priority={false}
+              onError={() => setImgError(true)}
+            />
+          )}
         </motion.div>
       </div>
 
@@ -267,6 +269,7 @@ export default function Aside() {
                 icon={icon}
                 lordIconSrc={lordIconSrc}
                 isActive={isActive}
+                isHovered={false}
                 isExpanded={isExpanded}
                 badgeAlert={label === 'Estoque' && hasCriticalStock}
                 aria-current={isActive ? 'page' : undefined}
