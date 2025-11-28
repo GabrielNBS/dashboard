@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
 import FormError from './FormError';
-import Button from '../base/Button';
-import { Minus, Plus } from 'lucide-react';
 
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
@@ -22,8 +20,6 @@ const QuantityWithUnitInput = ({
   label = 'Quantidade',
   quantityError,
   unitError,
-  quickIncrements = [1, 10],
-
   min = 0,
   placeholder = '0',
   className,
@@ -58,18 +54,10 @@ const QuantityWithUnitInput = ({
 
   const { displayValue, handleChange } = useRTLMask({
     initialValue: quantityValue || '',
-    onChange: (val) => setValue('quantity', val, { shouldValidate: true }),
+    onChange: val => setValue('quantity', val, { shouldValidate: true }),
     decimals,
-    autoAdjustSmallValues: ['kg', 'l'].includes(unitValue),
     maxValue: unitValue === 'kg' || unitValue === 'l' ? 1000 : undefined,
   });
-
-  const adjustValue = (delta: number) => {
-    const current = parseFloat(quantityValue || '0') || 0;
-    const newValue = Math.max(current + delta, min);
-    const formatted = newValue.toString();
-    setValue('quantity', formatted, { shouldValidate: true });
-  };
 
   const hasError = quantityError || unitError;
 
@@ -99,6 +87,7 @@ const QuantityWithUnitInput = ({
               type="text"
               inputMode={decimals > 0 ? 'decimal' : 'numeric'}
               value={displayValue}
+              min={min}
               onChange={handleChange}
               placeholder={placeholder}
               className={cn(
@@ -108,11 +97,10 @@ const QuantityWithUnitInput = ({
               )}
             />
 
-
             {displayUnitBadge && (
-               <span className="text-muted-foreground pointer-events-none flex items-center pr-2 text-sm">
-                 {displayUnitBadge}
-               </span>
+              <span className="text-muted-foreground pointer-events-none flex items-center pr-2 text-sm">
+                {displayUnitBadge}
+              </span>
             )}
 
             {/* Divisor visual */}

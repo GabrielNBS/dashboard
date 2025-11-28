@@ -1,9 +1,5 @@
 import React, { useMemo } from 'react';
 import FormError from './FormError';
-import Button from '../base/Button';
-import { Minus, Plus } from 'lucide-react';
-
-
 import Input from '../base/Input';
 import { IngredientFormData } from '@/schemas/validationSchemas';
 import { useFormContext } from 'react-hook-form';
@@ -15,23 +11,10 @@ interface ExtendedNumericInputProps extends Omit<NumericInputProps, 'size'> {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const NumericInput = ({
-  label,
-  error,
-  quickIncrements = [1, 10],
-  size = 'lg',
-  ...props
-}: ExtendedNumericInputProps) => {
-  const { register, setValue, watch } = useFormContext<IngredientFormData>();
+const NumericInput = ({ label, error, size = 'lg', ...props }: ExtendedNumericInputProps) => {
+  const { setValue, watch } = useFormContext<IngredientFormData>();
   const name = props.name as keyof IngredientFormData;
 
-  if (!name) {
-    console.error('NumericInput: name prop is required');
-    return null;
-  }
-  const value = watch(name);
-
-  // Determina decimais baseado no step ou nome
   const decimals = useMemo(() => {
     if (props.step && parseFloat(props.step.toString()) < 1) return 3;
     if (name === 'buyPrice') return 2;
@@ -39,8 +22,8 @@ const NumericInput = ({
   }, [props.step, name]);
 
   const { displayValue, handleChange } = useRTLMask({
-    initialValue: value || '',
-    onChange: (val) => setValue(name, val, { shouldValidate: true }),
+    initialValue: watch(name) || '',
+    onChange: val => setValue(name, val, { shouldValidate: true }),
     decimals,
   });
 
@@ -73,7 +56,7 @@ const NumericInput = ({
               props.className
             )}
           />
-          
+
           {name === 'buyPrice' && (
             <span className="text-muted-foreground absolute top-1/2 right-4 -translate-y-[50%] text-base font-medium sm:text-lg">
               R$

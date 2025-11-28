@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
-import { Ingredient } from '@/types/ingredients';
+import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
 
 import AddIngredientList from './addIngredientList';
@@ -21,35 +21,23 @@ export default function IngredientSelector() {
   const [, setQuantity] = useState<string>('1');
   const [displayQuantity, setDisplayQuantity] = useState<string>('1');
 
-  // Converte valor de display para valor real baseado na unidade
-  const convertDisplayToReal = (displayValue: string, unit: string): number => {
-    const parsed = parseFloat(displayValue);
-    if (isNaN(parsed) || parsed <= 0) return 0;
+  // Helper para determinar a unidade dinâmica
+  const getDynamicUnit = (value: string, baseUnit: UnitType): UnitType => {
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return baseUnit;
 
-    // Para kg e l, o usuário digita em gramas/ml, então dividimos por 1000
-    if (unit === 'kg' || unit === 'l') {
-      return parsed / 1000;
+    if (baseUnit === 'kg') {
+      return numValue < 1 ? 'g' : 'kg';
     }
-
-    return parsed;
-  };
-
-  // Converte valor real para valor de display baseado na unidade
-  const convertRealToDisplay = (realValue: string, unit: string): string => {
-    const parsed = parseFloat(realValue);
-    if (isNaN(parsed) || parsed <= 0) return '';
-
-    // Para kg e l, mostramos em gramas/ml
-    if (unit === 'kg' || unit === 'l') {
-      return (parsed * 1000).toString();
+    if (baseUnit === 'l') {
+      return numValue < 1 ? 'ml' : 'l';
     }
-
-    return realValue;
+    return getBaseUnit(baseUnit);
   };
 
   // Função para calcular o custo usando preço médio ponderado
-  const getTotalPrice = (displayQuantity: string, ingredient: Ingredient): string => {
-    const realQuantity = convertDisplayToReal(displayQuantity, ingredient.unit);
+  const getTotalPrice = (quantity: string, ingredient: Ingredient): string => {
+    const realQuantity = parseFloat(quantity);
 
     if (realQuantity <= 0) return '0.00';
 
@@ -63,8 +51,8 @@ export default function IngredientSelector() {
   };
 
   // Verifica se há quantidade suficiente em estoque
-  const hasEnoughStock = (ingredient: Ingredient, displayQuantity: string): boolean => {
-    const realQuantity = convertDisplayToReal(displayQuantity, ingredient.unit);
+  const hasEnoughStock = (ingredient: Ingredient, quantity: string): boolean => {
+    const realQuantity = parseFloat(quantity);
     const normalizedRequired = normalizeQuantity(realQuantity, ingredient.unit);
     return ingredient.totalQuantity >= normalizedRequired;
   };
@@ -72,15 +60,14 @@ export default function IngredientSelector() {
   const handleSelectIngredient = (ingredient: Ingredient) => {
     setSelectedIngredient(ingredient);
     setInputValue(ingredient.name);
-    // Reset quantity when selecting new ingredient
     setQuantity('0');
-    setDisplayQuantity(convertRealToDisplay('0', ingredient.unit));
+    setDisplayQuantity('0');
   };
 
   const handleAddIngredient = () => {
     if (!selectedIngredient) return;
 
-    const realQuantity = convertDisplayToReal(displayQuantity, selectedIngredient.unit);
+    const realQuantity = parseFloat(displayQuantity);
 
     if (!selectedIngredient || !displayQuantity || realQuantity <= 0 || !selectedIngredient.name) {
       alert('Preencha todos os campos');
@@ -178,22 +165,18 @@ export default function IngredientSelector() {
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs sm:gap-4 sm:text-sm">
-            <div className="rounded-lg bg-[var(--color-info)] p-2 sm:p-3">
-              <p className="text-[10px] font-medium text-[var(--color-on-info)] sm:text-xs">
-                Preço médio
-              </p>
-              <p className="text-xs font-semibold text-[var(--color-on-info)] sm:text-sm">
+            <div className="bg-info rounded-lg p-2 sm:p-3">
+              <p className="text-on-info text-[10px] font-medium sm:text-xs">Preço médio</p>
+              <p className="text-on-info text-xs font-semibold sm:text-sm">
                 {selectedIngredient.unit === 'un'
                   ? `R$ ${selectedIngredient.averageUnitPrice.toFixed(2)}`
                   : ` R$ ${selectedIngredient.averageUnitPrice.toFixed(3)}`}
                 /{getBaseUnit(selectedIngredient.unit)}
               </p>
             </div>
-            <div className="rounded-lg bg-[var(--color-great)] p-2 sm:p-3">
-              <p className="text-[10px] font-medium text-[var(--color-on-great)] sm:text-xs">
-                Estoque disponível
-              </p>
-              <p className="text-xs font-semibold text-[var(--color-on-great)] sm:text-sm">
+            <div className="bg-great rounded-lg p-2 sm:p-3">
+              <p className="text-on-great text-[10px] font-medium sm:text-xs">Estoque disponível</p>
+              <p className="text-on-great text-xs font-semibold sm:text-sm">
                 {selectedIngredient.totalQuantity} {getBaseUnit(selectedIngredient.unit)}
               </p>
             </div>
@@ -214,23 +197,16 @@ export default function IngredientSelector() {
                   value={displayQuantity}
                   onChange={value => {
                     setDisplayQuantity(value);
-                    const realValue = convertDisplayToReal(value, selectedIngredient.unit);
-                    setQuantity(realValue.toString());
+                    setQuantity(value);
                   }}
                   placeholder="0"
                   className="w-full"
-                  unit={
-                    selectedIngredient.unit === 'kg'
-                      ? 'g'
-                      : selectedIngredient.unit === 'l'
-                        ? 'ml'
-                        : getBaseUnit(selectedIngredient.unit)
-                  }
+                  unit={getDynamicUnit(displayQuantity, selectedIngredient.unit)}
                   maxValue={
                     selectedIngredient.unit === 'un'
                       ? 1000
                       : selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l'
-                        ? 100000
+                        ? 100
                         : 100
                   }
                 />
@@ -248,14 +224,14 @@ export default function IngredientSelector() {
               <Button
                 type="button"
                 onClick={handleCancelSelection}
-                className="flex-1 rounded-lg bg-[var(--color-danger)] px-3 py-1.5 text-xs font-medium text-[var(--color-on-danger)] transition-colors hover:bg-[var(--color-danger)]/80 sm:flex-none sm:px-4 sm:py-2 sm:text-sm"
+                className="bg-secondary text-on-secondary hover:bg-secondary/80 flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors sm:flex-none sm:px-4 sm:py-2 sm:text-sm"
               >
                 Cancelar
               </Button>
               <Button
                 type="button"
                 onClick={handleAddIngredient}
-                className="disabled:bg-muted flex-1 rounded-lg bg-[var(--color-great)] px-3 py-1.5 text-xs font-medium text-[var(--color-on-great)] transition-colors hover:bg-[var(--color-great)]/80 disabled:cursor-not-allowed sm:flex-none sm:px-4 sm:py-2 sm:text-sm"
+                className="disabled:bg-muted bg-great text-on-great hover:bg-great/80 flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed sm:flex-none sm:px-4 sm:py-2 sm:text-sm"
                 disabled={!hasEnoughStock(selectedIngredient, displayQuantity)}
               >
                 Adicionar
@@ -267,17 +243,14 @@ export default function IngredientSelector() {
             <p>
               <strong>Quantidade na receita:</strong>{' '}
               {(() => {
-                const realQuantity = convertDisplayToReal(displayQuantity, selectedIngredient.unit);
+                const realQuantity = parseFloat(displayQuantity);
                 if (!displayQuantity || realQuantity <= 0) return '0';
                 return `${realQuantity} ${selectedIngredient.unit}`;
               })()}{' '}
               <span className="text-muted-foreground/70">
                 (normalizada:{' '}
                 {(() => {
-                  const realQuantity = convertDisplayToReal(
-                    displayQuantity,
-                    selectedIngredient.unit
-                  );
+                  const realQuantity = parseFloat(displayQuantity);
                   if (realQuantity <= 0) return 0;
                   return normalizeQuantity(realQuantity, selectedIngredient.unit);
                 })()}{' '}
@@ -302,7 +275,7 @@ export default function IngredientSelector() {
                     <span className="font-medium">
                       {batch.currentQuantity} {getBaseUnit(selectedIngredient.unit)}
                     </span>
-                    <span className="text-[var(--color-on-great)]">
+                    <span className="text-on-great">
                       R$ {batch.unitPrice.toFixed(3)}/{getBaseUnit(selectedIngredient.unit)}
                     </span>
                   </div>

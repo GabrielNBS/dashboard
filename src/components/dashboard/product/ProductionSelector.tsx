@@ -91,7 +91,6 @@ export default function ProductionSelector() {
             unit="un"
             allowDecimals={false}
             maxValue={10000}
-            minValue={1}
           />
         </div>
       )}

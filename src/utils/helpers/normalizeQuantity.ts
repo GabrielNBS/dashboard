@@ -140,7 +140,7 @@ export function formatQuantity(quantity: number, unit: string): string {
  * getBaseUnit('l') // 'ml'
  * getBaseUnit('un') // 'un'
  */
-export function getBaseUnit(unit: UnitType): string {
+export function getBaseUnit(unit: UnitType): UnitType {
   switch (unit) {
     case 'kg':
       return 'g'; // gramas

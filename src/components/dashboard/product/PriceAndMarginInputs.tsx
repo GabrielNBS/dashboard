@@ -63,7 +63,6 @@ export default function PriceAndMarginInputs({
           onChange={onSellingPriceChange}
           placeholder="R$ 0,00"
           maxValue={CURRENCY_LIMITS.product.max}
-          minValue={CURRENCY_LIMITS.product.min}
           required
           size="md"
         />

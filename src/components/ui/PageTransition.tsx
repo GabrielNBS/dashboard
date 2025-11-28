@@ -20,7 +20,7 @@ const pageTransition = {
   type: 'tween',
   ease: 'easeOut',
   duration: 0.15, // Transição mais rápida e suave
-};
+} as const;
 
 export default function PageTransition({ children }: PageTransitionProps) {
   return (

@@ -116,7 +116,6 @@ export default function FinancialSettingsSection() {
                 }
                 placeholder="R$ 50.000,00"
                 maxValue={9999999.99}
-                minValue={0}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Meta de vendas mensal para acompanhamento

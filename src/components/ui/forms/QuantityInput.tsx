@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Input from '@/components/ui/base/Input';
 import { cn } from '@/utils/utils';
+import { useRTLMask } from '@/hooks/ui/useRTLMask';
+import { UnitType } from '@/types/ingredients';
 
 interface QuantityInputProps {
   value: string | number;
@@ -13,7 +15,7 @@ interface QuantityInputProps {
   required?: boolean;
   id?: string;
   'aria-invalid'?: boolean;
-  unit?: string;
+  unit?: UnitType;
   allowDecimals?: boolean;
   maxValue?: number;
   minValue?: number;
@@ -33,135 +35,25 @@ export default function QuantityInput({
   'aria-invalid': ariaInvalid,
   unit,
   allowDecimals = true,
-  maxValue = 99999, // Limite padrão: 99.999 unidades (adequado para PME)
-  minValue = 0,
+  maxValue = 99999,
   label,
   error,
   size = 'md',
 }: QuantityInputProps) {
-  const [displayValue, setDisplayValue] = useState('');
-
-  // Função para formatar valor como quantidade
-  const formatQuantity = (val: string): string => {
-    if (!allowDecimals) {
-      // Remove tudo que não é dígito
-      const numbers = val.replace(/\D/g, '');
-      return numbers;
-    }
-
-    // Remove tudo que não é dígito, vírgula ou ponto
-    let numbers = val.replace(/[^\d.,]/g, '');
-
-    // Substitui vírgula por ponto para cálculos
-    numbers = numbers.replace(',', '.');
-
-    // Garante apenas um ponto decimal e limita casas decimais
-    const parts = numbers.split('.');
-    if (parts.length > 2) {
-      numbers = parts[0] + '.' + parts.slice(1).join('');
-    }
-
-    // Limita casas decimais baseado na unidade
-    if (parts.length > 1) {
-      const maxDecimals = unit === 'kg' || unit === 'l' ? 3 : 2;
-      parts[1] = parts[1].substring(0, maxDecimals);
-      numbers = parts.join('.');
-    }
-
-    return numbers;
+  const getDecimals = () => {
+    if (!allowDecimals) return 0;
+    if (unit === 'un') return 2;
+    return 3;
   };
 
-  // Atualiza display quando value prop muda
-  useEffect(() => {
-    if (typeof value === 'number') {
-      if (value === 0) {
-        setDisplayValue('');
-      } else {
-        setDisplayValue(value.toString());
-      }
-    } else if (typeof value === 'string') {
-      if (!value || value === '0') {
-        setDisplayValue('');
-      } else {
-        setDisplayValue(value);
-      }
-    }
-  }, [value]);
+  const decimals = getDecimals();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let inputValue = e.target.value;
-
-    // Se o usuário apagou tudo, limpa o campo
-    if (!inputValue) {
-      setDisplayValue('');
-      onChange('');
-      return;
-    }
-
-    if (!allowDecimals) {
-      // Remove tudo que não é dígito
-      inputValue = inputValue.replace(/\D/g, '');
-
-      if (!inputValue) {
-        setDisplayValue('');
-        onChange('');
-        return;
-      }
-
-      const numValue = parseInt(inputValue, 10);
-      if (!isNaN(numValue)) {
-        // Impede digitação acima do máximo
-        if (numValue > maxValue) {
-          return;
-        }
-
-        const limitedValue = Math.max(numValue, minValue);
-        const limitedStr = limitedValue.toString();
-        setDisplayValue(limitedStr);
-        onChange(limitedStr);
-      }
-    } else {
-      // Remove tudo que não é dígito, vírgula ou ponto
-      inputValue = inputValue.replace(/[^\d.,]/g, '');
-
-      // Substitui vírgula por ponto para cálculos
-      inputValue = inputValue.replace(',', '.');
-
-      if (!inputValue) {
-        setDisplayValue('');
-        onChange('');
-        return;
-      }
-
-      // Garante apenas um ponto decimal
-      const parts = inputValue.split('.');
-      if (parts.length > 2) {
-        inputValue = parts[0] + '.' + parts.slice(1).join('');
-      } else if (parts.length === 2) {
-        // Limita casas decimais baseado na unidade
-        const maxDecimals = unit === 'kg' || unit === 'l' ? 3 : 2;
-        parts[1] = parts[1].substring(0, maxDecimals);
-        inputValue = parts.join('.');
-      }
-
-      const numValue = parseFloat(inputValue);
-      if (!isNaN(numValue)) {
-        // Impede digitação acima do máximo
-        if (numValue > maxValue) {
-          return;
-        }
-
-        const limitedValue = Math.max(numValue, minValue);
-        const limitedStr = limitedValue.toString();
-        setDisplayValue(limitedStr);
-        onChange(limitedStr);
-      } else {
-        // Permite valores parciais como "5." durante digitação
-        setDisplayValue(inputValue);
-        onChange(inputValue);
-      }
-    }
-  };
+  const { displayValue, handleChange } = useRTLMask({
+    initialValue: value,
+    onChange,
+    decimals,
+    maxValue,
+  });
 
   const paddingClasses = {
     sm: unit ? 'pr-8' : '',
@@ -204,6 +96,7 @@ export default function QuantityInput({
           aria-invalid={ariaInvalid}
           error={error}
           size={size}
+          inputMode={decimals > 0 ? 'decimal' : 'numeric'}
         />
         {unit && (
           <div

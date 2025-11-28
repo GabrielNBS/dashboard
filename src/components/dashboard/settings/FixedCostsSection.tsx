@@ -156,7 +156,6 @@ export default function FixedCostsSection() {
                 }
                 placeholder="R$ 0,00"
                 maxValue={CURRENCY_LIMITS.fixedCost.max}
-                minValue={CURRENCY_LIMITS.fixedCost.min}
                 required
               />
             </div>

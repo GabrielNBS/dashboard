@@ -9,7 +9,6 @@ interface CurrencyInputFieldProps {
   id?: string;
   className?: string;
   maxValue?: number;
-  minValue?: number;
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
@@ -19,16 +18,7 @@ interface CurrencyInputFieldProps {
 
 const CurrencyInputField = forwardRef<HTMLInputElement, CurrencyInputFieldProps>(
   (
-    {
-      placeholder = 'R$ 0,00',
-      id,
-      className,
-      value,
-      onChange,
-      disabled,
-      maxValue,
-      ...props
-    },
+    { placeholder = 'R$ 0,00', id, className, value, onChange, disabled, maxValue, ...props },
     ref
   ) => {
     const { displayValue, handleChange } = useRTLMask({

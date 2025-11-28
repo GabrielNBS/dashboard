@@ -14,7 +14,6 @@ interface CurrencyInputProps {
   id?: string;
   'aria-invalid'?: boolean;
   maxValue?: number;
-  minValue?: number;
   label?: string;
   error?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -29,14 +28,12 @@ export default function CurrencyInput({
   required = false,
   id,
   'aria-invalid': ariaInvalid,
-  maxValue = 999999.99, // Limite padrão: R$ 999.999,99 (adequado para PME)
-  minValue = 0,
+  maxValue = 999999.99,
   label,
   error,
   size = 'md',
 }: CurrencyInputProps) {
   const [displayValue, setDisplayValue] = useState('');
-  const [rawDigits, setRawDigits] = useState(''); // Mantém apenas os dígitos puros
 
   // Função para formatar centavos como moeda
   const formatCentsAsCurrency = useCallback((cents: number): string => {
@@ -52,25 +49,20 @@ export default function CurrencyInput({
     if (typeof value === 'number') {
       if (value === 0) {
         setDisplayValue('');
-        setRawDigits('');
       } else {
         const cents = Math.round(value * 100);
-        setRawDigits(cents.toString());
         setDisplayValue(formatCentsAsCurrency(cents));
       }
     } else if (typeof value === 'string') {
       if (!value || value === '0') {
         setDisplayValue('');
-        setRawDigits('');
       } else {
         const numValue = parseFloat(value);
         if (!isNaN(numValue)) {
           const cents = Math.round(numValue * 100);
-          setRawDigits(cents.toString());
           setDisplayValue(formatCentsAsCurrency(cents));
         } else {
           setDisplayValue('');
-          setRawDigits('');
         }
       }
     }
@@ -84,7 +76,6 @@ export default function CurrencyInput({
 
     // Se o usuário apagou tudo, limpa o campo
     if (!newDigits) {
-      setRawDigits('');
       setDisplayValue('');
       onChange('');
       return;
@@ -94,21 +85,16 @@ export default function CurrencyInput({
     const cents = parseInt(newDigits, 10);
     const reais = cents / 100;
 
-    // Aplica limites de valor - impede digitação acima do limite
+    // Aplica apenas o limite máximo - impede digitação acima do limite
     if (reais > maxValue) {
-      // Não permite digitar mais se já atingiu o máximo
       return;
     }
 
-    const limitedReais = Math.max(reais, minValue);
-    const limitedCents = Math.round(limitedReais * 100);
-
-    // Atualiza os estados
-    setRawDigits(limitedCents.toString());
-    setDisplayValue(formatCentsAsCurrency(limitedCents));
+    // Atualiza os estados sem forçar o valor mínimo
+    setDisplayValue(formatCentsAsCurrency(cents));
 
     // Passa o valor numérico para o onChange
-    onChange(limitedReais.toString());
+    onChange(reais.toString());
   };
 
   const paddingClasses = {

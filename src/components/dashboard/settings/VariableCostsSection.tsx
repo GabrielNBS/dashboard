@@ -225,7 +225,6 @@ export default function VariableCostsSection() {
                 }
                 placeholder="R$ 0,00"
                 maxValue={CURRENCY_LIMITS.variableCost.max}
-                minValue={CURRENCY_LIMITS.variableCost.min}
               />
             </div>
 

@@ -65,7 +65,6 @@ const QuantityInputField = forwardRef<HTMLInputElement, QuantityInputFieldProps>
       onChange,
       decimals,
       // Removemos o suffix do mask para evitar bug de deleção
-      autoAdjustSmallValues: ['kg', 'l'].includes(unit),
       maxValue,
     });
 

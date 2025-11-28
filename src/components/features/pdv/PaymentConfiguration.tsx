@@ -133,7 +133,6 @@ export default React.memo(function PaymentConfiguration({
               className="flex-1 text-sm"
               placeholder="R$ 0,00"
               maxValue={CURRENCY_LIMITS.discount.max}
-              minValue={CURRENCY_LIMITS.discount.min}
             />
           )}
         </div>

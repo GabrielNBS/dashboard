@@ -630,7 +630,6 @@ export default function IngredientForm() {
                           value={buyPrice}
                           placeholder="R$ 0,00"
                           maxValue={CURRENCY_LIMITS.ingredient.max}
-                          minValue={CURRENCY_LIMITS.ingredient.min}
                           onChange={(v: string) =>
                             setValue('buyPrice', v, { shouldValidate: true })
                           }

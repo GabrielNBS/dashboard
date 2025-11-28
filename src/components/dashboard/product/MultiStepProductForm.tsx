@@ -16,7 +16,7 @@ import IngredientsStep from './steps/IngredientsStep';
 import ProductionStep from './steps/ProductionStep';
 import PricingStep from './steps/PricingStep';
 import ReviewStep from './steps/ReviewStep';
-import { Check, CheckCheck } from 'lucide-react';
+import { ArrowRight, Check, CheckCheck } from 'lucide-react';
 import LordIcon from '@/components/ui/LordIcon';
 import { Button } from '@/components/ui/base';
 
@@ -459,7 +459,7 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
   ]);
 
   return (
-    <div className="flex h-full max-h-[calc(100dvh-8rem)] flex-col overflow-hidden">
+    <div className="flex h-full max-h-[calc(100dvh-8rem)] flex-col">
       {/* Header com progresso - altura fixa */}
       <div className="flex-shrink-0 border-b border-gray-200 pb-2 sm:pb-4">
         <div className="mb-2 flex items-center justify-end sm:mb-3">
@@ -532,14 +532,14 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
       </div>
 
       {/* Conteúdo do step atual - área flexível com scroll controlado */}
-      <div className="flex-1 overflow-y-auto py-2 sm:py-4">
+      <div className="flex-1 py-2 sm:py-4">
         <div className="h-full">
           <CurrentStepComponent {...stepProps} />
         </div>
       </div>
 
       {/* Botões de navegação - altura fixa */}
-      <div className="flex-shrink-0 border-t border-gray-200 pt-2 sm:pt-4">
+      <div className="shrink-0 border-t border-gray-200 pt-2 sm:pt-4">
         <div className="flex justify-between gap-2">
           <Button
             type="button"
@@ -580,8 +580,9 @@ export default function MultiStepProductForm({ onClose }: MultiStepProductFormPr
               className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-blue-700 sm:gap-2 sm:px-4 sm:py-2 sm:text-sm"
             >
               <span className="hidden sm:inline">Próximo</span>
-              <span className="sm:hidden">→</span>
-              <span className="hidden sm:inline">→</span>
+              <span className="sm:hidden">
+                <ArrowRight className="h-4 w-4" />
+              </span>
             </Button>
           )}
         </div>

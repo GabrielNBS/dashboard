@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 interface UseRTLMaskProps {
   initialValue?: string | number;
@@ -7,7 +7,7 @@ interface UseRTLMaskProps {
   prefix?: string;
   suffix?: string;
   maxIntegerDigits?: number;
-  autoAdjustSmallValues?: boolean; 
+  autoAdjustSmallValues?: boolean;
   maxValue?: number;
 }
 
@@ -18,11 +18,14 @@ export function useRTLMask({
   prefix = '',
   suffix = '',
   maxIntegerDigits = 9,
-  autoAdjustSmallValues = false,
   maxValue,
 }: UseRTLMaskProps) {
   // Estado interno para armazenar apenas os dígitos
   const [digits, setDigits] = useState<string>('');
+
+  // Ref para evitar loops infinitos no useEffect
+  const isInitializing = useRef(true);
+  const lastExternalValue = useRef<string | number | undefined>(initialValue);
 
   // Formata os dígitos para exibição (ex: 1234 -> 12,34)
   const formatDisplay = useCallback(
@@ -37,72 +40,91 @@ export function useRTLMask({
         return `${prefix}${numberValue.toLocaleString('pt-BR')}${suffix}`;
       }
 
-
-
       // Divide por 10^decimals para obter o valor real
       const realValue = numberValue / Math.pow(10, decimals);
-      
+
       return `${prefix}${realValue.toLocaleString('pt-BR', {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
       })}${suffix}`;
     },
-    [decimals, prefix, suffix, autoAdjustSmallValues]
+    [decimals, prefix, suffix]
   );
 
   // Inicializa o estado com base no valor inicial
   useEffect(() => {
+    // Só atualiza se o valor mudou externamente (não por digitação do usuário)
+    if (lastExternalValue.current === initialValue && !isInitializing.current) {
+      return;
+    }
+
+    lastExternalValue.current = initialValue;
+    isInitializing.current = false;
+
     if (initialValue === undefined || initialValue === '' || initialValue === null) {
       setDigits('');
       return;
     }
 
     // Converte o valor inicial para dígitos
-    // Ex: 12.34 -> "1234" (se decimals=2)
     const numValue = typeof initialValue === 'string' ? parseFloat(initialValue) : initialValue;
-    if (!isNaN(numValue)) {
-      const fixed = numValue.toFixed(decimals);
-      const raw = fixed.replace(/\D/g, '');
-      // Remove zeros à esquerda, mas mantém se for zero
-      const cleanRaw = raw.replace(/^0+/, '') || (numValue === 0 ? '0' : '');
-      setDigits(cleanRaw);
+
+    if (isNaN(numValue) || numValue === 0) {
+      setDigits('');
+      return;
     }
+
+    // Converte para centavos/dígitos inteiros
+    const multiplier = Math.pow(10, decimals);
+    const integerValue = Math.round(numValue * multiplier);
+    const digitsStr = integerValue.toString();
+
+    setDigits(digitsStr);
   }, [initialValue, decimals]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
-      
+
       // Remove tudo que não for dígito
       const newDigits = inputValue.replace(/\D/g, '');
 
-      // Limita o tamanho para evitar overflow
-      if (newDigits.length > maxIntegerDigits + decimals) return;
-
-      // Remove zeros à esquerda
-      const cleanDigits = newDigits.replace(/^0+/, '');
-
-      // Verifica maxValue se definido
-      if (maxValue !== undefined && cleanDigits) {
-        const numberValue = parseInt(cleanDigits, 10);
-        const realValue = numberValue / Math.pow(10, decimals);
-        if (realValue > maxValue) return; // Impede a atualização se exceder o máximo
-      }
-
-      setDigits(cleanDigits);
-
-      // Calcula o valor real para o onChange
-      if (!cleanDigits) {
+      // Se vazio, limpa tudo
+      if (!newDigits) {
+        setDigits('');
         onChange('');
         return;
       }
 
+      // Remove zeros à esquerda, mas mantém pelo menos um dígito
+      const cleanDigits = newDigits.replace(/^0+/, '') || '0';
+
+      // Limita o tamanho para evitar overflow
+      const maxLength = maxIntegerDigits + decimals;
+      if (cleanDigits.length > maxLength) {
+        return;
+      }
+
+      // Calcula o valor real
       const numberValue = parseInt(cleanDigits, 10);
-      const realValue = numberValue / Math.pow(10, decimals);
-      
-      onChange(realValue.toString());
+      const multiplier = Math.pow(10, decimals);
+      const realValue = numberValue / multiplier;
+
+      // Verifica maxValue se definido
+      if (maxValue !== undefined && realValue > maxValue) {
+        return;
+      }
+
+      // Atualiza apenas se o valor mudou
+      if (cleanDigits !== digits) {
+        setDigits(cleanDigits);
+
+        // Chama onChange com o valor formatado
+        // Se for 0, passa string vazia para permitir limpar o campo
+        onChange(realValue === 0 ? '' : realValue.toString());
+      }
     },
-    [decimals, maxIntegerDigits, onChange, maxValue]
+    [decimals, maxIntegerDigits, onChange, maxValue, digits]
   );
 
   return {
