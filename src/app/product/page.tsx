@@ -13,8 +13,9 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  SheetFooter,
 } from '@/components/ui/feedback/sheet';
-import ProductForm from '@/components/dashboard/product/ProductForm';
+import { ProductForm } from '@/components/dashboard/product/ProductForm';
 import { Header } from '@/components/ui/Header';
 
 export default function Product() {
@@ -32,6 +33,12 @@ export default function Product() {
   const handleToggleForm = () => {
     dispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
     builderDispatch({ type: 'RESET_PRODUCT' });
+    dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
+  };
+
+  const handleCloseForm = () => {
+    builderDispatch({ type: 'RESET_PRODUCT' });
+    dispatch({ type: 'CLEAR_PRODUCT_TO_EDIT' });
     dispatch({ type: 'TOGGLE_FORM_VISIBILITY' });
   };
 
@@ -67,35 +74,44 @@ export default function Product() {
               aria-labelledby="product-form-title"
               aria-describedby="product-form-description"
             >
-              <div className="flex h-full flex-col">
-                <SheetHeader className="border-border flex-shrink-0 border-b p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
-                      <PackagePlus className="text-primary h-5 w-5" aria-hidden="true" />
+              <ProductForm.Root key={state.productToEdit?.uid || 'new'} onClose={handleCloseForm}>
+                <div className="flex h-full flex-col">
+                  <SheetHeader className="border-border shrink-0 border-b ">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                        <PackagePlus className="text-primary h-5 w-5" aria-hidden="true" />
+                      </div>
+                      <div className="text-left">
+                        <SheetTitle
+                          id="product-form-title"
+                          className="text-foreground text-lg font-semibold"
+                        >
+                          {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
+                        </SheetTitle>
+                        <SheetDescription
+                          id="product-form-description"
+                          className="text-muted-foreground text-sm"
+                        >
+                          {state.isEditMode
+                            ? 'Atualize as informações do produto existente'
+                            : 'Preencha as informações para criar um novo produto'}
+                        </SheetDescription>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <SheetTitle
-                        id="product-form-title"
-                        className="text-foreground text-lg font-semibold"
-                      >
-                        {state.isEditMode ? 'Editar Produto' : 'Novo Produto'}
-                      </SheetTitle>
-                      <SheetDescription
-                        id="product-form-description"
-                        className="text-muted-foreground text-sm"
-                      >
-                        {state.isEditMode
-                          ? 'Atualize as informações do produto existente'
-                          : 'Preencha as informações para criar um novo produto'}
-                      </SheetDescription>
+                    <div className="mt-6">
+                      <ProductForm.Header />
                     </div>
-                  </div>
-                </SheetHeader>
+                  </SheetHeader>
 
-                <div className="flex-1 overflow-hidden p-6">
-                  <ProductForm />
+                  <div className="flex-1 overflow-scroll scrollbar-hide ">
+                    <ProductForm.Content />
+                  </div>
+
+                  <SheetFooter className="border-border shrink-0 border-t ">
+                    <ProductForm.Footer />
+                  </SheetFooter>
                 </div>
-              </div>
+              </ProductForm.Root>
             </SheetContent>
           </Sheet>
         </>,

@@ -499,7 +499,7 @@ export default function IngredientForm() {
           {/* BOTÃO FIXO (Apenas mostra se não estiver em modo de edição) */}
           {!isEditMode && (
             <Button
-              className="fixed right-4 bottom-4 z-50 shadow-lg transition-all duration-200 hover:scale-105 sm:right-6 sm:bottom-6"
+              className="fixed right-4 bottom-4 z-20 shadow-lg transition-all duration-200 hover:scale-105 sm:right-6 sm:bottom-6"
               type="button"
               onClick={() => setLocalIsOpen(true)}
               size="md"

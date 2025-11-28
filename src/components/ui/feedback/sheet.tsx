@@ -43,7 +43,7 @@ function SheetContent({ className, children, side = 'right', ...props }: SheetCo
       <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
       <Drawer.Content
         className={cn(
-          'bg-card border-border fixed z-[60] flex flex-col shadow-2xl',
+          'bg-card border-border fixed z-60 flex flex-col shadow-2xl',
           side === 'right' &&
             'inset-y-0 right-0 h-dvh w-full max-w-[90vw] border-l md:max-w-md lg:max-w-lg xl:max-w-xl',
           side === 'left' &&
