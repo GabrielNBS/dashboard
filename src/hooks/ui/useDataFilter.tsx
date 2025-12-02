@@ -2,6 +2,16 @@
 // 🔹 Hook Extendido para Filtragem com Data
 // ============================================================
 
+import {
+  endOfDay,
+  isValid,
+  parseISO,
+  startOfDay,
+  startOfMonth,
+  startOfQuarter,
+  startOfWeek,
+  startOfYear,
+} from 'date-fns';
 import { useMemo, useState } from 'react';
 import { FilterableItem, FilterConfig } from './useFilter'; // Import do seu hook original
 import Input from '@/components/ui/base/Input';
@@ -33,15 +43,16 @@ const dateUtils = {
     if (!value) return null;
 
     try {
-      switch (format) {
-        case 'timestamp':
-          return new Date(Number(value));
-        case 'string':
-          return new Date(String(value));
-        case 'iso':
-        default:
-          return new Date(String(value));
-      }
+      const parsed =
+        format === 'timestamp'
+          ? new Date(Number(value))
+          : format === 'string'
+            ? new Date(String(value))
+            : parseISO(String(value));
+
+      if (!isValid(parsed)) return null;
+
+      return parsed;
     } catch {
       return null;
     }
@@ -51,21 +62,21 @@ const dateUtils = {
   isDateInRange: (date: Date, startDate: Date | null, endDate: Date | null): boolean => {
     if (!startDate && !endDate) return true;
 
-    const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const targetDate = startOfDay(date);
 
     if (startDate && endDate) {
-      const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-      const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+      const start = startOfDay(startDate);
+      const end = endOfDay(endDate);
       return targetDate >= start && targetDate <= end;
     }
 
     if (startDate) {
-      const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const start = startOfDay(startDate);
       return targetDate >= start;
     }
 
     if (endDate) {
-      const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+      const end = endOfDay(endDate);
       return targetDate <= end;
     }
 
@@ -74,32 +85,30 @@ const dateUtils = {
 
   // Gera intervalos de data pré-definidos
   getQuickDateRange: (type: string): DateRange => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const today = startOfDay(new Date());
 
     switch (type) {
       case 'today':
         return { startDate: today, endDate: today };
 
       case 'week': {
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
-        return { startDate: startOfWeek, endDate: today };
+        const weekStart = startOfWeek(today);
+        return { startDate: weekStart, endDate: today };
       }
 
       case 'month': {
-        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        return { startDate: startOfMonth, endDate: today };
+        const monthStart = startOfMonth(today);
+        return { startDate: monthStart, endDate: today };
       }
 
       case 'quarter': {
-        const quarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1);
+        const quarterStart = startOfQuarter(today);
         return { startDate: quarterStart, endDate: today };
       }
 
       case 'year': {
-        const startOfYear = new Date(today.getFullYear(), 0, 1);
-        return { startDate: startOfYear, endDate: today };
+        const yearStart = startOfYear(today);
+        return { startDate: yearStart, endDate: today };
       }
 
       default:

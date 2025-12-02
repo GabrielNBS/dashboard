@@ -1,4 +1,5 @@
 // src/utils/calculations/batchSale.ts
+import { formatISO } from 'date-fns';
 import { ProductState } from '@/types/products';
 import { BatchSaleItem, SaleItem } from '@/types/sale';
 import { Ingredient } from '@/types/ingredients';
@@ -313,7 +314,7 @@ export function updateProducedQuantity(
     production: {
       ...product.production,
       producedQuantity: (product.production.producedQuantity || 0) + additionalQuantity,
-      lastProductionDate: new Date().toISOString(),
+      lastProductionDate: formatISO(new Date()),
     },
   };
 }

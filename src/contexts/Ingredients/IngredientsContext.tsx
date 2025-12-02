@@ -2,7 +2,6 @@
 
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
 import { Ingredient, PurchaseBatch } from '@/types/ingredients';
-import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 
 /**
  * Estado do contexto de ingredientes
@@ -11,6 +10,8 @@ interface IngredientState {
   ingredients: Ingredient[];
   ingredientToEdit: Ingredient | null;
   isModalOpen: boolean;
+  isLoading: boolean;
+  error: string | null;
 }
 
 /**
@@ -24,7 +25,18 @@ type IngredientAction =
   | { type: 'EDIT_INGREDIENT'; payload: Ingredient }
   | { type: 'SET_INGREDIENTS'; payload: Ingredient[] }
   | { type: 'OPEN_EDIT_MODAL'; payload: Ingredient }
-  | { type: 'CLOSE_EDIT_MODAL' };
+  | { type: 'CLOSE_EDIT_MODAL' }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string }
+  | { type: 'CLEAR_ERROR' };
+
+const initialState: IngredientState = {
+  ingredients: [],
+  ingredientToEdit: null,
+  isModalOpen: false,
+  isLoading: true,
+  error: null,
+};
 
 /**
  * Utilitários para cálculos com batches
@@ -73,7 +85,7 @@ const consumeQuantityFIFO = (
 function ingredientReducer(state: IngredientState, action: IngredientAction): IngredientState {
   switch (action.type) {
     case 'ADD_INGREDIENT':
-      return { ...state, ingredients: [...state.ingredients, action.payload] };
+      return { ...state, ingredients: [...state.ingredients, action.payload], error: null };
 
     case 'ADD_BATCH': {
       const { ingredientId, batch } = action.payload;
@@ -92,6 +104,7 @@ function ingredientReducer(state: IngredientState, action: IngredientAction): In
             averageUnitPrice: calculateAverageUnitPrice(updatedBatches),
           };
         }),
+        error: null,
       };
     }
 
@@ -112,6 +125,7 @@ function ingredientReducer(state: IngredientState, action: IngredientAction): In
             averageUnitPrice: calculateAverageUnitPrice(updatedBatches),
           };
         }),
+        error: null,
       };
     }
 
@@ -119,22 +133,33 @@ function ingredientReducer(state: IngredientState, action: IngredientAction): In
       return {
         ...state,
         ingredients: state.ingredients.filter(i => i.id !== action.payload),
+        error: null,
       };
 
     case 'EDIT_INGREDIENT':
       return {
         ...state,
         ingredients: state.ingredients.map(i => (i.id === action.payload.id ? action.payload : i)),
+        error: null,
       };
 
     case 'SET_INGREDIENTS':
-      return { ...state, ingredients: action.payload };
+      return { ...state, ingredients: action.payload, isLoading: false, error: null };
 
     case 'OPEN_EDIT_MODAL':
       return { ...state, isModalOpen: true, ingredientToEdit: action.payload };
 
     case 'CLOSE_EDIT_MODAL':
       return { ...state, isModalOpen: false, ingredientToEdit: null };
+
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
+
+    case 'SET_ERROR':
+      return { ...state, error: action.payload, isLoading: false };
+
+    case 'CLEAR_ERROR':
+      return { ...state, error: null };
 
     default:
       return state;
@@ -162,22 +187,42 @@ export const IngredientContext = createContext<IngredientContextType | undefined
  * Provider do contexto de ingredientes
  */
 export const IngredientProvider = ({ children }: { children: ReactNode }) => {
-  // Hook para gerenciar ingredientes no localStorage
-  const [storedIngredients, setStoredIngredients] = useLocalStorage<Ingredient[]>(
-    'ingredients',
-    []
-  );
+  const [state, dispatch] = useReducer(ingredientReducer, initialState);
 
-  const [state, dispatch] = useReducer(ingredientReducer, {
-    ingredients: storedIngredients,
-    ingredientToEdit: null,
-    isModalOpen: false,
-  });
-
-  // Sincroniza mudanças do estado com o localStorage (debounce já está no hook)
+  // 1. CARREGAMENTO INICIAL (Load)
   useEffect(() => {
-    setStoredIngredients(state.ingredients);
-  }, [state.ingredients, setStoredIngredients]);
+    try {
+      const item = window.localStorage.getItem('ingredients');
+      if (item) {
+        const parsedIngredients = JSON.parse(item);
+        dispatch({ type: 'SET_INGREDIENTS', payload: parsedIngredients });
+      } else {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    } catch (error) {
+      console.error('Falha ao carregar ingredientes:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Não foi possível carregar seus ingredientes.' });
+    }
+  }, []);
+
+  // 2. PERSISTÊNCIA (Save)
+  useEffect(() => {
+    if (state.isLoading) return;
+
+    try {
+      window.localStorage.setItem('ingredients', JSON.stringify(state.ingredients));
+    } catch (error) {
+      console.error('Falha ao salvar ingredientes:', error);
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        dispatch({
+          type: 'SET_ERROR',
+          payload: 'Memória cheia! Não foi possível salvar o ingrediente.',
+        });
+      } else {
+        dispatch({ type: 'SET_ERROR', payload: 'Erro ao salvar os ingredientes localmente.' });
+      }
+    }
+  }, [state.ingredients, state.isLoading]);
 
   // Funções auxiliares
   const addBatch = (ingredientId: string, batchData: Omit<PurchaseBatch, 'id'>) => {

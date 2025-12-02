@@ -1,94 +1,123 @@
 'use client';
 
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
-import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 import { Sale } from '@/types/sale';
 
-/**
- * Estado do contexto de vendas
- */
 interface SalesState {
   sales: Sale[];
+  error: string | null;
+  isLoading: boolean;
 }
 
-/**
- * Ações possíveis para o reducer de vendas
- */
 type SalesAction =
   | { type: 'ADD_SALE'; payload: Sale }
   | { type: 'SET_SALES'; payload: Sale[] }
-  | { type: 'REMOVE_SALE'; payload: string };
+  | { type: 'REMOVE_SALE'; payload: string }
+  | { type: 'SET_ERROR'; payload: string } // Aciona um erro
+  | { type: 'CLEAR_ERROR' } // Limpa o erro
+  | { type: 'SET_LOADING'; payload: boolean }; // Controla carregamento
 
-/**
- * Estado inicial do contexto de vendas
- */
 const initialState: SalesState = {
   sales: [],
+  error: null,
+  isLoading: true, // Começa carregando
 };
 
-/**
- * Reducer para gerenciar o estado das vendas
- *
- * @param state - Estado atual
- * @param action - Ação a ser executada
- * @returns Novo estado
- */
+// --- REDUCER ---
+
 function salesReducer(state: SalesState, action: SalesAction): SalesState {
   switch (action.type) {
     case 'ADD_SALE':
-      return { ...state, sales: [...state.sales, action.payload] };
+      return {
+        ...state,
+        sales: [...state.sales, action.payload],
+        error: null, // Limpa erros antigos ao tentar nova ação
+      };
 
     case 'SET_SALES':
-      return { ...state, sales: action.payload };
+      return {
+        ...state,
+        sales: action.payload,
+        isLoading: false,
+        error: null,
+      };
 
     case 'REMOVE_SALE':
-      return { ...state, sales: state.sales.filter(sale => sale.id !== action.payload) };
+      return {
+        ...state,
+        sales: state.sales.filter(sale => sale.id !== action.payload),
+        error: null,
+      };
+
+    case 'SET_ERROR':
+      return { ...state, error: action.payload, isLoading: false };
+
+    case 'CLEAR_ERROR':
+      return { ...state, error: null };
+
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
 
     default:
       return state;
   }
 }
 
-/**
- * Tipo do contexto de vendas
- */
+// --- CONTEXTO ---
+
 interface SalesContextType {
   state: SalesState;
   dispatch: React.Dispatch<SalesAction>;
-  isLoading: boolean;
 }
 
-/**
- * Contexto para gerenciar estado global das vendas
- */
 export const SalesContext = createContext<SalesContextType | undefined>(undefined);
 
-/**
- * Provider do contexto de vendas
- *
- * Gerencia o estado das vendas com persistência no localStorage
- * e sincronização automática entre componentes.
- *
- * @param children - Componentes filhos que terão acesso ao contexto
- */
+// --- PROVIDER ---
+
 export const SalesProvider = ({ children }: { children: ReactNode }) => {
-  // Hook para persistir vendas no localStorage
-  const [storedSales, setStoredSales] = useLocalStorage<Sale[]>('sales', []);
+  const [state, dispatch] = useReducer(salesReducer, initialState);
 
-  // Estado inicial do reducer com dados do localStorage
-  const [state, dispatch] = useReducer(salesReducer, {
-    ...initialState,
-    sales: storedSales,
-  });
-
-  // Sincroniza mudanças do estado com o localStorage (debounce já está no hook)
+  // 1. CARREGAMENTO INICIAL (Load)
+  // Isso roda apenas no cliente, resolvendo o erro de hidratação
   useEffect(() => {
-    setStoredSales(state.sales);
-  }, [state.sales, setStoredSales]);
+    try {
+      const item = window.localStorage.getItem('sales');
+      if (item) {
+        const parsedSales = JSON.parse(item);
+        dispatch({ type: 'SET_SALES', payload: parsedSales });
+      } else {
+        // Se não tem nada, apenas tira o loading
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    } catch (error) {
+      console.error('Falha ao carregar vendas:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Não foi possível carregar seus dados salvos.' });
+    }
+  }, []);
 
-  return (
-    <SalesContext.Provider value={{ state, dispatch, isLoading: false }}>
-      {children}
-    </SalesContext.Provider>
-  );
+  // 2. PERSISTÊNCIA (Save)
+  // Toda vez que state.sales mudar, tentamos salvar
+  useEffect(() => {
+    // Evita salvar enquanto ainda está carregando a primeira vez (evita sobrescrever com array vazio)
+    if (state.isLoading) return;
+
+    try {
+      window.localStorage.setItem('sales', JSON.stringify(state.sales));
+    } catch (error) {
+      console.error('Falha ao salvar vendas:', error);
+
+      // Tratamento específico para quota excedida (localStorage cheio)
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        dispatch({
+          type: 'SET_ERROR',
+          payload:
+            'Memória cheia! Não foi possível salvar a nova venda. Tente limpar dados antigos.',
+        });
+      } else {
+        dispatch({ type: 'SET_ERROR', payload: 'Erro ao salvar os dados localmente.' });
+      }
+    }
+  }, [state.sales, state.isLoading]);
+
+  return <SalesContext.Provider value={{ state, dispatch }}>{children}</SalesContext.Provider>;
 };

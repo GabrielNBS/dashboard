@@ -1,6 +1,6 @@
-// src/lib/hooks/business/useSaleProcess.tsx
 'use client';
 
+import { formatISO } from 'date-fns';
 import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from '@/components/ui/feedback/use-toast';
@@ -168,9 +168,11 @@ export function useSaleProcess() {
 
     const sale: Sale = {
       id: uuidv4(),
-      date: new Date().toISOString(),
+      date: formatISO(new Date()),
       items: saleItems,
       sellingResume,
+      error: null,
+      isLoading: false,
     };
 
     salesDispatch({ type: 'ADD_SALE', payload: sale });

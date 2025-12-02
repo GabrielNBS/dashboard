@@ -43,6 +43,8 @@ export interface Sale {
   date: string;
   items: SaleItem[];
   sellingResume: SellingResume;
+  error: string | null;
+  isLoading: boolean;
 }
 
 // Configuração de pagamento local (estado do form)

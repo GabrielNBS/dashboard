@@ -1,5 +1,6 @@
 import { Sale } from '@/types/sale';
 import { FixedCostSettings, VariableCostSettings } from '@/types/settings';
+import { addDays } from '../helpers/dateTime';
 
 // ============================================================================
 // INTERFACES E TIPOS
@@ -337,8 +338,7 @@ export function projectBreakEvenDate(
   const remainingRevenue = breakEvenRevenue - currentRevenue;
   const daysToBreakEven = Math.ceil(remainingRevenue / averageDailyRevenue);
 
-  const estimatedDate = new Date();
-  estimatedDate.setDate(estimatedDate.getDate() + daysToBreakEven);
+  const estimatedDate = addDays(new Date(), daysToBreakEven);
 
   return {
     daysToBreakEven,

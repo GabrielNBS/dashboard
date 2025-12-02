@@ -16,7 +16,7 @@ interface TopSellingItem {
 
 const TopSellingItems = memo(() => {
   const {
-    state: { sales },
+    state: { sales, isLoading, error },
   } = useSalesContext();
 
   const topItems = useMemo(() => {
@@ -81,6 +81,38 @@ const TopSellingItems = memo(() => {
 
   const [imgError, setImgError] = useState(false);
   const fallbackSrc = 'https://placehold.co/150';
+
+  if (isLoading) {
+    return (
+      <aside className="w-full" aria-labelledby="top-products-title">
+        <div className="bg-card overflow-hidden rounded-lg shadow-sm">
+          <header className="bg-muted px-4 py-3">
+            <h3 id="top-products-title" className="text-primary text-sm font-bold">
+              Top produtos
+            </h3>
+          </header>
+          <div className="flex min-h-64 items-center justify-center p-3">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+          </div>
+        </div>
+      </aside>
+    );
+  }
+
+  if (error) {
+    return (
+      <aside className="w-full" aria-labelledby="top-products-title">
+        <div className="bg-card overflow-hidden rounded-lg shadow-sm">
+          <header className="bg-muted px-4 py-3">
+            <h3 id="top-products-title" className="text-primary text-sm font-bold">
+              Top produtos
+            </h3>
+          </header>
+          <div className="min-h-64 p-3 text-center text-sm text-red-500">Erro ao carregar</div>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="w-full" aria-labelledby="top-products-title">

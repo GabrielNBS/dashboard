@@ -1,3 +1,4 @@
+import { endOfMonth, isWithinInterval, parseISO, startOfMonth, subMonths } from 'date-fns';
 import { useMemo } from 'react';
 import { Sale } from '@/types/sale';
 import { FinanceSummary } from './useSummaryFinance';
@@ -21,20 +22,15 @@ export interface TrendingMetrics {
 export function useTrendingMetrics(sales: Sale[], currentSummary: FinanceSummary): TrendingMetrics {
   return useMemo(() => {
     const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+    const currentMonthStart = startOfMonth(now);
 
-    // Primeiro dia do mês atual
-    const currentMonthStart = new Date(currentYear, currentMonth, 1);
-
-    // Primeiro dia do mês anterior
-    const previousMonthStart = new Date(currentYear, currentMonth - 1, 1);
-    const previousMonthEnd = new Date(currentYear, currentMonth, 0);
+    const previousMonthStart = startOfMonth(subMonths(currentMonthStart, 1));
+    const previousMonthEnd = endOfMonth(previousMonthStart);
 
     // Filtrar vendas do mês anterior
     const previousMonthSales = sales.filter(sale => {
-      const saleDate = new Date(sale.date);
-      return saleDate >= previousMonthStart && saleDate <= previousMonthEnd;
+      const saleDate = parseISO(sale.date);
+      return isWithinInterval(saleDate, { start: previousMonthStart, end: previousMonthEnd });
     });
 
     // Calcular métricas do mês anterior

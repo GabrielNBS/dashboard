@@ -71,7 +71,7 @@ export default function StoreSettingsSection() {
         <h2 className="text-lg font-bold lg:text-xl">Dados da Loja</h2>
       </div>
 
-      {!state.store.storeName ? (
+      {!state.store.name ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50 py-16 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
             <Store className="h-8 w-8 text-gray-400" />
@@ -139,7 +139,7 @@ export default function StoreSettingsSection() {
               <div className="space-y-3">
                 <div>
                   <p className="mb-1 block text-sm font-medium text-gray-700">Nome da Loja</p>
-                  <p className="text-foreground text-sm">{state.store.storeName || '-'}</p>
+                  <p className="text-foreground text-sm">{state.store.name || '-'}</p>
                 </div>
 
                 <div>
@@ -257,9 +257,9 @@ export default function StoreSettingsSection() {
                     Nome da Loja
                   </label>
                   <Input
-                    value={formData.storeName || ''}
+                    value={formData.name || ''}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleInputChange('storeName', e.target.value)
+                      handleInputChange('name', e.target.value)
                     }
                     placeholder="Ex: Minha Loja Incrível"
                   />

@@ -2,6 +2,7 @@
 'use client';
 
 import { useCallback } from 'react';
+import { formatISO } from 'date-fns';
 import { toast } from '@/components/ui/feedback/use-toast';
 
 import { useProductContext } from '@/contexts/products/ProductContext';
@@ -89,7 +90,7 @@ export function useProductionProcess() {
         production: {
           ...product.production,
           producedQuantity: (product.production.producedQuantity || 0) + producedUnits,
-          lastProductionDate: new Date().toISOString(),
+          lastProductionDate: formatISO(new Date()),
         },
       };
 

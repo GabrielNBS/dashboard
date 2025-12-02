@@ -44,6 +44,22 @@ export default function Finance() {
 
   const financialSummary = useFinanceSummary(filteredItems);
 
+  if (salesState.isLoading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (salesState.error) {
+    return (
+      <div className="rounded-lg bg-red-50 p-4 text-red-600">
+        <p>Erro ao carregar dados: {salesState.error}</p>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Conteúdo Principal */}

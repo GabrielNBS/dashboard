@@ -1,3 +1,4 @@
+import { endOfMonth, isWithinInterval, parseISO, startOfMonth, subMonths } from 'date-fns';
 import { useMemo } from 'react';
 import { Sale } from '@/types/sale';
 import { TrendingData } from './useTrendingMetrics';
@@ -13,26 +14,20 @@ export function useRevenueMonthlyTrending(sales: Sale[]): TrendingData | null {
     }
 
     const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-
-    // Primeiro dia do mês atual
-    const currentMonthStart = new Date(currentYear, currentMonth, 1);
-
-    // Primeiro dia do mês anterior
-    const previousMonthStart = new Date(currentYear, currentMonth - 1, 1);
-    const previousMonthEnd = new Date(currentYear, currentMonth, 0, 23, 59, 59);
+    const currentMonthStart = startOfMonth(now);
+    const previousMonthStart = startOfMonth(subMonths(currentMonthStart, 1));
+    const previousMonthEnd = endOfMonth(previousMonthStart);
 
     // Filtrar vendas do mês atual
     const currentMonthSales = sales.filter(sale => {
-      const saleDate = new Date(sale.date);
+      const saleDate = parseISO(sale.date);
       return saleDate >= currentMonthStart;
     });
 
     // Filtrar vendas do mês anterior
     const previousMonthSales = sales.filter(sale => {
-      const saleDate = new Date(sale.date);
-      return saleDate >= previousMonthStart && saleDate <= previousMonthEnd;
+      const saleDate = parseISO(sale.date);
+      return isWithinInterval(saleDate, { start: previousMonthStart, end: previousMonthEnd });
     });
 
     // Se não houver vendas no mês anterior, não mostrar trending

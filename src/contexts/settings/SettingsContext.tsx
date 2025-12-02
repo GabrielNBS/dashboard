@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { useLocalStorage } from '@/hooks/ui/useLocalStorage';
 import {
   AppSettings,
   StoreSettings,
@@ -25,7 +24,10 @@ type SettingsAction =
   | { type: 'UPDATE_PAYMENT_FEES'; payload: Partial<PaymentFeesSettings> }
   | { type: 'UPDATE_SYSTEM'; payload: Partial<SystemSettings> }
   | { type: 'LOAD_SETTINGS'; payload: AppSettings }
-  | { type: 'RESET_SETTINGS' };
+  | { type: 'RESET_SETTINGS' }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'CLEAR_ERROR' };
 
 // Estado inicial das configurações
 const defaultSettings: AppSettings = {
@@ -70,14 +72,26 @@ const defaultSettings: AppSettings = {
   },
 };
 
+// Interface do estado interno do reducer
+interface SettingsState extends AppSettings {
+  isLoading: boolean;
+  error: string | null;
+}
+
+const initialState: SettingsState = {
+  ...defaultSettings,
+  isLoading: true,
+  error: null,
+};
+
 // Reducer
-function settingsReducer(state: AppSettings, action: SettingsAction): AppSettings {
+function settingsReducer(state: SettingsState, action: SettingsAction): SettingsState {
   switch (action.type) {
     case 'UPDATE_STORE':
-      return { ...state, store: { ...state.store, ...action.payload } };
+      return { ...state, store: { ...state.store, ...action.payload }, error: null };
 
     case 'ADD_FIXED_COST':
-      return { ...state, fixedCosts: [...state.fixedCosts, action.payload] };
+      return { ...state, fixedCosts: [...state.fixedCosts, action.payload], error: null };
 
     case 'UPDATE_FIXED_COST':
       return {
@@ -85,16 +99,18 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
         fixedCosts: state.fixedCosts.map(cost =>
           cost.id === action.payload.id ? action.payload : cost
         ),
+        error: null,
       };
 
     case 'REMOVE_FIXED_COST':
       return {
         ...state,
         fixedCosts: state.fixedCosts.filter(cost => cost.id !== action.payload),
+        error: null,
       };
 
     case 'ADD_VARIABLE_COST':
-      return { ...state, variableCosts: [...state.variableCosts, action.payload] };
+      return { ...state, variableCosts: [...state.variableCosts, action.payload], error: null };
 
     case 'UPDATE_VARIABLE_COST':
       return {
@@ -102,28 +118,39 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
         variableCosts: state.variableCosts.map(cost =>
           cost.id === action.payload.id ? action.payload : cost
         ),
+        error: null,
       };
 
     case 'REMOVE_VARIABLE_COST':
       return {
         ...state,
         variableCosts: state.variableCosts.filter(cost => cost.id !== action.payload),
+        error: null,
       };
 
     case 'UPDATE_FINANCIAL':
-      return { ...state, financial: { ...state.financial, ...action.payload } };
+      return { ...state, financial: { ...state.financial, ...action.payload }, error: null };
 
     case 'UPDATE_PAYMENT_FEES':
-      return { ...state, paymentFees: { ...state.paymentFees, ...action.payload } };
+      return { ...state, paymentFees: { ...state.paymentFees, ...action.payload }, error: null };
 
     case 'UPDATE_SYSTEM':
-      return { ...state, system: { ...state.system, ...action.payload } };
+      return { ...state, system: { ...state.system, ...action.payload }, error: null };
 
     case 'LOAD_SETTINGS':
-      return action.payload;
+      return { ...state, ...action.payload, isLoading: false, error: null };
 
     case 'RESET_SETTINGS':
-      return defaultSettings;
+      return { ...defaultSettings, isLoading: false, error: null };
+
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
+
+    case 'SET_ERROR':
+      return { ...state, error: action.payload, isLoading: false };
+
+    case 'CLEAR_ERROR':
+      return { ...state, error: null };
 
     default:
       return state;
@@ -132,34 +159,69 @@ function settingsReducer(state: AppSettings, action: SettingsAction): AppSetting
 
 // Contexto
 interface SettingsContextType {
-  state: AppSettings;
+  state: SettingsState;
   dispatch: React.Dispatch<SettingsAction>;
   saveSettings: () => void;
   resetSettings: () => void;
   isLoading: boolean;
+  error: string | null;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 // Provider
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  // Hook para gerenciar settings no localStorage
-  const [storedSettings, setStoredSettings] = useLocalStorage<AppSettings>(
-    'dashboard-settings',
-    defaultSettings
-  );
+  const [state, dispatch] = useReducer(settingsReducer, initialState);
 
-  const [state, dispatch] = useReducer(settingsReducer, storedSettings);
-
-  // Sincroniza mudanças do estado com o localStorage (debounce já está no hook)
+  // 1. CARREGAMENTO INICIAL (Load)
   useEffect(() => {
-    setStoredSettings(state);
-  }, [state, setStoredSettings]);
+    try {
+      const item = window.localStorage.getItem('dashboard-settings');
+      if (item) {
+        const parsedSettings = JSON.parse(item);
+        dispatch({ type: 'LOAD_SETTINGS', payload: parsedSettings });
+      } else {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    } catch (error) {
+      console.error('Falha ao carregar configurações:', error);
+      dispatch({ type: 'SET_ERROR', payload: 'Não foi possível carregar suas configurações.' });
+    }
+  }, []);
+
+  // 2. PERSISTÊNCIA (Save)
+  useEffect(() => {
+    if (state.isLoading) return;
+
+    try {
+      // Create a clean object without internal state properties like isLoading/error
+      const settingsToSave: AppSettings = {
+        store: state.store,
+        fixedCosts: state.fixedCosts,
+        variableCosts: state.variableCosts,
+        financial: state.financial,
+        paymentFees: state.paymentFees,
+        system: state.system,
+      };
+      window.localStorage.setItem('dashboard-settings', JSON.stringify(settingsToSave));
+    } catch (error) {
+      console.error('Falha ao salvar configurações:', error);
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        dispatch({
+          type: 'SET_ERROR',
+          payload: 'Memória cheia! Não foi possível salvar as configurações.',
+        });
+      } else {
+        dispatch({ type: 'SET_ERROR', payload: 'Erro ao salvar as configurações localmente.' });
+      }
+    }
+  }, [state, state.isLoading]);
 
   // Stable functions that don't change on every render
   const saveSettings = React.useCallback(() => {
-    setStoredSettings(state);
-  }, [state, setStoredSettings]);
+    // Trigger a save by updating state (though useEffect handles auto-save)
+    // This might be redundant with auto-save but kept for API compatibility
+  }, []);
 
   const resetSettings = React.useCallback(() => {
     dispatch({ type: 'RESET_SETTINGS' });
@@ -172,7 +234,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       dispatch,
       saveSettings,
       resetSettings,
-      isLoading: false,
+      isLoading: state.isLoading,
+      error: state.error,
     }),
     [state, saveSettings, resetSettings]
   );

@@ -1,10 +1,6 @@
-// ============================================================
-// 🔹 Unified Utility Functions
-// ============================================================
-// Consolidated utility functions to eliminate duplication across
-// formatting, calculation, and validation utilities
+import { format as formatDateFns, isValid } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
-// Re-export existing utilities for centralized access
 export { formatCurrency, formatPercent } from './formatting/formatCurrency';
 export {
   normalizeQuantity,
@@ -35,14 +31,6 @@ export {
   getStockStatus,
 } from './calculations/calcSale';
 
-// ============================================================
-// 🔹 Enhanced Formatting Functions
-// ============================================================
-
-/**
- * Format any numeric value with proper validation
- * Centralized number formatting with fallback handling
- */
 export function formatNumber(
   value: number | string | null | undefined,
   options: Intl.NumberFormatOptions = {}
@@ -71,9 +59,6 @@ export function formatNumber(
   }
 }
 
-/**
- * Format percentage with consistent styling
- */
 export function formatPercentage(
   value: number | string | null | undefined,
   decimals: number = 1
@@ -87,41 +72,23 @@ export function formatPercentage(
   return `${numValue.toFixed(decimals).replace('.', ',')}%`;
 }
 
-/**
- * Format date consistently across the application
- */
-export function formatDate(
-  date: Date | string | null | undefined,
-  options: Intl.DateTimeFormatOptions = {}
-): string {
+export function formatDate(date: Date | string | null | undefined, pattern: string = 'dd/MM/yyyy') {
   if (!date) return '';
 
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-    if (isNaN(dateObj.getTime())) {
+    if (!isValid(dateObj)) {
       return '';
     }
 
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      ...options,
-    }).format(dateObj);
+    return formatDateFns(dateObj, pattern, { locale: ptBR });
   } catch (error) {
     console.error('Error formatting date:', error);
     return '';
   }
 }
 
-// ============================================================
-// 🔹 Enhanced Validation Functions
-// ============================================================
-
-/**
- * Comprehensive validation for required fields
- */
 export function validateRequired(value: any, fieldName: string = 'Campo'): string | null {
   if (value === null || value === undefined) {
     return `${fieldName} é obrigatório`;
@@ -138,9 +105,6 @@ export function validateRequired(value: any, fieldName: string = 'Campo'): strin
   return null;
 }
 
-/**
- * Enhanced number validation with range checking
- */
 export function validateNumber(
   value: any,
   options: {
@@ -173,9 +137,6 @@ export function validateNumber(
   return null;
 }
 
-/**
- * Enhanced email validation
- */
 export function validateEmail(email: string): string | null {
   if (!email || !email.trim()) {
     return 'Email é obrigatório';
@@ -189,10 +150,6 @@ export function validateEmail(email: string): string | null {
   return null;
 }
 
-// ============================================================
-// 🔹 Enhanced Calculation Helpers
-// ============================================================
-
 /**
  * Safe division with fallback
  */
@@ -203,28 +160,15 @@ export function safeDivide(numerator: number, denominator: number, fallback: num
   return numerator / denominator;
 }
 
-/**
- * Calculate percentage with safe division
- */
 export function calculatePercentage(value: number, total: number, fallback: number = 0): number {
   return safeDivide(value * 100, total, fallback);
 }
 
-/**
- * Round to specified decimal places
- */
 export function roundTo(value: number, decimals: number = 2): number {
   const factor = Math.pow(10, decimals);
   return Math.round(value * factor) / factor;
 }
 
-// ============================================================
-// 🔹 Array and Object Utilities
-// ============================================================
-
-/**
- * Group array items by a specified key
- */
 export function groupBy<T>(array: T[], keyFn: (item: T) => string | number): Record<string, T[]> {
   return array.reduce(
     (groups, item) => {
@@ -239,23 +183,14 @@ export function groupBy<T>(array: T[], keyFn: (item: T) => string | number): Rec
   );
 }
 
-/**
- * Sum array values by a specified key
- */
 export function sumBy<T>(array: T[], keyFn: (item: T) => number): number {
   return array.reduce((sum, item) => sum + (keyFn(item) || 0), 0);
 }
 
-/**
- * Find unique values in array
- */
 export function unique<T>(array: T[]): T[] {
   return Array.from(new Set(array));
 }
 
-/**
- * Sort array by multiple criteria
- */
 export function sortBy<T>(array: T[], ...sortFns: Array<(item: T) => string | number>): T[] {
   return [...array].sort((a, b) => {
     for (const sortFn of sortFns) {
@@ -269,13 +204,6 @@ export function sortBy<T>(array: T[], ...sortFns: Array<(item: T) => string | nu
   });
 }
 
-// ============================================================
-// 🔹 String Utilities
-// ============================================================
-
-/**
- * Capitalize first letter of each word
- */
 export function capitalize(str: string): string {
   return str
     .toLowerCase()
@@ -284,9 +212,6 @@ export function capitalize(str: string): string {
     .join(' ');
 }
 
-/**
- * Generate slug from string
- */
 export function slugify(str: string): string {
   return str
     .toLowerCase()
@@ -298,21 +223,11 @@ export function slugify(str: string): string {
     .trim();
 }
 
-/**
- * Truncate string with ellipsis
- */
 export function truncate(str: string, length: number = 50): string {
   if (str.length <= length) return str;
   return str.slice(0, length).trim() + '...';
 }
 
-// ============================================================
-// 🔹 Local Storage Utilities
-// ============================================================
-
-/**
- * Safe localStorage operations with error handling
- */
 export const storage = {
   get<T>(key: string, defaultValue: T): T {
     try {
@@ -355,13 +270,6 @@ export const storage = {
   },
 };
 
-// ============================================================
-// 🔹 Debounce and Throttle Utilities
-// ============================================================
-
-/**
- * Debounce function calls
- */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
