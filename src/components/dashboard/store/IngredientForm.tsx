@@ -605,7 +605,7 @@ export default function IngredientForm() {
                           value={quantity}
                           allowDecimals={UNIT_LIMITS[unit]?.decimals > 0}
                           maxValue={UNIT_LIMITS[unit]?.max}
-                          minValue={UNIT_LIMITS[unit]?.min}
+                          min={UNIT_LIMITS[unit]?.min}
                           onChange={(v: string) =>
                             setValue('quantity', v, { shouldValidate: true })
                           }
@@ -656,7 +656,7 @@ export default function IngredientForm() {
                           value={watch('minQuantity') || ''}
                           allowDecimals={UNIT_LIMITS[unit]?.decimals > 0}
                           maxValue={UNIT_LIMITS[unit]?.max}
-                          minValue={0}
+                          min={0}
                           onChange={(v: string) =>
                             setValue('minQuantity', v, { shouldValidate: true })
                           }
@@ -679,7 +679,7 @@ export default function IngredientForm() {
                           value={watch('maxQuantity') || ''}
                           allowDecimals={UNIT_LIMITS[unit]?.decimals > 0}
                           maxValue={UNIT_LIMITS[unit]?.max}
-                          minValue={0}
+                          min={0}
                           onChange={(v: string) =>
                             setValue('maxQuantity', v, { shouldValidate: true })
                           }

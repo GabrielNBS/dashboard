@@ -60,7 +60,7 @@ export default function FinancialSettingsSection() {
                 }
                 placeholder="30%"
                 maxValue={PERCENTAGE_LIMITS.margin.max}
-                minValue={PERCENTAGE_LIMITS.margin.min}
+                min={PERCENTAGE_LIMITS.margin.min}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Percentual padrão de lucro para novos produtos
@@ -88,7 +88,7 @@ export default function FinancialSettingsSection() {
                 }
                 placeholder="10%"
                 maxValue={50}
-                minValue={0}
+                min={0}
               />
               <p className="mt-1 text-xs text-gray-500">
                 Percentual do lucro reservado para emergências

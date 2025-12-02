@@ -11,7 +11,7 @@ interface QuantityInputFieldProps {
   unit?: string;
   allowDecimals?: boolean;
   maxValue?: number;
-  minValue?: number;
+  min?: number;
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;

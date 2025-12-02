@@ -14,7 +14,7 @@ interface PercentageInputProps {
   id?: string;
   'aria-invalid'?: boolean;
   maxValue?: number;
-  minValue?: number;
+  min?: number;
   label?: string;
   error?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -30,7 +30,7 @@ export default function PercentageInput({
   id,
   'aria-invalid': ariaInvalid,
   maxValue = 100,
-  minValue = 0,
+  min = 0,
   label,
   error,
   size = 'md',
@@ -114,7 +114,7 @@ export default function PercentageInput({
         return;
       }
 
-      const limitedValue = Math.max(numValue, minValue);
+      const limitedValue = Math.max(numValue, min);
       const limitedStr = limitedValue.toString();
       setDisplayValue(limitedStr);
       onChange(limitedStr);

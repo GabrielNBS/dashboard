@@ -81,7 +81,7 @@ export default function PriceAndMarginInputs({
           onChange={onMarginChange}
           placeholder="0%"
           maxValue={PERCENTAGE_LIMITS.margin.max}
-          minValue={PERCENTAGE_LIMITS.margin.min}
+          min={PERCENTAGE_LIMITS.margin.min}
           required
           size="md"
         />

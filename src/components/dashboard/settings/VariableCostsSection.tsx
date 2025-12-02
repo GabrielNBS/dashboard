@@ -296,7 +296,7 @@ export default function VariableCostsSection() {
                       }
                       placeholder="0%"
                       maxValue={PERCENTAGE_LIMITS.variableCost.max}
-                      minValue={PERCENTAGE_LIMITS.variableCost.min}
+                      min={PERCENTAGE_LIMITS.variableCost.min}
                     />
                   </div>
                   <div>

@@ -18,7 +18,7 @@ interface QuantityInputProps {
   unit?: UnitType;
   allowDecimals?: boolean;
   maxValue?: number;
-  minValue?: number;
+  min?: number;
   label?: string;
   error?: string;
   size?: 'sm' | 'md' | 'lg';

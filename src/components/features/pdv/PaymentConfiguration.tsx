@@ -118,7 +118,7 @@ export default React.memo(function PaymentConfiguration({
               className="flex-1 text-sm"
               placeholder="0%"
               maxValue={PERCENTAGE_LIMITS.discount.max}
-              minValue={PERCENTAGE_LIMITS.discount.min}
+              min={PERCENTAGE_LIMITS.discount.min}
             />
           ) : (
             <CurrencyInput

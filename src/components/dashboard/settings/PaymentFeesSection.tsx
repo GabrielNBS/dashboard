@@ -70,7 +70,7 @@ export default function PaymentFeesSection() {
                   onChange={value => handleFeeChange(key, value)}
                   placeholder="0%"
                   maxValue={PERCENTAGE_LIMITS.paymentFee.max}
-                  minValue={PERCENTAGE_LIMITS.paymentFee.min}
+                  min={PERCENTAGE_LIMITS.paymentFee.min}
                 />
                 <p className="mt-1 text-xs text-gray-500">{description}</p>
               </div>

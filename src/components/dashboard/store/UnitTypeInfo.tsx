@@ -16,7 +16,7 @@ export default function UnitTypeInfo({ unit }: UnitTypeInfoProps) {
           description:
             'Medida de peso. Convertida para gramas internamente para cálculos precisos.',
           examples: ['1 kg = 1000g', '0.5 kg = 500g', '0.001 kg = 1g'],
-          minValue: '0.001 kg',
+          min: '0.001 kg',
           maxValue: '1000 kg',
           step: '0.001',
         };
@@ -27,7 +27,7 @@ export default function UnitTypeInfo({ unit }: UnitTypeInfoProps) {
           description:
             'Medida de volume. Convertida para mililitros internamente para cálculos precisos.',
           examples: ['1 l = 1000ml', '0.5 l = 500ml', '0.001 l = 1ml'],
-          minValue: '0.001 l',
+          min: '0.001 l',
           maxValue: '1000 l',
           step: '0.001',
         };
@@ -37,7 +37,7 @@ export default function UnitTypeInfo({ unit }: UnitTypeInfoProps) {
           title: 'Unidades (un)',
           description: 'Medida de quantidade discreta. Valores inteiros apenas.',
           examples: ['1 un = 1 item', '10 un = 10 items', '100 un = 100 items'],
-          minValue: '1 un',
+          min: '1 un',
           maxValue: '10000 un',
           step: '1',
         };
@@ -47,7 +47,7 @@ export default function UnitTypeInfo({ unit }: UnitTypeInfoProps) {
           title: 'Unidade',
           description: 'Medida padrão.',
           examples: [],
-          minValue: '1',
+          min: '1',
           maxValue: '1000',
           step: '1',
         };
@@ -63,7 +63,7 @@ export default function UnitTypeInfo({ unit }: UnitTypeInfoProps) {
 
       <div className="space-y-2">
         <div className="text-sm">
-          <span className="text-primary font-medium">Valor mínimo:</span> {unitInfo.minValue}
+          <span className="text-primary font-medium">Valor mínimo:</span> {unitInfo.min}
         </div>
         <div className="text-sm">
           <span className="text-primary font-medium">Valor máximo:</span> {unitInfo.maxValue}

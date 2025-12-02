@@ -52,7 +52,7 @@ const CardWrapper = memo(function CardWrapper({
     },
   },
 }: CardWrapperProps) {
-  const formattedValue = useMemo(() => {
+  const typeOfValue = useMemo(() => {
     if (type === 'custom' || typeof value !== 'number') return value;
 
     switch (type) {
@@ -67,13 +67,13 @@ const CardWrapper = memo(function CardWrapper({
 
   // Helper para converter classe Tailwind em cor hex
   const getIconColor = useMemo(() => {
-    return (colorValue: string | undefined, defaultColor: string): string => {
-      if (!colorValue) return defaultColor;
+    const HEX_COLOR = '#';
 
-      // Se já é hex, retorna direto
-      if (colorValue.startsWith('#')) return colorValue;
+    return (typeOfColor: string | undefined, defaultColor: string): string => {
+      if (!typeOfColor) return defaultColor;
 
-      // Mapeamento de classes Tailwind comuns para hex
+      if (typeOfColor.startsWith(HEX_COLOR)) return typeOfColor;
+
       const colorMap: Record<string, string> = {
         'bg-bad': '#730a0a',
         'bg-great': '#0a5c2e',
@@ -89,7 +89,7 @@ const CardWrapper = memo(function CardWrapper({
         'text-on-great': '#0a5c2e',
       };
 
-      return colorMap[colorValue] || defaultColor;
+      return colorMap[typeOfColor] || defaultColor;
     };
   }, []);
 
@@ -114,16 +114,16 @@ const CardWrapper = memo(function CardWrapper({
           )}
         </h3>
         {type === 'custom' ? (
-          <div className="mt-1" role="text" aria-label={`Valor: ${formattedValue}`}>
-            {formattedValue}
+          <div className="mt-1" role="text" aria-label={`Valor: ${typeOfValue}`}>
+            {typeOfValue}
           </div>
         ) : (
           <p
             className="mt-1 text-lg font-bold sm:text-xl"
             role="text"
-            aria-label={`Valor: ${formattedValue}`}
+            aria-label={`Valor: ${typeOfValue}`}
           >
-            {formattedValue}
+            {typeOfValue}
           </p>
         )}
         {subtitle && <p className="text-muted-foreground text-xs sm:text-sm">{subtitle}</p>}
