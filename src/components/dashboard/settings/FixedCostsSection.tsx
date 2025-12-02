@@ -10,6 +10,8 @@ import { getTotalFixedCost } from '@/utils/calculations/finance';
 import { CurrencyInput } from '@/components/ui/forms';
 import { useConfirmation } from '@/hooks/ui/useConfirmation';
 import { CURRENCY_LIMITS } from '@/schemas/validationSchemas';
+import { RECURRENCE_OPTIONS } from '@/types/settings';
+import { FIXED_COST_CATEGORIES } from '@/types/settings';
 import {
   ConfirmationDialog,
   Sheet,
@@ -34,22 +36,6 @@ export default function FixedCostsSection() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
     useConfirmation();
-
-  const categories = [
-    { value: 'aluguel', label: 'Aluguel' },
-    { value: 'energia', label: 'Energia' },
-    { value: 'agua', label: 'Água' },
-    { value: 'internet', label: 'Internet' },
-    { value: 'funcionarios', label: 'Funcionários' },
-    { value: 'outros', label: 'Outros' },
-  ];
-
-  const recurrences = [
-    { value: 'diario', label: 'Diário' },
-    { value: 'semanal', label: 'Semanal' },
-    { value: 'mensal', label: 'Mensal' },
-    { value: 'anual', label: 'Anual' },
-  ];
 
   const handleAddCost = () => {
     const newCost: FixedCostSettings = {
@@ -260,9 +246,9 @@ export default function FixedCostsSection() {
                         <SelectValue placeholder="Categoria" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map(category => (
-                          <SelectItem key={category.value} value={category.value}>
-                            {category.label}
+                        {FIXED_COST_CATEGORIES.map(category => (
+                          <SelectItem key={category} value={category}>
+                            {category}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -288,9 +274,9 @@ export default function FixedCostsSection() {
                         <SelectValue placeholder="Recorrência" />
                       </SelectTrigger>
                       <SelectContent>
-                        {recurrences.map(recurrence => (
-                          <SelectItem key={recurrence.value} value={recurrence.value}>
-                            {recurrence.label}
+                        {RECURRENCE_OPTIONS.map(recurrence => (
+                          <SelectItem key={recurrence} value={recurrence}>
+                            {recurrence}
                           </SelectItem>
                         ))}
                       </SelectContent>

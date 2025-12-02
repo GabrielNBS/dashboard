@@ -12,47 +12,34 @@ import {
 } from '@/utils/calculations/finance';
 
 export interface DashboardMetrics {
-  // Financial summary data
   summary: FinanceSummary;
-
-  // Trending metrics for month-over-month comparison
   trending: TrendingMetrics;
-
-  // Chart data for home screen
   chartData: Array<{
     date: string;
     revenue: number;
     expenses: number;
     profit: number;
   }>;
-
-  // Aggregated data for different chart types
   aggregatedData: Array<{
     name: string;
     value: number;
     color: string;
   }>;
+  isLoading: boolean;
 }
 
-/**
- * Unified hook that combines dashboard metrics with chart data
- * This connects the business logic from Dashboard metrics with home screen charts
- */
 export function useDashboardMetrics(): DashboardMetrics {
-  const { state: salesState } = useSalesContext();
-  const { state: settings } = useSettings();
+  const { state: salesState, isLoading: salesLoading } = useSalesContext();
+  const { state: settings, isLoading: settingsLoading } = useSettings();
 
-  // Get financial summary using existing business logic
+  const isLoading = salesLoading || settingsLoading;
+
   const summary = useFinanceSummary(salesState.sales);
 
-  // Get trending metrics for month-over-month comparison
   const trending = useTrendingMetrics(salesState.sales, summary);
-
-  // Process sales data for chart visualization
   const chartData = useMemo(() => {
-    if (salesState.sales.length === 0) return [];
+    if (isLoading || salesState.sales.length === 0) return [];
 
-    // Group sales by date and calculate daily metrics
     const salesByDate = salesState.sales.reduce(
       (acc, sale) => {
         const date = new Date(sale.date).toISOString().split('T')[0];
@@ -72,9 +59,8 @@ export function useDashboardMetrics(): DashboardMetrics {
       {} as Record<string, { sales: Sale[]; revenue: number }>
     );
 
-    const fixedCostDaily = getTotalFixedCost(settings.fixedCosts) / 30; // Daily portion
+    const fixedCostDaily = getTotalFixedCost(settings.fixedCosts) / 30;
 
-    // Calculate expenses for each date using business logic functions directly
     return Object.entries(salesByDate)
       .map(([date, data]) => {
         const dailyRevenue = getTotalRevenue(data.sales);
@@ -98,9 +84,8 @@ export function useDashboardMetrics(): DashboardMetrics {
         };
       })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [salesState.sales, settings.variableCosts, settings.fixedCosts]);
+  }, [salesState.sales, settings.variableCosts, settings.fixedCosts, isLoading]);
 
-  // Prepare aggregated data for pie/radial charts
   const aggregatedData = useMemo(() => {
     const colors = {
       revenue: '#3B82F6',
@@ -132,5 +117,6 @@ export function useDashboardMetrics(): DashboardMetrics {
     trending,
     chartData,
     aggregatedData,
+    isLoading,
   };
 }

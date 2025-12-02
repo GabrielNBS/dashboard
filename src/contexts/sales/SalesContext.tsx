@@ -55,6 +55,7 @@ function salesReducer(state: SalesState, action: SalesAction): SalesState {
 interface SalesContextType {
   state: SalesState;
   dispatch: React.Dispatch<SalesAction>;
+  isLoading: boolean;
 }
 
 /**
@@ -85,5 +86,9 @@ export const SalesProvider = ({ children }: { children: ReactNode }) => {
     setStoredSales(state.sales);
   }, [state.sales, setStoredSales]);
 
-  return <SalesContext.Provider value={{ state, dispatch }}>{children}</SalesContext.Provider>;
+  return (
+    <SalesContext.Provider value={{ state, dispatch, isLoading: false }}>
+      {children}
+    </SalesContext.Provider>
+  );
 };

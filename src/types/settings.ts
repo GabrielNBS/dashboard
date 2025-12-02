@@ -1,8 +1,42 @@
-/**
- * Configurações básicas da loja
- */
+export const RECURRENCE_OPTIONS = ['mensal', 'semanal', 'diario', 'anual'] as const;
+
+export const FIXED_COST_CATEGORIES = [
+  'aluguel',
+  'energia',
+  'agua',
+  'internet',
+  'funcionarios',
+  'outros',
+] as const;
+
+export const VARIABLE_COST_TYPES = ['ingredientes', 'embalagens', 'comissoes', 'outros'] as const;
+
+export const VARIABLE_COST_CATEGORIES = [
+  'materia_prima',
+  'operacional',
+  'comercial',
+  'outros',
+] as const;
+
+export const CURRENCIES = ['BRL', 'USD', 'EUR'] as const;
+export const CURRENCY_FORMATS = ['symbol', 'code', 'name'] as const;
+
+export const LANGUAGES = ['pt-BR', 'en-US', 'es-ES'] as const;
+export const THEMES = ['light', 'dark', 'auto'] as const;
+export const BACKUP_FREQUENCIES = ['daily', 'weekly', 'monthly'] as const;
+
+export type RecurrenceType = (typeof RECURRENCE_OPTIONS)[number];
+export type FixedCostCategory = (typeof FIXED_COST_CATEGORIES)[number];
+export type VariableCostType = (typeof VARIABLE_COST_TYPES)[number];
+export type VariableCostCategory = (typeof VARIABLE_COST_CATEGORIES)[number];
+export type CurrencyType = (typeof CURRENCIES)[number];
+export type CurrencyFormat = (typeof CURRENCY_FORMATS)[number];
+export type LanguageType = (typeof LANGUAGES)[number];
+export type ThemeType = (typeof THEMES)[number];
+export type BackupFrequency = (typeof BACKUP_FREQUENCIES)[number];
+
 export interface StoreSettings {
-  storeName: string;
+  name: string;
   segment: string;
   cnpj?: string;
   address?: string;
@@ -11,102 +45,57 @@ export interface StoreSettings {
   logo?: string;
 }
 
-/**
- * Configurações de custos fixos
- */
 export interface FixedCostSettings {
-  /** ID único do custo fixo */
   id: string;
-  /** Nome/descrição do custo */
   name: string;
-  /** Valor do custo */
   amount: number;
-  /** Recorrência do custo */
-  recurrence: 'mensal' | 'semanal' | 'diario' | 'anual';
-  /** Categoria do custo */
-  category: 'aluguel' | 'energia' | 'agua' | 'internet' | 'funcionarios' | 'outros';
-  /** Data de vencimento (opcional) */
+  recurrence: RecurrenceType;
+  category: FixedCostCategory;
   dueDate?: string;
-  /** Observações adicionais */
   notes?: string;
 }
 
-/**
- * Configurações de custos variáveis
- */
 export interface VariableCostSettings {
-  /** ID único do custo variável */
   id: string;
-  /** Nome/descrição do custo */
   name: string;
-  /** Tipo de custo variável */
-  type: 'ingredientes' | 'embalagens' | 'comissoes' | 'outros';
-  /** Percentual sobre vendas (0-100) */
+  type: VariableCostType;
   percentage?: number;
-  /** Valor fixo por unidade */
   fixedValue?: number;
-  /** Categoria do custo */
-  category: 'materia_prima' | 'operacional' | 'comercial' | 'outros';
-  /** Observações adicionais */
+  category: VariableCostCategory;
   notes?: string;
 }
 
-/**
- * Configurações de taxas de pagamento
- */
 export interface PaymentFeesSettings {
-  /** Taxa para pagamento em dinheiro (%) */
   cash: number;
-  /** Taxa para pagamento no débito (%) */
   debit: number;
-  /** Taxa para pagamento no crédito (%) */
   credit: number;
-  /** Taxa para pagamento via iFood (%) */
   ifood: number;
 }
 
-/**
- * Configurações financeiras
- */
 export interface FinancialSettings {
-  /** Percentual de margem de lucro padrão */
   defaultProfitMargin: number;
-  /** Percentual para reserva de emergência */
   emergencyReservePercentage: number;
-  /** Meta de vendas mensal */
   monthlySalesGoal: number;
-  /** Moeda utilizada */
-  currency: 'BRL' | 'USD' | 'EUR';
-  /** Formato de exibição de valores */
-  currencyFormat: 'symbol' | 'code' | 'name';
+  currency: CurrencyType;
+  currencyFormat: CurrencyFormat;
 }
 
-/**
- * Configurações gerais do sistema
- */
 export interface SystemSettings {
-  /** Idioma do sistema */
-  language: 'pt-BR' | 'en-US' | 'es-ES';
-  /** Tema do sistema */
-  theme: 'light' | 'dark' | 'auto';
-  /** Notificações ativas */
+  language: LanguageType;
+  theme: ThemeType;
   notifications: {
     lowStock: boolean;
     salesGoal: boolean;
     costAlerts: boolean;
     backupReminder: boolean;
   };
-  /** Configurações de backup */
   backup: {
     autoBackup: boolean;
-    backupFrequency: 'daily' | 'weekly' | 'monthly';
+    backupFrequency: BackupFrequency;
     cloudBackup: boolean;
   };
 }
 
-/**
- * Interface completa das configurações
- */
 export interface AppSettings {
   store: StoreSettings;
   fixedCosts: FixedCostSettings[];

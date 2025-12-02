@@ -30,7 +30,7 @@ type SettingsAction =
 // Estado inicial das configurações
 const defaultSettings: AppSettings = {
   store: {
-    storeName: '',
+    name: '',
     segment: '',
     cnpj: '',
     address: '',
@@ -136,6 +136,7 @@ interface SettingsContextType {
   dispatch: React.Dispatch<SettingsAction>;
   saveSettings: () => void;
   resetSettings: () => void;
+  isLoading: boolean;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -171,6 +172,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       dispatch,
       saveSettings,
       resetSettings,
+      isLoading: false,
     }),
     [state, saveSettings, resetSettings]
   );

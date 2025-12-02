@@ -1,4 +1,5 @@
 // Skeleton Components Index
+export * from './DashboardSkeleton';
 export { default as SalesTableSkeleton } from './SalesTableSkeleton';
 export { default as ProductCatalogSkeleton } from './ProductCatalogSkeleton';
 export { default as IngredientListSkeleton } from './IngredientListSkeleton';

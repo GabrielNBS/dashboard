@@ -2,7 +2,11 @@
 
 import React, { useState } from 'react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
-import { VariableCostSettings } from '@/types/settings';
+import {
+  VARIABLE_COST_CATEGORIES,
+  VARIABLE_COST_TYPES,
+  VariableCostSettings,
+} from '@/types/settings';
 import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
 import { Calculator, Plus, Edit, Trash2, FileText, Tag, Percent } from 'lucide-react';
@@ -33,20 +37,6 @@ export default function VariableCostsSection() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const { confirmationState, showConfirmation, hideConfirmation, handleConfirm } =
     useConfirmation();
-
-  const types = [
-    { value: 'ingredientes', label: 'Ingredientes' },
-    { value: 'embalagens', label: 'Embalagens' },
-    { value: 'comissoes', label: 'Comissões' },
-    { value: 'outros', label: 'Outros' },
-  ];
-
-  const categories = [
-    { value: 'materia_prima', label: 'Matéria Prima' },
-    { value: 'operacional', label: 'Operacional' },
-    { value: 'comercial', label: 'Comercial' },
-    { value: 'outros', label: 'Outros' },
-  ];
 
   const handleAddCost = () => {
     const newCost: VariableCostSettings = {
@@ -249,9 +239,9 @@ export default function VariableCostsSection() {
                         <SelectValue placeholder="Tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        {types.map(type => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
+                        {VARIABLE_COST_TYPES.map(type => (
+                          <SelectItem key={type} value={type}>
+                            {type}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -274,9 +264,9 @@ export default function VariableCostsSection() {
                         <SelectValue placeholder="Categoria" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map(category => (
-                          <SelectItem key={category.value} value={category.value}>
-                            {category.label}
+                        {VARIABLE_COST_CATEGORIES.map(category => (
+                          <SelectItem key={category} value={category}>
+                            {category}
                           </SelectItem>
                         ))}
                       </SelectContent>
