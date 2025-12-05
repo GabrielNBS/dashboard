@@ -55,7 +55,7 @@ function SheetContent({ className, children, side = 'right', ...props }: SheetCo
         {...props}
       >
         <Drawer.Title className="sr-only">Dialog</Drawer.Title>
-        <div className="h-full w-full overflow-scroll p-6">{children}</div>
+        <div className="scrollbar-hide h-full w-full overflow-scroll p-6">{children}</div>
         <Drawer.Close className="text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-accent absolute top-4 right-4 rounded-full p-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none">
           <XIcon className="h-5 w-5" />
           <span className="sr-only">Fechar</span>

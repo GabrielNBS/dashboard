@@ -10,7 +10,10 @@ interface IngredientsStepProps {
 }
 
 // ✅ FASE 2.1: Memoizado para evitar re-render quando outros steps mudam
-const IngredientsStep = React.memo(function IngredientsStep({ data, updateData }: IngredientsStepProps) {
+const IngredientsStep = React.memo(function IngredientsStep({
+  data,
+  updateData,
+}: IngredientsStepProps) {
   const { state } = useProductBuilderContext();
 
   // ✅ FASE 1.4: Memoiza updateData para evitar recriação desnecessária

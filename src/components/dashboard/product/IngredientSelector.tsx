@@ -93,12 +93,10 @@ export default function IngredientSelector() {
       return;
     }
 
-    // Adiciona ao produto - cria um "snapshot" do ingrediente com preço fixo
-    // NÃO consome estoque - isso acontece apenas no PDV
     const ingredientSnapshot: Ingredient = {
       ...selectedIngredient,
       totalQuantity: normalizedQuantity,
-      averageUnitPrice: selectedIngredient.averageUnitPrice, // Preço fixo no momento da adição
+      averageUnitPrice: selectedIngredient.averageUnitPrice,
       batches: [
         {
           id: `recipe_batch_${Date.now()}`,
@@ -116,8 +114,6 @@ export default function IngredientSelector() {
       payload: ingredientSnapshot,
     });
 
-    // NÃO chama consumeIngredient aqui - estoque permanece inalterado
-
     setSelectedIngredient(null);
     setQuantity('');
     setDisplayQuantity('');
@@ -131,7 +127,6 @@ export default function IngredientSelector() {
     setInputValue('');
   };
 
-  // Filtrar apenas ingredientes que têm estoque
   const ingredientsWithStock = estoque.ingredients.filter(
     ingredient => ingredient.totalQuantity > 0
   );

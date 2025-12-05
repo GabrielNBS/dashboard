@@ -21,175 +21,194 @@ export interface LordIconRef {
   reset: () => void;
 }
 
-const LordIcon = memo(
-  forwardRef<LordIconRef, LordIconProps>(
-    (
-      {
-        src,
-        width = 24,
-        height = 24,
-        className = '',
-        isActive = false,
-        isHovered = false,
-        colors: customColors,
+interface LordIconElement extends HTMLElement {
+  play?: () => void;
+  pause?: () => void;
+  reset?: () => void;
+  goToFirstFrame?: () => void;
+  seek?: (frame: number) => void;
+  goToFrame?: (frame: number) => void;
+  playerInstance?: {
+    goToAndStop?: (frame: number, isFrame?: boolean) => void;
+  };
+  time?: number;
+}
+
+const LordIconInner = (
+  {
+    src,
+    width = 24,
+    height = 24,
+    className,
+    isActive = false,
+    isHovered = false,
+    colors: customColors,
+  }: LordIconProps,
+  ref: React.Ref<LordIconRef>
+) => {
+  const iconRef = useRef<LordIconElement | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [internalHover, setInternalHover] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Garante que só renderiza "de verdade" no cliente
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Verificar se o custom element <lord-icon> já foi registrado
+  useEffect(() => {
+    if (!isMounted) return;
+
+    if (typeof window === 'undefined' || !('customElements' in window)) {
+      return;
+    }
+
+    if (window.customElements.get('lord-icon')) {
+      setIsLoaded(true);
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      if (window.customElements?.get('lord-icon')) {
+        setIsLoaded(true);
+        window.clearInterval(intervalId);
+      }
+    }, 100);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [isMounted]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      play: () => {
+        iconRef.current?.play?.();
       },
-      ref
-    ) => {
-      const iconRef = useRef<HTMLElement>(null);
-      const [isLoaded, setIsLoaded] = useState(false);
-      const [internalHover, setInternalHover] = useState(false);
-      const [isMounted, setIsMounted] = useState(false);
+      pause: () => {
+        iconRef.current?.pause?.();
+      },
+      reset: () => {
+        iconRef.current?.reset?.();
+      },
+    }),
+    []
+  );
 
-      // Garantir que o componente só renderiza no cliente
-      useEffect(() => {
-        setIsMounted(true);
-      }, []);
+  const shouldPlay = isHovered || internalHover;
 
-      useEffect(() => {
-        if (!isMounted) return;
+  // Controle manual de animação baseado em hover quando não está em modo "ativo" (loop)
+  useEffect(() => {
+    if (isActive) return;
 
-        // Verificar se o LordIcon foi carregado
-        const checkLordIcon = () => {
-          if (
-            typeof window !== 'undefined' &&
-            window.customElements &&
-            window.customElements.get('lord-icon')
-          ) {
-            setIsLoaded(true);
-          } else {
-            // Tentar novamente após um pequeno delay
-            const timeoutId = setTimeout(checkLordIcon, 100);
-            return () => clearTimeout(timeoutId);
-          }
-        };
+    const icon = iconRef.current;
+    if (!icon) return;
 
-        checkLordIcon();
-      }, [isMounted]);
+    if (shouldPlay) {
+      icon.play?.();
+      return;
+    }
 
-      useImperativeHandle(ref, () => ({
-        play: () => {
-          if (iconRef.current && 'play' in iconRef.current) {
-            (iconRef.current as { play: () => void }).play();
-          }
-        },
-        pause: () => {
-          if (iconRef.current && 'pause' in iconRef.current) {
-            (iconRef.current as { pause: () => void }).pause();
-          }
-        },
-        reset: () => {
-          if (iconRef.current && 'reset' in iconRef.current) {
-            (iconRef.current as { reset: () => void }).reset();
-          }
-        },
-      }));
+    // Quando o hover termina, para a animação e volta ao frame inicial
+    icon.pause?.();
 
-      // Trigger animation when hover state changes
-      const shouldPlay = isHovered || internalHover;
+    const resetIcon = () => {
+      // Tentar diferentes métodos para voltar ao frame inicial para garantir compatibilidade
+      if (icon.goToFirstFrame) {
+        icon.goToFirstFrame();
+      } else if (icon.seek) {
+        icon.seek(0);
+      } else if (icon.goToFrame) {
+        icon.goToFrame(0);
+      }
 
-      useEffect(() => {
-        if (isActive) return; // Se estiver ativo, o loop é controlado pelo trigger nativo
+      // Alguns elementos lord-icon expõem a propriedade time
+      if ('time' in icon) {
+        icon.time = 0;
+      }
 
-        if (iconRef.current) {
-          const icon = iconRef.current as any;
+      icon.playerInstance?.goToAndStop?.(0, true);
+    };
 
-          if (shouldPlay) {
-            if (icon.play) icon.play();
-          } else {
-            // Quando o hover termina, para e volta ao início
-            if (icon.stop) icon.stop();
-            if (icon.goToFrame) icon.goToFrame(0);
-          }
+    resetIcon();
+
+    // Reforçar o reset no próximo frame para garantir que a remoção do atributo 'trigger'
+    // não interfira no estado da animação
+    requestAnimationFrame(resetIcon);
+  }, [shouldPlay, isActive]);
+
+  // Definição de cores baseada em estado
+  const colors = customColors
+    ? customColors
+    : isActive
+      ? {
+          primary: '#ffffff',
+          secondary: '#ffffff',
         }
-      }, [shouldPlay, isActive]);
-
-      // Determine colors based on state
-      const getColors = () => {
-        // Se cores customizadas foram fornecidas, use-as
-        if (customColors) {
-          return customColors;
-        }
-
-        if (isActive) {
-          return {
-            primary: '#ffffff',
-            secondary: '#ffffff',
-          };
-        } else if (shouldPlay) {
-          return {
+      : shouldPlay
+        ? {
             primary: 'hsl(var(--foreground))',
             secondary: 'hsl(var(--foreground))',
-          };
-        } else {
-          return {
+          }
+        : {
             primary: 'hsl(var(--muted-foreground))',
             secondary: 'hsl(var(--muted-foreground))',
           };
-        }
-      };
 
-      const colors = getColors();
+  // Placeholder no servidor / antes do mount para evitar hydration mismatch
+  if (!isMounted) {
+    return (
+      <div
+        style={{
+          width,
+          height,
+          backgroundColor: 'transparent',
+          borderRadius: 2,
+        }}
+        className={className}
+      />
+    );
+  }
 
-      // Não renderizar nada no servidor para evitar hidration mismatch
-      if (!isMounted) {
-        return (
-          <div
-            style={{
-              width: `${width}px`,
-              height: `${height}px`,
-              backgroundColor: 'transparent',
-              borderRadius: '2px',
-            }}
-            className={className}
-          />
-        );
-      }
+  // Fallback enquanto o custom element ainda não está disponível
+  if (!isLoaded) {
+    return (
+      <div
+        style={{
+          width,
+          height,
+          backgroundColor: colors.primary,
+          borderRadius: 2,
+          opacity: 0.3,
+        }}
+        className={className}
+      />
+    );
+  }
 
-      // Fallback enquanto o LordIcon não carrega
-      if (!isLoaded) {
-        return (
-          <div
-            style={{
-              width: `${width}px`,
-              height: `${height}px`,
-              backgroundColor: colors.primary,
-              borderRadius: '2px',
-              opacity: 0.3,
-            }}
-            className={className}
-          />
-        );
-      }
+  const trigger = isActive ? 'loop' : undefined;
 
-      // Determine trigger based on state
-      const getTrigger = () => {
-        if (isActive) {
-          return 'loop'; // Animação contínua quando ativo
-        } else {
-          return undefined; // Desativa trigger nativo para controle manual via hover
-        }
-      };
+  return React.createElement('lord-icon', {
+    ref: iconRef,
+    src,
+    trigger,
+    colors: `primary:${colors.primary},secondary:${colors.secondary}`,
+    style: {
+      width,
+      height,
+      display: 'block',
+      pointerEvents: 'auto',
+      cursor: 'pointer',
+    },
+    className,
+    onMouseEnter: () => setInternalHover(true),
+    onMouseLeave: () => setInternalHover(false),
+  });
+};
 
-      return React.createElement('lord-icon', {
-        ref: iconRef,
-        src: src,
-        trigger: getTrigger(),
-        colors: `primary:${colors.primary},secondary:${colors.secondary}`,
-        style: {
-          width: `${width}px`,
-          height: `${height}px`,
-          display: 'block',
-          pointerEvents: 'auto', // Permitir eventos de mouse
-          cursor: 'pointer',
-        },
-        className: className,
-        onMouseEnter: () => setInternalHover(true),
-        onMouseLeave: () => setInternalHover(false),
-      });
-    }
-  )
-);
-
+const LordIcon = memo(forwardRef<LordIconRef, LordIconProps>(LordIconInner));
 LordIcon.displayName = 'LordIcon';
 
 export default LordIcon;
