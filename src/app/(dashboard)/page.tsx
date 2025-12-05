@@ -7,7 +7,6 @@ import { ChartBarIcon, PercentIcon, DollarSign, ShoppingBagIcon } from 'lucide-r
 import { getGreetingByHour } from '@/utils/helpers/dateTime'; // ✅ nome corrigido
 import { Header } from '@/components/ui/Header';
 
-// Cards
 import NetProfitCard from '@/components/dashboard/finance/cards/NetProfitCard';
 import ProfitMarginCard from '@/components/dashboard/finance/cards/ProfitMarginCard';
 import RevenueCard from '@/components/dashboard/finance/cards/RevenueCard';

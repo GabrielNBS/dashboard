@@ -3,7 +3,6 @@
 import React, { useMemo, createContext, useContext, ReactNode } from 'react';
 import { useProductForm } from '@/hooks/useProductForm';
 
-// Importar os steps
 import BasicInfoStep from './steps/BasicInfoStep';
 import IngredientsStep from './steps/IngredientsStep';
 import ProductionStep from './steps/ProductionStep';

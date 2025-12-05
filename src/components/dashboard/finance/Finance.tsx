@@ -5,10 +5,9 @@ import React, { useMemo, useRef } from 'react';
 import { useSalesContext } from '@/contexts/sales/useSalesContext';
 import { useFinanceSummary } from '@/hooks/business/useSummaryFinance';
 import { useFinanceActions } from '@/hooks/business/useFinanceActions';
+import { useSalesFilter } from '@/hooks/ui/useUnifiedFilter';
 import { Sale } from '@/types/sale';
 import { ConfirmationDialog } from '@/components/ui/feedback';
-
-import { useSalesFilter } from '@/hooks/ui/useUnifiedFilter';
 
 import MetroTilesKPIs from '@/components/features/finance/MetroTilesKPIs';
 import SalesTable from '@/components/features/finance/SalesTable';
@@ -22,7 +21,6 @@ export default function Finance() {
     useFinanceActions();
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Create searchable sales data - memoized for performance
   const searchableSales = useMemo((): SearchableSale[] => {
     return salesState.sales.map(sale => ({
       ...sale,
