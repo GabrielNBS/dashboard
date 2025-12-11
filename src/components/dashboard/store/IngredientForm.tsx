@@ -37,10 +37,6 @@ import {
 import { normalizeQuantity, denormalizeQuantity } from '@/utils/helpers/normalizeQuantity';
 import { formatCurrency } from '@/utils/UnifiedUtils';
 
-/* ===========================================================
-   UTILITÁRIOS
-=========================================================== */
-
 const sanitizeInput = (value: string): string =>
   value
     .replace(/[<>]/g, '')
@@ -49,10 +45,6 @@ const sanitizeInput = (value: string): string =>
     .replace(/[\u0300-\u036f]/g, '');
 
 const normalizeForComparison = (value: string): string => sanitizeInput(value.toLowerCase());
-
-/* ===========================================================
-   COMPONENTES INTERNOS (mantidos)
-=========================================================== */
 
 const ExistingStockInfo = ({ ingredient }: { ingredient: Ingredient }) => (
   <div className="bg-great/50 mb-4 rounded-lg p-4 shadow-md transition-all duration-200">
@@ -150,10 +142,6 @@ const PricePreview = ({
   );
 };
 
-/* ===========================================================
-   COMPONENTE PRINCIPAL (AJUSTADO)
-=========================================================== */
-
 export default function IngredientForm() {
   const { dispatch, state, addBatch } = useIngredientContext();
   const { toast } = useToast();
@@ -162,13 +150,8 @@ export default function IngredientForm() {
   const [localIsOpen, setLocalIsOpen] = useState(false);
   const [isWeightConversionEnabled, setIsWeightConversionEnabled] = useState(false);
 
-  // Determina se estamos em modo de edição baseado no contexto
   const isEditMode = state.isModalOpen && !!state.ingredientToEdit;
   const isOpen = localIsOpen || state.isModalOpen;
-
-  /* ------------------------------
-     FORM
-  ------------------------------ */
 
   const {
     register,
@@ -233,12 +216,6 @@ export default function IngredientForm() {
     }
   }, [isEditMode, state.ingredientToEdit, isOpen, reset]);
 
-  /*
-   * REMOVED DUPLICATE USEEFFECT
-   * The logic was merged into the main reset effect above to ensure
-   * atomic updates and avoid race conditions.
-   */
-
   const existingIngredient = useMemo(() => {
     if (isEditMode || !name) return null;
     const normalizedName = normalizeForComparison(name);
@@ -269,6 +246,49 @@ export default function IngredientForm() {
       combinedQuantity,
     };
   }, [existingIngredient, quantity, buyPrice, unit]);
+
+  const exceedsMaxQuantity = useMemo(() => {
+    if (!existingIngredient) {
+      const qty = parseFloat(quantity);
+      const max = watch('maxQuantity');
+      const maxQty = max ? parseFloat(max) : 0;
+
+      if (!isNaN(qty) && qty > 0 && !isNaN(maxQty) && maxQty > 0 && qty > maxQty) {
+        return {
+          exceeds: true,
+          newTotal: qty,
+          maxQuantity: maxQty,
+          surplus: qty - maxQty,
+        };
+      }
+      return { exceeds: false };
+    }
+
+    if (!pricePreview) return { exceeds: false };
+
+    const max = watch('maxQuantity');
+    const maxQty = max ? normalizeQuantity(parseFloat(max), unit) : existingIngredient.maxQuantity;
+
+    if (pricePreview.combinedQuantity > maxQty) {
+      return {
+        exceeds: true,
+        newTotal: pricePreview.combinedQuantity,
+        maxQuantity: maxQty,
+        surplus: pricePreview.combinedQuantity - maxQty,
+      };
+    }
+    return { exceeds: false };
+  }, [existingIngredient, pricePreview, quantity, unit, watch]);
+
+  useEffect(() => {
+    if (exceedsMaxQuantity.exceeds) {
+      const input = document.getElementById('maxQuantity');
+      if (input) {
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => input.focus(), 300);
+      }
+    }
+  }, [exceedsMaxQuantity.exceeds]);
 
   useEffect(() => {
     setMounted(true);
@@ -415,7 +435,6 @@ export default function IngredientForm() {
           });
         }
 
-        // Fecha o modal apropriado
         if (state.isModalOpen) {
           dispatch({ type: 'CLOSE_EDIT_MODAL' });
         }
@@ -490,7 +509,6 @@ export default function IngredientForm() {
     <>
       {createPortal(
         <>
-          {/* BOTÃO FIXO (Apenas mostra se não estiver em modo de edição) */}
           {!isEditMode && (
             <Button
               className="fixed right-4 bottom-4 z-20 shadow-lg transition-all duration-200 hover:scale-105 sm:right-6 sm:bottom-6"
@@ -548,7 +566,6 @@ export default function IngredientForm() {
                   )}
 
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                    {/* Nome + Unidade */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="name">Nome do ingrediente</Label>
@@ -558,7 +575,7 @@ export default function IngredientForm() {
                           {...register('name')}
                           id="name"
                           autoComplete="off"
-                          disabled={!!existingIngredient && !isEditMode} // Desabilita apenas se for reabastecimento
+                          disabled={!!existingIngredient && !isEditMode}
                           className={errors.name ? 'border-destructive' : ''}
                         />
                         {errors.name && (
@@ -574,7 +591,7 @@ export default function IngredientForm() {
                         <UnitSelect
                           register={register}
                           errors={errors}
-                          disabled={!!existingIngredient && !isEditMode} // Desabilita apenas se for reabastecimento
+                          disabled={!!existingIngredient && !isEditMode}
                         />
                         {errors.unit && (
                           <p className="text-destructive flex items-center gap-1 text-xs">
@@ -585,7 +602,6 @@ export default function IngredientForm() {
                       </div>
                     </div>
 
-                    {/* Quantidade + Preço */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="quantity">
@@ -639,7 +655,6 @@ export default function IngredientForm() {
                       </div>
                     </div>
 
-                    {/* Conversão de Unidade (Opcional - Apenas se UNIDADE for 'un') */}
                     {unit === 'un' && (
                       <div className="bg-muted/30 rounded-lg border border-dashed p-4">
                         <div className="mb-4 flex items-start justify-between">
@@ -714,7 +729,6 @@ export default function IngredientForm() {
                       </div>
                     )}
 
-                    {/* Min/Max Quantity */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="minQuantity">Quantidade Mínima (Alerta Crítico)</Label>
@@ -752,7 +766,13 @@ export default function IngredientForm() {
                           onChange={(v: string) =>
                             setValue('maxQuantity', v, { shouldValidate: true })
                           }
-                          className={errors.maxQuantity ? 'border-destructive' : ''}
+                          className={`transition-all duration-300 ${
+                            exceedsMaxQuantity.exceeds
+                              ? 'border-destructive ring-destructive/30 ring-2'
+                              : errors.maxQuantity
+                                ? 'border-destructive'
+                                : ''
+                          }`}
                         />
                         {errors.maxQuantity && (
                           <p className="text-destructive flex items-center gap-1 text-xs">
@@ -763,7 +783,6 @@ export default function IngredientForm() {
                       </div>
                     </div>
 
-                    {/* PREVIEW DE PREÇO - Apenas se não for edição */}
                     {pricePreview && existingIngredient && !isEditMode && (
                       <PricePreview
                         currentPrice={existingIngredient.averageUnitPrice}
@@ -774,7 +793,28 @@ export default function IngredientForm() {
                       />
                     )}
 
-                    {/* BOTÕES */}
+                    {exceedsMaxQuantity.exceeds && (
+                      <div className="bg-warning/20 border-warning text-warning-foreground animate-in fade-in slide-in-from-top-2 rounded-lg border p-4 duration-300">
+                        <div className="flex items-start gap-3">
+                          <AlertCircle className="text-warning mt-0.5 h-5 w-5 flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="font-medium">Limite de estoque excedido</p>
+                            <p className="text-sm opacity-80">
+                              O total de{' '}
+                              <strong>
+                                {exceedsMaxQuantity.newTotal} {unit}
+                              </strong>{' '}
+                              excede o limite máximo de{' '}
+                              <strong>
+                                {exceedsMaxQuantity.maxQuantity} {unit}
+                              </strong>
+                              . Atualize a quantidade máxima acima.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex justify-end gap-3 border-t pt-4">
                       <Button variant="outline" type="button" onClick={handleCancel}>
                         Cancelar
@@ -783,7 +823,7 @@ export default function IngredientForm() {
                       <Button
                         variant="accept"
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || exceedsMaxQuantity.exceeds}
                         className="min-w-[140px]"
                       >
                         {isSubmitting ? (

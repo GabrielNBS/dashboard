@@ -41,7 +41,9 @@ export default function QuantityInput({
   size = 'md',
 }: QuantityInputProps) {
   const getDecimals = () => {
-    if (!allowDecimals || unit === 'un') return 0;
+    // un, g, ml são unidades inteiras, não precisam de decimais
+    if (!allowDecimals || unit === 'un' || unit === 'g' || unit === 'ml') return 0;
+    // kg e l usam 3 decimais (ex: 1.500 kg = 1500g)
     return 3;
   };
 

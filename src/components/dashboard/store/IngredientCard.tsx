@@ -4,8 +4,6 @@ import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { getStockStatus } from '@/utils/calculations/calcSale';
 import { formatStockDisplay } from '@/utils/helpers/normalizeQuantity';
 import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
-
-// New unified components - replacing old card implementation
 import { GenericCard, type BadgeConfig } from '@/components/ui/GenericCard';
 
 const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) => {
@@ -15,7 +13,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
   const [isExiting, setIsExiting] = React.useState(false);
   const tooltipTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  // Calculate stock metrics
   const maxQuantity = ingredient.maxQuantity;
   const status = getStockStatus(ingredient.totalQuantity, maxQuantity, ingredient.minQuantity);
   const stockPercentage = maxQuantity > 0 ? (ingredient.totalQuantity / maxQuantity) * 100 : 0;
@@ -32,7 +29,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
     }
   }, [isCriticalAlert]);
 
-  // Gerencia a montagem e desmontagem do tooltip com animação
   const shouldShowTooltip = showTooltip || autoShowTooltip;
 
   React.useEffect(() => {
@@ -44,12 +40,11 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
       const timer = setTimeout(() => {
         setIsTooltipMounted(false);
         setIsExiting(false);
-      }, 200); // Duração da animação de saída
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [shouldShowTooltip, isTooltipMounted]);
 
-  // Determina a mensagem do tooltip baseada no status
   const getTooltipMessage = () => {
     if (ingredient.totalQuantity === 0) {
       return `Estoque zerado! ${ingredient.name} precisa de reposição urgente.`;
@@ -63,7 +58,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
     return '';
   };
 
-  // Status configuration for display - centralized status logic
   const statusConfig = {
     critico: {
       text: 'Crítico',
@@ -84,7 +78,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
 
   const { text, icon, variant } = statusConfig[status];
 
-  // Configure badges for unit and status
   const badges: BadgeConfig[] = [
     {
       text: ingredient.unit,
@@ -97,7 +90,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
     },
   ];
 
-  // Configure main metrics to display
   const mainMetrics = [
     {
       label: 'Quantidade',
@@ -114,7 +106,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
     },
   ];
 
-  // Configure progress bar for stock level
   const progressConfig = {
     value: stockPercentage,
     label: 'Nível do Estoque',
@@ -122,7 +113,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
     showPercentage: true,
   };
 
-  // Configure action buttons with custom icons
   const actions = [
     {
       icon: <Edit3 className="h-4 w-4" />,
@@ -142,7 +132,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
 
   return (
     <div className="relative" id={`ingredient-${ingredient.id}`}>
-      {/* Indicador de alerta pulsante */}
       {isCriticalAlert && (
         <div
           className="group/alert absolute top-2 right-2 z-10 cursor-pointer"
@@ -160,9 +149,7 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
           }}
         >
           <div className="relative flex h-6 w-6 items-center justify-center transition-transform duration-200 ease-out group-hover/alert:scale-110">
-            {/* Pulso animado */}
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-            {/* Círculo sólido */}
             <span className="ring-background relative inline-flex h-4 w-4 rounded-full bg-red-600 ring-2 transition-all duration-200 group-hover/alert:ring-4">
               <span className="absolute inset-0 flex items-center justify-center">
                 <AlertOctagon className="h-2.5 w-2.5 text-white transition-transform duration-200 group-hover/alert:rotate-12" />
@@ -170,7 +157,6 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
             </span>
           </div>
 
-          {/* Tooltip */}
           {isTooltipMounted && (
             <div
               className={`absolute top-full right-0 mt-2 w-64 transition-all duration-200 ease-out ${
@@ -181,10 +167,9 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
             >
               <div className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-xl">
                 <div className="flex items-start gap-2">
-                  <AlertOctagon className="mt-0.5 h-4 w-4 flex-shrink-0 animate-pulse" />
+                  <AlertOctagon className="mt-0.5 h-4 w-4 shrink-0 animate-pulse" />
                   <p className="leading-snug">{getTooltipMessage()}</p>
                 </div>
-                {/* Seta do tooltip */}
                 <div className="absolute -top-1 right-4 h-2 w-2 rotate-45 bg-red-600" />
               </div>
             </div>

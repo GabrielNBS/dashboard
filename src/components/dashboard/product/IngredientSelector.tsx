@@ -22,7 +22,6 @@ export default function IngredientSelector() {
   const [displayQuantity, setDisplayQuantity] = useState<string>('1');
   const [useWeightMode, setUseWeightMode] = useState(false);
 
-  // Reset do modo de peso ao selecionar novo ingrediente
   const handleSelectIngredient = (ingredient: Ingredient) => {
     setSelectedIngredient(ingredient);
     setInputValue(ingredient.name);
@@ -52,8 +51,10 @@ export default function IngredientSelector() {
 
   // Função para calcular o custo usando preço médio ponderado
   const getTotalPrice = (quantity: string, ingredient: Ingredient): string => {
-    const realQuantity = parseFloat(quantity);
-    if (realQuantity <= 0) return '0.00';
+    // Converter vírgula para ponto (formato brasileiro -> parseFloat)
+    const normalizedInput = quantity.replace(',', '.');
+    const realQuantity = parseFloat(normalizedInput);
+    if (isNaN(realQuantity) || realQuantity <= 0) return '0.00';
 
     if (useWeightMode && ingredient.weightPerUnit && ingredient.weightUnit) {
       // Conversão: Quantidade (g/ml) -> Unidades
@@ -75,7 +76,9 @@ export default function IngredientSelector() {
 
   // Verifica se há quantidade suficiente em estoque
   const hasEnoughStock = (ingredient: Ingredient, quantity: string): boolean => {
-    const realQuantity = parseFloat(quantity);
+    const normalizedInput = quantity.replace(',', '.');
+    const realQuantity = parseFloat(normalizedInput);
+    if (isNaN(realQuantity) || realQuantity <= 0) return false;
 
     if (useWeightMode && ingredient.weightPerUnit && ingredient.weightUnit) {
       const normalizedQuantity = normalizeQuantity(realQuantity, ingredient.weightUnit);
@@ -84,7 +87,6 @@ export default function IngredientSelector() {
         ingredient.weightUnit
       );
       const unitsNeeded = normalizedQuantity / normalizedWeightPerUnit;
-      // Estoque totalQuantity está em Unidades (se unit == 'un')
       return ingredient.totalQuantity >= unitsNeeded;
     }
 
@@ -98,9 +100,16 @@ export default function IngredientSelector() {
   const handleAddIngredient = () => {
     if (!selectedIngredient) return;
 
-    const realQuantity = parseFloat(displayQuantity);
+    const normalizedInput = displayQuantity.replace(',', '.');
+    const realQuantity = parseFloat(normalizedInput);
 
-    if (!selectedIngredient || !displayQuantity || realQuantity <= 0 || !selectedIngredient.name) {
+    if (
+      !selectedIngredient ||
+      !displayQuantity ||
+      isNaN(realQuantity) ||
+      realQuantity <= 0 ||
+      !selectedIngredient.name
+    ) {
       alert('Preencha todos os campos');
       return;
     }

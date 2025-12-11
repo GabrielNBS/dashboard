@@ -11,14 +11,12 @@ export interface CardableItem {
   name: string;
 }
 
-// Badge configuration for status indicators
 export interface BadgeConfig {
   text: string;
   variant?: 'default' | 'outline' | 'danger' | 'warning' | 'normal';
   icon?: React.ReactNode;
 }
 
-// Action button configuration
 export interface ActionConfig<T> {
   icon: React.ReactNode;
   label: string;
@@ -27,7 +25,6 @@ export interface ActionConfig<T> {
   tooltip?: string;
 }
 
-// Progress bar configuration
 export interface ProgressConfig {
   value: number;
   max?: number;
@@ -36,7 +33,6 @@ export interface ProgressConfig {
   showPercentage?: boolean;
 }
 
-// Tab configuration interface
 export interface TabConfig {
   key: string;
   label: string;
@@ -44,64 +40,40 @@ export interface TabConfig {
   content: React.ReactNode;
 }
 
-// Main card configuration interface
 export interface GenericCardProps<T extends CardableItem> {
   item: T;
 
-  // Header configuration
-  title?: string; // Defaults to item.name
+  title?: string;
   subtitle?: string;
   badges?: BadgeConfig[];
 
-  // Content configuration - can be tabs or simple content
   tabs?: TabConfig[];
   mainMetrics?: Array<{
     label: string;
-    value: string | number | React.ReactNode; // Support for complex content like JSX elements
+    value: string | number | React.ReactNode;
     className?: string;
     icon?: React.ReactNode;
   }>;
 
   progress?: ProgressConfig;
 
-  // Expandable details section (legacy support)
   details?: {
     title: string;
     icon?: React.ReactNode;
     content: React.ReactNode;
   };
 
-  // Footer configuration
   footerInfo?: Array<{
     label: string;
     value: string;
   }>;
 
-  // Actions
   actions?: ActionConfig<T>[];
 
-  // Styling
   className?: string;
   variant?: 'default' | 'compact' | 'detailed' | 'modern';
 }
 
-/**
- * Generic card component that can be used for products, ingredients, or any other entity
- * Eliminates code duplication across different card implementations
- *
- * @param item - The item to display
- * @param title - Card title (defaults to item.name)
- * @param subtitle - Optional subtitle
- * @param badges - Status badges to display
- * @param tabs - Tab configuration for modern variant
- * @param mainMetrics - Key metrics to highlight
- * @param progress - Progress bar configuration
- * @param details - Expandable details section
- * @param footerInfo - Footer information
- * @param actions - Action buttons (edit, delete, etc.)
- * @param className - Additional CSS classes
- * @param variant - Card layout variant
- */
 export function GenericCard<T extends CardableItem>({
   item,
   title,
@@ -122,7 +94,6 @@ export function GenericCard<T extends CardableItem>({
 
   React.useEffect(() => {
     const checkMobile = () => {
-      // Verifica se é um dispositivo de toque ou tela pequena (tablet/mobile)
       const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
       const isSmallScreen = window.matchMedia('(max-width: 1024px)').matches;
       setIsMobile(isTouch || isSmallScreen);
@@ -133,11 +104,9 @@ export function GenericCard<T extends CardableItem>({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Modern variant with tabs
   if (variant === 'modern' && tabs.length > 0) {
     return (
       <div className={`border-border bg-card rounded-xl border shadow-sm ${className}`}>
-        {/* Header minimalista */}
         <div className="border-border border-b px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
@@ -148,7 +117,6 @@ export function GenericCard<T extends CardableItem>({
                 <p className="text-muted-foreground mb-2 text-xs sm:text-sm">{subtitle}</p>
               )}
 
-              {/* Badges */}
               {badges.length > 0 && (
                 <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                   {badges.map((badge, index) => (
@@ -170,7 +138,6 @@ export function GenericCard<T extends CardableItem>({
               )}
             </div>
 
-            {/* Action buttons */}
             {actions.length > 0 && (
               <div className="ml-2 flex gap-1 sm:gap-2">
                 {actions.map((action, index) => (
@@ -197,7 +164,6 @@ export function GenericCard<T extends CardableItem>({
           </div>
         </div>
 
-        {/* Tabs minimalistas */}
         <div className="border-border border-b px-4 py-2 sm:px-6 sm:py-3">
           <div className="flex gap-1 overflow-x-auto">
             {tabs.map(tab => (
@@ -229,19 +195,16 @@ export function GenericCard<T extends CardableItem>({
           </div>
         </div>
 
-        {/* Conteúdo das tabs */}
         <div className="p-4 sm:p-6">{tabs.find(tab => tab.key === activeTab)?.content}</div>
       </div>
     );
   }
 
-  // Legacy/default variant
   return (
     <Card
       className={`flex overflow-hidden rounded-xl border-0 shadow-lg transition-all hover:shadow-md ${className}`}
     >
       <div className="flex w-full flex-col">
-        {/* Header Section */}
         <CardHeader className="text-surface p-3 sm:p-4">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
@@ -253,7 +216,6 @@ export function GenericCard<T extends CardableItem>({
                 <p className="text-muted-foreground mb-2 text-xs sm:text-sm">{subtitle}</p>
               )}
 
-              {/* Badges */}
               {badges.length > 0 && (
                 <div className="mt-2 flex flex-wrap items-center gap-1 sm:gap-2">
                   {badges.map((badge, index) => (
@@ -266,7 +228,6 @@ export function GenericCard<T extends CardableItem>({
               )}
             </div>
 
-            {/* Action buttons */}
             {actions.length > 0 && (
               <div className="ml-2 flex gap-1">
                 {actions.map((action, index) => (
@@ -289,9 +250,7 @@ export function GenericCard<T extends CardableItem>({
           </div>
         </CardHeader>
 
-        {/* Content Section */}
         <CardContent className="p-3 sm:p-4">
-          {/* Main metrics grid */}
           {mainMetrics.length > 0 && (
             <div
               className={`mb-3 grid gap-2 sm:mb-4 sm:gap-3 ${
@@ -311,7 +270,6 @@ export function GenericCard<T extends CardableItem>({
                     {metric.icon}
                     <p className="text-muted-foreground text-xs font-medium">{metric.label}</p>
                   </div>
-                  {/* Handle both string/number values and React elements */}
                   {typeof metric.value === 'string' || typeof metric.value === 'number' ? (
                     <p className="text-primary text-base font-bold sm:text-lg">{metric.value}</p>
                   ) : (
@@ -324,7 +282,6 @@ export function GenericCard<T extends CardableItem>({
             </div>
           )}
 
-          {/* Progress bar */}
           {progress && (
             <div className="mb-4">
               <div className="text-muted-foreground mb-1 flex justify-between text-xs">
@@ -340,7 +297,6 @@ export function GenericCard<T extends CardableItem>({
             </div>
           )}
 
-          {/* Expandable details */}
           {details && (
             <details className="group">
               <summary className="flex cursor-pointer items-center justify-between py-2 font-medium">
@@ -365,7 +321,6 @@ export function GenericCard<T extends CardableItem>({
           )}
         </CardContent>
 
-        {/* Footer Section */}
         {footerInfo.length > 0 && (
           <CardFooter className="text-muted-foreground flex justify-between p-3 text-xs">
             {footerInfo.map((info, index) => (
@@ -380,13 +335,6 @@ export function GenericCard<T extends CardableItem>({
   );
 }
 
-// ============================================================
-// 🔹 Predefined action configurations for common use cases
-// ============================================================
-
-/**
- * Standard edit action configuration
- */
 export function createEditAction<T extends CardableItem>(
   onEdit: (item: T) => void,
   tooltip = 'Editar'
@@ -400,9 +348,6 @@ export function createEditAction<T extends CardableItem>(
   };
 }
 
-/**
- * Standard delete action configuration
- */
 export function createDeleteAction<T extends CardableItem>(
   onDelete: (item: T) => void,
   tooltip = 'Excluir'

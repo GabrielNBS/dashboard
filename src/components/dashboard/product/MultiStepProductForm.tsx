@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/base';
 
-// TAREFA 2: Tipo base unificado para o estado do produto
 interface ProductBuilderStateShape {
   name: string;
   category: string;
@@ -34,10 +33,8 @@ interface ProductBuilderStateShape {
   margin: string;
 }
 
-// TAREFA 2: StepValidationData herda do tipo base
 type StepValidationData = ProductBuilderStateShape;
 
-// TAREFA 2: StepData estende o tipo base com campos adicionais
 interface StepData extends ProductBuilderStateShape {
   ingredientsCount: number;
   productionMode: ProductionMode;
@@ -50,13 +47,11 @@ interface StepData extends ProductBuilderStateShape {
   };
 }
 
-// TAREFA 1: Props tipados para todos os step components
 interface StepProps {
   data: StepData;
   updateData: (data: Partial<StepData>) => void;
 }
 
-// TAREFA 1: StepComponent fortemente tipado com StepProps
 type StepComponent = React.ComponentType<StepProps>;
 
 interface StepConfig {
@@ -67,7 +62,6 @@ interface StepConfig {
   validate?: (data: StepValidationData) => boolean;
 }
 
-// TAREFA 3: Função utilitária para parse numérico robusto
 const parseNumber = (value: string): number | null => {
   if (!value) return null;
   const normalized = value.replace(',', '.');
@@ -75,8 +69,6 @@ const parseNumber = (value: string): number | null => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-// TAREFA 1: Steps com type assertion - necessário porque cada step tem props específicas
-// mas todos são compatíveis com StepProps em runtime (recebem data e updateData)
 const STEPS: StepConfig[] = [
   {
     component: BasicInfoStep as StepComponent,
@@ -104,7 +96,6 @@ const STEPS: StepConfig[] = [
     label: 'Preços',
     icon: DollarSign,
     description: 'Preços e margens',
-    // TAREFA 3: Validação com parseNumber robusto
     validate: data => {
       const price = parseNumber(data.sellingPrice);
       const margin = parseNumber(data.margin);
@@ -163,7 +154,6 @@ export function MultiStepRoot({ children, onClose }: { children: ReactNode; onCl
     goToStep,
   } = useProductForm(onClose);
 
-  // Função para verificar se um step está completo
   const isStepComplete = (stepIndex: number): boolean => {
     const step = STEPS[stepIndex];
     if (!step.validate) return true;
@@ -181,10 +171,8 @@ export function MultiStepRoot({ children, onClose }: { children: ReactNode; onCl
     return step.validate(data);
   };
 
-  // Verificar se pode avançar para o próximo step
   const canAdvance = isStepComplete(currentStep);
 
-  // TAREFA 4: Progress simplificado sem useMemo
   const stepProgress = ((currentStep + 1) / STEPS.length) * 100;
   const realProgress =
     currentStep === STEPS.length - 1
@@ -193,13 +181,10 @@ export function MultiStepRoot({ children, onClose }: { children: ReactNode; onCl
         : stepProgress
       : stepProgress;
 
-  // TAREFA 4: CurrentStepComponent simplificado sem useMemo
   const CurrentStepComponent = STEPS[currentStep].component;
 
-  // TAREFA 5: Cálculos sem memoização - chamada direta
   const calculations = getCalculations();
 
-  // TAREFA 5: stepProps mantém useMemo pois updateData vem de useCallback no hook
   const stepProps: StepProps = useMemo(
     () => ({
       data: {
@@ -291,7 +276,7 @@ export function MultiStepHeader() {
                       : isCompleted
                         ? 'bg-great text-on-great-foreground shadow-md'
                         : hasError
-                          ? 'bg-red-500 text-white'
+                          ? 'bg-on-bad text-secondary'
                           : 'bg-muted text-muted-foreground'
                   }`}
                 >
@@ -303,7 +288,6 @@ export function MultiStepHeader() {
                     <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
                   )}
                 </div>
-                {/* TAREFA 6: aria-current para step atual */}
                 <span
                   className={`text-center text-[10px] font-medium sm:text-xs ${
                     isCurrent
@@ -311,7 +295,7 @@ export function MultiStepHeader() {
                       : isCompleted
                         ? 'text-on-great'
                         : hasError
-                          ? 'text-red-500'
+                          ? 'text-on-bad'
                           : 'text-muted-foreground'
                   }`}
                   aria-current={isCurrent ? 'step' : undefined}
@@ -331,7 +315,6 @@ export function MultiStepHeader() {
         })}
       </div>
 
-      {/* TAREFA 6: Barra de progresso com ARIA */}
       <div
         className="bg-muted h-1 w-full rounded-full"
         role="progressbar"

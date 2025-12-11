@@ -9,17 +9,14 @@ interface IngredientsStepProps {
   updateData: (data: Partial<{ ingredientsCount: number }>) => void;
 }
 
-// ✅ FASE 2.1: Memoizado para evitar re-render quando outros steps mudam
 const IngredientsStep = React.memo(function IngredientsStep({
   data,
   updateData,
 }: IngredientsStepProps) {
   const { state } = useProductBuilderContext();
 
-  // ✅ FASE 1.4: Memoiza updateData para evitar recriação desnecessária
   const memoizedUpdateData = useCallback(updateData, [updateData]);
 
-  // Atualizar o contador quando ingredientes mudarem
   useEffect(() => {
     if (state.ingredients.length !== data.ingredientsCount) {
       memoizedUpdateData({ ingredientsCount: state.ingredients.length });
