@@ -19,6 +19,9 @@ export type Ingredient = {
   batches: PurchaseBatch[]; // Histórico de compras (batches)
   maxQuantity: number;
   minQuantity?: number;
+  // Conversão de unidade (Ex: 1 UN = 395 g)
+  weightPerUnit?: number; // Peso/Volume por unidade
+  weightUnit?: UnitType; // Unidade do peso (g, ml, kg, l)
 };
 
 export type IngredientTableProps = {

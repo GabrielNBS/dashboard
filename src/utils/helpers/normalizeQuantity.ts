@@ -151,3 +151,38 @@ export function getBaseUnit(unit: UnitType): UnitType {
       return 'un'; // unidades
   }
 }
+
+/**
+ * Formata quantidade para exibição no estoque, considerando unidades quebradas.
+ *
+ * @param quantity - Quantidade total
+ * @param unit - Unidade principal
+ * @param weightPerUnit - Peso por unidade (opcional)
+ * @param weightUnit - Unidade do peso (opcional)
+ * @returns String formatada (ex: "2 un + 500 g" ou "1.5 kg")
+ */
+export function formatStockDisplay(
+  quantity: number,
+  unit: string,
+  weightPerUnit?: number,
+  weightUnit?: string
+): string {
+  if (unit === 'un' && weightPerUnit && weightUnit) {
+    const fullUnits = Math.floor(quantity);
+    const remainder = quantity - fullUnits;
+
+    if (remainder > 0.001) {
+      // Pequena tolerância para float point
+      const remainderWeight = remainder * weightPerUnit;
+      const formattedWeight = formatQuantity(remainderWeight, weightUnit);
+
+      if (fullUnits === 0) {
+        return `0 un + ${formattedWeight}`;
+      }
+
+      return `${fullUnits} un + ${formattedWeight}`;
+    }
+  }
+
+  return formatQuantity(quantity, unit);
+}

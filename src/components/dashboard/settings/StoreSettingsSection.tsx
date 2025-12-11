@@ -7,7 +7,7 @@ import Input from '@/components/ui/base/Input';
 import Button from '@/components/ui/base/Button';
 import { Store, Upload, MapPin, Phone, Building2, Camera, ImageIcon, Edit } from 'lucide-react';
 import { PhoneInput, EmailInput } from '@/components/ui/forms';
-import { cnpjMask } from '@/utils/masks';
+import InputMask from 'react-input-mask';
 import {
   Sheet,
   SheetContent,
@@ -276,14 +276,20 @@ export default function StoreSettingsSection() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">CNPJ</label>
-                  <Input
+                  <InputMask
+                    mask="99.999.999/9999-99"
                     value={formData.cnpj || ''}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleInputChange('cnpj', cnpjMask(e.target.value))
+                      handleInputChange('cnpj', e.target.value)
                     }
-                    placeholder="00.000.000/0000-00"
-                    maxLength={18}
-                  />
+                    maskChar="_"
+                  >
+                    {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => {
+                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                      const { size, ...restProps } = inputProps;
+                      return <Input {...restProps} placeholder="00.000.000/0000-00" />;
+                    }}
+                  </InputMask>
                 </div>
               </div>
             </div>

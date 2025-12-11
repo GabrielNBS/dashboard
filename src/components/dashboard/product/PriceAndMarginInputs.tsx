@@ -7,7 +7,6 @@ import {
 } from '@/utils/calculations';
 import { useMemo } from 'react';
 import { CURRENCY_LIMITS, PERCENTAGE_LIMITS } from '@/schemas/validationSchemas';
-// ✅ FASE 2.2: Hook de debounce para otimizar cálculos
 import { useDebounce } from '@/hooks/useDebounce';
 
 interface PriceAndMarginInputsProps {
@@ -27,13 +26,9 @@ export default function PriceAndMarginInputs({
 }: PriceAndMarginInputsProps) {
   const { state } = useProductBuilderContext();
 
-  // ✅ FASE 2.2: Debounce de valores digitados para reduzir cálculos
-  // Benefício: Apenas calcula quando usuário pausa a digitação (300ms)
-  // Redução: ~10 cálculos/segundo → ~3 cálculos/segundo
   const debouncedSellingPrice = useDebounce(sellingPrice, 300);
   const debouncedMargin = useDebounce(margin, 300);
 
-  // Cálculos em tempo real (agora com valores debounced)
   const calculations = useMemo(() => {
     const totalCost = state.ingredients.reduce(
       (acc, ing) => acc + (ing.averageUnitPrice * ing.totalQuantity || 0),
@@ -69,7 +64,7 @@ export default function PriceAndMarginInputs({
           label={mode === 'lote' ? 'Preço por Unidade' : 'Preço de Venda'}
           value={sellingPrice}
           onChange={onSellingPriceChange}
-          placeholder="R$ 0,00"
+          placeholder="0,00"
           maxValue={CURRENCY_LIMITS.product.max}
           required
           size="md"

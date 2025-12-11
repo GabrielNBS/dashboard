@@ -386,9 +386,10 @@ export function MultiStepFooter() {
       {isLastStep ? (
         <Button
           type="button"
+          variant="accept"
           onClick={submit}
           disabled={isSubmitting}
-          className="bg-success text-success-foreground hover:bg-success/90 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:gap-2 sm:px-6 sm:py-2 sm:text-sm"
+          className="text-success-foreground flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:gap-2 sm:px-6 sm:py-2 sm:text-sm"
         >
           {isSubmitting ? (
             <>

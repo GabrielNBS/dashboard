@@ -1,12 +1,3 @@
-/**
- * Utilitários de máscaras para inputs
- * Centraliza todas as funções de formatação e validação de entrada
- */
-
-/**
- * Máscara para telefone brasileiro
- * Formatos: (11) 98888-8888 ou (11) 3888-8888
- */
 export function phoneMask(value: string): string {
   const numbers = value.replace(/\D/g, '');
 
@@ -18,28 +9,19 @@ export function phoneMask(value: string): string {
       .substring(0, 14);
   }
 
-  // Celular: (11) 98888-8888
   return numbers
     .replace(/^(\d{2})(\d)/, '($1) $2')
     .replace(/(\d{5})(\d)/, '$1-$2')
     .substring(0, 15);
 }
 
-/**
- * Máscara para e-mail (validação básica)
- */
 export function emailMask(value: string): string {
-  // Remove espaços e caracteres inválidos
   return value
     .toLowerCase()
     .replace(/\s/g, '')
     .replace(/[^a-z0-9@._-]/g, '');
 }
 
-/**
- * Máscara para CPF
- * Formato: 123.456.789-01
- */
 export function cpfMask(value: string): string {
   const numbers = value.replace(/\D/g, '');
 
@@ -50,10 +32,6 @@ export function cpfMask(value: string): string {
     .substring(0, 14);
 }
 
-/**
- * Máscara para CNPJ
- * Formato: 12.345.678/0001-90
- */
 export function cnpjMask(value: string): string {
   const numbers = value.replace(/\D/g, '');
 

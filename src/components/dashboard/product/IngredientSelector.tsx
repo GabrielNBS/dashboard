@@ -20,49 +20,80 @@ export default function IngredientSelector() {
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
   const [, setQuantity] = useState<string>('1');
   const [displayQuantity, setDisplayQuantity] = useState<string>('1');
+  const [useWeightMode, setUseWeightMode] = useState(false);
 
-  // Helper para determinar a unidade dinâmica
+  // Reset do modo de peso ao selecionar novo ingrediente
+  const handleSelectIngredient = (ingredient: Ingredient) => {
+    setSelectedIngredient(ingredient);
+    setInputValue(ingredient.name);
+    setQuantity('0');
+    setDisplayQuantity('0');
+    setUseWeightMode(false);
+  };
   const getDynamicUnit = (value: string, baseUnit: UnitType): UnitType => {
     const numValue = parseFloat(value);
     if (isNaN(numValue)) return baseUnit;
 
+    // Para kg, converter para g quando valor < 1
     if (baseUnit === 'kg') {
       return numValue < 1 ? 'g' : 'kg';
     }
+    // Para l, converter para ml quando valor < 1
     if (baseUnit === 'l') {
       return numValue < 1 ? 'ml' : 'l';
     }
-    return getBaseUnit(baseUnit);
+    // Para g, ml - retornar diretamente (não usar getBaseUnit que retorna 'un')
+    if (baseUnit === 'g' || baseUnit === 'ml') {
+      return baseUnit;
+    }
+    // Para un - retornar diretamente
+    return 'un';
   };
 
   // Função para calcular o custo usando preço médio ponderado
   const getTotalPrice = (quantity: string, ingredient: Ingredient): string => {
     const realQuantity = parseFloat(quantity);
-
     if (realQuantity <= 0) return '0.00';
+
+    if (useWeightMode && ingredient.weightPerUnit && ingredient.weightUnit) {
+      // Conversão: Quantidade (g/ml) -> Unidades
+      const normalizedQuantity = normalizeQuantity(realQuantity, ingredient.weightUnit);
+      const normalizedWeightPerUnit = normalizeQuantity(
+        ingredient.weightPerUnit,
+        ingredient.weightUnit
+      );
+      const unitsNeeded = normalizedQuantity / normalizedWeightPerUnit;
+      return formatCurrency(unitsNeeded * ingredient.averageUnitPrice);
+    }
 
     // Converte a quantidade para unidade base (ex: g, ml, un)
     const normalized = normalizeQuantity(realQuantity, ingredient.unit);
-
     // Usa o preço médio ponderado atual
     const total = normalized * ingredient.averageUnitPrice;
-
     return formatCurrency(total);
   };
 
   // Verifica se há quantidade suficiente em estoque
   const hasEnoughStock = (ingredient: Ingredient, quantity: string): boolean => {
     const realQuantity = parseFloat(quantity);
+
+    if (useWeightMode && ingredient.weightPerUnit && ingredient.weightUnit) {
+      const normalizedQuantity = normalizeQuantity(realQuantity, ingredient.weightUnit);
+      const normalizedWeightPerUnit = normalizeQuantity(
+        ingredient.weightPerUnit,
+        ingredient.weightUnit
+      );
+      const unitsNeeded = normalizedQuantity / normalizedWeightPerUnit;
+      // Estoque totalQuantity está em Unidades (se unit == 'un')
+      return ingredient.totalQuantity >= unitsNeeded;
+    }
+
     const normalizedRequired = normalizeQuantity(realQuantity, ingredient.unit);
     return ingredient.totalQuantity >= normalizedRequired;
   };
 
-  const handleSelectIngredient = (ingredient: Ingredient) => {
-    setSelectedIngredient(ingredient);
-    setInputValue(ingredient.name);
-    setQuantity('0');
-    setDisplayQuantity('0');
-  };
+  // Handler antigo removido daqui pois foi movido para cima no primeiro chunk
+  // Mantemos o getDynamicUnit se for necessário, mas ele estava no chunk anterior não editado
 
   const handleAddIngredient = () => {
     if (!selectedIngredient) return;
@@ -82,8 +113,6 @@ export default function IngredientSelector() {
       return;
     }
 
-    const normalizedQuantity = normalizeQuantity(realQuantity, selectedIngredient.unit);
-
     const alreadyAdded = finalProduct.ingredients.some(
       ingredient => ingredient.id === selectedIngredient.id
     );
@@ -93,21 +122,56 @@ export default function IngredientSelector() {
       return;
     }
 
-    const ingredientSnapshot: Ingredient = {
-      ...selectedIngredient,
-      totalQuantity: normalizedQuantity,
-      averageUnitPrice: selectedIngredient.averageUnitPrice,
-      batches: [
-        {
-          id: `recipe_batch_${Date.now()}`,
-          purchaseDate: new Date(),
-          buyPrice: selectedIngredient.averageUnitPrice * normalizedQuantity,
-          originalQuantity: normalizedQuantity,
-          currentQuantity: normalizedQuantity,
-          unitPrice: selectedIngredient.averageUnitPrice,
-        },
-      ],
-    };
+    let ingredientSnapshot: Ingredient;
+
+    if (useWeightMode && selectedIngredient.weightPerUnit && selectedIngredient.weightUnit) {
+      // Cria snapshot convertido para a unidade de peso (ex: g)
+      // Ajusta o preço médio para ser "por g"
+      const normalizedQuantity = normalizeQuantity(realQuantity, selectedIngredient.weightUnit);
+      // Preço total calculado
+      const normalizedWeightPerUnit = normalizeQuantity(
+        selectedIngredient.weightPerUnit,
+        selectedIngredient.weightUnit
+      );
+      const unitsUsed = normalizedQuantity / normalizedWeightPerUnit;
+      const totalCost = unitsUsed * selectedIngredient.averageUnitPrice;
+
+      const pricePerWeightUnit = totalCost / normalizedQuantity;
+
+      ingredientSnapshot = {
+        ...selectedIngredient,
+        unit: selectedIngredient.weightUnit, // Muda a unidade para g/ml
+        totalQuantity: normalizedQuantity,
+        averageUnitPrice: pricePerWeightUnit,
+        batches: [
+          {
+            id: `recipe_batch_${Date.now()}`,
+            purchaseDate: new Date(),
+            buyPrice: totalCost,
+            originalQuantity: normalizedQuantity,
+            currentQuantity: normalizedQuantity,
+            unitPrice: pricePerWeightUnit,
+          },
+        ],
+      };
+    } else {
+      const normalizedQuantity = normalizeQuantity(realQuantity, selectedIngredient.unit);
+      ingredientSnapshot = {
+        ...selectedIngredient,
+        totalQuantity: normalizedQuantity,
+        averageUnitPrice: selectedIngredient.averageUnitPrice,
+        batches: [
+          {
+            id: `recipe_batch_${Date.now()}`,
+            purchaseDate: new Date(),
+            buyPrice: selectedIngredient.averageUnitPrice * normalizedQuantity,
+            originalQuantity: normalizedQuantity,
+            currentQuantity: normalizedQuantity,
+            unitPrice: selectedIngredient.averageUnitPrice,
+          },
+        ],
+      };
+    }
 
     dispatch({
       type: 'ADD_INGREDIENT',
@@ -154,26 +218,66 @@ export default function IngredientSelector() {
             <h4 className="text-card-foreground text-sm font-medium sm:text-base">
               {selectedIngredient.name}
             </h4>
-            <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[10px] sm:px-2 sm:py-1 sm:text-xs">
-              {selectedIngredient.unit}
-            </span>
+            <div className="flex items-center gap-2">
+              {selectedIngredient.unit === 'un' && selectedIngredient.weightPerUnit && (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setUseWeightMode(!useWeightMode);
+                    setDisplayQuantity('0');
+                  }}
+                  variant="outline"
+                  className="h-6 px-2 text-[10px] sm:h-7 sm:text-xs"
+                >
+                  {useWeightMode ? 'Usar Unidades' : `Usar ${selectedIngredient.weightUnit}`}
+                </Button>
+              )}
+              <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[10px] sm:px-2 sm:py-1 sm:text-xs">
+                {selectedIngredient.unit}
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs sm:gap-4 sm:text-sm">
             <div className="bg-info rounded-lg p-2 sm:p-3">
-              <p className="text-on-info text-[10px] font-medium sm:text-xs">Preço médio</p>
-              <p className="text-on-info text-xs font-semibold sm:text-sm">
-                {selectedIngredient.unit === 'un'
-                  ? `R$ ${selectedIngredient.averageUnitPrice.toFixed(2)}`
-                  : ` R$ ${selectedIngredient.averageUnitPrice.toFixed(3)}`}
-                /{getBaseUnit(selectedIngredient.unit)}
+              <p className="text-on-info text-[10px] font-medium sm:text-xs">
+                {useWeightMode && selectedIngredient.weightPerUnit
+                  ? 'Preço por unidade'
+                  : 'Preço médio'}
               </p>
+              <p className="text-on-info text-xs font-semibold sm:text-sm">
+                {useWeightMode && selectedIngredient.weightPerUnit
+                  ? // No modo peso, mostrar preço por unidade inteira
+                    `R$ ${selectedIngredient.averageUnitPrice.toFixed(2)}/un`
+                  : selectedIngredient.unit === 'un'
+                    ? `R$ ${selectedIngredient.averageUnitPrice.toFixed(2)}/${getBaseUnit(selectedIngredient.unit)}`
+                    : `R$ ${selectedIngredient.averageUnitPrice.toFixed(3)}/${getBaseUnit(selectedIngredient.unit)}`}
+              </p>
+              {useWeightMode &&
+                selectedIngredient.weightPerUnit &&
+                selectedIngredient.weightUnit && (
+                  <p className="text-on-info/70 mt-0.5 text-[9px] sm:text-[10px]">
+                    (1 un = {selectedIngredient.weightPerUnit}
+                    {selectedIngredient.weightUnit})
+                  </p>
+                )}
             </div>
             <div className="bg-great rounded-lg p-2 sm:p-3">
               <p className="text-on-great text-[10px] font-medium sm:text-xs">Estoque disponível</p>
               <p className="text-on-great text-xs font-semibold sm:text-sm">
                 {selectedIngredient.totalQuantity} {getBaseUnit(selectedIngredient.unit)}
               </p>
+              {useWeightMode &&
+                selectedIngredient.weightPerUnit &&
+                selectedIngredient.weightUnit && (
+                  <p className="text-on-great/70 mt-0.5 text-[9px] sm:text-[10px]">
+                    (≈{' '}
+                    {(selectedIngredient.totalQuantity * selectedIngredient.weightPerUnit).toFixed(
+                      0
+                    )}
+                    {selectedIngredient.weightUnit} total)
+                  </p>
+                )}
             </div>
           </div>
 
@@ -182,29 +286,82 @@ export default function IngredientSelector() {
               <div className="flex-1">
                 <label className="text-card-foreground mb-1 block text-xs font-medium sm:text-sm">
                   Quantidade necessária
-                  {(selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l') && (
+                  {useWeightMode && selectedIngredient.weightUnit ? (
                     <span className="text-muted-foreground ml-1 text-[10px] sm:text-xs">
-                      (em {selectedIngredient.unit === 'kg' ? 'gramas' : 'mililitros'})
+                      (em{' '}
+                      {selectedIngredient.weightUnit === 'g' ||
+                      selectedIngredient.weightUnit === 'kg'
+                        ? 'gramas'
+                        : 'mililitros'}
+                      )
                     </span>
+                  ) : (
+                    (selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l') && (
+                      <span className="text-muted-foreground ml-1 text-[10px] sm:text-xs">
+                        (em {selectedIngredient.unit === 'kg' ? 'gramas' : 'mililitros'})
+                      </span>
+                    )
                   )}
                 </label>
-                <QuantityInput
-                  value={displayQuantity}
-                  onChange={value => {
-                    setDisplayQuantity(value);
-                    setQuantity(value);
-                  }}
-                  placeholder="0"
-                  className="w-full"
-                  unit={getDynamicUnit(displayQuantity, selectedIngredient.unit)}
-                  maxValue={
-                    selectedIngredient.unit === 'un'
-                      ? 1000
-                      : selectedIngredient.unit === 'kg' || selectedIngredient.unit === 'l'
-                        ? 100
-                        : 100
-                  }
-                />
+                <div className="flex gap-2">
+                  <QuantityInput
+                    value={displayQuantity}
+                    onChange={value => {
+                      setDisplayQuantity(value);
+                      setQuantity(value);
+                    }}
+                    placeholder="0"
+                    className="w-full"
+                    unit={
+                      useWeightMode && selectedIngredient.weightUnit
+                        ? getDynamicUnit(displayQuantity, selectedIngredient.weightUnit)
+                        : getDynamicUnit(displayQuantity, selectedIngredient.unit)
+                    }
+                    maxValue={
+                      useWeightMode ? 100000 : selectedIngredient.unit === 'un' ? 1000 : 100
+                    }
+                  />
+                  {/* Botão para usar unidade inteira - aparece apenas no modo peso */}
+                  {useWeightMode && selectedIngredient.weightPerUnit && (
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setDisplayQuantity(selectedIngredient.weightPerUnit!.toString());
+                        setQuantity(selectedIngredient.weightPerUnit!.toString());
+                      }}
+                      variant="outline"
+                      className="h-9 shrink-0 px-2 text-[10px] sm:h-10 sm:px-3 sm:text-xs"
+                      title={`Usar 1 unidade inteira (${selectedIngredient.weightPerUnit}${selectedIngredient.weightUnit})`}
+                    >
+                      1 un
+                    </Button>
+                  )}
+                </div>
+                {/* Feedback visual quando está usando unidade inteira */}
+                {useWeightMode && selectedIngredient.weightPerUnit && (
+                  <p className="text-muted-foreground mt-1 text-[10px] sm:text-xs">
+                    {(() => {
+                      const qty = parseFloat(displayQuantity);
+                      if (isNaN(qty) || qty <= 0) return null;
+                      const unitsUsed = qty / selectedIngredient.weightPerUnit!;
+                      const isWholeUnit = Math.abs(unitsUsed - Math.round(unitsUsed)) < 0.001;
+                      if (isWholeUnit && unitsUsed >= 1) {
+                        return (
+                          <span className="text-primary font-medium">
+                            ≈ {Math.round(unitsUsed)} unidade{Math.round(unitsUsed) > 1 ? 's' : ''}{' '}
+                            inteira{Math.round(unitsUsed) > 1 ? 's' : ''}
+                          </span>
+                        );
+                      }
+                      return (
+                        <span>
+                          ≈ {unitsUsed.toFixed(2)} unidades ({(unitsUsed * 100).toFixed(0)}% de 1
+                          un)
+                        </span>
+                      );
+                    })()}
+                  </p>
+                )}
               </div>
               <div className="flex-1">
                 <label className="text-card-foreground mb-1 block text-xs font-medium sm:text-sm">
@@ -240,17 +397,19 @@ export default function IngredientSelector() {
               {(() => {
                 const realQuantity = parseFloat(displayQuantity);
                 if (!displayQuantity || realQuantity <= 0) return '0';
-                return `${realQuantity} ${selectedIngredient.unit}`;
+                // Usar weightUnit quando no modo peso, senão unit
+                const displayUnit =
+                  useWeightMode && selectedIngredient.weightUnit
+                    ? selectedIngredient.weightUnit
+                    : selectedIngredient.unit;
+                return `${realQuantity} ${displayUnit}`;
               })()}{' '}
-              <span className="text-muted-foreground/70">
-                (normalizada:{' '}
-                {(() => {
-                  const realQuantity = parseFloat(displayQuantity);
-                  if (realQuantity <= 0) return 0;
-                  return normalizeQuantity(realQuantity, selectedIngredient.unit);
-                })()}{' '}
-                {getBaseUnit(selectedIngredient.unit)})
-              </span>
+              {useWeightMode && selectedIngredient.weightPerUnit && (
+                <span className="text-primary font-medium">
+                  (≈ {(parseFloat(displayQuantity) / selectedIngredient.weightPerUnit).toFixed(2)}{' '}
+                  unidades)
+                </span>
+              )}
             </p>
           </div>
 

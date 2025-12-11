@@ -160,6 +160,7 @@ export default function IngredientForm() {
 
   const [mounted, setMounted] = useState(false);
   const [localIsOpen, setLocalIsOpen] = useState(false);
+  const [isWeightConversionEnabled, setIsWeightConversionEnabled] = useState(false);
 
   // Determina se estamos em modo de edição baseado no contexto
   const isEditMode = state.isModalOpen && !!state.ingredientToEdit;
@@ -185,14 +186,20 @@ export default function IngredientForm() {
       buyPrice: '',
       minQuantity: '',
       maxQuantity: '',
+      weightPerUnit: '',
+      weightUnit: 'g',
     },
   });
 
-  const [name, unit, quantity, buyPrice] = watch(['name', 'unit', 'quantity', 'buyPrice']);
+  const [name, unit, quantity, buyPrice, weightPerUnit, weightUnit] = watch([
+    'name',
+    'unit',
+    'quantity',
+    'buyPrice',
+    'weightPerUnit',
+    'weightUnit',
+  ]);
 
-  /* ------------------------------
-     POPULATE FORM ON EDIT
-  ------------------------------ */
   useEffect(() => {
     if (isEditMode && state.ingredientToEdit) {
       const ing = state.ingredientToEdit;
@@ -207,9 +214,11 @@ export default function IngredientForm() {
         maxQuantity: ing.maxQuantity
           ? denormalizeQuantity(ing.maxQuantity, ing.unit).toString()
           : '',
+        weightPerUnit: ing.weightPerUnit?.toString() || '',
+        weightUnit: ing.weightUnit || 'g',
       });
+      setIsWeightConversionEnabled(!!ing.weightPerUnit);
     } else if (!isOpen) {
-      // Limpa o formulário quando fecha
       reset({
         name: '',
         quantity: '',
@@ -217,24 +226,24 @@ export default function IngredientForm() {
         buyPrice: '',
         minQuantity: '',
         maxQuantity: '',
+        weightPerUnit: '',
+        weightUnit: 'g',
       });
+      setIsWeightConversionEnabled(false);
     }
   }, [isEditMode, state.ingredientToEdit, isOpen, reset]);
 
-  /* ------------------------------
-     EXISTING INGREDIENT (RESTOCK LOGIC)
-  ------------------------------ */
+  /*
+   * REMOVED DUPLICATE USEEFFECT
+   * The logic was merged into the main reset effect above to ensure
+   * atomic updates and avoid race conditions.
+   */
 
   const existingIngredient = useMemo(() => {
-    // Se estamos editando, não queremos lógica de "reabastecimento" baseada em nome
     if (isEditMode || !name) return null;
     const normalizedName = normalizeForComparison(name);
     return state.ingredients.find(ing => normalizeForComparison(ing.name) === normalizedName);
   }, [name, state.ingredients, isEditMode]);
-
-  /* ------------------------------
-     PRICE PREVIEW
-  ------------------------------ */
 
   const pricePreview = useMemo(() => {
     if (!existingIngredient || !quantity || !buyPrice) return null;
@@ -261,53 +270,52 @@ export default function IngredientForm() {
     };
   }, [existingIngredient, quantity, buyPrice, unit]);
 
-  /* ------------------------------
-     MOUNT GUARD SAFE PORTAL
-  ------------------------------ */
-
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  /* ------------------------------
-     CREATE NEW INGREDIENT
-  ------------------------------ */
+  const createNewIngredient = useCallback(
+    (data: IngredientFormData): Ingredient => {
+      const rawQuantity = parseFloat(data.quantity);
+      const rawPrice = parseFloat(data.buyPrice);
 
-  const createNewIngredient = useCallback((data: IngredientFormData): Ingredient => {
-    const rawQuantity = parseFloat(data.quantity);
-    const rawPrice = parseFloat(data.buyPrice);
+      const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
+      const unitPrice = data.unit === 'un' ? rawPrice : rawPrice / normalizedQuantity;
 
-    const normalizedQuantity = normalizeQuantity(rawQuantity, data.unit);
-    const unitPrice = data.unit === 'un' ? rawPrice : rawPrice / normalizedQuantity;
+      const batch: PurchaseBatch = {
+        id: uuidv4(),
+        purchaseDate: new Date(),
+        buyPrice: rawPrice,
+        originalQuantity: normalizedQuantity,
+        currentQuantity: normalizedQuantity,
+        unitPrice,
+      };
 
-    const batch: PurchaseBatch = {
-      id: uuidv4(),
-      purchaseDate: new Date(),
-      buyPrice: rawPrice,
-      originalQuantity: normalizedQuantity,
-      currentQuantity: normalizedQuantity,
-      unitPrice,
-    };
-
-    return {
-      id: uuidv4(),
-      name: sanitizeInput(data.name),
-      unit: data.unit,
-      totalQuantity: normalizedQuantity,
-      averageUnitPrice: unitPrice,
-      batches: [batch],
-      maxQuantity: data.maxQuantity
-        ? normalizeQuantity(parseFloat(data.maxQuantity), data.unit)
-        : normalizeQuantity(10, data.unit),
-      minQuantity: data.minQuantity
-        ? normalizeQuantity(parseFloat(data.minQuantity), data.unit)
-        : 0,
-    };
-  }, []);
-
-  /* ------------------------------
-     ADD BATCH TO EXISTING INGREDIENT
-  ------------------------------ */
+      return {
+        id: uuidv4(),
+        name: sanitizeInput(data.name),
+        unit: data.unit,
+        totalQuantity: normalizedQuantity,
+        averageUnitPrice: unitPrice,
+        batches: [batch],
+        maxQuantity: data.maxQuantity
+          ? normalizeQuantity(parseFloat(data.maxQuantity), data.unit)
+          : normalizeQuantity(10, data.unit),
+        minQuantity: data.minQuantity
+          ? normalizeQuantity(parseFloat(data.minQuantity), data.unit)
+          : 0,
+        weightPerUnit:
+          data.weightPerUnit && !isNaN(parseFloat(data.weightPerUnit)) && isWeightConversionEnabled
+            ? parseFloat(data.weightPerUnit)
+            : undefined,
+        weightUnit:
+          data.weightPerUnit && isWeightConversionEnabled
+            ? (data.weightUnit as UnitType)
+            : undefined,
+      };
+    },
+    [isWeightConversionEnabled]
+  );
 
   const handleAddBatchToExisting = useCallback(
     (data: IngredientFormData, ingredient: Ingredient) => {
@@ -347,9 +355,6 @@ export default function IngredientForm() {
     [addBatch, toast]
   );
 
-  /* ------------------------------
-     EDIT EXISTING INGREDIENT
-  ------------------------------ */
   const handleEditIngredient = useCallback(
     (data: IngredientFormData) => {
       if (!state.ingredientToEdit) return;
@@ -370,6 +375,14 @@ export default function IngredientForm() {
         maxQuantity: data.maxQuantity
           ? normalizeQuantity(parseFloat(data.maxQuantity), data.unit)
           : normalizeQuantity(10, data.unit),
+        weightPerUnit:
+          data.weightPerUnit && !isNaN(parseFloat(data.weightPerUnit)) && isWeightConversionEnabled
+            ? parseFloat(data.weightPerUnit)
+            : undefined,
+        weightUnit:
+          data.weightPerUnit && isWeightConversionEnabled
+            ? (data.weightUnit as UnitType)
+            : undefined,
       };
 
       dispatch({ type: 'EDIT_INGREDIENT', payload: updatedIngredient });
@@ -380,12 +393,8 @@ export default function IngredientForm() {
         type: 'success',
       });
     },
-    [state.ingredientToEdit, dispatch, toast]
+    [state.ingredientToEdit, dispatch, toast, isWeightConversionEnabled]
   );
-
-  /* ------------------------------
-     FORM SUBMIT
-  ------------------------------ */
 
   const onSubmit = useCallback(
     async (data: IngredientFormData) => {
@@ -434,10 +443,6 @@ export default function IngredientForm() {
     ]
   );
 
-  /* ------------------------------
-     CANCEL / CLOSE HANDLER SEGURO
-  ------------------------------ */
-
   const handleCancel = useCallback(() => {
     if (isDirty) {
       const confirmed = window.confirm(
@@ -453,10 +458,6 @@ export default function IngredientForm() {
     reset();
   }, [isDirty, reset, state.isModalOpen, dispatch]);
 
-  /* ------------------------------
-     onOpenChange FINAL
-  ------------------------------ */
-
   const handleSheetOpenChange = useCallback(
     (open: boolean) => {
       if (!open && isDirty) {
@@ -465,9 +466,6 @@ export default function IngredientForm() {
         );
 
         if (!confirmed) {
-          // Força o modal permanecer aberto
-          // Se estava aberto via context, não faz nada (pois não fechamos)
-          // Se estava aberto via local, setLocalIsOpen(true)
           if (!state.isModalOpen) setLocalIsOpen(true);
           return;
         }
@@ -485,10 +483,6 @@ export default function IngredientForm() {
     },
     [isDirty, reset, state.isModalOpen, dispatch]
   );
-
-  /* ===========================================================
-     RENDER
-  =========================================================== */
 
   if (!mounted) return null;
 
@@ -517,7 +511,7 @@ export default function IngredientForm() {
                 aria-labelledby="ingredient-form-title"
                 aria-describedby="ingredient-form-description"
               >
-                <SheetHeader className="border-border mb-6 flex-shrink-0 border-b p-6">
+                <SheetHeader className="border-border mb-6 shrink-0 border-b p-6">
                   <div className="flex items-center gap-3">
                     <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
                       {isEditMode ? (
@@ -609,11 +603,11 @@ export default function IngredientForm() {
                           onChange={(v: string) =>
                             setValue('quantity', v, { shouldValidate: true })
                           }
-                          className={errors.quantity ? 'border-destructive' : ''}
+                          className={errors.quantity ? 'border-on-bad' : ''}
                         />
 
                         {errors.quantity && (
-                          <p className="text-destructive flex items-center gap-1 text-xs">
+                          <p className="text-on-badborder-on-bad flex items-center gap-1 text-xs">
                             <AlertCircle className="h-3 w-3" />
                             {errors.quantity.message}
                           </p>
@@ -644,6 +638,81 @@ export default function IngredientForm() {
                         )}
                       </div>
                     </div>
+
+                    {/* Conversão de Unidade (Opcional - Apenas se UNIDADE for 'un') */}
+                    {unit === 'un' && (
+                      <div className="bg-muted/30 rounded-lg border border-dashed p-4">
+                        <div className="mb-4 flex items-start justify-between">
+                          <div>
+                            <Label className="text-primary mb-1 block font-medium">
+                              Conversão de Medida (Opcional)
+                            </Label>
+                            <p className="text-muted-foreground text-xs">
+                              Habilite para definir o peso equivalente a 1 unidade (ex: 1 caixa =
+                              395g).
+                            </p>
+                          </div>
+                          <div className="flex h-6 items-center">
+                            <input
+                              type="checkbox"
+                              id="enableConversion"
+                              className="border-input ring-offset-background focus-visible:ring-ring data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground peer h-4 w-4 shrink-0 rounded-sm border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                              checked={isWeightConversionEnabled}
+                              onChange={e => {
+                                setIsWeightConversionEnabled(e.target.checked);
+                                if (!e.target.checked) {
+                                  setValue('weightPerUnit', '', { shouldValidate: true });
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div
+                          className={`transition-all duration-200 ${
+                            !isWeightConversionEnabled
+                              ? 'pointer-events-none opacity-50 blur-[1px] grayscale'
+                              : 'opacity-100'
+                          }`}
+                        >
+                          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label htmlFor="weightPerUnit">Peso/Volume por Unidade</Label>
+                              <QuantityInputField
+                                placeholder="Ex: 395"
+                                id="weightPerUnit"
+                                unit={weightUnit || 'g'}
+                                value={weightPerUnit || ''}
+                                allowDecimals={true}
+                                maxValue={100000}
+                                min={0.001}
+                                onChange={(v: string) =>
+                                  setValue('weightPerUnit', v, { shouldValidate: true })
+                                }
+                                className={errors.weightPerUnit ? 'border-destructive' : ''}
+                                disabled={!isWeightConversionEnabled}
+                              />
+                              {errors.weightPerUnit && (
+                                <p className="text-destructive flex items-center gap-1 text-xs">
+                                  <AlertCircle className="h-3 w-3" />
+                                  {errors.weightPerUnit.message}
+                                </p>
+                              )}
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="weightUnit">Unidade de Peso/Volume</Label>
+                              <UnitSelect
+                                register={register}
+                                name="weightUnit"
+                                errors={errors}
+                                options={['g', 'ml', 'kg', 'l']}
+                                disabled={!isWeightConversionEnabled}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Min/Max Quantity */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

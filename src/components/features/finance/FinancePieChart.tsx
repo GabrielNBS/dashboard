@@ -11,7 +11,7 @@ interface FinancePieChartProps {
 
 const COLORS = {
   revenue: 'hsl(var(--primary))',
-  variableCost: 'hsl(var(--destructive))',
+  variableCost: 'hsl(var(--primary))',
   fixedCost: 'hsl(var(--muted-foreground))',
   profit: 'hsl(33, 100%, 49%)',
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { IngredientCardProps } from '@/types/components';
 import { formatCurrency } from '@/utils/formatting/formatCurrency';
 import { getStockStatus } from '@/utils/calculations/calcSale';
-import { formatQuantity } from '@/utils/helpers/normalizeQuantity';
+import { formatStockDisplay } from '@/utils/helpers/normalizeQuantity';
 import { AlertOctagon, AlertTriangle, Edit3, Trash2 } from 'lucide-react';
 
 // New unified components - replacing old card implementation
@@ -101,7 +101,12 @@ const IngredientCard = ({ ingredient, onEdit, onDelete }: IngredientCardProps) =
   const mainMetrics = [
     {
       label: 'Quantidade',
-      value: formatQuantity(ingredient.totalQuantity, ingredient.unit),
+      value: formatStockDisplay(
+        ingredient.totalQuantity,
+        ingredient.unit,
+        ingredient.weightPerUnit,
+        ingredient.weightUnit
+      ),
     },
     {
       label: ingredient.unit === 'un' ? 'Preço por unidade' : 'Preço por grama/litro',

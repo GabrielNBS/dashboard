@@ -11,7 +11,6 @@ interface PricingStepProps {
   updateData: (data: Partial<{ sellingPrice: string; margin: string }>) => void;
 }
 
-// ✅ FASE 2.1: Memoizado para performance
 const PricingStep = React.memo(function PricingStep({ data, updateData }: PricingStepProps) {
   const { state } = useProductBuilderContext();
 

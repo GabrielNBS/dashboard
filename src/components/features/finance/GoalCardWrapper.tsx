@@ -32,15 +32,15 @@ export default function GoalCardWrapper({
   const remaining = !isInfinite && goalValue > currentValue ? goalValue - currentValue : 0;
 
   const getProgressColor = (percentage: number) => {
-    if (percentage >= 100) return 'bg-great';
-    if (percentage >= 75) return 'bg-accent';
-    if (percentage >= 40) return 'bg-warning';
-    return 'bg-bad';
+    if (percentage >= 100) return 'bg-on-great';
+    if (percentage >= 75) return 'bg-on-accent';
+    if (percentage >= 40) return 'bg-on-warning';
+    return 'bg-on-bad';
   };
 
   const getTextColor = (percentage: number) => {
     if (percentage >= 100) return 'text-muted';
-    if (percentage >= 75) return 'text-on-great';
+    if (percentage >= 75) return 'text-on-accent';
     if (percentage >= 40) return 'text-on-warning';
     return 'text-on-bad';
   };

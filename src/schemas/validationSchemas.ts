@@ -97,6 +97,17 @@ export const ingredientSchema = z
         },
         `Preço não pode ser maior que R$ ${CURRENCY_LIMITS.ingredient.max.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
       ),
+
+    weightPerUnit: z
+      .string()
+      .optional()
+      .refine(val => {
+        if (!val) return true;
+        const num = parseFloat(val);
+        return !isNaN(num) && num > 0;
+      }, 'Peso/Volume deve ser maior que zero'),
+
+    weightUnit: z.enum(['kg', 'l', 'un', 'g', 'ml']).optional(),
   })
   .superRefine((data, ctx) => {
     // Validação dinâmica da quantidade baseada na unidade
