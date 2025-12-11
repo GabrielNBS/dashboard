@@ -14,6 +14,8 @@ import {
   PieChart,
   ChevronRight,
   X,
+  Store,
+  ShoppingBagIcon,
 } from 'lucide-react';
 import { ProductState } from '@/types/products';
 import { Ingredient } from '@/types/ingredients';
@@ -102,7 +104,7 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
         {/* Image Section */}
         <motion.div
           layoutId={`product-image-${product.uid}`}
-          className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 sm:h-56"
+          className="relative h-48 w-full overflow-hidden bg-linear-to-br from-slate-100 to-slate-200 sm:h-56"
           transition={{
             type: 'spring',
             stiffness: 500,
@@ -121,11 +123,11 @@ export const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
                 priority={false}
               />
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
             </>
           ) : (
-            <div className="flex h-full items-center justify-center">
-              <Package className="h-16 w-16 text-slate-300" />
+            <div className="flex h-full items-center justify-center bg-slate-100">
+              <ShoppingBagIcon className="h-16 w-16 text-slate-300" />
             </div>
           )}
 
@@ -308,7 +310,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
               {/* Image Header Section */}
               <motion.div
                 layoutId={`product-image-${product.uid}`}
-                className="relative h-48 w-full flex-shrink-0 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 sm:h-64"
+                className="relative h-48 w-full shrink-0 overflow-hidden bg-linear-to-br from-slate-100 to-slate-200 sm:h-64"
                 transition={{
                   type: 'spring',
                   stiffness: 500,
@@ -327,11 +329,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
                       priority
                     />
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
                   </>
                 ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <Package className="h-20 w-20 text-slate-300" />
+                  <div className="flex h-full items-center justify-center bg-slate-100">
+                    <Store className="h-20 w-20 text-slate-300" />
                   </div>
                 )}
 
@@ -400,7 +402,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
                 transition={{ delay: 0.3, duration: 0.4 }}
               >
                 {/* Tabs */}
-                <div className="flex-shrink-0 border-b border-slate-200 px-4 sm:px-6">
+                <div className="shrink-0 border-b border-slate-200 px-4 sm:px-6">
                   <div className="flex gap-1 overflow-x-auto sm:gap-2">
                     {tabs.map(tab => (
                       <motion.button
@@ -485,8 +487,8 @@ const OverviewTab: React.FC<{
     <motion.div
       className={`rounded-xl border-2 p-4 ${
         isProfit
-          ? 'border-green-200 bg-gradient-to-br from-green-50 to-green-100/50'
-          : 'border-red-200 bg-gradient-to-br from-red-50 to-red-100/50'
+          ? 'border-green-200 bg-linear-to-br from-green-50 to-green-100/50'
+          : 'border-red-200 bg-linear-to-br from-red-50 to-red-100/50'
       }`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -536,7 +538,7 @@ const OverviewTab: React.FC<{
         <span className="text-sm text-slate-500">{formatCurrency(unitCost)}/un.</span>
       </div>
 
-      <div className="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-100/50 p-4 shadow-sm transition-shadow hover:shadow-md">
+      <div className="rounded-xl border border-indigo-200 bg-linear-to-br from-indigo-50 to-indigo-100/50 p-4 shadow-sm transition-shadow hover:shadow-md">
         <div className="mb-2 flex items-center gap-2">
           <div className="rounded-lg bg-indigo-500 p-2">
             <DollarSign className="h-4 w-4 text-white" />
@@ -570,7 +572,7 @@ const OverviewTab: React.FC<{
       </div>
       <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200">
         <motion.div
-          className={`h-3 rounded-full ${isProfit ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'}`}
+          className={`h-3 rounded-full ${isProfit ? 'bg-linear-to-r from-green-500 to-green-600' : 'bg-linear-to-r from-red-500 to-red-600'}`}
           initial={{ width: 0 }}
           animate={{
             width: `${Math.min(100, (unitCost / product.production.unitSellingPrice) * 100)}%`,
@@ -582,7 +584,7 @@ const OverviewTab: React.FC<{
 
     {/* Production Info */}
     <motion.div
-      className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100/50 p-4"
+      className="rounded-xl border border-blue-200 bg-linear-to-br from-blue-50 to-blue-100/50 p-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}

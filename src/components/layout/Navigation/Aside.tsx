@@ -10,6 +10,7 @@ import { useSidebar } from '@/contexts/SidebarContext';
 import LordIcon, { LordIconRef } from '@/components/ui/LordIcon';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
+import { User } from 'lucide-react';
 import DeveloperTag from './DeveloperTag';
 
 interface MenuItemProps {
@@ -61,9 +62,8 @@ function MenuItem({
               <LordIcon
                 ref={iconRef}
                 src={lordIconSrc}
-                width={24}
                 height={24}
-                className="flex-shrink-0"
+                className="shrink-0"
                 isActive={isActive}
                 isHovered={isHovered}
               />
@@ -226,16 +226,8 @@ export default function Aside() {
           className="bg-muted overflow-hidden rounded-full"
         >
           {imgError || !logoSrc || logoSrc.endsWith('.json') || fallbackSrc.endsWith('.json') ? (
-            <div className="flex h-full w-full items-center justify-center p-1">
-              <LordIcon
-                src={fallbackSrc}
-                width={48}
-                height={48}
-                colors={{
-                  primary: 'hsl(var(--primary))',
-                  secondary: 'hsl(var(--muted-foreground))',
-                }}
-              />
+            <div className="bg-muted flex h-full w-full items-center justify-center">
+              <User className="text-muted-foreground/50 h-1/2 w-1/2" />
             </div>
           ) : (
             <Image

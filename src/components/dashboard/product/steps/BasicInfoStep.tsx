@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
+import Image from 'next/image';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import CategoryList from '@/components/ui/CategoryList';
 import Input from '@/components/ui/base/Input';
 import { Label } from '@/components/ui/base/label';
-import { ImageUpload } from '@/components/products/ImageUpload';
 
 interface BasicInfoStepProps {
   data: {
@@ -14,20 +14,14 @@ interface BasicInfoStepProps {
   updateData: (data: Partial<{ name: string; category: string; image?: string }>) => void;
 }
 
-// ✅ FASE 2.1: Componente memoizado para evitar re-renders desnecessários
-// Benefício: BasicInfoStep só re-renderiza quando suas props mudam
-// Redução estimada: 3-5 re-renders por ação no wizard
+import { ShoppingBagIcon } from 'lucide-react';
+
 const BasicInfoStep = React.memo(function BasicInfoStep({ data, updateData }: BasicInfoStepProps) {
   const { dispatch, state } = useProductBuilderContext();
 
   const handleNameChange = (name: string) => {
     updateData({ name });
     dispatch({ type: 'SET_NAME', payload: name });
-  };
-
-  const handleImageChange = (image: string) => {
-    updateData({ image });
-    dispatch({ type: 'SET_IMAGE', payload: image });
   };
 
   // ✅ FASE 1.4: Memoiza updateData para evitar loops infinitos no useEffect
@@ -54,8 +48,20 @@ const BasicInfoStep = React.memo(function BasicInfoStep({ data, updateData }: Ba
       </div>
 
       <div className="space-y-3 sm:space-y-4">
-        <div>
-          <ImageUpload value={data.image} onChange={handleImageChange} />
+        <div className="bg-muted/30 flex w-full flex-col items-center justify-center rounded-lg border border-dashed py-6">
+          <div className="bg-muted relative mb-2 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full shadow-md sm:h-32 sm:w-32">
+            {data.image ? (
+              <Image
+                src={data.image}
+                alt={data.name}
+                className="object-cover"
+                fill
+                sizes="(max-width: 768px) 96px, 128px"
+              />
+            ) : (
+              <ShoppingBagIcon className="h-12 w-12 text-slate-300 sm:h-16 sm:w-16" />
+            )}
+          </div>
         </div>
 
         <div>
@@ -68,9 +74,6 @@ const BasicInfoStep = React.memo(function BasicInfoStep({ data, updateData }: Ba
             value={data.name}
             onChange={e => handleNameChange(e.target.value)}
             onKeyDown={e => {
-              // ✅ FASE 1.5: Removido acesso direto ao DOM (document.querySelectorAll)
-              // Benefício: Segue padrões React, comportamento mais previsível
-              // O foco automático na categoria não é crítico e causava problemas
               if (e.key === 'Enter') {
                 e.preventDefault();
               }

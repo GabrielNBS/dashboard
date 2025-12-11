@@ -15,12 +15,12 @@ import {
   Settings,
   Menu,
   X,
+  User,
 } from 'lucide-react';
 import { useSettings } from '@/contexts/settings/SettingsContext';
 import DeveloperTag from '../Navigation/DeveloperTag';
 import { useSidebar } from '@/contexts/SidebarContext';
 import NotificationDropdown from '@/components/ui/NotificationDropdown';
-import LordIcon from '@/components/ui/LordIcon';
 
 const menuItems = [
   { label: 'Dashboard', href: '/', icon: Home },
@@ -168,16 +168,8 @@ export default function MobileHeader() {
                     !state.store.logo ||
                     state.store.logo.endsWith('.json') ||
                     fallbackSrc.endsWith('.json') ? (
-                      <div className="flex h-full w-full items-center justify-center p-1">
-                        <LordIcon
-                          src={fallbackSrc}
-                          width={48}
-                          height={48}
-                          colors={{
-                            primary: 'hsl(var(--primary))',
-                            secondary: 'hsl(var(--muted-foreground))',
-                          }}
-                        />
+                      <div className="bg-muted flex h-full w-full items-center justify-center">
+                        <User className="text-muted-foreground/50 h-1/2 w-1/2" />
                       </div>
                     ) : (
                       <Image
@@ -195,7 +187,7 @@ export default function MobileHeader() {
 
                   <div className="min-w-0 flex-1">
                     <p className="text-foreground truncate text-sm font-medium">
-                      {state.store.storeName || 'Usuário'}
+                      {state.store.name || 'Usuário'}
                     </p>
                     <p className="text-muted-foreground truncate text-xs">
                       {state.store.email || 'email@example.com'}
