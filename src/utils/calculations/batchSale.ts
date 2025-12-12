@@ -87,21 +87,49 @@ export function calculateProportionalIngredientConsumption(
 ): Array<{ id: string; name: string; quantityToConsume: number }> {
   if (product.production.mode !== 'lote' || product.production.yieldQuantity <= 0) {
     // Para produtos individuais, consome a quantidade total dos ingredientes
-    return product.ingredients.map(ingredient => ({
-      id: ingredient.id,
-      name: ingredient.name,
-      quantityToConsume: (ingredient.totalQuantity || 0) * soldQuantity,
-    }));
+    return product.ingredients.map(ingredient => {
+      let quantityToConsume = (ingredient.totalQuantity || 0) * soldQuantity;
+
+      // Se o ingrediente foi salvo em peso (g/ml) mas o estoque original é em unidades
+      // Converte peso para unidades: 1000g / 390g = 2.56 unidades
+      if (
+        ingredient.originalUnit === 'un' &&
+        ingredient.weightPerUnit &&
+        ingredient.weightPerUnit > 0
+      ) {
+        quantityToConsume = quantityToConsume / ingredient.weightPerUnit;
+      }
+
+      return {
+        id: ingredient.id,
+        name: ingredient.name,
+        quantityToConsume,
+      };
+    });
   }
 
   // Para produtos em lote, calcula consumo proporcional
   const proportion = soldQuantity / product.production.yieldQuantity;
 
-  return product.ingredients.map(ingredient => ({
-    id: ingredient.id,
-    name: ingredient.name,
-    quantityToConsume: (ingredient.totalQuantity || 0) * proportion,
-  }));
+  return product.ingredients.map(ingredient => {
+    let quantityToConsume = (ingredient.totalQuantity || 0) * proportion;
+
+    // Se o ingrediente foi salvo em peso (g/ml) mas o estoque original é em unidades
+    // Converte peso para unidades: 1000g / 390g = 2.56 unidades
+    if (
+      ingredient.originalUnit === 'un' &&
+      ingredient.weightPerUnit &&
+      ingredient.weightPerUnit > 0
+    ) {
+      quantityToConsume = quantityToConsume / ingredient.weightPerUnit;
+    }
+
+    return {
+      id: ingredient.id,
+      name: ingredient.name,
+      quantityToConsume,
+    };
+  });
 }
 
 /**
@@ -179,9 +207,20 @@ export function calculateMaxSellableQuantity(
       return 0;
     }
 
-    const possibleQuantity = Math.floor(
-      availableIngredient.totalQuantity / ingredient.totalQuantity
-    );
+    // Calcular a quantidade necessária por unidade do produto
+    let requiredPerUnit = ingredient.totalQuantity;
+
+    // Se o ingrediente foi salvo em peso (g/ml) mas o estoque original é em unidades
+    // Converte peso para unidades: 1000g / 390g = 2.56 unidades
+    if (
+      ingredient.originalUnit === 'un' &&
+      ingredient.weightPerUnit &&
+      ingredient.weightPerUnit > 0
+    ) {
+      requiredPerUnit = ingredient.totalQuantity / ingredient.weightPerUnit;
+    }
+
+    const possibleQuantity = Math.floor(availableIngredient.totalQuantity / requiredPerUnit);
     maxQuantity = Math.min(maxQuantity, possibleQuantity);
   }
 
@@ -210,9 +249,19 @@ export function calculateMaxProducibleBatches(
       return 0;
     }
 
-    const possibleBatches = Math.floor(
-      availableIngredient.totalQuantity / ingredient.totalQuantity
-    );
+    // Calcular a quantidade necessária por lote
+    let requiredPerBatch = ingredient.totalQuantity;
+
+    // Se o ingrediente foi salvo em peso (g/ml) mas o estoque original é em unidades
+    if (
+      ingredient.originalUnit === 'un' &&
+      ingredient.weightPerUnit &&
+      ingredient.weightPerUnit > 0
+    ) {
+      requiredPerBatch = ingredient.totalQuantity / ingredient.weightPerUnit;
+    }
+
+    const possibleBatches = Math.floor(availableIngredient.totalQuantity / requiredPerBatch);
     maxBatches = Math.min(maxBatches, possibleBatches);
   }
 
@@ -238,14 +287,24 @@ export function validateBatchProduction(
   const missingIngredients: string[] = [];
 
   const isValid = product.ingredients.every(ingredient => {
-    const required = ingredient.totalQuantity * batchCount;
+    let required = ingredient.totalQuantity * batchCount;
+
+    // Se o ingrediente foi salvo em peso (g/ml) mas o estoque original é em unidades
+    if (
+      ingredient.originalUnit === 'un' &&
+      ingredient.weightPerUnit &&
+      ingredient.weightPerUnit > 0
+    ) {
+      required = required / ingredient.weightPerUnit;
+    }
+
     const available = availableIngredients.find(i => i.id === ingredient.id);
     const hasEnough = available && available.totalQuantity >= required;
 
     if (!hasEnough) {
       const availableQty = available?.totalQuantity || 0;
       missingIngredients.push(
-        `${ingredient.name} (necessário: ${required}, disponível: ${availableQty})`
+        `${ingredient.name} (necessário: ${required.toFixed(2)}, disponível: ${availableQty})`
       );
     }
 
@@ -280,11 +339,24 @@ export function produceBatch(
     return { success: false, consumedIngredients: [], producedQuantity: 0 };
   }
 
-  const consumedIngredients = product.ingredients.map(ingredient => ({
-    id: ingredient.id,
-    name: ingredient.name,
-    quantityConsumed: ingredient.totalQuantity * batchesToProduce,
-  }));
+  const consumedIngredients = product.ingredients.map(ingredient => {
+    let quantityConsumed = ingredient.totalQuantity * batchesToProduce;
+
+    // Se o ingrediente foi salvo em peso (g/ml) mas o estoque original é em unidades
+    if (
+      ingredient.originalUnit === 'un' &&
+      ingredient.weightPerUnit &&
+      ingredient.weightPerUnit > 0
+    ) {
+      quantityConsumed = quantityConsumed / ingredient.weightPerUnit;
+    }
+
+    return {
+      id: ingredient.id,
+      name: ingredient.name,
+      quantityConsumed,
+    };
+  });
 
   const producedQuantity = product.production.yieldQuantity * batchesToProduce;
 

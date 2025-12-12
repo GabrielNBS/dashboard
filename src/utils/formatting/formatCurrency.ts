@@ -37,11 +37,16 @@ export function formatCurrency(value: number): string {
   }
 
   try {
+    // Para valores muito pequenos (menor que 1 centavo) e diferentes de zero,
+    // usamos mais casas decimais para não exibir R$ 0,00
+    const needsMorePrecision = Math.abs(value) > 0 && Math.abs(value) < 0.01;
+    const fractionDigits = needsMorePrecision ? 4 : 2;
+
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
     }).format(value);
   } catch (error) {
     console.error('Erro ao formatar moeda:', error);

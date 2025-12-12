@@ -30,8 +30,12 @@ interface LordIconElement extends HTMLElement {
   goToFrame?: (frame: number) => void;
   playerInstance?: {
     goToAndStop?: (frame: number, isFrame?: boolean) => void;
+    goToFirstFrame?: () => void;
+    pause?: () => void;
+    play?: () => void;
   };
   time?: number;
+  ready?: Promise<void>;
 }
 
 const LordIconInner = (
@@ -107,15 +111,44 @@ const LordIconInner = (
     if (!icon) return;
 
     if (shouldPlay) {
-      icon.play?.();
+      // Garantir que o ícone está pronto antes de tocar
+      const playIcon = async () => {
+        try {
+          await icon.ready;
+        } catch {
+          // Ignora erro se ready não existir
+        }
+        icon.playerInstance?.play?.() ?? icon.play?.();
+      };
+      playIcon();
       return;
     }
 
     // Quando o hover termina, para a animação e volta ao frame inicial
-    icon.pause?.();
+    const resetToFirstFrame = async () => {
+      // Primeiro, pausar a animação
+      icon.playerInstance?.pause?.() ?? icon.pause?.();
 
-    const resetIcon = () => {
-      // Tentar diferentes métodos para voltar ao frame inicial para garantir compatibilidade
+      // Aguardar o ícone estar pronto (para garantir que playerInstance existe)
+      try {
+        await icon.ready;
+      } catch {
+        // Ignora se ready não existir
+      }
+
+      // Usar playerInstance.goToFirstFrame() como método principal (API oficial)
+      if (icon.playerInstance?.goToFirstFrame) {
+        icon.playerInstance.goToFirstFrame();
+        return;
+      }
+
+      // Fallback: usar goToAndStop(0, true) para ir ao frame 0
+      if (icon.playerInstance?.goToAndStop) {
+        icon.playerInstance.goToAndStop(0, true);
+        return;
+      }
+
+      // Fallbacks para APIs alternativas
       if (icon.goToFirstFrame) {
         icon.goToFirstFrame();
       } else if (icon.seek) {
@@ -124,19 +157,22 @@ const LordIconInner = (
         icon.goToFrame(0);
       }
 
-      // Alguns elementos lord-icon expõem a propriedade time
-      if ('time' in icon) {
+      // Último recurso: definir time = 0
+      if ('time' in icon && typeof icon.time === 'number') {
         icon.time = 0;
       }
-
-      icon.playerInstance?.goToAndStop?.(0, true);
     };
 
-    resetIcon();
+    resetToFirstFrame();
 
-    // Reforçar o reset no próximo frame para garantir que a remoção do atributo 'trigger'
-    // não interfira no estado da animação
-    requestAnimationFrame(resetIcon);
+    // Reforçar o reset no próximo frame para garantir consistência
+    const rafId = requestAnimationFrame(() => {
+      resetToFirstFrame();
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
   }, [shouldPlay, isActive]);
 
   // Definição de cores baseada em estado

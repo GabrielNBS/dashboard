@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useProductBuilderContext } from '@/contexts/products/ProductBuilderContext';
 import { Ingredient, UnitType } from '@/types/ingredients';
 import { useIngredientContext } from '@/contexts/Ingredients/useIngredientContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import AddIngredientList from './addIngredientList';
 import SearchableInput from '@/components/ui/SearcheableInput';
@@ -135,7 +136,7 @@ export default function IngredientSelector() {
 
     if (useWeightMode && selectedIngredient.weightPerUnit && selectedIngredient.weightUnit) {
       // Cria snapshot convertido para a unidade de peso (ex: g)
-      // Ajusta o preço médio para ser "por g"
+      // Preserva originalUnit para permitir conversão de volta para unidades no consumo
       const normalizedQuantity = normalizeQuantity(realQuantity, selectedIngredient.weightUnit);
       // Preço total calculado
       const normalizedWeightPerUnit = normalizeQuantity(
@@ -152,6 +153,10 @@ export default function IngredientSelector() {
         unit: selectedIngredient.weightUnit, // Muda a unidade para g/ml
         totalQuantity: normalizedQuantity,
         averageUnitPrice: pricePerWeightUnit,
+        // Preservar metadados para conversão de volta para unidades no consumo
+        originalUnit: selectedIngredient.unit, // Preserva 'un'
+        weightPerUnit: normalizedWeightPerUnit, // Peso normalizado por unidade (ex: 390g)
+        weightUnit: selectedIngredient.weightUnit,
         batches: [
           {
             id: `recipe_batch_${Date.now()}`,
@@ -221,8 +226,15 @@ export default function IngredientSelector() {
         />
       </div>
 
-      {selectedIngredient && (
-        <div className="border-border bg-card space-y-3 rounded-lg border p-3 sm:space-y-4 sm:p-4">
+      <AnimatePresence>
+        {selectedIngredient && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="border-border bg-card overflow-hidden rounded-lg border p-3 sm:space-y-4 sm:p-4"
+          >
           <div className="flex items-center justify-between">
             <h4 className="text-card-foreground text-sm font-medium sm:text-base">
               {selectedIngredient.name}
@@ -235,10 +247,19 @@ export default function IngredientSelector() {
                     setUseWeightMode(!useWeightMode);
                     setDisplayQuantity('0');
                   }}
-                  variant="outline"
-                  className="h-6 px-2 text-[10px] sm:h-7 sm:text-xs"
+                  variant="default"
+                  className="relative overflow-hidden h-6 px-2 text-[10px] sm:h-7 sm:text-xs"
                 >
-                  {useWeightMode ? 'Usar Unidades' : `Usar ${selectedIngredient.weightUnit}`}
+                  {useWeightMode 
+                    ? 'Usar Unidades' 
+                    : `Usar ${
+                        selectedIngredient.weightUnit === 'g' ? 'Gramas' :
+                        selectedIngredient.weightUnit === 'ml' ? 'Mililitros' :
+                        selectedIngredient.weightUnit === 'kg' ? 'Quilogramas' :
+                        selectedIngredient.weightUnit === 'l' ? 'Litros' :
+                        selectedIngredient.weightUnit
+                      }`}
+                  <div className="absolute inset-0 -translate-x-full animate-shimmer bg-linear-to-r from-transparent via-white/20 to-transparent" />
                 </Button>
               )}
               <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[10px] sm:px-2 sm:py-1 sm:text-xs">
@@ -446,8 +467,9 @@ export default function IngredientSelector() {
               </div>
             </details>
           )}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AddIngredientList />
     </div>

@@ -22,6 +22,8 @@ export type Ingredient = {
   // Conversão de unidade (Ex: 1 UN = 395 g)
   weightPerUnit?: number; // Peso/Volume por unidade
   weightUnit?: UnitType; // Unidade do peso (g, ml, kg, l)
+  // Quando ingrediente é salvo com conversão de peso, preserva a unidade original do estoque
+  originalUnit?: UnitType;
 };
 
 export type IngredientTableProps = {

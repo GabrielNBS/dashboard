@@ -10,11 +10,11 @@ export function normalizeQuantity(quantity: number, unit: UnitType): number {
 
     case 'g':
     case 'ml':
-      return Math.round(quantity);
+      return quantity;
 
     case 'un':
     default:
-      return Math.round(quantity);
+      return quantity;
   }
 }
 
@@ -50,13 +50,13 @@ export function formatQuantity(quantity: number, unit: string): string {
   if (baseUnit === 'g') {
     if (quantity >= 1000) return `${(quantity / 1000).toFixed(2)} kg`;
     if (quantity < 1 && quantity > 0) return `${quantity.toFixed(2)} g`;
-    return `${Math.round(quantity)} g`;
+    return `${quantity % 1 !== 0 ? quantity.toFixed(2) : quantity} g`;
   }
 
   if (baseUnit === 'ml') {
     if (quantity >= 1000) return `${(quantity / 1000).toFixed(2)} l`;
     if (quantity < 1 && quantity > 0) return `${quantity.toFixed(2)} ml`;
-    return `${Math.round(quantity)} ml`;
+    return `${quantity % 1 !== 0 ? quantity.toFixed(2) : quantity} ml`;
   }
 
   if (baseUnit === 'un') {

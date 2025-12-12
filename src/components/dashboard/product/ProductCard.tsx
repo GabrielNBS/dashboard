@@ -333,7 +333,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
                   </>
                 ) : (
                   <div className="flex h-full items-center justify-center bg-slate-100">
-                    <Store className="h-20 w-20 text-slate-300" />
+                    <ShoppingBagIcon className="h-20 w-20 text-slate-300" />
                   </div>
                 )}
 
